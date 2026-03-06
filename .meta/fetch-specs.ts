@@ -1,20 +1,25 @@
 #!/usr/bin/env bun
 /**
- * Fetches all GCP API discovery documents (all versions) to the repo root.
+ * Fetches all GCP API discovery documents (all versions) to ../specs/.
  *
  * Usage:
  *   bun run fetch-specs.ts
  *
  * Discovery docs are saved to:
- *   ../{name}-{version}.json
+ *   ../specs/{name}-{version}.json
  *
  * Also saves:
- *   ../_directory.json   – raw directory listing from Google
- *   ../_manifest.json    – manifest of successfully fetched specs
+ *   ../specs/_directory.json   – raw directory listing from Google
+ *   ../specs/_manifest.json    – manifest of successfully fetched specs
  */
 
+import { mkdirSync } from "fs";
+
 const DISCOVERY_URL = "https://discovery.googleapis.com/discovery/v1/apis";
-const ROOT = "..";
+const SPECS_DIR = "../specs";
+
+// Ensure the specs directory exists
+mkdirSync(SPECS_DIR, { recursive: true });
 
 interface DirectoryItem {
   kind: string;
@@ -48,7 +53,7 @@ async function main() {
 
   // Save directory
   await Bun.write(
-    `${ROOT}/_directory.json`,
+    `${SPECS_DIR}/_directory.json`,
     JSON.stringify(directory, null, 2),
   );
 
@@ -69,7 +74,7 @@ async function main() {
     await Promise.allSettled(
       batch.map(async (item) => {
         const filename = `${item.name}-${item.version}.json`;
-        const filepath = `${ROOT}/${filename}`;
+        const filepath = `${SPECS_DIR}/${filename}`;
 
         try {
           const response = await fetch(item.discoveryRestUrl);
@@ -108,7 +113,7 @@ async function main() {
       // Check if file was actually written
       try {
         return (
-          Bun.file(`${ROOT}/${item.name}-${item.version}.json`).size > 0
+          Bun.file(`${SPECS_DIR}/${item.name}-${item.version}.json`).size > 0
         );
       } catch {
         return false;
@@ -123,14 +128,14 @@ async function main() {
     }));
 
   await Bun.write(
-    `${ROOT}/_manifest.json`,
+    `${SPECS_DIR}/_manifest.json`,
     JSON.stringify(manifest, null, 2),
   );
 
   console.log(
-    `\nDone! ${fetched} specs saved to repo root, ${failed} failed.`,
+    `\nDone! ${fetched} specs saved to specs/, ${failed} failed.`,
   );
-  console.log(`Manifest: ${ROOT}/_manifest.json`);
+  console.log(`Manifest: ${SPECS_DIR}/_manifest.json`);
 }
 
 main().catch((err) => {
