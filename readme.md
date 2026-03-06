@@ -7,7 +7,7 @@ Because it's a plain git repo with commit history, you can pin to a specific com
 ## Usage as a submodule
 
 ```sh
-git submodule add https://github.com/alchemy/gcp-spec.git
+git submodule add https://github.com/alchemy-run/gcp-discovery-api.git
 ```
 
 ## Updating specs
