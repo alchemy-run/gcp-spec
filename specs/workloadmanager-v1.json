@@ -1,11 +1,4 @@
 {
-  "discoveryVersion": "v1",
-  "documentationLink": "https://cloud.google.com/workload-manager/docs",
-  "version": "v1",
-  "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
-  },
   "schemas": {
     "ListOperationsResponse": {
       "id": "ListOperationsResponse",
@@ -108,11 +101,11 @@
     },
     "ListEvaluationsResponse": {
       "id": "ListEvaluationsResponse",
-      "description": "Response message for the ListEvaluations RPC.",
+      "description": "Message for response to listing Evaluations",
       "type": "object",
       "properties": {
         "evaluations": {
-          "description": "The list of evaluations.",
+          "description": "The list of Evaluation",
           "type": "array",
           "items": {
             "$ref": "Evaluation"
@@ -133,54 +126,62 @@
     },
     "Evaluation": {
       "id": "Evaluation",
-      "description": "Represents a Workload Manager Evaluation configuration. An Evaluation defines a set of rules to be validated against a scope of Cloud resources.",
+      "description": "Message describing Evaluation object",
       "type": "object",
       "properties": {
         "name": {
-          "description": "Name of resource that has the form `projects/{project_id}/locations/{location_id}/evaluations/{evaluation_id}`.",
+          "description": "name of resource names have the form 'projects/{project_id}/locations/{location_id}/evaluations/{evaluation_id}'",
           "type": "string"
         },
         "description": {
-          "description": "Description of the Evaluation.",
+          "description": "Description of the Evaluation",
           "type": "string"
         },
         "resourceFilter": {
-          "description": "Resource filter for an evaluation defining the scope of resources to be evaluated.",
+          "description": "annotations as key value pairs",
           "$ref": "ResourceFilter"
         },
         "ruleNames": {
-          "description": "The names of the rules used for this evaluation.",
+          "description": "the name of the rule",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ruleVersions": {
+          "description": "Output only. [Output only] The updated rule ids if exist.",
+          "readOnly": true,
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "resourceStatus": {
-          "description": "Output only. [Output only] The current lifecycle state of the evaluation resource.",
+          "description": "Output only. [Output only] The updated rule ids if exist.",
           "readOnly": true,
           "$ref": "ResourceStatus"
         },
         "createTime": {
-          "description": "Output only. [Output only] Create time stamp.",
+          "description": "Output only. [Output only] Create time stamp",
           "readOnly": true,
           "type": "string",
           "format": "google-datetime"
         },
         "updateTime": {
-          "description": "Output only. [Output only] Update time stamp.",
+          "description": "Output only. [Output only] Update time stamp",
           "readOnly": true,
           "type": "string",
           "format": "google-datetime"
         },
         "labels": {
-          "description": "Labels as key value pairs.",
+          "description": "Labels as key value pairs",
           "type": "object",
           "additionalProperties": {
             "type": "string"
           }
         },
         "schedule": {
-          "description": "Crontab format schedule for scheduled evaluation, currently only supports the following fixed schedules: * `0 */1 * * *` # Hourly * `0 */6 * * *` # Every 6 hours * `0 */12 * * *` # Every 12 hours * `0 0 */1 * *` # Daily * `0 0 */7 * *` # Weekly * `0 0 */14 * *` # Every 14 days * `0 0 1 */1 *` # Monthly",
+          "description": "crontab format schedule for scheduled evaluation, currently only support the following schedule: \"0 */1 * * *\", \"0 */6 * * *\", \"0 */12 * * *\", \"0 0 */1 * *\", \"0 0 */7 * *\",",
           "type": "string"
         },
         "customRulesBucket": {
@@ -188,70 +189,79 @@
           "type": "string"
         },
         "evaluationType": {
-          "description": "Evaluation type.",
+          "description": "Evaluation type",
           "type": "string",
           "enumDescriptions": [
-            "Not specified.",
-            "SAP best practices.",
-            "SQL best practices.",
-            "Customized best practices."
+            "Not specified",
+            "SAP best practices",
+            "SQL best practices",
+            "Customized best practices",
+            "SCC IaC (Infra as Code) best practices."
+          ],
+          "enumDeprecated": [
+            false,
+            false,
+            false,
+            false,
+            true
           ],
           "enum": [
             "EVALUATION_TYPE_UNSPECIFIED",
             "SAP",
             "SQL_SERVER",
-            "OTHER"
+            "OTHER",
+            "SCC_IAC"
           ]
         },
         "bigQueryDestination": {
-          "description": "Optional. The BigQuery destination for detailed evaluation results. If this field is specified, the results of each evaluation execution are exported to BigQuery.",
+          "description": "Optional. BigQuery destination",
           "$ref": "BigQueryDestination"
         },
         "kmsKey": {
-          "description": "Optional. Immutable. Customer-managed encryption key name, in the format projects/*/locations/*/keyRings/*/cryptoKeys/*. The key will be used for CMEK encryption of the evaluation resource.",
+          "description": "Optional. Immutable. Customer-managed encryption key name, in the format projects/*/locations/*/keyRings/*/cryptoKeys/*.",
           "type": "string"
         }
       }
     },
     "ResourceFilter": {
       "id": "ResourceFilter",
-      "description": "Resource filter for an evaluation defining the scope of resources to be evaluated.",
+      "description": "Message describing resource filters",
       "type": "object",
       "properties": {
         "scopes": {
-          "description": "The scopes of evaluation resource. Format: * `projects/{project_id}` * `folders/{folder_id}` * `organizations/{organization_id}`",
+          "description": "The scopes of evaluation resource",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "resourceIdPatterns": {
-          "description": "The pattern to filter resources by their id For example, a pattern of \".*prod-cluster.*\" will match all resources that contain \"prod-cluster\" in their ID.",
+          "description": "The id pattern for filter resource",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "inclusionLabels": {
-          "description": "Labels to filter resources by. Each key-value pair in the map must exist on the resource for it to be included (e.g. VM instance labels). For example, specifying `{ \"env\": \"prod\", \"database\": \"nosql\" }` will only include resources that have labels `env=prod` and `database=nosql`.",
+          "description": "The label used for filter resource",
           "type": "object",
           "additionalProperties": {
             "type": "string"
           }
         },
         "gceInstanceFilter": {
-          "description": "Filter compute engine resources.",
+          "description": "Filter compute engine resource",
           "$ref": "GceInstanceFilter"
         }
       }
     },
     "GceInstanceFilter": {
       "id": "GceInstanceFilter",
-      "description": "A filter for matching Compute Engine instances.",
+      "description": "Message describing compute engine instance filter",
       "type": "object",
       "properties": {
         "serviceAccounts": {
-          "description": "If non-empty, only Compute Engine instances associated with at least one of the provided service accounts will be included in the evaluation.",
+          "description": "Service account of compute engine",
           "type": "array",
           "items": {
             "type": "string"
@@ -261,11 +271,19 @@
     },
     "ResourceStatus": {
       "id": "ResourceStatus",
-      "description": "The lifecycle status of an Evaluation resource.",
+      "description": "Message describing resource status",
       "type": "object",
       "properties": {
+        "rulesNewerVersions": {
+          "description": "Historical: Used before 2023-05-22 the new version of rule id if exists",
+          "deprecated": true,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "state": {
-          "description": "State of the Evaluation resource.",
+          "description": "State of the resource",
           "type": "string",
           "enumDescriptions": [
             "The state has not been populated in this message.",
@@ -284,26 +302,26 @@
     },
     "BigQueryDestination": {
       "id": "BigQueryDestination",
-      "description": "BigQuery destination for evaluation results.",
+      "description": "Message describing big query destination",
       "type": "object",
       "properties": {
         "destinationDataset": {
-          "description": "Optional. Destination dataset to save evaluation results.",
+          "description": "Optional. destination dataset to save evaluation results",
           "type": "string"
         },
         "createNewResultsTable": {
-          "description": "Optional. Determines if a new results table will be created when an Execution is created.",
+          "description": "Optional. determine if results will be saved in a new table",
           "type": "boolean"
         }
       }
     },
     "ListExecutionsResponse": {
       "id": "ListExecutionsResponse",
-      "description": "Response message for the ListExecutions RPC.",
+      "description": "Message for response to listing Executions",
       "type": "object",
       "properties": {
         "executions": {
-          "description": "The list of Execution.",
+          "description": "The list of Execution",
           "type": "array",
           "items": {
             "$ref": "Execution"
@@ -324,40 +342,40 @@
     },
     "Execution": {
       "id": "Execution",
-      "description": "Execution that represents a single run of an Evaluation.",
+      "description": "Message describing Execution object",
       "type": "object",
       "properties": {
         "name": {
-          "description": "The name of execution resource. The format is projects/{project}/locations/{location}/evaluations/{evaluation}/executions/{execution}.",
+          "description": "The name of execution resource. The format is projects/{project}/locations/{location}/evaluations/{evaluation}/executions/{execution}",
           "type": "string"
         },
         "startTime": {
-          "description": "Output only. [Output only] Start time stamp.",
+          "description": "Output only. [Output only] Start time stamp",
           "readOnly": true,
           "type": "string",
           "format": "google-datetime"
         },
         "endTime": {
-          "description": "Output only. [Output only] End time stamp.",
+          "description": "Output only. [Output only] End time stamp",
           "readOnly": true,
           "type": "string",
           "format": "google-datetime"
         },
         "inventoryTime": {
-          "description": "Output only. [Output only] Inventory time stamp.",
+          "description": "Output only. [Output only] Inventory time stamp",
           "readOnly": true,
           "type": "string",
           "format": "google-datetime"
         },
         "state": {
-          "description": "Output only. [Output only] State.",
+          "description": "Output only. [Output only] State",
           "readOnly": true,
           "type": "string",
           "enumDescriptions": [
-            "State of execution is unspecified.",
-            "The execution is running in backend service.",
-            "The execution run succeeded.",
-            "The execution run failed."
+            "state of execution is unspecified",
+            "the execution is running in backend service",
+            "the execution run success",
+            "the execution run failed"
           ],
           "enum": [
             "STATE_UNSPECIFIED",
@@ -367,24 +385,24 @@
           ]
         },
         "evaluationId": {
-          "description": "Output only. [Output only] Evaluation ID.",
+          "description": "Output only. [Output only] Evaluation ID",
           "readOnly": true,
           "type": "string"
         },
         "labels": {
-          "description": "Labels as key value pairs.",
+          "description": "Labels as key value pairs",
           "type": "object",
           "additionalProperties": {
             "type": "string"
           }
         },
         "runType": {
-          "description": "Type which represents whether the execution executed directly by user or scheduled according to the `Evaluation.schedule` field.",
+          "description": "type represent whether the execution executed directly by user or scheduled according evaluation.schedule field.",
           "type": "string",
           "enumDescriptions": [
-            "Type of execution is unspecified.",
-            "Type of execution is one time.",
-            "Type of execution is scheduled."
+            "type of execution is unspecified",
+            "type of execution is one time",
+            "type of execution is scheduled"
           ],
           "enum": [
             "TYPE_UNSPECIFIED",
@@ -393,7 +411,7 @@
           ]
         },
         "ruleResults": {
-          "description": "Output only. Execution result summary per rule.",
+          "description": "Output only. execution result summary per rule",
           "readOnly": true,
           "type": "array",
           "items": {
@@ -401,14 +419,14 @@
           }
         },
         "externalDataSources": {
-          "description": "Optional. External data sources.",
+          "description": "Optional. External data sources",
           "type": "array",
           "items": {
             "$ref": "ExternalDataSources"
           }
         },
         "notices": {
-          "description": "Output only. Additional information generated by the execution.",
+          "description": "Output only. Additional information generated by the execution",
           "readOnly": true,
           "type": "array",
           "items": {
@@ -416,12 +434,12 @@
           }
         },
         "engine": {
-          "description": "Optional. Engine.",
+          "description": "Optional. Engine",
           "type": "string",
           "enumDescriptions": [
-            "The original CG.",
-            "SlimCG / Scanner.",
-            "Evaluation Engine V2."
+            "The original CG",
+            "SlimCG / Scanner",
+            "Evaluation Engine V2"
           ],
           "enum": [
             "ENGINE_UNSPECIFIED",
@@ -430,7 +448,7 @@
           ]
         },
         "resultSummary": {
-          "description": "Output only. [Output only] Result summary for the execution.",
+          "description": "Output only. [Output only] Result summary for the execution",
           "readOnly": true,
           "$ref": "Summary"
         }
@@ -438,22 +456,22 @@
     },
     "RuleExecutionResult": {
       "id": "RuleExecutionResult",
-      "description": "Execution result summary per rule.",
+      "description": "Message for execution result summary per rule",
       "type": "object",
       "properties": {
         "rule": {
-          "description": "Rule name as plain text like `sap-hana-configured`.",
+          "description": "rule name",
           "type": "string"
         },
         "state": {
-          "description": "Output only. The execution status.",
+          "description": "Output only. The execution status",
           "readOnly": true,
           "type": "string",
           "enumDescriptions": [
             "Unknown state",
-            "Execution completed successfully",
-            "Execution completed with failures",
-            "Execution was not executed"
+            "execution completed successfully",
+            "execution completed with failures",
+            "execution was not executed"
           ],
           "enum": [
             "STATE_UNSPECIFIED",
@@ -463,16 +481,16 @@
           ]
         },
         "message": {
-          "description": "Execution message, if any.",
+          "description": "Execution message, if any",
           "type": "string"
         },
         "resultCount": {
-          "description": "Number of violations.",
+          "description": "Number of violations",
           "type": "string",
           "format": "int64"
         },
         "scannedResourceCount": {
-          "description": "Number of total scanned resources.",
+          "description": "Number of total scanned resources",
           "type": "string",
           "format": "int64"
         }
@@ -480,23 +498,23 @@
     },
     "ExternalDataSources": {
       "id": "ExternalDataSources",
-      "description": "External data sources for an execution.",
+      "description": "Message for external data sources",
       "type": "object",
       "properties": {
         "name": {
-          "description": "Optional. Name of external data source. The name will be used inside the rego/sql to refer the external data.",
+          "description": "Optional. Name of external data source. The name will be used inside the rego/sql to refer the external data",
           "type": "string"
         },
         "uri": {
-          "description": "Required. URI of external data source. example of bq table {project_ID}.{dataset_ID}.{table_ID}.",
+          "description": "Required. URI of external data source. example of bq table {project_ID}.{dataset_ID}.{table_ID}",
           "type": "string"
         },
         "type": {
-          "description": "Required. Type of external data source.",
+          "description": "Required. Type of external data source",
           "type": "string",
           "enumDescriptions": [
-            "Unknown type.",
-            "BigQuery table."
+            "Unknown type",
+            "BigQuery table"
           ],
           "enum": [
             "TYPE_UNSPECIFIED",
@@ -511,11 +529,11 @@
     },
     "Notice": {
       "id": "Notice",
-      "description": "Additional information generated by an execution.",
+      "description": "Message for additional information generated by the execution",
       "type": "object",
       "properties": {
         "message": {
-          "description": "Output only. Message of the notice.",
+          "description": "Output only. Message of the notice",
           "readOnly": true,
           "type": "string"
         }
@@ -523,23 +541,23 @@
     },
     "Summary": {
       "id": "Summary",
-      "description": "Execution summary.",
+      "description": "Message for execution summary",
       "type": "object",
       "properties": {
         "failures": {
-          "description": "Output only. Number of failures.",
+          "description": "Output only. Number of failures",
           "readOnly": true,
           "type": "string",
           "format": "int64"
         },
         "newFailures": {
-          "description": "Output only. Number of new failures compared to the previous execution.",
+          "description": "Output only. Number of new failures compared to the previous execution",
           "readOnly": true,
           "type": "string",
           "format": "int64"
         },
         "newFixes": {
-          "description": "Output only. Number of new fixes compared to the previous execution.",
+          "description": "Output only. Number of new fixes compared to the previous execution",
           "readOnly": true,
           "type": "string",
           "format": "int64"
@@ -548,15 +566,15 @@
     },
     "RunEvaluationRequest": {
       "id": "RunEvaluationRequest",
-      "description": "Request message for the RunEvaluation RPC.",
+      "description": "Message for creating a Execution",
       "type": "object",
       "properties": {
         "executionId": {
-          "description": "Required. ID of the execution which will be created.",
+          "description": "Required. Id of the requesting object If auto-generating Id server-side, remove this field and execution_id from the method_signature of Create RPC",
           "type": "string"
         },
         "execution": {
-          "description": "Required. The resource being created.",
+          "description": "Required. The resource being created",
           "$ref": "Execution"
         },
         "requestId": {
@@ -567,7 +585,7 @@
     },
     "ListExecutionResultsResponse": {
       "id": "ListExecutionResultsResponse",
-      "description": "Response message for the ListExecutionResults RPC.",
+      "description": "Message for response of list execution results",
       "type": "object",
       "properties": {
         "executionResults": {
@@ -585,7 +603,7 @@
     },
     "ExecutionResult": {
       "id": "ExecutionResult",
-      "description": "The result of an execution.",
+      "description": "Message describing the result of an execution",
       "type": "object",
       "properties": {
         "violationMessage": {
@@ -620,12 +638,12 @@
           }
         },
         "type": {
-          "description": "Execution result type of the scanned resource.",
+          "description": "Execution result type of the scanned resource",
           "type": "string",
           "enumDescriptions": [
-            "Unknown state.",
-            "Resource successfully passed the rule.",
-            "Resource violated the rule."
+            "Unknown state",
+            "resource successfully passed the rule",
+            "resource violated the rule"
           ],
           "enum": [
             "TYPE_UNSPECIFIED",
@@ -637,7 +655,7 @@
     },
     "Resource": {
       "id": "Resource",
-      "description": "Resource in execution result.",
+      "description": "Message represent resource in execution result",
       "type": "object",
       "properties": {
         "type": {
@@ -656,7 +674,7 @@
     },
     "ViolationDetails": {
       "id": "ViolationDetails",
-      "description": "The violation in an evaluation result.",
+      "description": "Message describing the violation in an evaluation result.",
       "type": "object",
       "properties": {
         "asset": {
@@ -706,7 +724,7 @@
     },
     "Command": {
       "id": "Command",
-      "description": "Command specifies the type of command to execute.",
+      "description": "* Command specifies the type of command to execute.",
       "type": "object",
       "properties": {
         "agentCommand": {
@@ -721,15 +739,15 @@
     },
     "AgentCommand": {
       "id": "AgentCommand",
-      "description": "An AgentCommand specifies a one-time executable program for the agent to run.",
+      "description": "* An AgentCommand specifies a one-time executable program for the agent to run.",
       "type": "object",
       "properties": {
         "command": {
-          "description": "The name of the agent one-time executable that will be invoked.",
+          "description": "command is the name of the agent one-time executable that will be invoked.",
           "type": "string"
         },
         "parameters": {
-          "description": "A map of key/value pairs that can be used to specify additional one-time executable settings.",
+          "description": "parameters is a map of key/value pairs that can be used to specify additional one-time executable settings.",
           "type": "object",
           "additionalProperties": {
             "type": "string"
@@ -739,15 +757,15 @@
     },
     "ShellCommand": {
       "id": "ShellCommand",
-      "description": "A ShellCommand is invoked via the agent's command line executor.",
+      "description": "* A ShellCommand is invoked via the agent's command line executor",
       "type": "object",
       "properties": {
         "command": {
-          "description": "The name of the command to be executed.",
+          "description": "command is the name of the command to be executed.",
           "type": "string"
         },
         "args": {
-          "description": "Arguments to be passed to the command.",
+          "description": "args is a string of arguments to be passed to the command.",
           "type": "string"
         },
         "timeoutSeconds": {
@@ -759,66 +777,70 @@
     },
     "ListRulesResponse": {
       "id": "ListRulesResponse",
-      "description": "Response message for the ListRules RPC.",
+      "description": "Mesesage of response of list rules",
       "type": "object",
       "properties": {
         "rules": {
-          "description": "All rules in response.",
+          "description": "all rules in response",
           "type": "array",
           "items": {
             "$ref": "Rule"
           }
+        },
+        "invalidRulesWrapper": {
+          "description": "A wrapper of the invalid rules that failed to be validated.",
+          "$ref": "InvalidRulesWrapper"
         }
       }
     },
     "Rule": {
       "id": "Rule",
-      "description": "A rule to be evaluated.",
+      "description": "Message represent a rule",
       "type": "object",
       "properties": {
         "name": {
-          "description": "Rule name.",
+          "description": "rule name",
           "type": "string"
         },
         "revisionId": {
-          "description": "Output only. The version of the rule.",
+          "description": "Output only. the version of the rule",
           "readOnly": true,
           "type": "string"
         },
         "displayName": {
-          "description": "The name display in UI.",
+          "description": "the name display in UI",
           "type": "string"
         },
         "description": {
-          "description": "Describe rule in plain language.",
+          "description": "descrite rule in plain language",
           "type": "string"
         },
         "severity": {
-          "description": "The severity of the rule.",
+          "description": "the severity of the rule",
           "type": "string"
         },
         "primaryCategory": {
-          "description": "The primary category.",
+          "description": "the primary category",
           "type": "string"
         },
         "secondaryCategory": {
-          "description": "The secondary category.",
+          "description": "the secondary category",
           "type": "string"
         },
         "errorMessage": {
-          "description": "The message template for rule.",
+          "description": "the message template for rule",
           "type": "string"
         },
         "uri": {
-          "description": "The document url for the rule.",
+          "description": "the docuement url for the rule",
           "type": "string"
         },
         "remediation": {
-          "description": "The remediation for the rule.",
+          "description": "the remediation for the rule",
           "type": "string"
         },
         "tags": {
-          "description": "List of user-defined tags.",
+          "description": "List of user-defined tags",
           "type": "array",
           "items": {
             "type": "string"
@@ -829,8 +851,8 @@
           "type": "string",
           "enumDescriptions": [
             "Not specified.",
-            "Baseline rules.",
-            "Custom rules."
+            "Baseline rules",
+            "Custom rules"
           ],
           "enum": [
             "RULE_TYPE_UNSPECIFIED",
@@ -844,13 +866,50 @@
         }
       }
     },
+    "InvalidRulesWrapper": {
+      "id": "InvalidRulesWrapper",
+      "description": "Message wrappes a list of invalid rules.",
+      "type": "object",
+      "properties": {
+        "invalidRules": {
+          "description": "The invalid rules that failed to be validated.",
+          "type": "array",
+          "items": {
+            "$ref": "InvalidRule"
+          }
+        }
+      }
+    },
+    "InvalidRule": {
+      "id": "InvalidRule",
+      "description": "Message represent an rule that failed to be validated.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "name of the invalid rule",
+          "type": "string"
+        },
+        "displayName": {
+          "description": "display name of the invalid rule",
+          "type": "string"
+        },
+        "gcsUri": {
+          "description": "cloud storage destination of the invalid rule",
+          "type": "string"
+        },
+        "valiadtionError": {
+          "description": "The error message of valdating rule formats.",
+          "type": "string"
+        }
+      }
+    },
     "ListScannedResourcesResponse": {
       "id": "ListScannedResourcesResponse",
-      "description": "Response message for the ListScannedResources RPC.",
+      "description": "Message for response to list scanned resources",
       "type": "object",
       "properties": {
         "scannedResources": {
-          "description": "All scanned resources in response.",
+          "description": "All scanned resources in response",
           "type": "array",
           "items": {
             "$ref": "ScannedResource"
@@ -864,15 +923,15 @@
     },
     "ScannedResource": {
       "id": "ScannedResource",
-      "description": "A scanned resource.",
+      "description": "Message of scanned resource",
       "type": "object",
       "properties": {
         "resource": {
-          "description": "Resource name.",
+          "description": "resource name",
           "type": "string"
         },
         "type": {
-          "description": "Resource type.",
+          "description": "resource type",
           "type": "string"
         }
       }
@@ -3634,9 +3693,7 @@
       }
     }
   },
-  "baseUrl": "https://workloadmanager.googleapis.com/",
-  "mtlsRootUrl": "https://workloadmanager.mtls.googleapis.com/",
-  "protocol": "rest",
+  "documentationLink": "https://cloud.google.com/workload-manager/docs",
   "parameters": {
     "access_token": {
       "type": "string",
@@ -3714,6 +3771,39 @@
       "location": "query"
     }
   },
+  "ownerDomain": "google.com",
+  "kind": "discovery#restDescription",
+  "basePath": "",
+  "canonicalName": "Workload Manager",
+  "ownerName": "Google",
+  "mtlsRootUrl": "https://workloadmanager.mtls.googleapis.com/",
+  "version_module": true,
+  "baseUrl": "https://workloadmanager.googleapis.com/",
+  "revision": "20260204",
+  "auth": {
+    "oauth2": {
+      "scopes": {
+        "https://www.googleapis.com/auth/cloud-platform": {
+          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
+        }
+      }
+    }
+  },
+  "id": "workloadmanager:v1",
+  "protocol": "rest",
+  "name": "workloadmanager",
+  "servicePath": "",
+  "description": "Workload Manager is a service that provides tooling for enterprise workloads to automate the deployment and validation of your workloads against best practices and recommendations.",
+  "rootUrl": "https://workloadmanager.googleapis.com/",
+  "title": "Workload Manager API",
+  "icons": {
+    "x16": "http://www.google.com/images/icons/product/search-16.gif",
+    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  },
+  "discoveryVersion": "v1",
+  "version": "v1",
+  "fullyEncodeReservedExpansion": true,
+  "batchPath": "batch",
   "resources": {
     "projects": {
       "resources": {
@@ -3930,7 +4020,7 @@
                   "httpMethod": "GET",
                   "parameters": {
                     "parent": {
-                      "description": "Required. Parent value for ListEvaluationsRequest.",
+                      "description": "Required. Parent value for ListEvaluationsRequest",
                       "pattern": "^projects/[^/]+/locations/[^/]+$",
                       "location": "path",
                       "required": true,
@@ -3953,7 +4043,7 @@
                       "type": "string"
                     },
                     "orderBy": {
-                      "description": "Hint for how to order the results.",
+                      "description": "Hint for how to order the results",
                       "location": "query",
                       "type": "string"
                     }
@@ -3976,7 +4066,7 @@
                   "httpMethod": "GET",
                   "parameters": {
                     "name": {
-                      "description": "Required. Name of the resource.",
+                      "description": "Required. Name of the resource",
                       "pattern": "^projects/[^/]+/locations/[^/]+/evaluations/[^/]+$",
                       "location": "path",
                       "required": true,
@@ -4001,14 +4091,14 @@
                   "httpMethod": "POST",
                   "parameters": {
                     "parent": {
-                      "description": "Required. The resource prefix of the evaluation location using the form: `projects/{project_id}/locations/{location_id}`.",
+                      "description": "Required. The resource prefix of the evaluation location using the form: `projects/{project_id}/locations/{location_id}`",
                       "pattern": "^projects/[^/]+/locations/[^/]+$",
                       "location": "path",
                       "required": true,
                       "type": "string"
                     },
                     "evaluationId": {
-                      "description": "Required. Id of the requesting object.",
+                      "description": "Required. Id of the requesting object",
                       "location": "query",
                       "type": "string"
                     },
@@ -4039,7 +4129,7 @@
                   "httpMethod": "PATCH",
                   "parameters": {
                     "name": {
-                      "description": "Name of resource that has the form `projects/{project_id}/locations/{location_id}/evaluations/{evaluation_id}`.",
+                      "description": "name of resource names have the form 'projects/{project_id}/locations/{location_id}/evaluations/{evaluation_id}'",
                       "pattern": "^projects/[^/]+/locations/[^/]+/evaluations/[^/]+$",
                       "location": "path",
                       "required": true,
@@ -4078,7 +4168,7 @@
                   "httpMethod": "DELETE",
                   "parameters": {
                     "name": {
-                      "description": "Required. Name of the resource.",
+                      "description": "Required. Name of the resource",
                       "pattern": "^projects/[^/]+/locations/[^/]+/evaluations/[^/]+$",
                       "location": "path",
                       "required": true,
@@ -4090,7 +4180,7 @@
                       "type": "string"
                     },
                     "force": {
-                      "description": "Optional. Followed the best practice from https://aip.dev/135#cascading-delete.",
+                      "description": "Optional. Followed the best practice from https://aip.dev/135#cascading-delete",
                       "location": "query",
                       "type": "boolean"
                     }
@@ -4117,7 +4207,7 @@
                       "httpMethod": "GET",
                       "parameters": {
                         "parent": {
-                          "description": "Required. The resource prefix of the Execution using the form: `projects/{project}/locations/{location}/evaluations/{evaluation}`.",
+                          "description": "Required. The resource prefix of the Execution using the form: 'projects/{project}/locations/{location}/evaluations/{evaluation}'",
                           "pattern": "^projects/[^/]+/locations/[^/]+/evaluations/[^/]+$",
                           "location": "path",
                           "required": true,
@@ -4135,7 +4225,7 @@
                           "type": "string"
                         },
                         "filter": {
-                          "description": "Filtering results.",
+                          "description": "Filtering results",
                           "location": "query",
                           "type": "string"
                         },
@@ -4163,7 +4253,7 @@
                       "httpMethod": "GET",
                       "parameters": {
                         "name": {
-                          "description": "Required. Name of the resource.",
+                          "description": "Required. Name of the resource",
                           "pattern": "^projects/[^/]+/locations/[^/]+/evaluations/[^/]+/executions/[^/]+$",
                           "location": "path",
                           "required": true,
@@ -4188,7 +4278,7 @@
                       "httpMethod": "POST",
                       "parameters": {
                         "name": {
-                          "description": "Required. The resource name of the Evaluation using the form: `projects/{project}/locations/{location}/evaluations/{evaluation}`.",
+                          "description": "Required. The resource name of the Execution using the form: 'projects/{project}/locations/{location}/evaluations/{evaluation}/executions/{execution}'",
                           "pattern": "^projects/[^/]+/locations/[^/]+/evaluations/[^/]+$",
                           "location": "path",
                           "required": true,
@@ -4216,7 +4306,7 @@
                       "httpMethod": "DELETE",
                       "parameters": {
                         "name": {
-                          "description": "Required. Name of the resource.",
+                          "description": "Required. Name of the resource",
                           "pattern": "^projects/[^/]+/locations/[^/]+/evaluations/[^/]+/executions/[^/]+$",
                           "location": "path",
                           "required": true,
@@ -4250,7 +4340,7 @@
                           "httpMethod": "GET",
                           "parameters": {
                             "parent": {
-                              "description": "Required. The execution results. Format: {parent}/evaluations/*/executions/*/results.",
+                              "description": "Required. The execution results. Format: {parent}/evaluations/*/executions/*/results",
                               "pattern": "^projects/[^/]+/locations/[^/]+/evaluations/[^/]+/executions/[^/]+$",
                               "location": "path",
                               "required": true,
@@ -4268,7 +4358,7 @@
                               "type": "string"
                             },
                             "filter": {
-                              "description": "Filtering results.",
+                              "description": "Filtering results",
                               "location": "query",
                               "type": "string"
                             }
@@ -4295,14 +4385,14 @@
                           "httpMethod": "GET",
                           "parameters": {
                             "parent": {
-                              "description": "Required. Parent for ListScannedResourcesRequest.",
+                              "description": "Required. parent for ListScannedResourcesRequest",
                               "pattern": "^projects/[^/]+/locations/[^/]+/evaluations/[^/]+/executions/[^/]+$",
                               "location": "path",
                               "required": true,
                               "type": "string"
                             },
                             "rule": {
-                              "description": "Rule name.",
+                              "description": "rule name",
                               "location": "query",
                               "type": "string"
                             },
@@ -4318,7 +4408,7 @@
                               "type": "string"
                             },
                             "filter": {
-                              "description": "Filtering results.",
+                              "description": "Filtering results",
                               "location": "query",
                               "type": "string"
                             },
@@ -4354,7 +4444,7 @@
                   "httpMethod": "GET",
                   "parameters": {
                     "parent": {
-                      "description": "Required. The [project] on which to execute the request. The format is: projects/{project_id}/locations/{location} Currently, the pre-defined rules are global available to all projects and all regions.",
+                      "description": "Required. The [project] on which to execute the request. The format is: projects/{project_id}/locations/{location} Currently, the pre-defined rules are global available to all projects and all regions",
                       "pattern": "^projects/[^/]+/locations/[^/]+$",
                       "location": "path",
                       "required": true,
@@ -4372,7 +4462,7 @@
                       "type": "string"
                     },
                     "filter": {
-                      "description": "Filter based on primary_category, secondary_category.",
+                      "description": "Filter based on primary_category, secondary_category",
                       "location": "query",
                       "type": "string"
                     },
@@ -4386,16 +4476,25 @@
                       "location": "query",
                       "type": "string",
                       "enumDescriptions": [
-                        "Not specified.",
-                        "SAP best practices.",
-                        "SQL best practices.",
-                        "Customized best practices."
+                        "Not specified",
+                        "SAP best practices",
+                        "SQL best practices",
+                        "Customized best practices",
+                        "SCC IaC (Infra as Code) best practices."
+                      ],
+                      "enumDeprecated": [
+                        false,
+                        false,
+                        false,
+                        false,
+                        true
                       ],
                       "enum": [
                         "EVALUATION_TYPE_UNSPECIFIED",
                         "SAP",
                         "SQL_SERVER",
-                        "OTHER"
+                        "OTHER",
+                        "SCC_IAC"
                       ]
                     }
                   },
@@ -4857,29 +4956,5 @@
         }
       }
     }
-  },
-  "kind": "discovery#restDescription",
-  "basePath": "",
-  "canonicalName": "Workload Manager",
-  "revision": "20260217",
-  "description": "Workload Manager is a service that provides tooling for enterprise workloads to automate the deployment and validation of your workloads against best practices and recommendations.",
-  "auth": {
-    "oauth2": {
-      "scopes": {
-        "https://www.googleapis.com/auth/cloud-platform": {
-          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
-        }
-      }
-    }
-  },
-  "id": "workloadmanager:v1",
-  "servicePath": "",
-  "title": "Workload Manager API",
-  "fullyEncodeReservedExpansion": true,
-  "ownerDomain": "google.com",
-  "version_module": true,
-  "name": "workloadmanager",
-  "batchPath": "batch",
-  "ownerName": "Google",
-  "rootUrl": "https://workloadmanager.googleapis.com/"
+  }
 }

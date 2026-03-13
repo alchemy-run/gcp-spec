@@ -2,77 +2,179 @@
   "resources": {
     "flights": {
       "methods": {
-        "computeFlightEmissions": {
-          "path": "v1/flights:computeFlightEmissions",
+        "computeTypicalFlightEmissions": {
           "request": {
-            "$ref": "ComputeFlightEmissionsRequest"
+            "$ref": "ComputeTypicalFlightEmissionsRequest"
           },
-          "response": {
-            "$ref": "ComputeFlightEmissionsResponse"
-          },
-          "flatPath": "v1/flights:computeFlightEmissions",
-          "description": "Stateless method to retrieve emission estimates. Details on how emission estimates are computed are in [GitHub](https://github.com/google/travel-impact-model) The response will contain all entries that match the input flight legs, in the same order. If there are no estimates available for a certain flight leg, the response will return the flight leg object with empty emission fields. The request will still be considered successful. Reasons for missing emission estimates include: * The flight is unknown to the server. * The input flight leg is missing one or more identifiers. * The flight date is in the past. * The aircraft type is not supported by the model. * Missing seat configuration. The request can contain up to 1000 flight legs. If the request has more than 1000 direct flights, if will fail with an INVALID_ARGUMENT error.",
+          "description": "Retrieves typical flight emissions estimates between two airports, also known as a market. If there are no estimates available for a certain market, the response will return the market object with empty emission fields. The request will still be considered successful. Details on how the typical emissions estimates are computed are on [GitHub](https://github.com/google/travel-impact-model/blob/main/projects/typical_flight_emissions.md). The request can contain up to 1000 markets. If the request has more than 1000 markets, it will fail with an INVALID_ARGUMENT error.",
+          "path": "v1/flights:computeTypicalFlightEmissions",
           "parameters": {},
+          "id": "travelimpactmodel.flights.computeTypicalFlightEmissions",
+          "flatPath": "v1/flights:computeTypicalFlightEmissions",
+          "httpMethod": "POST",
           "parameterOrder": [],
-          "id": "travelimpactmodel.flights.computeFlightEmissions",
-          "httpMethod": "POST"
+          "response": {
+            "$ref": "ComputeTypicalFlightEmissionsResponse"
+          }
         },
         "computeScope3FlightEmissions": {
           "request": {
             "$ref": "ComputeScope3FlightEmissionsRequest"
           },
+          "flatPath": "v1/flights:computeScope3FlightEmissions",
+          "httpMethod": "POST",
+          "parameterOrder": [],
           "response": {
             "$ref": "ComputeScope3FlightEmissionsResponse"
           },
-          "path": "v1/flights:computeScope3FlightEmissions",
-          "parameterOrder": [],
-          "httpMethod": "POST",
           "id": "travelimpactmodel.flights.computeScope3FlightEmissions",
+          "path": "v1/flights:computeScope3FlightEmissions",
           "parameters": {},
-          "flatPath": "v1/flights:computeScope3FlightEmissions",
           "description": "Stateless method to retrieve GHG emissions estimates for a set of flight segments for Scope 3 reporting. The response will contain all entries that match the input Scope3FlightSegment flight segments, in the same order provided. The estimates will be computed using the following cascading logic (using the first one that is available): 1. TIM-based emissions given origin, destination, carrier, flightNumber, departureDate, and cabinClass. 2. Typical flight emissions given origin, destination, year in departureDate, and cabinClass. 3. Distance-based emissions calculated using distanceKm, year in departureDate, and cabinClass. If there is a future flight requested in this calendar year, we do not support Tier 1 emissions and will fallback to Tier 2 or 3 emissions. If the requested future flight is in not in this calendar year, we will return an empty response. We recommend that for future flights, computeFlightEmissions API is used instead. If there are no estimates available for a certain flight with any of the three methods, the response will return a Scope3FlightEmissions object with empty emission fields. The request will still be considered successful. Generally, missing emissions estimates occur when the flight is unknown to the server (e.g. no specific flight exists, or typical flight emissions are not available for the requested pair). The request will fail with an `INVALID_ARGUMENT` error if: * The request contains more than 1,000 flight legs. * The input flight leg is missing one or more identifiers. For example, missing origin/destination without a valid distance for TIM_EMISSIONS or TYPICAL_FLIGHT_EMISSIONS type matching, or missing distance for a DISTANCE_BASED_EMISSIONS type matching (if you want to fallback to distance-based emissions or want a distance-based emissions estimate, you need to specify a distance). * The flight date is before 2019 (Scope 3 data is only available for 2019 and after). * The flight distance is 0 or lower. * Missing cabin class. Because the request is processed with fallback logic, it is possible that misconfigured requests return valid emissions estimates using fallback methods. For example, if a request has the wrong flight number but specifies the origin and destination, the request will still succeed, but the returned emissions will be based solely on the typical flight emissions. Similarly, if a request is missing the origin for a typical flight emissions request, but specifies a valid distance, the request could succeed based solely on the distance-based emissions. Consequently, one should check the source of the returned emissions (source) to confirm the results are as expected."
         },
-        "computeTypicalFlightEmissions": {
-          "path": "v1/flights:computeTypicalFlightEmissions",
+        "computeFlightEmissions": {
           "request": {
-            "$ref": "ComputeTypicalFlightEmissionsRequest"
+            "$ref": "ComputeFlightEmissionsRequest"
           },
-          "response": {
-            "$ref": "ComputeTypicalFlightEmissionsResponse"
-          },
+          "description": "Stateless method to retrieve emission estimates. Details on how emission estimates are computed are in [GitHub](https://github.com/google/travel-impact-model) The response will contain all entries that match the input flight legs, in the same order. If there are no estimates available for a certain flight leg, the response will return the flight leg object with empty emission fields. The request will still be considered successful. Reasons for missing emission estimates include: * The flight is unknown to the server. * The input flight leg is missing one or more identifiers. * The flight date is in the past. * The aircraft type is not supported by the model. * Missing seat configuration. The request can contain up to 1000 flight legs. If the request has more than 1000 direct flights, if will fail with an INVALID_ARGUMENT error.",
+          "path": "v1/flights:computeFlightEmissions",
           "parameters": {},
-          "flatPath": "v1/flights:computeTypicalFlightEmissions",
-          "description": "Retrieves typical flight emissions estimates between two airports, also known as a market. If there are no estimates available for a certain market, the response will return the market object with empty emission fields. The request will still be considered successful. Details on how the typical emissions estimates are computed are on [GitHub](https://github.com/google/travel-impact-model/blob/main/projects/typical_flight_emissions.md). The request can contain up to 1000 markets. If the request has more than 1000 markets, it will fail with an INVALID_ARGUMENT error.",
-          "parameterOrder": [],
+          "id": "travelimpactmodel.flights.computeFlightEmissions",
+          "flatPath": "v1/flights:computeFlightEmissions",
           "httpMethod": "POST",
-          "id": "travelimpactmodel.flights.computeTypicalFlightEmissions"
+          "parameterOrder": [],
+          "response": {
+            "$ref": "ComputeFlightEmissionsResponse"
+          }
         }
       }
     }
   },
-  "icons": {
-    "x32": "http://www.google.com/images/icons/product/search-32.gif",
-    "x16": "http://www.google.com/images/icons/product/search-16.gif"
-  },
-  "documentationLink": "https://developers.google.com/travel/impact-model",
+  "batchPath": "batch",
+  "title": "Travel Impact Model API",
+  "name": "travelimpactmodel",
   "schemas": {
+    "Market": {
+      "properties": {
+        "origin": {
+          "description": "Required. IATA airport code for flight origin, e.g. \"LHR\".",
+          "type": "string"
+        },
+        "destination": {
+          "description": "Required. IATA airport code for flight destination, e.g. \"JFK\".",
+          "type": "string"
+        }
+      },
+      "id": "Market",
+      "description": "A pair of airports.",
+      "type": "object"
+    },
+    "ComputeFlightEmissionsRequest": {
+      "properties": {
+        "flights": {
+          "type": "array",
+          "description": "Required. Direct flights to return emission estimates for.",
+          "items": {
+            "$ref": "Flight"
+          }
+        }
+      },
+      "id": "ComputeFlightEmissionsRequest",
+      "description": "Input definition for the ComputeFlightEmissions request.",
+      "type": "object"
+    },
+    "Flight": {
+      "properties": {
+        "origin": {
+          "type": "string",
+          "description": "Required. IATA airport code for flight origin, e.g. \"LHR\"."
+        },
+        "destination": {
+          "type": "string",
+          "description": "Required. IATA airport code for flight destination, e.g. \"JFK\"."
+        },
+        "operatingCarrierCode": {
+          "description": "Required. IATA carrier code, e.g. \"AA\".",
+          "type": "string"
+        },
+        "flightNumber": {
+          "description": "Required. Flight number, e.g. 324.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "departureDate": {
+          "description": "Required. Date of the flight in the time zone of the origin airport. Must be a date in the present or future.",
+          "$ref": "Date"
+        }
+      },
+      "id": "Flight",
+      "description": "All details related to a single request item for a direct flight emission estimates.",
+      "type": "object"
+    },
     "ComputeScope3FlightEmissionsResponse": {
-      "id": "ComputeScope3FlightEmissionsResponse",
-      "description": "A list of flights with Scope 3 emission estimates.",
+      "properties": {
+        "flightEmissions": {
+          "items": {
+            "$ref": "Scope3FlightEmissions"
+          },
+          "description": "List of flight segments with emission estimates.",
+          "type": "array"
+        },
+        "modelVersion": {
+          "description": "The model version under which emission estimates for all flights in this response were computed.",
+          "$ref": "ModelVersion"
+        }
+      },
       "type": "object",
+      "id": "ComputeScope3FlightEmissionsResponse",
+      "description": "A list of flights with Scope 3 emission estimates."
+    },
+    "ComputeTypicalFlightEmissionsRequest": {
+      "properties": {
+        "markets": {
+          "type": "array",
+          "description": "Required. Request the typical flight emissions estimates for this market pair. A maximum of 1000 markets can be requested.",
+          "items": {
+            "$ref": "Market"
+          }
+        }
+      },
+      "type": "object",
+      "id": "ComputeTypicalFlightEmissionsRequest",
+      "description": "A list of pair of airports (markets) to request the typical emissions for."
+    },
+    "TypicalFlightEmissions": {
+      "properties": {
+        "emissionsGramsPerPax": {
+          "description": "Optional. Typical flight emissions per passenger for requested market. Will not be present if a typical emissions could not be computed. For the list of reasons why typical flight emissions could not be computed, see [GitHub](https://github.com/google/travel-impact-model/blob/main/projects/typical_flight_emissions.md#step-7-validate-dataset).",
+          "$ref": "EmissionsGramsPerPax"
+        },
+        "market": {
+          "description": "Required. Matches the flight identifiers in the request. Note: all IATA codes are capitalized.",
+          "$ref": "Market"
+        }
+      },
+      "id": "TypicalFlightEmissions",
+      "description": "Typical flight emission estimates for a certain market",
+      "type": "object"
+    },
+    "ComputeFlightEmissionsResponse": {
       "properties": {
         "modelVersion": {
           "description": "The model version under which emission estimates for all flights in this response were computed.",
           "$ref": "ModelVersion"
         },
         "flightEmissions": {
-          "description": "List of flight segments with emission estimates.",
+          "description": "List of flight legs with emission estimates.",
           "type": "array",
           "items": {
-            "$ref": "Scope3FlightEmissions"
+            "$ref": "FlightWithEmissions"
           }
         }
-      }
+      },
+      "type": "object",
+      "id": "ComputeFlightEmissionsResponse",
+      "description": "Output definition for the ComputeFlightEmissions response."
     },
     "Date": {
       "type": "object",
@@ -84,110 +186,97 @@
           "description": "Year of the date. Must be from 1 to 9999, or 0 to specify a date without a year.",
           "format": "int32"
         },
-        "day": {
-          "format": "int32",
-          "description": "Day of a month. Must be from 1 to 31 and valid for the year and month, or 0 to specify a year by itself or a year and month where the day isn't significant.",
-          "type": "integer"
-        },
         "month": {
           "type": "integer",
           "description": "Month of a year. Must be from 1 to 12, or 0 to specify a year without a month and day.",
           "format": "int32"
+        },
+        "day": {
+          "type": "integer",
+          "description": "Day of a month. Must be from 1 to 31 and valid for the year and month, or 0 to specify a year by itself or a year and month where the day isn't significant.",
+          "format": "int32"
         }
       }
     },
-    "EmissionsGramsPerPax": {
-      "type": "object",
-      "id": "EmissionsGramsPerPax",
-      "description": "Grouped emissions per seating class results.",
+    "ComputeTypicalFlightEmissionsResponse": {
       "properties": {
-        "first": {
-          "format": "int32",
-          "type": "integer",
-          "description": "Emissions for one passenger in first class in grams. This field is always computed and populated, regardless of whether the aircraft has first class seats or not."
+        "typicalFlightEmissions": {
+          "description": "Market's Typical Flight Emissions requested.",
+          "type": "array",
+          "items": {
+            "$ref": "TypicalFlightEmissions"
+          }
         },
-        "business": {
-          "type": "integer",
-          "description": "Emissions for one passenger in business class in grams. This field is always computed and populated, regardless of whether the aircraft has business class seats or not.",
-          "format": "int32"
-        },
-        "economy": {
-          "type": "integer",
-          "description": "Emissions for one passenger in economy class in grams. This field is always computed and populated, regardless of whether the aircraft has economy class seats or not.",
-          "format": "int32"
-        },
-        "premiumEconomy": {
-          "format": "int32",
-          "description": "Emissions for one passenger in premium economy class in grams. This field is always computed and populated, regardless of whether the aircraft has premium economy class seats or not.",
-          "type": "integer"
-        }
-      }
-    },
-    "TypicalFlightEmissions": {
-      "properties": {
-        "market": {
-          "$ref": "Market",
-          "description": "Required. Matches the flight identifiers in the request. Note: all IATA codes are capitalized."
-        },
-        "emissionsGramsPerPax": {
-          "description": "Optional. Typical flight emissions per passenger for requested market. Will not be present if a typical emissions could not be computed. For the list of reasons why typical flight emissions could not be computed, see [GitHub](https://github.com/google/travel-impact-model/blob/main/projects/typical_flight_emissions.md#step-7-validate-dataset).",
-          "$ref": "EmissionsGramsPerPax"
+        "modelVersion": {
+          "description": "The model version under which typical flight emission estimates for all flights in this response were computed.",
+          "$ref": "ModelVersion"
         }
       },
       "type": "object",
-      "id": "TypicalFlightEmissions",
-      "description": "Typical flight emission estimates for a certain market"
+      "id": "ComputeTypicalFlightEmissionsResponse",
+      "description": "The response includes the emissions but also the model version."
     },
-    "ComputeFlightEmissionsRequest": {
-      "id": "ComputeFlightEmissionsRequest",
-      "description": "Input definition for the ComputeFlightEmissions request.",
-      "type": "object",
+    "Scope3FlightEmissions": {
       "properties": {
-        "flights": {
-          "description": "Required. Direct flights to return emission estimates for.",
-          "type": "array",
-          "items": {
-            "$ref": "Flight"
-          }
+        "flight": {
+          "description": "Required. Matches the flight identifiers in the request.",
+          "$ref": "Scope3FlightSegment"
+        },
+        "wttEmissionsGramsPerPax": {
+          "type": "string",
+          "description": "Optional. Well-to-tank flight emissions per passenger based on the requested info.",
+          "format": "int64"
+        },
+        "wtwEmissionsGramsPerPax": {
+          "description": "Optional. Total flight emissions (sum of well-to-tank and tank-to-wake) per passenger based on the requested info. This is the total emissions and unless you have specific reasons for using TTW or WTT emissions, you should use this number.",
+          "format": "int64",
+          "type": "string"
+        },
+        "source": {
+          "description": "Optional. The source of the emissions data.",
+          "type": "string",
+          "enum": [
+            "SCOPE3_DATA_TYPE_UNSPECIFIED",
+            "TIM_EMISSIONS",
+            "TYPICAL_FLIGHT_EMISSIONS",
+            "DISTANCE_BASED_EMISSIONS"
+          ],
+          "enumDescriptions": [
+            "Unspecified data type.",
+            "TIM-based emissions given origin, destination, carrier, flight number, departure date, and year.",
+            "Typical flight emissions given origin, destination, and year.",
+            "Distance-based emissions based on the distance traveled and year."
+          ]
+        },
+        "ttwEmissionsGramsPerPax": {
+          "type": "string",
+          "description": "Optional. Tank-to-wake flight emissions per passenger based on the requested info.",
+          "format": "int64"
         }
-      }
-    },
-    "Flight": {
-      "id": "Flight",
-      "description": "All details related to a single request item for a direct flight emission estimates.",
+      },
       "type": "object",
-      "properties": {
-        "flightNumber": {
-          "format": "int32",
-          "type": "integer",
-          "description": "Required. Flight number, e.g. 324."
-        },
-        "departureDate": {
-          "description": "Required. Date of the flight in the time zone of the origin airport. Must be a date in the present or future.",
-          "$ref": "Date"
-        },
-        "origin": {
-          "type": "string",
-          "description": "Required. IATA airport code for flight origin, e.g. \"LHR\"."
-        },
-        "destination": {
-          "type": "string",
-          "description": "Required. IATA airport code for flight destination, e.g. \"JFK\"."
-        },
-        "operatingCarrierCode": {
-          "type": "string",
-          "description": "Required. IATA carrier code, e.g. \"AA\"."
-        }
-      }
+      "id": "Scope3FlightEmissions",
+      "description": "Scope 3 flight with emission estimates."
     },
     "Scope3FlightSegment": {
-      "id": "Scope3FlightSegment",
-      "description": "Flight parameters with which the Scope 3 emissions are fetched.",
-      "type": "object",
       "properties": {
-        "carrierCode": {
+        "cabinClass": {
+          "description": "Required. The cabin class of the flight.",
           "type": "string",
-          "description": "Optional. 2-character [IATA carrier code](https://www.iata.org/en/publications/directories/code-search/), e.g. `KE`. This is required if specific flight matching is desired. Otherwise, this is unused for typical flight and distance-based emissions models. This could be both operating and marketing carrier code (i.e. codeshare is covered)."
+          "enum": [
+            "CABIN_CLASS_UNSPECIFIED",
+            "ECONOMY",
+            "PREMIUM_ECONOMY",
+            "BUSINESS",
+            "FIRST"
+          ],
+          "enumDescriptions": [
+            "Unspecified cabin class.",
+            "Economy class.",
+            "Premium economy class.",
+            "Business class.",
+            "First class."
+          ]
         },
         "origin": {
           "type": "string",
@@ -197,217 +286,34 @@
           "type": "string",
           "description": "Optional. 3-character [IATA airport code](https://www.iata.org/en/publications/directories/code-search/) for flight destination, e.g. `ICN`. This is used to match specific flight if provided alongside origin, carrier, and flight number. If there is no match, we will first try to match the flight to a typical flight between the provided origin and destination airports. Otherwise, we will use the distance-based emissions model if the flight distance is provided."
         },
-        "departureDate": {
-          "$ref": "Date",
-          "description": "Required. Date of the flight in the time zone of the origin airport. Only year is required for typical flight and distance-based emissions models (month and day values are ignored and therefore, can be either omitted, set to 0, or set to a valid date for those cases). Correspondingly, if a specific date is not provided for TIM emissions, we will fallback to typical flight (or distance-based) emissions."
-        },
-        "cabinClass": {
-          "type": "string",
-          "enumDescriptions": [
-            "Unspecified cabin class.",
-            "Economy class.",
-            "Premium economy class.",
-            "Business class.",
-            "First class."
-          ],
-          "description": "Required. The cabin class of the flight.",
-          "enum": [
-            "CABIN_CLASS_UNSPECIFIED",
-            "ECONOMY",
-            "PREMIUM_ECONOMY",
-            "BUSINESS",
-            "FIRST"
-          ]
-        },
-        "flightNumber": {
-          "format": "int32",
-          "type": "integer",
-          "description": "Optional. Up to 4-digit [flight number](https://en.wikipedia.org/wiki/Flight_number), e.g. `71`, from [1, 9999]. This is first used to match a specific flight if a flight number is specified alongside origin, destination, and carrier. If a flight number is not specified, we will first try to match the flight to a typical flight between the provided origin and destination airports. If that fails and/or origin & destination are not provided, we will use the distance-based emissions model based on the flight distance provided."
+        "carrierCode": {
+          "description": "Optional. 2-character [IATA carrier code](https://www.iata.org/en/publications/directories/code-search/), e.g. `KE`. This is required if specific flight matching is desired. Otherwise, this is unused for typical flight and distance-based emissions models. This could be both operating and marketing carrier code (i.e. codeshare is covered).",
+          "type": "string"
         },
         "distanceKm": {
-          "format": "int64",
+          "type": "string",
           "description": "Optional. Distance in kilometers, e.g. `2423`, from [1, 2.5e16) km. This is used to match a flight to distance-based emissions when origin and destination are not provided or there are no matching typical flights.",
-          "type": "string"
-        }
-      }
-    },
-    "ComputeFlightEmissionsResponse": {
-      "type": "object",
-      "id": "ComputeFlightEmissionsResponse",
-      "description": "Output definition for the ComputeFlightEmissions response.",
-      "properties": {
-        "flightEmissions": {
-          "description": "List of flight legs with emission estimates.",
-          "type": "array",
-          "items": {
-            "$ref": "FlightWithEmissions"
-          }
+          "format": "int64"
         },
-        "modelVersion": {
-          "description": "The model version under which emission estimates for all flights in this response were computed.",
-          "$ref": "ModelVersion"
-        }
-      }
-    },
-    "Market": {
-      "type": "object",
-      "id": "Market",
-      "description": "A pair of airports.",
-      "properties": {
-        "origin": {
-          "description": "Required. IATA airport code for flight origin, e.g. \"LHR\".",
-          "type": "string"
+        "flightNumber": {
+          "description": "Optional. Up to 4-digit [flight number](https://en.wikipedia.org/wiki/Flight_number), e.g. `71`, from [1, 9999]. This is first used to match a specific flight if a flight number is specified alongside origin, destination, and carrier. If a flight number is not specified, we will first try to match the flight to a typical flight between the provided origin and destination airports. If that fails and/or origin & destination are not provided, we will use the distance-based emissions model based on the flight distance provided.",
+          "format": "int32",
+          "type": "integer"
         },
-        "destination": {
-          "description": "Required. IATA airport code for flight destination, e.g. \"JFK\".",
-          "type": "string"
-        }
-      }
-    },
-    "ComputeScope3FlightEmissionsRequest": {
-      "type": "object",
-      "id": "ComputeScope3FlightEmissionsRequest",
-      "description": "A list of flight segments to request the Scope 3 emissions for.",
-      "properties": {
-        "flights": {
-          "type": "array",
-          "items": {
-            "$ref": "Scope3FlightSegment"
-          },
-          "description": "Required. Flights to return emission estimates for."
-        },
-        "modelVersion": {
-          "$ref": "ModelVersion",
-          "description": "Optional. The model version under which emission estimates for all flights in this request were computed."
-        }
-      }
-    },
-    "EasaLabelMetadata": {
-      "properties": {
-        "labelVersion": {
-          "description": "Version of the label.",
-          "type": "string"
-        },
-        "safDiscountPercentage": {
-          "format": "double",
-          "description": "Sustainable Aviation Fuel (SAF) emissions discount percentage applied to the label. It is a percentage as a decimal. The values are in the interval [0,1]. For example, 0.0021 means 0.21%. This discount and reduction in emissions are reported by the EASA label but they are not included in the CO2e estimates distributed by this API.",
-          "type": "number"
-        },
-        "labelIssueDate": {
-          "$ref": "Date",
-          "description": "The date when the label was issued."
-        },
-        "labelExpiryDate": {
-          "description": "The date when the label expires. The label can be displayed until the end of this date.",
+        "departureDate": {
+          "description": "Required. Date of the flight in the time zone of the origin airport. Only year is required for typical flight and distance-based emissions models (month and day values are ignored and therefore, can be either omitted, set to 0, or set to a valid date for those cases). Correspondingly, if a specific date is not provided for TIM emissions, we will fallback to typical flight (or distance-based) emissions.",
           "$ref": "Date"
         }
       },
-      "id": "EasaLabelMetadata",
-      "description": "Metadata about the EASA Flight Emissions Label.",
-      "type": "object"
-    },
-    "ModelVersion": {
-      "properties": {
-        "major": {
-          "type": "integer",
-          "description": "Major versions: Major changes to methodology (e.g. adding new data sources to the model that lead to major output changes). Such changes will be infrequent and announced well in advance. Might involve API version changes, which will respect [Google Cloud API guidelines](https://cloud.google.com/endpoints/docs/openapi/versioning-an-api#backwards-incompatible)",
-          "format": "int32"
-        },
-        "minor": {
-          "type": "integer",
-          "description": "Minor versions: Changes to the model that, while being consistent across schema versions, change the model parameters or implementation.",
-          "format": "int32"
-        },
-        "dated": {
-          "description": "Dated versions: Model datasets are recreated with refreshed input data but no change to the algorithms regularly.",
-          "type": "string"
-        },
-        "patch": {
-          "format": "int32",
-          "type": "integer",
-          "description": "Patch versions: Implementation changes meant to address bugs or inaccuracies in the model implementation."
-        }
-      },
-      "type": "object",
-      "id": "ModelVersion",
-      "description": "Travel Impact Model version. For more information about the model versioning see [GitHub](https://github.com/google/travel-impact-model/#versioning)."
-    },
-    "ComputeTypicalFlightEmissionsResponse": {
-      "properties": {
-        "typicalFlightEmissions": {
-          "type": "array",
-          "items": {
-            "$ref": "TypicalFlightEmissions"
-          },
-          "description": "Market's Typical Flight Emissions requested."
-        },
-        "modelVersion": {
-          "description": "The model version under which typical flight emission estimates for all flights in this response were computed.",
-          "$ref": "ModelVersion"
-        }
-      },
-      "id": "ComputeTypicalFlightEmissionsResponse",
-      "description": "The response includes the emissions but also the model version.",
-      "type": "object"
-    },
-    "Scope3FlightEmissions": {
-      "properties": {
-        "wttEmissionsGramsPerPax": {
-          "format": "int64",
-          "type": "string",
-          "description": "Optional. Well-to-tank flight emissions per passenger based on the requested info."
-        },
-        "flight": {
-          "$ref": "Scope3FlightSegment",
-          "description": "Required. Matches the flight identifiers in the request."
-        },
-        "wtwEmissionsGramsPerPax": {
-          "format": "int64",
-          "type": "string",
-          "description": "Optional. Total flight emissions (sum of well-to-tank and tank-to-wake) per passenger based on the requested info. This is the total emissions and unless you have specific reasons for using TTW or WTT emissions, you should use this number."
-        },
-        "ttwEmissionsGramsPerPax": {
-          "description": "Optional. Tank-to-wake flight emissions per passenger based on the requested info.",
-          "type": "string",
-          "format": "int64"
-        },
-        "source": {
-          "description": "Optional. The source of the emissions data.",
-          "type": "string",
-          "enumDescriptions": [
-            "Unspecified data type.",
-            "TIM-based emissions given origin, destination, carrier, flight number, departure date, and year.",
-            "Typical flight emissions given origin, destination, and year.",
-            "Distance-based emissions based on the distance traveled and year."
-          ],
-          "enum": [
-            "SCOPE3_DATA_TYPE_UNSPECIFIED",
-            "TIM_EMISSIONS",
-            "TYPICAL_FLIGHT_EMISSIONS",
-            "DISTANCE_BASED_EMISSIONS"
-          ]
-        }
-      },
-      "id": "Scope3FlightEmissions",
-      "description": "Scope 3 flight with emission estimates.",
+      "id": "Scope3FlightSegment",
+      "description": "Flight parameters with which the Scope 3 emissions are fetched.",
       "type": "object"
     },
     "FlightWithEmissions": {
-      "type": "object",
-      "id": "FlightWithEmissions",
-      "description": "Direct flight with emission estimates.",
       "properties": {
-        "flight": {
-          "description": "Required. Matches the flight identifiers in the request. Note: all IATA codes are capitalized.",
-          "$ref": "Flight"
-        },
-        "easaLabelMetadata": {
-          "$ref": "EasaLabelMetadata",
-          "description": "Optional. Metadata about the EASA Flight Emissions Label. Only set when the emissions data source is EASA."
-        },
         "source": {
-          "description": "Optional. The source of the emissions data.",
           "type": "string",
+          "description": "Optional. The source of the emissions data.",
           "enumDescriptions": [
             "The source of the emissions data is unspecified.",
             "The emissions data is from the Travel Impact Model.",
@@ -423,134 +329,228 @@
           "description": "Optional. Per-passenger emission estimate numbers. Will not be present if emissions could not be computed. For the list of reasons why emissions could not be computed, see ComputeFlightEmissions.",
           "$ref": "EmissionsGramsPerPax"
         },
+        "flight": {
+          "description": "Required. Matches the flight identifiers in the request. Note: all IATA codes are capitalized.",
+          "$ref": "Flight"
+        },
+        "easaLabelMetadata": {
+          "description": "Optional. Metadata about the EASA Flight Emissions Label. Only set when the emissions data source is EASA.",
+          "$ref": "EasaLabelMetadata"
+        },
         "contrailsImpactBucket": {
+          "enumDescriptions": [
+            "The contrails impact is unspecified.",
+            "The contrails impact is negligible compared to the total CO2e emissions.",
+            "The contrails impact is comparable to the total CO2e emissions.",
+            "The contrails impact is higher than the total CO2e emissions impact."
+          ],
           "enum": [
             "CONTRAILS_IMPACT_UNSPECIFIED",
             "CONTRAILS_IMPACT_NEGLIGIBLE",
             "CONTRAILS_IMPACT_MODERATE",
             "CONTRAILS_IMPACT_SEVERE"
           ],
-          "description": "Optional. The significance of contrails warming impact compared to the total CO2e emissions impact.",
           "type": "string",
-          "enumDescriptions": [
-            "The contrails impact is unspecified.",
-            "The contrails impact is negligible compared to the total CO2e emissions.",
-            "The contrails impact is comparable to the total CO2e emissions.",
-            "The contrails impact is higher than the total CO2e emissions impact."
-          ]
+          "description": "Optional. The significance of contrails warming impact compared to the total CO2e emissions impact."
+        }
+      },
+      "id": "FlightWithEmissions",
+      "description": "Direct flight with emission estimates.",
+      "type": "object"
+    },
+    "EasaLabelMetadata": {
+      "type": "object",
+      "id": "EasaLabelMetadata",
+      "description": "Metadata about the EASA Flight Emissions Label.",
+      "properties": {
+        "labelExpiryDate": {
+          "description": "The date when the label expires. The label can be displayed until the end of this date.",
+          "$ref": "Date"
+        },
+        "labelIssueDate": {
+          "description": "The date when the label was issued.",
+          "$ref": "Date"
+        },
+        "labelVersion": {
+          "type": "string",
+          "description": "Version of the label."
+        },
+        "safDiscountPercentage": {
+          "description": "Sustainable Aviation Fuel (SAF) emissions discount percentage applied to the label. It is a percentage as a decimal. The values are in the interval [0,1]. For example, 0.0021 means 0.21%. This discount and reduction in emissions are reported by the EASA label but they are not included in the CO2e estimates distributed by this API.",
+          "format": "double",
+          "type": "number"
         }
       }
     },
-    "ComputeTypicalFlightEmissionsRequest": {
+    "ComputeScope3FlightEmissionsRequest": {
+      "id": "ComputeScope3FlightEmissionsRequest",
+      "description": "A list of flight segments to request the Scope 3 emissions for.",
+      "type": "object",
       "properties": {
-        "markets": {
-          "description": "Required. Request the typical flight emissions estimates for this market pair. A maximum of 1000 markets can be requested.",
-          "type": "array",
+        "flights": {
           "items": {
-            "$ref": "Market"
-          }
+            "$ref": "Scope3FlightSegment"
+          },
+          "description": "Required. Flights to return emission estimates for.",
+          "type": "array"
+        },
+        "modelVersion": {
+          "description": "Optional. The model version under which emission estimates for all flights in this request were computed.",
+          "$ref": "ModelVersion"
+        }
+      }
+    },
+    "EmissionsGramsPerPax": {
+      "type": "object",
+      "id": "EmissionsGramsPerPax",
+      "description": "Grouped emissions per seating class results.",
+      "properties": {
+        "first": {
+          "description": "Emissions for one passenger in first class in grams. This field is always computed and populated, regardless of whether the aircraft has first class seats or not.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "business": {
+          "type": "integer",
+          "description": "Emissions for one passenger in business class in grams. This field is always computed and populated, regardless of whether the aircraft has business class seats or not.",
+          "format": "int32"
+        },
+        "economy": {
+          "type": "integer",
+          "description": "Emissions for one passenger in economy class in grams. This field is always computed and populated, regardless of whether the aircraft has economy class seats or not.",
+          "format": "int32"
+        },
+        "premiumEconomy": {
+          "description": "Emissions for one passenger in premium economy class in grams. This field is always computed and populated, regardless of whether the aircraft has premium economy class seats or not.",
+          "format": "int32",
+          "type": "integer"
+        }
+      }
+    },
+    "ModelVersion": {
+      "properties": {
+        "patch": {
+          "type": "integer",
+          "description": "Patch versions: Implementation changes meant to address bugs or inaccuracies in the model implementation.",
+          "format": "int32"
+        },
+        "major": {
+          "description": "Major versions: Major changes to methodology (e.g. adding new data sources to the model that lead to major output changes). Such changes will be infrequent and announced well in advance. Might involve API version changes, which will respect [Google Cloud API guidelines](https://cloud.google.com/endpoints/docs/openapi/versioning-an-api#backwards-incompatible)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "dated": {
+          "type": "string",
+          "description": "Dated versions: Model datasets are recreated with refreshed input data but no change to the algorithms regularly."
+        },
+        "minor": {
+          "description": "Minor versions: Changes to the model that, while being consistent across schema versions, change the model parameters or implementation.",
+          "format": "int32",
+          "type": "integer"
         }
       },
-      "type": "object",
-      "id": "ComputeTypicalFlightEmissionsRequest",
-      "description": "A list of pair of airports (markets) to request the typical emissions for."
+      "id": "ModelVersion",
+      "description": "Travel Impact Model version. For more information about the model versioning see [GitHub](https://github.com/google/travel-impact-model/#versioning).",
+      "type": "object"
     }
   },
-  "version_module": true,
-  "id": "travelimpactmodel:v1",
-  "kind": "discovery#restDescription",
-  "revision": "20260310",
-  "rootUrl": "https://travelimpactmodel.googleapis.com/",
-  "name": "travelimpactmodel",
-  "version": "v1",
-  "description": "Travel Impact Model API lets you query travel carbon emission estimates.",
-  "servicePath": "",
-  "protocol": "rest",
   "basePath": "",
-  "title": "Travel Impact Model API",
-  "baseUrl": "https://travelimpactmodel.googleapis.com/",
-  "batchPath": "batch",
-  "ownerName": "Google",
-  "mtlsRootUrl": "https://travelimpactmodel.mtls.googleapis.com/",
-  "discoveryVersion": "v1",
   "ownerDomain": "google.com",
+  "canonicalName": "Travel Impact Model",
+  "baseUrl": "https://travelimpactmodel.googleapis.com/",
+  "documentationLink": "https://developers.google.com/travel/impact-model",
+  "version_module": true,
   "fullyEncodeReservedExpansion": true,
+  "mtlsRootUrl": "https://travelimpactmodel.mtls.googleapis.com/",
+  "icons": {
+    "x32": "http://www.google.com/images/icons/product/search-32.gif",
+    "x16": "http://www.google.com/images/icons/product/search-16.gif"
+  },
+  "kind": "discovery#restDescription",
+  "version": "v1",
+  "revision": "20260311",
+  "servicePath": "",
+  "description": "Travel Impact Model API lets you query travel carbon emission estimates.",
+  "ownerName": "Google",
+  "discoveryVersion": "v1",
+  "protocol": "rest",
+  "id": "travelimpactmodel:v1",
+  "rootUrl": "https://travelimpactmodel.googleapis.com/",
   "parameters": {
-    "fields": {
-      "description": "Selector specifying which fields to include in a partial response.",
+    "uploadType": {
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
       "type": "string",
       "location": "query"
-    },
-    "prettyPrint": {
-      "location": "query",
-      "description": "Returns response with indentations and line breaks.",
-      "type": "boolean",
-      "default": "true"
-    },
-    "alt": {
-      "enum": [
-        "json",
-        "media",
-        "proto"
-      ],
-      "location": "query",
-      "type": "string",
-      "description": "Data format for response.",
-      "default": "json",
-      "enumDescriptions": [
-        "Responses with Content-Type of application/json",
-        "Media download with context-dependent Content-Type",
-        "Responses with Content-Type of application/x-protobuf"
-      ]
     },
     "$.xgafv": {
       "enumDescriptions": [
         "v1 error format",
         "v2 error format"
       ],
+      "location": "query",
+      "description": "V1 error format.",
+      "type": "string",
       "enum": [
         "1",
         "2"
-      ],
+      ]
+    },
+    "access_token": {
+      "description": "OAuth access token.",
+      "type": "string",
+      "location": "query"
+    },
+    "prettyPrint": {
+      "location": "query",
+      "type": "boolean",
+      "description": "Returns response with indentations and line breaks.",
+      "default": "true"
+    },
+    "quotaUser": {
       "location": "query",
       "type": "string",
-      "description": "V1 error format."
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters."
+    },
+    "alt": {
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ],
+      "location": "query",
+      "description": "Data format for response.",
+      "default": "json",
+      "type": "string",
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ]
+    },
+    "fields": {
+      "location": "query",
+      "type": "string",
+      "description": "Selector specifying which fields to include in a partial response."
+    },
+    "key": {
+      "location": "query",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+      "type": "string"
+    },
+    "oauth_token": {
+      "description": "OAuth 2.0 token for the current user.",
+      "type": "string",
+      "location": "query"
     },
     "upload_protocol": {
       "location": "query",
       "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
       "type": "string"
     },
-    "uploadType": {
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
-      "type": "string",
-      "location": "query"
-    },
-    "access_token": {
-      "location": "query",
-      "type": "string",
-      "description": "OAuth access token."
-    },
     "callback": {
-      "location": "query",
+      "type": "string",
       "description": "JSONP",
-      "type": "string"
-    },
-    "key": {
-      "location": "query",
-      "type": "string",
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token."
-    },
-    "quotaUser": {
-      "location": "query",
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
-      "type": "string"
-    },
-    "oauth_token": {
-      "location": "query",
-      "type": "string",
-      "description": "OAuth 2.0 token for the current user."
+      "location": "query"
     }
-  },
-  "canonicalName": "Travel Impact Model"
+  }
 }
