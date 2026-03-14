@@ -1,44 +1,116 @@
 {
-  "name": "playgrouping",
   "mtlsRootUrl": "https://playgrouping.mtls.googleapis.com/",
-  "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  "schemas": {
+    "CreateOrUpdateTagsResponse": {
+      "properties": {
+        "tags": {
+          "items": {
+            "$ref": "Tag"
+          },
+          "description": "All requested tags are returned, including pre-existing ones.",
+          "type": "array"
+        }
+      },
+      "description": "Response message for CreateOrUpdateTags.",
+      "type": "object",
+      "id": "CreateOrUpdateTagsResponse"
+    },
+    "VerifyTokenResponse": {
+      "description": "Response message for VerifyToken.",
+      "type": "object",
+      "id": "VerifyTokenResponse",
+      "properties": {}
+    },
+    "CreateOrUpdateTagsRequest": {
+      "id": "CreateOrUpdateTagsRequest",
+      "description": "Request message for CreateOrUpdateTags. VerifyToken.",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "items": {
+            "$ref": "Tag"
+          },
+          "description": "Tags to be inserted or updated.",
+          "type": "array"
+        }
+      }
+    },
+    "Tag": {
+      "id": "Tag",
+      "description": "A tag is associated with exactly one package name and user.",
+      "type": "object",
+      "properties": {
+        "stringValue": {
+          "description": "A string value of the tag.",
+          "type": "string"
+        },
+        "int64Value": {
+          "format": "int64",
+          "description": "A signed 64-bit integer value of the tag.",
+          "type": "string"
+        },
+        "timeValue": {
+          "format": "google-datetime",
+          "description": "A time value of the tag.",
+          "type": "string"
+        },
+        "key": {
+          "description": "Required. Key for the tag.",
+          "type": "string"
+        },
+        "booleanValue": {
+          "description": "A boolean value of the tag.",
+          "type": "boolean"
+        }
+      }
+    },
+    "VerifyTokenRequest": {
+      "id": "VerifyTokenRequest",
+      "description": "Request message for VerifyToken.",
+      "type": "object",
+      "properties": {
+        "persona": {
+          "description": "Required. Persona represented by the token. Format: personas/{persona}",
+          "type": "string"
+        }
+      }
+    }
   },
+  "name": "playgrouping",
   "resources": {
     "apps": {
       "resources": {
         "tokens": {
           "methods": {
             "verify": {
+              "id": "playgrouping.apps.tokens.verify",
+              "httpMethod": "POST",
+              "request": {
+                "$ref": "VerifyTokenRequest"
+              },
+              "response": {
+                "$ref": "VerifyTokenResponse"
+              },
               "path": "v1alpha1/{+appPackage}/{+token}:verify",
               "flatPath": "v1alpha1/apps/{appsId}/tokens/{tokensId}:verify",
-              "description": "Verify an API token by asserting the app and persona it belongs to. The verification is a protection against client-side attacks and will fail if the contents of the token don't match the provided values. A token must be verified before it can be used to manipulate user tags.",
               "parameterOrder": [
                 "appPackage",
                 "token"
               ],
-              "request": {
-                "$ref": "VerifyTokenRequest"
-              },
-              "id": "playgrouping.apps.tokens.verify",
-              "httpMethod": "POST",
-              "response": {
-                "$ref": "VerifyTokenResponse"
-              },
+              "description": "Verify an API token by asserting the app and persona it belongs to. The verification is a protection against client-side attacks and will fail if the contents of the token don't match the provided values. A token must be verified before it can be used to manipulate user tags.",
               "parameters": {
                 "appPackage": {
-                  "required": true,
-                  "pattern": "^apps/[^/]+$",
+                  "description": "Required. App the token belongs to. Format: apps/{package_name}",
                   "location": "path",
-                  "type": "string",
-                  "description": "Required. App the token belongs to. Format: apps/{package_name}"
+                  "pattern": "^apps/[^/]+$",
+                  "required": true,
+                  "type": "string"
                 },
                 "token": {
-                  "pattern": "^tokens/[^/]+$",
-                  "required": true,
                   "description": "Required. The token to be verified. Format: tokens/{token}",
                   "location": "path",
+                  "pattern": "^tokens/[^/]+$",
+                  "required": true,
                   "type": "string"
                 }
               }
@@ -48,37 +120,37 @@
             "tags": {
               "methods": {
                 "createOrUpdate": {
-                  "path": "v1alpha1/{+appPackage}/{+token}/tags:createOrUpdate",
-                  "flatPath": "v1alpha1/apps/{appsId}/tokens/{tokensId}/tags:createOrUpdate",
-                  "description": "Create or update tags for the user and app that are represented by the given token.",
-                  "parameterOrder": [
-                    "appPackage",
-                    "token"
-                  ],
-                  "request": {
-                    "$ref": "CreateOrUpdateTagsRequest"
-                  },
-                  "id": "playgrouping.apps.tokens.tags.createOrUpdate",
-                  "httpMethod": "POST",
-                  "response": {
-                    "$ref": "CreateOrUpdateTagsResponse"
-                  },
                   "parameters": {
+                    "appPackage": {
+                      "description": "Required. App whose tags are being manipulated. Format: apps/{package_name}",
+                      "location": "path",
+                      "pattern": "^apps/[^/]+$",
+                      "required": true,
+                      "type": "string"
+                    },
                     "token": {
                       "pattern": "^tokens/[^/]+$",
                       "required": true,
                       "description": "Required. Token for which the tags are being inserted or updated. Format: tokens/{token}",
                       "location": "path",
                       "type": "string"
-                    },
-                    "appPackage": {
-                      "required": true,
-                      "pattern": "^apps/[^/]+$",
-                      "type": "string",
-                      "location": "path",
-                      "description": "Required. App whose tags are being manipulated. Format: apps/{package_name}"
                     }
-                  }
+                  },
+                  "flatPath": "v1alpha1/apps/{appsId}/tokens/{tokensId}/tags:createOrUpdate",
+                  "parameterOrder": [
+                    "appPackage",
+                    "token"
+                  ],
+                  "description": "Create or update tags for the user and app that are represented by the given token.",
+                  "path": "v1alpha1/{+appPackage}/{+token}/tags:createOrUpdate",
+                  "response": {
+                    "$ref": "CreateOrUpdateTagsResponse"
+                  },
+                  "httpMethod": "POST",
+                  "request": {
+                    "$ref": "CreateOrUpdateTagsRequest"
+                  },
+                  "id": "playgrouping.apps.tokens.tags.createOrUpdate"
                 }
               }
             }
@@ -87,176 +159,104 @@
       }
     }
   },
+  "rootUrl": "https://playgrouping.googleapis.com/",
+  "kind": "discovery#restDescription",
   "discoveryVersion": "v1",
-  "protocol": "rest",
+  "basePath": "",
   "parameters": {
-    "quotaUser": {
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
-      "location": "query",
-      "type": "string"
-    },
-    "prettyPrint": {
-      "description": "Returns response with indentations and line breaks.",
-      "default": "true",
-      "type": "boolean",
-      "location": "query"
-    },
     "$.xgafv": {
-      "enum": [
-        "1",
-        "2"
-      ],
       "enumDescriptions": [
         "v1 error format",
         "v2 error format"
       ],
-      "type": "string",
+      "description": "V1 error format.",
       "location": "query",
-      "description": "V1 error format."
+      "enum": [
+        "1",
+        "2"
+      ],
+      "type": "string"
     },
-    "key": {
+    "upload_protocol": {
       "type": "string",
-      "location": "query",
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token."
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
+      "location": "query"
+    },
+    "access_token": {
+      "type": "string",
+      "description": "OAuth access token.",
+      "location": "query"
+    },
+    "oauth_token": {
+      "type": "string",
+      "description": "OAuth 2.0 token for the current user.",
+      "location": "query"
     },
     "callback": {
       "type": "string",
-      "location": "query",
-      "description": "JSONP"
-    },
-    "oauth_token": {
-      "location": "query",
-      "type": "string",
-      "description": "OAuth 2.0 token for the current user."
-    },
-    "fields": {
-      "location": "query",
-      "type": "string",
-      "description": "Selector specifying which fields to include in a partial response."
-    },
-    "upload_protocol": {
-      "location": "query",
-      "type": "string",
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\")."
+      "description": "JSONP",
+      "location": "query"
     },
     "uploadType": {
-      "location": "query",
       "type": "string",
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\")."
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
+      "location": "query"
+    },
+    "fields": {
+      "type": "string",
+      "description": "Selector specifying which fields to include in a partial response.",
+      "location": "query"
+    },
+    "quotaUser": {
+      "type": "string",
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
+      "location": "query"
+    },
+    "prettyPrint": {
+      "type": "boolean",
+      "description": "Returns response with indentations and line breaks.",
+      "location": "query",
+      "default": "true"
     },
     "alt": {
-      "description": "Data format for response.",
-      "location": "query",
-      "type": "string",
-      "default": "json",
       "enum": [
         "json",
         "media",
         "proto"
       ],
+      "type": "string",
       "enumDescriptions": [
         "Responses with Content-Type of application/json",
         "Media download with context-dependent Content-Type",
         "Responses with Content-Type of application/x-protobuf"
-      ]
+      ],
+      "description": "Data format for response.",
+      "location": "query",
+      "default": "json"
     },
-    "access_token": {
-      "description": "OAuth access token.",
+    "key": {
       "type": "string",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
       "location": "query"
     }
   },
-  "schemas": {
-    "VerifyTokenResponse": {
-      "id": "VerifyTokenResponse",
-      "properties": {},
-      "type": "object",
-      "description": "Response message for VerifyToken."
-    },
-    "Tag": {
-      "description": "A tag is associated with exactly one package name and user.",
-      "type": "object",
-      "id": "Tag",
-      "properties": {
-        "timeValue": {
-          "type": "string",
-          "format": "google-datetime",
-          "description": "A time value of the tag."
-        },
-        "booleanValue": {
-          "description": "A boolean value of the tag.",
-          "type": "boolean"
-        },
-        "stringValue": {
-          "description": "A string value of the tag.",
-          "type": "string"
-        },
-        "int64Value": {
-          "description": "A signed 64-bit integer value of the tag.",
-          "type": "string",
-          "format": "int64"
-        },
-        "key": {
-          "description": "Required. Key for the tag.",
-          "type": "string"
-        }
-      }
-    },
-    "CreateOrUpdateTagsResponse": {
-      "id": "CreateOrUpdateTagsResponse",
-      "properties": {
-        "tags": {
-          "description": "All requested tags are returned, including pre-existing ones.",
-          "type": "array",
-          "items": {
-            "$ref": "Tag"
-          }
-        }
-      },
-      "type": "object",
-      "description": "Response message for CreateOrUpdateTags."
-    },
-    "CreateOrUpdateTagsRequest": {
-      "id": "CreateOrUpdateTagsRequest",
-      "properties": {
-        "tags": {
-          "description": "Tags to be inserted or updated.",
-          "type": "array",
-          "items": {
-            "$ref": "Tag"
-          }
-        }
-      },
-      "type": "object",
-      "description": "Request message for CreateOrUpdateTags. VerifyToken."
-    },
-    "VerifyTokenRequest": {
-      "id": "VerifyTokenRequest",
-      "properties": {
-        "persona": {
-          "description": "Required. Persona represented by the token. Format: personas/{persona}",
-          "type": "string"
-        }
-      },
-      "type": "object",
-      "description": "Request message for VerifyToken."
-    }
-  },
-  "basePath": "",
-  "description": "playgrouping.googleapis.com API.",
-  "ownerDomain": "google.com",
-  "batchPath": "batch",
-  "kind": "discovery#restDescription",
-  "fullyEncodeReservedExpansion": true,
-  "documentationLink": "https://cloud.google.com/playgrouping/",
-  "version_module": true,
-  "servicePath": "",
   "title": "Google Play Grouping API",
+  "documentationLink": "https://cloud.google.com/playgrouping/",
   "id": "playgrouping:v1alpha1",
-  "rootUrl": "https://playgrouping.googleapis.com/",
+  "ownerDomain": "google.com",
+  "protocol": "rest",
+  "fullyEncodeReservedExpansion": true,
   "version": "v1alpha1",
+  "description": "playgrouping.googleapis.com API.",
   "ownerName": "Google",
-  "baseUrl": "https://playgrouping.googleapis.com/",
+  "revision": "20260312",
   "canonicalName": "Play Grouping",
-  "revision": "20260311"
+  "version_module": true,
+  "baseUrl": "https://playgrouping.googleapis.com/",
+  "servicePath": "",
+  "batchPath": "batch",
+  "icons": {
+    "x32": "http://www.google.com/images/icons/product/search-32.gif",
+    "x16": "http://www.google.com/images/icons/product/search-16.gif"
+  }
 }
