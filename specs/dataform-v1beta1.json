@@ -1,13 +1,12 @@
 {
-  "basePath": "",
-  "description": "Service to develop, version control, and operationalize SQL pipelines in BigQuery.",
-  "fullyEncodeReservedExpansion": true,
-  "version": "v1beta1",
-  "kind": "discovery#restDescription",
-  "name": "dataform",
+  "icons": {
+    "x16": "http://www.google.com/images/icons/product/search-16.gif",
+    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  },
   "servicePath": "",
-  "batchPath": "batch",
-  "version_module": true,
+  "rootUrl": "https://dataform.googleapis.com/",
+  "id": "dataform:v1beta1",
+  "fullyEncodeReservedExpansion": true,
   "schemas": {
     "ListOperationsResponse": {
       "id": "ListOperationsResponse",
@@ -661,6 +660,29 @@
         "directory": {
           "description": "A child directory in the directory.",
           "type": "string"
+        },
+        "metadata": {
+          "description": "Entry with metadata.",
+          "$ref": "FilesystemEntryMetadata"
+        }
+      }
+    },
+    "FilesystemEntryMetadata": {
+      "id": "FilesystemEntryMetadata",
+      "description": "Represents metadata for a single entry in a filesystem.",
+      "type": "object",
+      "properties": {
+        "sizeBytes": {
+          "description": "Output only. Provides the size of the entry in bytes. For directories, this will be 0.",
+          "readOnly": true,
+          "type": "string",
+          "format": "int64"
+        },
+        "updateTime": {
+          "description": "Output only. Represents the time of the last modification of the entry.",
+          "readOnly": true,
+          "type": "string",
+          "format": "google-datetime"
         }
       }
     },
@@ -718,13 +740,15 @@
             "Default value. This value is unused.",
             "The token could not be found in Secret Manager (or the Dataform Service Account did not have permission to access it).",
             "The token could not be used to authenticate against the Git remote.",
-            "The token was used successfully to authenticate against the Git remote."
+            "The token was used successfully to authenticate against the Git remote.",
+            "The token is not accessible due to permission issues."
           ],
           "enum": [
             "TOKEN_STATUS_UNSPECIFIED",
             "NOT_FOUND",
             "INVALID",
-            "VALID"
+            "VALID",
+            "PERMISSION_DENIED"
           ]
         }
       }
@@ -2756,6 +2780,85 @@
     }
   },
   "baseUrl": "https://dataform.googleapis.com/",
+  "parameters": {
+    "access_token": {
+      "type": "string",
+      "description": "OAuth access token.",
+      "location": "query"
+    },
+    "alt": {
+      "type": "string",
+      "description": "Data format for response.",
+      "default": "json",
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ],
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ],
+      "location": "query"
+    },
+    "callback": {
+      "type": "string",
+      "description": "JSONP",
+      "location": "query"
+    },
+    "fields": {
+      "type": "string",
+      "description": "Selector specifying which fields to include in a partial response.",
+      "location": "query"
+    },
+    "key": {
+      "type": "string",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+      "location": "query"
+    },
+    "oauth_token": {
+      "type": "string",
+      "description": "OAuth 2.0 token for the current user.",
+      "location": "query"
+    },
+    "prettyPrint": {
+      "type": "boolean",
+      "description": "Returns response with indentations and line breaks.",
+      "default": "true",
+      "location": "query"
+    },
+    "quotaUser": {
+      "type": "string",
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
+      "location": "query"
+    },
+    "upload_protocol": {
+      "type": "string",
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
+      "location": "query"
+    },
+    "uploadType": {
+      "type": "string",
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
+      "location": "query"
+    },
+    "$.xgafv": {
+      "type": "string",
+      "description": "V1 error format.",
+      "enum": [
+        "1",
+        "2"
+      ],
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ],
+      "location": "query"
+    }
+  },
+  "title": "Dataform API",
+  "name": "dataform",
   "resources": {
     "projects": {
       "resources": {
@@ -4570,6 +4673,21 @@
                           "description": "Optional. Page token received from a previous `QueryDirectoryContents` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `QueryDirectoryContents`, with the exception of `page_size`, must match the call that provided the page token.",
                           "location": "query",
                           "type": "string"
+                        },
+                        "view": {
+                          "description": "Optional. Specifies the metadata to return for each directory entry. If unspecified, the default is `DIRECTORY_CONTENTS_VIEW_BASIC`. Currently the `DIRECTORY_CONTENTS_VIEW_METADATA` view is not supported by CMEK-protected workspaces.",
+                          "location": "query",
+                          "type": "string",
+                          "enumDescriptions": [
+                            "The default / unset value. Defaults to DIRECTORY_CONTENTS_VIEW_BASIC.",
+                            "Includes only the file or directory name. This is the default behavior.",
+                            "Includes all metadata for each file or directory. Currently not supported by CMEK-protected workspaces."
+                          ],
+                          "enum": [
+                            "DIRECTORY_CONTENTS_VIEW_UNSPECIFIED",
+                            "DIRECTORY_CONTENTS_VIEW_BASIC",
+                            "DIRECTORY_CONTENTS_VIEW_METADATA"
+                          ]
                         }
                       },
                       "parameterOrder": [
@@ -5605,96 +5723,11 @@
       }
     }
   },
-  "title": "Dataform API",
-  "discoveryVersion": "v1",
-  "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
-  },
-  "parameters": {
-    "access_token": {
-      "type": "string",
-      "description": "OAuth access token.",
-      "location": "query"
-    },
-    "alt": {
-      "type": "string",
-      "description": "Data format for response.",
-      "default": "json",
-      "enum": [
-        "json",
-        "media",
-        "proto"
-      ],
-      "enumDescriptions": [
-        "Responses with Content-Type of application/json",
-        "Media download with context-dependent Content-Type",
-        "Responses with Content-Type of application/x-protobuf"
-      ],
-      "location": "query"
-    },
-    "callback": {
-      "type": "string",
-      "description": "JSONP",
-      "location": "query"
-    },
-    "fields": {
-      "type": "string",
-      "description": "Selector specifying which fields to include in a partial response.",
-      "location": "query"
-    },
-    "key": {
-      "type": "string",
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
-      "location": "query"
-    },
-    "oauth_token": {
-      "type": "string",
-      "description": "OAuth 2.0 token for the current user.",
-      "location": "query"
-    },
-    "prettyPrint": {
-      "type": "boolean",
-      "description": "Returns response with indentations and line breaks.",
-      "default": "true",
-      "location": "query"
-    },
-    "quotaUser": {
-      "type": "string",
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
-      "location": "query"
-    },
-    "upload_protocol": {
-      "type": "string",
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
-      "location": "query"
-    },
-    "uploadType": {
-      "type": "string",
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
-      "location": "query"
-    },
-    "$.xgafv": {
-      "type": "string",
-      "description": "V1 error format.",
-      "enum": [
-        "1",
-        "2"
-      ],
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ],
-      "location": "query"
-    }
-  },
-  "rootUrl": "https://dataform.googleapis.com/",
-  "revision": "20260304",
-  "id": "dataform:v1beta1",
-  "documentationLink": "https://cloud.google.com/dataform/docs",
-  "protocol": "rest",
+  "kind": "discovery#restDescription",
   "mtlsRootUrl": "https://dataform.mtls.googleapis.com/",
-  "ownerDomain": "google.com",
+  "description": "Service to develop, version control, and operationalize SQL pipelines in BigQuery.",
+  "protocol": "rest",
+  "ownerName": "Google",
   "auth": {
     "oauth2": {
       "scopes": {
@@ -5707,5 +5740,12 @@
       }
     }
   },
-  "ownerName": "Google"
+  "documentationLink": "https://cloud.google.com/dataform/docs",
+  "version_module": true,
+  "version": "v1beta1",
+  "batchPath": "batch",
+  "basePath": "",
+  "revision": "20260317",
+  "discoveryVersion": "v1",
+  "ownerDomain": "google.com"
 }

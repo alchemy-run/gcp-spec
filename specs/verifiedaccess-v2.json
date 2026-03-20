@@ -1,52 +1,4 @@
 {
-  "revision": "20260310",
-  "canonicalName": "verifiedaccess",
-  "resources": {
-    "challenge": {
-      "methods": {
-        "generate": {
-          "description": "Generates a new challenge.",
-          "path": "v2/challenge:generate",
-          "id": "verifiedaccess.challenge.generate",
-          "parameters": {},
-          "parameterOrder": [],
-          "httpMethod": "POST",
-          "request": {
-            "$ref": "Empty"
-          },
-          "scopes": [
-            "https://www.googleapis.com/auth/verifiedaccess"
-          ],
-          "response": {
-            "$ref": "Challenge"
-          },
-          "flatPath": "v2/challenge:generate"
-        },
-        "verify": {
-          "parameters": {},
-          "parameterOrder": [],
-          "httpMethod": "POST",
-          "description": "Verifies the challenge response.",
-          "path": "v2/challenge:verify",
-          "id": "verifiedaccess.challenge.verify",
-          "flatPath": "v2/challenge:verify",
-          "request": {
-            "$ref": "VerifyChallengeResponseRequest"
-          },
-          "scopes": [
-            "https://www.googleapis.com/auth/verifiedaccess"
-          ],
-          "response": {
-            "$ref": "VerifyChallengeResponseResult"
-          }
-        }
-      }
-    }
-  },
-  "basePath": "",
-  "fullyEncodeReservedExpansion": true,
-  "batchPath": "batch",
-  "version_module": true,
   "auth": {
     "oauth2": {
       "scopes": {
@@ -56,28 +8,57 @@
       }
     }
   },
-  "kind": "discovery#restDescription",
+  "basePath": "",
+  "servicePath": "",
+  "baseUrl": "https://verifiedaccess.googleapis.com/",
+  "ownerName": "Google",
+  "documentationLink": "https://developers.google.com/chrome/verified-access",
+  "batchPath": "batch",
+  "id": "verifiedaccess:v2",
+  "rootUrl": "https://verifiedaccess.googleapis.com/",
   "schemas": {
-    "DeviceSignals": {
-      "id": "DeviceSignals",
-      "description": "The device signals as reported by Chrome. Unless otherwise specified, signals are available on all platforms.",
+    "Challenge": {
+      "description": "Result message for VerifiedAccess.GenerateChallenge.",
+      "type": "object",
+      "id": "Challenge",
       "properties": {
-        "siteIsolationEnabled": {
-          "description": "Output only. Whether the Site Isolation (a.k.a Site Per Process) setting is enabled. That setting may be controlled by an enterprise policy: https://chromeenterprise.google/policies/#SitePerProcess",
-          "type": "boolean",
-          "readOnly": true
-        },
-        "builtInDnsClientEnabled": {
+        "challenge": {
+          "format": "byte",
+          "description": "Generated challenge, the bytes representation of SignedData.",
+          "type": "string"
+        }
+      }
+    },
+    "CrowdStrikeAgent": {
+      "properties": {
+        "agentId": {
           "readOnly": true,
-          "description": "Output only. Whether Chrome's built-in DNS client is used. The OS DNS client is otherwise used. This value may be controlled by an enterprise policy: https://chromeenterprise.google/policies/#BuiltInDnsClientEnabled.",
-          "type": "boolean"
+          "description": "Output only. The Agent ID of the Crowdstrike agent.",
+          "type": "string"
         },
-        "meid": {
-          "type": "array",
-          "description": "Output only. Mobile Equipment Identifier (MEID) of the device. Available on ChromeOS only.",
+        "customerId": {
+          "readOnly": true,
+          "description": "Output only. The Customer ID to which the agent belongs to.",
+          "type": "string"
+        }
+      },
+      "id": "CrowdStrikeAgent",
+      "description": "Properties of the CrowdStrike agent installed on a device.",
+      "type": "object"
+    },
+    "DeviceSignals": {
+      "properties": {
+        "profileAffiliationIds": {
           "items": {
             "type": "string"
           },
+          "description": "Output only. Affiliation IDs of the organizations that are affiliated with the organization that is currently managing the Chrome Profile’s user or ChromeOS user.",
+          "type": "array",
+          "readOnly": true
+        },
+        "chromeRemoteDesktopAppBlocked": {
+          "description": "Output only. Whether access to the Chrome Remote Desktop application is blocked via a policy.",
+          "type": "boolean",
           "readOnly": true
         },
         "displayName": {
@@ -85,131 +66,34 @@
           "type": "string",
           "readOnly": true
         },
-        "browserVersion": {
-          "readOnly": true,
+        "profileEnrollmentDomain": {
+          "description": "Output only. Enrollment domain of the customer which is currently managing the profile.",
           "type": "string",
-          "description": "Output only. Current version of the Chrome browser which generated this set of signals. Example value: \"107.0.5286.0\"."
+          "readOnly": true
         },
-        "systemDnsServers": {
-          "type": "array",
-          "description": "List of the addesses of all OS level DNS servers configured in the device's network settings.",
-          "items": {
-            "type": "string"
-          }
-        },
-        "windowsMachineDomain": {
+        "serialNumber": {
           "readOnly": true,
-          "description": "Output only. Windows domain that the current machine has joined. Available on Windows only.",
+          "description": "Output only. The serial number of the device. On Windows, this represents the BIOS's serial number. Not available on most Linux distributions.",
           "type": "string"
         },
-        "macAddresses": {
-          "items": {
-            "type": "string"
-          },
-          "readOnly": true,
-          "type": "array",
-          "description": "Output only. MAC addresses of the device."
-        },
-        "deviceEnrollmentDomain": {
-          "description": "Output only. Enrollment domain of the customer which is currently managing the device.",
+        "osFirewall": {
           "type": "string",
-          "readOnly": true
-        },
-        "passwordProtectionWarningTrigger": {
-          "readOnly": true,
           "enum": [
-            "PASSWORD_PROTECTION_WARNING_TRIGGER_UNSPECIFIED",
-            "POLICY_UNSET",
-            "PASSWORD_PROTECTION_OFF",
-            "PASSWORD_REUSE",
-            "PHISHING_REUSE"
+            "OS_FIREWALL_UNSPECIFIED",
+            "OS_FIREWALL_UNKNOWN",
+            "OS_FIREWALL_DISABLED",
+            "OS_FIREWALL_ENABLED"
           ],
-          "type": "string",
-          "description": "Output only. Whether the Password Protection Warning feature is enabled or not. Password protection alerts users when they reuse their protected password on potentially suspicious sites. This setting is controlled by an enterprise policy: https://chromeenterprise.google/policies/#PasswordProtectionWarningTrigger. Note that the policy unset does not have the same effects as having the policy explicitly set to `PASSWORD_PROTECTION_OFF`.",
+          "readOnly": true,
           "enumDescriptions": [
             "Unspecified.",
-            "The policy is not set.",
-            "No password protection warning will be shown.",
-            "Password protection warning is shown if a protected password is re-used.",
-            "Password protection warning is shown if a protected password is re-used on a known phishing website."
-          ]
-        },
-        "hostname": {
-          "type": "string",
-          "description": "Hostname of the device."
-        },
-        "chromeRemoteDesktopAppBlocked": {
-          "readOnly": true,
-          "description": "Output only. Whether access to the Chrome Remote Desktop application is blocked via a policy.",
-          "type": "boolean"
-        },
-        "allowScreenLock": {
-          "description": "Output only. Value of the AllowScreenLock policy on the device. See https://chromeenterprise.google/policies/?policy=AllowScreenLock for more details. Available on ChromeOS only.",
-          "type": "boolean",
-          "readOnly": true
-        },
-        "deviceManufacturer": {
-          "description": "Output only. The name of the device's manufacturer.",
-          "type": "string",
-          "readOnly": true
-        },
-        "imei": {
-          "description": "Output only. International Mobile Equipment Identity (IMEI) of the device. Available on ChromeOS only.",
-          "type": "array",
-          "readOnly": true,
-          "items": {
-            "type": "string"
-          }
-        },
-        "osVersion": {
-          "type": "string",
-          "description": "Output only. The current version of the Operating System. On Windows and linux, the value will also include the security patch information.",
-          "readOnly": true
-        },
-        "windowsUserDomain": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. Windows domain for the current OS user. Available on Windows only."
-        },
-        "realtimeUrlCheckMode": {
-          "description": "Output only. Whether Enterprise-grade (i.e. custom) unsafe URL scanning is enabled or not. This setting may be controlled by an enterprise policy: https://chromeenterprise.google/policies/#EnterpriseRealTimeUrlCheckMode",
-          "enumDescriptions": [
-            "Unspecified.",
-            "Disabled. Consumer Safe Browsing checks are applied.",
-            "Realtime check for main frame URLs is enabled."
+            "Chrome could not evaluate the OS firewall state.",
+            "The OS firewall is disabled.",
+            "The OS firewall is enabled."
           ],
-          "type": "string",
-          "readOnly": true,
-          "enum": [
-            "REALTIME_URL_CHECK_MODE_UNSPECIFIED",
-            "REALTIME_URL_CHECK_MODE_DISABLED",
-            "REALTIME_URL_CHECK_MODE_ENABLED_MAIN_FRAME"
-          ]
-        },
-        "crowdStrikeAgent": {
-          "readOnly": true,
-          "description": "Output only. Crowdstrike agent properties installed on the device, if any. Available on Windows and MacOS only.",
-          "$ref": "CrowdStrikeAgent"
-        },
-        "secureBootMode": {
-          "type": "string",
-          "readOnly": true,
-          "enum": [
-            "SECURE_BOOT_MODE_UNSPECIFIED",
-            "SECURE_BOOT_MODE_UNKNOWN",
-            "SECURE_BOOT_MODE_DISABLED",
-            "SECURE_BOOT_MODE_ENABLED"
-          ],
-          "description": "Output only. Whether the device's startup software has its Secure Boot feature enabled. Available on Windows only.",
-          "enumDescriptions": [
-            "Unspecified.",
-            "Chrome was unable to determine the Secure Boot mode.",
-            "Secure Boot was disabled on the startup software.",
-            "Secure Boot was enabled on the startup software."
-          ]
+          "description": "Output only. The state of the OS level firewall. On ChromeOS, the value will always be ENABLED on regular devices and UNKNOWN on devices in developer mode. Support for MacOS 15 (Sequoia) and later has been introduced in Chrome M131."
         },
         "diskEncryption": {
-          "readOnly": true,
           "enum": [
             "DISK_ENCRYPTION_UNSPECIFIED",
             "DISK_ENCRYPTION_UNKNOWN",
@@ -218,6 +102,7 @@
           ],
           "type": "string",
           "description": "Output only. The encryption state of the disk. On ChromeOS, the main disk is always ENCRYPTED.",
+          "readOnly": true,
           "enumDescriptions": [
             "Unspecified.",
             "Chrome could not evaluate the encryption state.",
@@ -225,31 +110,74 @@
             "The main disk is encrypted."
           ]
         },
-        "deviceAffiliationIds": {
-          "type": "array",
-          "description": "Output only. Affiliation IDs of the organizations that are affiliated with the organization that is currently managing the device. When the sets of device and profile affiliation IDs overlap, it means that the organizations managing the device and user are affiliated. To learn more about user affiliation, visit https://support.google.com/chrome/a/answer/12801245?ref_topic=9027936.",
-          "items": {
-            "type": "string"
-          },
+        "antivirus": {
+          "readOnly": true,
+          "description": "Output only. Information about Antivirus software on the device. Available on Windows only.",
+          "$ref": "Antivirus"
+        },
+        "deviceEnrollmentDomain": {
+          "description": "Output only. Enrollment domain of the customer which is currently managing the device.",
+          "type": "string",
           "readOnly": true
         },
-        "thirdPartyBlockingEnabled": {
-          "type": "boolean",
-          "description": "Output only. Deprecated. The corresponding policy is now deprecated. Whether Chrome is blocking third-party software injection or not. This setting may be controlled by an enterprise policy: https://chromeenterprise.google/policies/?policy=ThirdPartyBlockingEnabled. Available on Windows only.",
-          "deprecated": true,
+        "passwordProtectionWarningTrigger": {
+          "description": "Output only. Whether the Password Protection Warning feature is enabled or not. Password protection alerts users when they reuse their protected password on potentially suspicious sites. This setting is controlled by an enterprise policy: https://chromeenterprise.google/policies/#PasswordProtectionWarningTrigger. Note that the policy unset does not have the same effects as having the policy explicitly set to `PASSWORD_PROTECTION_OFF`.",
+          "readOnly": true,
+          "enumDescriptions": [
+            "Unspecified.",
+            "The policy is not set.",
+            "No password protection warning will be shown.",
+            "Password protection warning is shown if a protected password is re-used.",
+            "Password protection warning is shown if a protected password is re-used on a known phishing website."
+          ],
+          "type": "string",
+          "enum": [
+            "PASSWORD_PROTECTION_WARNING_TRIGGER_UNSPECIFIED",
+            "POLICY_UNSET",
+            "PASSWORD_PROTECTION_OFF",
+            "PASSWORD_REUSE",
+            "PHISHING_REUSE"
+          ]
+        },
+        "windowsMachineDomain": {
+          "readOnly": true,
+          "description": "Output only. Windows domain that the current machine has joined. Available on Windows only.",
+          "type": "string"
+        },
+        "imei": {
+          "readOnly": true,
+          "description": "Output only. International Mobile Equipment Identity (IMEI) of the device. Available on ChromeOS only.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "realtimeUrlCheckMode": {
+          "readOnly": true,
+          "enumDescriptions": [
+            "Unspecified.",
+            "Disabled. Consumer Safe Browsing checks are applied.",
+            "Realtime check for main frame URLs is enabled."
+          ],
+          "description": "Output only. Whether Enterprise-grade (i.e. custom) unsafe URL scanning is enabled or not. This setting may be controlled by an enterprise policy: https://chromeenterprise.google/policies/#EnterpriseRealTimeUrlCheckMode",
+          "enum": [
+            "REALTIME_URL_CHECK_MODE_UNSPECIFIED",
+            "REALTIME_URL_CHECK_MODE_DISABLED",
+            "REALTIME_URL_CHECK_MODE_ENABLED_MAIN_FRAME"
+          ],
+          "type": "string"
+        },
+        "crowdStrikeAgent": {
+          "readOnly": true,
+          "description": "Output only. Crowdstrike agent properties installed on the device, if any. Available on Windows and MacOS only.",
+          "$ref": "CrowdStrikeAgent"
+        },
+        "deviceManufacturer": {
+          "description": "Output only. The name of the device's manufacturer.",
+          "type": "string",
           "readOnly": true
         },
         "operatingSystem": {
-          "description": "Output only. The type of the Operating System currently running on the device.",
-          "enumDescriptions": [
-            "UNSPECIFIED.",
-            "ChromeOS.",
-            "ChromiumOS.",
-            "Windows.",
-            "Mac Os X.",
-            "Linux"
-          ],
-          "readOnly": true,
           "enum": [
             "OPERATING_SYSTEM_UNSPECIFIED",
             "CHROME_OS",
@@ -258,270 +186,184 @@
             "MAC_OS_X",
             "LINUX"
           ],
-          "type": "string"
-        },
-        "screenLockSecured": {
-          "description": "Output only. The state of the Screen Lock password protection. On ChromeOS, this value will always be ENABLED as there is not way to disable requiring a password or pin when unlocking the device.",
-          "enumDescriptions": [
-            "Unspecified.",
-            "Chrome could not evaluate the state of the Screen Lock mechanism.",
-            "The Screen Lock is not password-protected.",
-            "The Screen Lock is password-protected."
-          ],
-          "readOnly": true,
-          "enum": [
-            "SCREEN_LOCK_SECURED_UNSPECIFIED",
-            "SCREEN_LOCK_SECURED_UNKNOWN",
-            "SCREEN_LOCK_SECURED_DISABLED",
-            "SCREEN_LOCK_SECURED_ENABLED"
-          ],
-          "type": "string"
-        },
-        "trigger": {
-          "description": "Output only. The trigger which generated this set of signals.",
-          "enumDescriptions": [
-            "Unspecified.",
-            "When navigating to an URL inside a browser.",
-            "When signing into an account on the ChromeOS login screen."
-          ],
           "type": "string",
+          "description": "Output only. The type of the Operating System currently running on the device.",
           "readOnly": true,
-          "enum": [
-            "TRIGGER_UNSPECIFIED",
-            "TRIGGER_BROWSER_NAVIGATION",
-            "TRIGGER_LOGIN_SCREEN"
+          "enumDescriptions": [
+            "UNSPECIFIED.",
+            "ChromeOS.",
+            "ChromiumOS.",
+            "Windows.",
+            "Mac Os X.",
+            "Linux"
           ]
-        },
-        "antivirus": {
-          "description": "Output only. Information about Antivirus software on the device. Available on Windows only.",
-          "$ref": "Antivirus",
-          "readOnly": true
-        },
-        "deviceModel": {
-          "description": "Output only. The name of the device's model.",
-          "type": "string",
-          "readOnly": true
-        },
-        "serialNumber": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. The serial number of the device. On Windows, this represents the BIOS's serial number. Not available on most Linux distributions."
-        },
-        "profileEnrollmentDomain": {
-          "type": "string",
-          "description": "Output only. Enrollment domain of the customer which is currently managing the profile.",
-          "readOnly": true
-        },
-        "osFirewall": {
-          "description": "Output only. The state of the OS level firewall. On ChromeOS, the value will always be ENABLED on regular devices and UNKNOWN on devices in developer mode. Support for MacOS 15 (Sequoia) and later has been introduced in Chrome M131.",
-          "enumDescriptions": [
-            "Unspecified.",
-            "Chrome could not evaluate the OS firewall state.",
-            "The OS firewall is disabled.",
-            "The OS firewall is enabled."
-          ],
-          "readOnly": true,
-          "enum": [
-            "OS_FIREWALL_UNSPECIFIED",
-            "OS_FIREWALL_UNKNOWN",
-            "OS_FIREWALL_DISABLED",
-            "OS_FIREWALL_ENABLED"
-          ],
-          "type": "string"
-        },
-        "profileAffiliationIds": {
-          "items": {
-            "type": "string"
-          },
-          "readOnly": true,
-          "type": "array",
-          "description": "Output only. Affiliation IDs of the organizations that are affiliated with the organization that is currently managing the Chrome Profile’s user or ChromeOS user."
         },
         "safeBrowsingProtectionLevel": {
           "readOnly": true,
+          "enumDescriptions": [
+            "Unspecified.",
+            "Safe Browsing is disabled.",
+            "Safe Browsing is active in the standard mode.",
+            "Safe Browsing is active in the enhanced mode."
+          ],
+          "description": "Output only. Safe Browsing Protection Level. That setting may be controlled by an enterprise policy: https://chromeenterprise.google/policies/#SafeBrowsingProtectionLevel.",
           "enum": [
             "SAFE_BROWSING_PROTECTION_LEVEL_UNSPECIFIED",
             "INACTIVE",
             "STANDARD",
             "ENHANCED"
           ],
-          "type": "string",
-          "description": "Output only. Safe Browsing Protection Level. That setting may be controlled by an enterprise policy: https://chromeenterprise.google/policies/#SafeBrowsingProtectionLevel.",
+          "type": "string"
+        },
+        "secureBootMode": {
+          "description": "Output only. Whether the device's startup software has its Secure Boot feature enabled. Available on Windows only.",
+          "readOnly": true,
           "enumDescriptions": [
             "Unspecified.",
-            "Safe Browsing is disabled.",
-            "Safe Browsing is active in the standard mode.",
-            "Safe Browsing is active in the enhanced mode."
+            "Chrome was unable to determine the Secure Boot mode.",
+            "Secure Boot was disabled on the startup software.",
+            "Secure Boot was enabled on the startup software."
+          ],
+          "enum": [
+            "SECURE_BOOT_MODE_UNSPECIFIED",
+            "SECURE_BOOT_MODE_UNKNOWN",
+            "SECURE_BOOT_MODE_DISABLED",
+            "SECURE_BOOT_MODE_ENABLED"
+          ],
+          "type": "string"
+        },
+        "allowScreenLock": {
+          "description": "Output only. Value of the AllowScreenLock policy on the device. See https://chromeenterprise.google/policies/?policy=AllowScreenLock for more details. Available on ChromeOS only.",
+          "type": "boolean",
+          "readOnly": true
+        },
+        "browserVersion": {
+          "readOnly": true,
+          "description": "Output only. Current version of the Chrome browser which generated this set of signals. Example value: \"107.0.5286.0\".",
+          "type": "string"
+        },
+        "thirdPartyBlockingEnabled": {
+          "readOnly": true,
+          "description": "Output only. Deprecated. The corresponding policy is now deprecated. Whether Chrome is blocking third-party software injection or not. This setting may be controlled by an enterprise policy: https://chromeenterprise.google/policies/?policy=ThirdPartyBlockingEnabled. Available on Windows only.",
+          "deprecated": true,
+          "type": "boolean"
+        },
+        "deviceModel": {
+          "description": "Output only. The name of the device's model.",
+          "type": "string",
+          "readOnly": true
+        },
+        "hostname": {
+          "description": "Hostname of the device.",
+          "type": "string"
+        },
+        "meid": {
+          "description": "Output only. Mobile Equipment Identifier (MEID) of the device. Available on ChromeOS only.",
+          "type": "array",
+          "readOnly": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "deviceAffiliationIds": {
+          "items": {
+            "type": "string"
+          },
+          "readOnly": true,
+          "description": "Output only. Affiliation IDs of the organizations that are affiliated with the organization that is currently managing the device. When the sets of device and profile affiliation IDs overlap, it means that the organizations managing the device and user are affiliated. To learn more about user affiliation, visit https://support.google.com/chrome/a/answer/12801245?ref_topic=9027936.",
+          "type": "array"
+        },
+        "screenLockSecured": {
+          "enum": [
+            "SCREEN_LOCK_SECURED_UNSPECIFIED",
+            "SCREEN_LOCK_SECURED_UNKNOWN",
+            "SCREEN_LOCK_SECURED_DISABLED",
+            "SCREEN_LOCK_SECURED_ENABLED"
+          ],
+          "type": "string",
+          "readOnly": true,
+          "enumDescriptions": [
+            "Unspecified.",
+            "Chrome could not evaluate the state of the Screen Lock mechanism.",
+            "The Screen Lock is not password-protected.",
+            "The Screen Lock is password-protected."
+          ],
+          "description": "Output only. The state of the Screen Lock password protection. On ChromeOS, this value will always be ENABLED as there is not way to disable requiring a password or pin when unlocking the device."
+        },
+        "macAddresses": {
+          "items": {
+            "type": "string"
+          },
+          "description": "Output only. MAC addresses of the device.",
+          "type": "array",
+          "readOnly": true
+        },
+        "builtInDnsClientEnabled": {
+          "readOnly": true,
+          "description": "Output only. Whether Chrome's built-in DNS client is used. The OS DNS client is otherwise used. This value may be controlled by an enterprise policy: https://chromeenterprise.google/policies/#BuiltInDnsClientEnabled.",
+          "type": "boolean"
+        },
+        "systemDnsServers": {
+          "description": "List of the addesses of all OS level DNS servers configured in the device's network settings.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "osVersion": {
+          "description": "Output only. The current version of the Operating System. On Windows and linux, the value will also include the security patch information.",
+          "type": "string",
+          "readOnly": true
+        },
+        "siteIsolationEnabled": {
+          "description": "Output only. Whether the Site Isolation (a.k.a Site Per Process) setting is enabled. That setting may be controlled by an enterprise policy: https://chromeenterprise.google/policies/#SitePerProcess",
+          "type": "boolean",
+          "readOnly": true
+        },
+        "trigger": {
+          "type": "string",
+          "enum": [
+            "TRIGGER_UNSPECIFIED",
+            "TRIGGER_BROWSER_NAVIGATION",
+            "TRIGGER_LOGIN_SCREEN"
+          ],
+          "description": "Output only. The trigger which generated this set of signals.",
+          "readOnly": true,
+          "enumDescriptions": [
+            "Unspecified.",
+            "When navigating to an URL inside a browser.",
+            "When signing into an account on the ChromeOS login screen."
           ]
+        },
+        "windowsUserDomain": {
+          "description": "Output only. Windows domain for the current OS user. Available on Windows only.",
+          "type": "string",
+          "readOnly": true
         }
       },
+      "id": "DeviceSignals",
+      "description": "The device signals as reported by Chrome. Unless otherwise specified, signals are available on all platforms.",
       "type": "object"
     },
-    "CrowdStrikeAgent": {
-      "type": "object",
-      "description": "Properties of the CrowdStrike agent installed on a device.",
-      "properties": {
-        "agentId": {
-          "description": "Output only. The Agent ID of the Crowdstrike agent.",
-          "type": "string",
-          "readOnly": true
-        },
-        "customerId": {
-          "description": "Output only. The Customer ID to which the agent belongs to.",
-          "type": "string",
-          "readOnly": true
-        }
-      },
-      "id": "CrowdStrikeAgent"
-    },
-    "VerifyChallengeResponseResult": {
-      "id": "VerifyChallengeResponseResult",
-      "type": "object",
-      "description": "Result message for VerifiedAccess.VerifyChallengeResponse. The response returned when successful for Managed profiles on Unmanaged browsers will NOT have devicePermanentId, keyTrustLevel, virtualDeviceId and customerId fields. Managed profiles will INSTEAD have the profileCustomerId, virtualProfileId, profilePermanentId and profileKeyTrustLevel fields.",
-      "properties": {
-        "virtualDeviceId": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. Virtual device id of the device. The definition of virtual device id is platform-specific."
-        },
-        "customerId": {
-          "readOnly": true,
-          "description": "Output only. Unique customer id that this device belongs to, as defined by the Google Admin SDK at https://developers.google.com/admin-sdk/directory/v1/guides/manage-customers",
-          "type": "string"
-        },
-        "profilePermanentId": {
-          "type": "string",
-          "description": "Output only. The unique server-side ID of a profile on the device.",
-          "readOnly": true
-        },
-        "deviceEnrollmentId": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. Device enrollment id for ChromeOS devices."
-        },
-        "profileCustomerId": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. Unique customer id that this profile belongs to, as defined by the Google Admin SDK at https://developers.google.com/admin-sdk/directory/v1/guides/manage-customers"
-        },
-        "deviceSignals": {
-          "description": "Output only. Device signals.",
-          "$ref": "DeviceSignals",
-          "readOnly": true
-        },
-        "virtualProfileId": {
-          "description": "Output only. The client-provided ID of a profile on the device.",
-          "type": "string",
-          "readOnly": true
-        },
-        "deviceSignal": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. Deprecated. Device signal in json string representation. Prefer using `device_signals` instead."
-        },
-        "attestedDeviceId": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. Attested device ID (ADID)."
-        },
-        "signedPublicKeyAndChallenge": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. Certificate Signing Request (in the SPKAC format, base64 encoded) is returned in this field. This field will be set only if device has included CSR in its challenge response. (the option to include CSR is now available for both user and machine responses)"
-        },
-        "devicePermanentId": {
-          "readOnly": true,
-          "description": "Output only. Device permanent id is returned in this field (for the machine response only).",
-          "type": "string"
-        },
-        "keyTrustLevel": {
-          "description": "Output only. Device attested key trust level.",
-          "enumDescriptions": [
-            "UNSPECIFIED.",
-            "ChromeOS device in verified mode.",
-            "ChromeOS device in developer mode.",
-            "Chrome Browser with the key stored in the device hardware.",
-            "Chrome Browser with the key stored at OS level.",
-            "Chrome Browser without an attestation key.",
-            "ChromeOS device without a signing key (e.g., Flex without TPM). Applies to both device and user contexts on ChromeOS."
-          ],
-          "type": "string",
-          "readOnly": true,
-          "enum": [
-            "KEY_TRUST_LEVEL_UNSPECIFIED",
-            "CHROME_OS_VERIFIED_MODE",
-            "CHROME_OS_DEVELOPER_MODE",
-            "CHROME_BROWSER_HW_KEY",
-            "CHROME_BROWSER_OS_KEY",
-            "CHROME_BROWSER_NO_KEY",
-            "CHROME_OS_NO_KEY"
-          ]
-        },
-        "profileKeyTrustLevel": {
-          "description": "Output only. Profile attested key trust level.",
-          "enumDescriptions": [
-            "UNSPECIFIED.",
-            "ChromeOS device in verified mode.",
-            "ChromeOS device in developer mode.",
-            "Chrome Browser with the key stored in the device hardware.",
-            "Chrome Browser with the key stored at OS level.",
-            "Chrome Browser without an attestation key.",
-            "ChromeOS device without a signing key (e.g., Flex without TPM). Applies to both device and user contexts on ChromeOS."
-          ],
-          "type": "string",
-          "readOnly": true,
-          "enum": [
-            "KEY_TRUST_LEVEL_UNSPECIFIED",
-            "CHROME_OS_VERIFIED_MODE",
-            "CHROME_OS_DEVELOPER_MODE",
-            "CHROME_BROWSER_HW_KEY",
-            "CHROME_BROWSER_OS_KEY",
-            "CHROME_BROWSER_NO_KEY",
-            "CHROME_OS_NO_KEY"
-          ]
-        }
-      }
-    },
-    "Empty": {
-      "type": "object",
-      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
-      "properties": {},
-      "id": "Empty"
-    },
-    "Challenge": {
-      "id": "Challenge",
-      "type": "object",
-      "description": "Result message for VerifiedAccess.GenerateChallenge.",
-      "properties": {
-        "challenge": {
-          "format": "byte",
-          "type": "string",
-          "description": "Generated challenge, the bytes representation of SignedData."
-        }
-      }
-    },
     "VerifyChallengeResponseRequest": {
-      "type": "object",
-      "description": "Signed ChallengeResponse.",
       "properties": {
         "challengeResponse": {
-          "type": "string",
           "description": "Required. The generated response to the challenge, the bytes representation of SignedData.",
+          "type": "string",
           "format": "byte"
         },
         "expectedIdentity": {
-          "type": "string",
-          "description": "Optional. Service can optionally provide identity information about the device or user associated with the key. For an EMK, this value is the enrolled domain. For an EUK, this value is the user's email address. If present, this value will be checked against contents of the response, and verification will fail if there is no match."
+          "description": "Optional. Service can optionally provide identity information about the device or user associated with the key. For an EMK, this value is the enrolled domain. For an EUK, this value is the user's email address. If present, this value will be checked against contents of the response, and verification will fail if there is no match.",
+          "type": "string"
         }
       },
+      "description": "Signed ChallengeResponse.",
+      "type": "object",
       "id": "VerifyChallengeResponseRequest"
     },
     "Antivirus": {
-      "id": "Antivirus",
-      "description": "Antivirus information on a device.",
       "properties": {
         "state": {
-          "readOnly": true,
           "enum": [
             "STATE_UNSPECIFIED",
             "MISSING",
@@ -530,6 +372,7 @@
           ],
           "type": "string",
           "description": "Output only. The state of the antivirus on the device. Introduced in Chrome M136.",
+          "readOnly": true,
           "enumDescriptions": [
             "Unspecified.",
             "No antivirus was detected on the device.",
@@ -538,19 +381,199 @@
           ]
         }
       },
+      "id": "Antivirus",
+      "description": "Antivirus information on a device.",
+      "type": "object"
+    },
+    "Empty": {
+      "id": "Empty",
+      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
+      "type": "object",
+      "properties": {}
+    },
+    "VerifyChallengeResponseResult": {
+      "properties": {
+        "profileKeyTrustLevel": {
+          "description": "Output only. Profile attested key trust level.",
+          "readOnly": true,
+          "enumDescriptions": [
+            "UNSPECIFIED.",
+            "ChromeOS device in verified mode.",
+            "ChromeOS device in developer mode.",
+            "Chrome Browser with the key stored in the device hardware.",
+            "Chrome Browser with the key stored at OS level.",
+            "Chrome Browser without an attestation key.",
+            "ChromeOS device without a signing key (e.g., Flex without TPM). Applies to both device and user contexts on ChromeOS."
+          ],
+          "type": "string",
+          "enum": [
+            "KEY_TRUST_LEVEL_UNSPECIFIED",
+            "CHROME_OS_VERIFIED_MODE",
+            "CHROME_OS_DEVELOPER_MODE",
+            "CHROME_BROWSER_HW_KEY",
+            "CHROME_BROWSER_OS_KEY",
+            "CHROME_BROWSER_NO_KEY",
+            "CHROME_OS_NO_KEY"
+          ]
+        },
+        "keyTrustLevel": {
+          "readOnly": true,
+          "enumDescriptions": [
+            "UNSPECIFIED.",
+            "ChromeOS device in verified mode.",
+            "ChromeOS device in developer mode.",
+            "Chrome Browser with the key stored in the device hardware.",
+            "Chrome Browser with the key stored at OS level.",
+            "Chrome Browser without an attestation key.",
+            "ChromeOS device without a signing key (e.g., Flex without TPM). Applies to both device and user contexts on ChromeOS."
+          ],
+          "description": "Output only. Device attested key trust level.",
+          "enum": [
+            "KEY_TRUST_LEVEL_UNSPECIFIED",
+            "CHROME_OS_VERIFIED_MODE",
+            "CHROME_OS_DEVELOPER_MODE",
+            "CHROME_BROWSER_HW_KEY",
+            "CHROME_BROWSER_OS_KEY",
+            "CHROME_BROWSER_NO_KEY",
+            "CHROME_OS_NO_KEY"
+          ],
+          "type": "string"
+        },
+        "deviceSignals": {
+          "readOnly": true,
+          "description": "Output only. Device signals.",
+          "$ref": "DeviceSignals"
+        },
+        "virtualProfileId": {
+          "readOnly": true,
+          "description": "Output only. The client-provided ID of a profile on the device.",
+          "type": "string"
+        },
+        "customerId": {
+          "description": "Output only. Unique customer id that this device belongs to, as defined by the Google Admin SDK at https://developers.google.com/admin-sdk/directory/v1/guides/manage-customers",
+          "type": "string",
+          "readOnly": true
+        },
+        "devicePermanentId": {
+          "description": "Output only. Device permanent id is returned in this field (for the machine response only).",
+          "type": "string",
+          "readOnly": true
+        },
+        "deviceSignal": {
+          "readOnly": true,
+          "description": "Output only. Deprecated. Device signal in json string representation. Prefer using `device_signals` instead.",
+          "type": "string"
+        },
+        "signedPublicKeyAndChallenge": {
+          "readOnly": true,
+          "description": "Output only. Certificate Signing Request (in the SPKAC format, base64 encoded) is returned in this field. This field will be set only if device has included CSR in its challenge response. (the option to include CSR is now available for both user and machine responses)",
+          "type": "string"
+        },
+        "profileCustomerId": {
+          "readOnly": true,
+          "description": "Output only. Unique customer id that this profile belongs to, as defined by the Google Admin SDK at https://developers.google.com/admin-sdk/directory/v1/guides/manage-customers",
+          "type": "string"
+        },
+        "virtualDeviceId": {
+          "readOnly": true,
+          "description": "Output only. Virtual device id of the device. The definition of virtual device id is platform-specific.",
+          "type": "string"
+        },
+        "attestedDeviceId": {
+          "readOnly": true,
+          "description": "Output only. Attested device ID (ADID).",
+          "type": "string"
+        },
+        "deviceEnrollmentId": {
+          "description": "Output only. Device enrollment id for ChromeOS devices.",
+          "type": "string",
+          "readOnly": true
+        },
+        "profilePermanentId": {
+          "readOnly": true,
+          "description": "Output only. The unique server-side ID of a profile on the device.",
+          "type": "string"
+        }
+      },
+      "id": "VerifyChallengeResponseResult",
+      "description": "Result message for VerifiedAccess.VerifyChallengeResponse. The response returned when successful for Managed profiles on Unmanaged browsers will NOT have devicePermanentId, keyTrustLevel, virtualDeviceId and customerId fields. Managed profiles will INSTEAD have the profileCustomerId, virtualProfileId, profilePermanentId and profileKeyTrustLevel fields.",
       "type": "object"
     }
   },
-  "servicePath": "",
-  "baseUrl": "https://verifiedaccess.googleapis.com/",
+  "canonicalName": "verifiedaccess",
   "ownerDomain": "google.com",
+  "icons": {
+    "x32": "http://www.google.com/images/icons/product/search-32.gif",
+    "x16": "http://www.google.com/images/icons/product/search-16.gif"
+  },
+  "description": "API for Verified Access chrome extension to provide credential verification for chrome devices connecting to an enterprise network",
   "version": "v2",
+  "fullyEncodeReservedExpansion": true,
+  "title": "Chrome Verified Access API",
   "name": "verifiedaccess",
+  "kind": "discovery#restDescription",
+  "protocol": "rest",
+  "version_module": true,
+  "revision": "20260310",
   "parameters": {
+    "access_token": {
+      "location": "query",
+      "type": "string",
+      "description": "OAuth access token."
+    },
+    "fields": {
+      "location": "query",
+      "type": "string",
+      "description": "Selector specifying which fields to include in a partial response."
+    },
     "key": {
       "location": "query",
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+      "type": "string",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token."
+    },
+    "$.xgafv": {
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ],
+      "description": "V1 error format.",
+      "enum": [
+        "1",
+        "2"
+      ],
+      "location": "query",
       "type": "string"
+    },
+    "alt": {
+      "default": "json",
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ],
+      "type": "string",
+      "location": "query",
+      "description": "Data format for response.",
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ]
+    },
+    "callback": {
+      "location": "query",
+      "type": "string",
+      "description": "JSONP"
+    },
+    "oauth_token": {
+      "type": "string",
+      "description": "OAuth 2.0 token for the current user.",
+      "location": "query"
+    },
+    "quotaUser": {
+      "location": "query",
+      "type": "string",
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters."
     },
     "prettyPrint": {
       "default": "true",
@@ -558,82 +581,59 @@
       "type": "boolean",
       "description": "Returns response with indentations and line breaks."
     },
-    "uploadType": {
-      "location": "query",
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
-      "type": "string"
-    },
-    "fields": {
-      "description": "Selector specifying which fields to include in a partial response.",
-      "type": "string",
-      "location": "query"
-    },
     "upload_protocol": {
       "location": "query",
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
-      "type": "string"
-    },
-    "callback": {
-      "description": "JSONP",
       "type": "string",
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\")."
+    },
+    "uploadType": {
+      "type": "string",
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
       "location": "query"
-    },
-    "quotaUser": {
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
-      "type": "string",
-      "location": "query"
-    },
-    "oauth_token": {
-      "type": "string",
-      "description": "OAuth 2.0 token for the current user.",
-      "location": "query"
-    },
-    "alt": {
-      "description": "Data format for response.",
-      "enumDescriptions": [
-        "Responses with Content-Type of application/json",
-        "Media download with context-dependent Content-Type",
-        "Responses with Content-Type of application/x-protobuf"
-      ],
-      "default": "json",
-      "enum": [
-        "json",
-        "media",
-        "proto"
-      ],
-      "location": "query",
-      "type": "string"
-    },
-    "access_token": {
-      "location": "query",
-      "description": "OAuth access token.",
-      "type": "string"
-    },
-    "$.xgafv": {
-      "enum": [
-        "1",
-        "2"
-      ],
-      "location": "query",
-      "type": "string",
-      "description": "V1 error format.",
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ]
     }
   },
   "mtlsRootUrl": "https://verifiedaccess.mtls.googleapis.com/",
-  "ownerName": "Google",
-  "title": "Chrome Verified Access API",
-  "protocol": "rest",
-  "documentationLink": "https://developers.google.com/chrome/verified-access",
-  "description": "API for Verified Access chrome extension to provide credential verification for chrome devices connecting to an enterprise network",
-  "id": "verifiedaccess:v2",
-  "rootUrl": "https://verifiedaccess.googleapis.com/",
   "discoveryVersion": "v1",
-  "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  "resources": {
+    "challenge": {
+      "methods": {
+        "generate": {
+          "id": "verifiedaccess.challenge.generate",
+          "parameterOrder": [],
+          "request": {
+            "$ref": "Empty"
+          },
+          "path": "v2/challenge:generate",
+          "httpMethod": "POST",
+          "response": {
+            "$ref": "Challenge"
+          },
+          "scopes": [
+            "https://www.googleapis.com/auth/verifiedaccess"
+          ],
+          "description": "Generates a new challenge.",
+          "flatPath": "v2/challenge:generate",
+          "parameters": {}
+        },
+        "verify": {
+          "request": {
+            "$ref": "VerifyChallengeResponseRequest"
+          },
+          "path": "v2/challenge:verify",
+          "httpMethod": "POST",
+          "id": "verifiedaccess.challenge.verify",
+          "parameterOrder": [],
+          "description": "Verifies the challenge response.",
+          "flatPath": "v2/challenge:verify",
+          "parameters": {},
+          "response": {
+            "$ref": "VerifyChallengeResponseResult"
+          },
+          "scopes": [
+            "https://www.googleapis.com/auth/verifiedaccess"
+          ]
+        }
+      }
+    }
   }
 }
