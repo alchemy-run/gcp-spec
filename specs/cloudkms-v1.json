@@ -1,10 +1,4 @@
 {
-  "revision": "20260226",
-  "kind": "discovery#restDescription",
-  "title": "Cloud Key Management Service (KMS) API",
-  "version_module": true,
-  "version": "v1",
-  "ownerDomain": "google.com",
   "schemas": {
     "AutokeyConfig": {
       "id": "AutokeyConfig",
@@ -824,26 +818,26 @@
     },
     "KeyAccessJustificationsPolicyConfig": {
       "id": "KeyAccessJustificationsPolicyConfig",
-      "description": "A singleton configuration for Key Access Justifications policies.",
+      "description": "Represents a singleton configuration for Key Access Justifications policies.",
       "type": "object",
       "properties": {
         "name": {
-          "description": "Identifier. The resource name for this KeyAccessJustificationsPolicyConfig in the format of \"{organizations|folders|projects}/*/kajPolicyConfig\".",
+          "description": "Identifier. Represents the resource name for this KeyAccessJustificationsPolicyConfig in the format of \"{organizations|folders|projects}/*/kajPolicyConfig\".",
           "type": "string"
         },
         "defaultKeyAccessJustificationPolicy": {
-          "description": "Optional. The default key access justification policy used when a CryptoKey is created in this folder. This is only used when a Key Access Justifications policy is not provided in the CreateCryptoKeyRequest. This overrides any default policies in its ancestry.",
+          "description": "Optional. Specifies the default key access justifications (KAJ) policy used when a CryptoKey is created in this folder. This is only used when a Key Access Justifications policy is not provided in the CreateCryptoKeyRequest. This overrides any default policies in its ancestry. If this field is unset, or is set but contains an empty allowed_access_reasons list, no default Key Access Justifications (KAJ) policy configuration is active. In this scenario, all newly created keys will default to an \"allow-all\" policy.",
           "$ref": "KeyAccessJustificationsPolicy"
         }
       }
     },
     "KeyAccessJustificationsPolicy": {
       "id": "KeyAccessJustificationsPolicy",
-      "description": "A KeyAccessJustificationsPolicy specifies zero or more allowed AccessReason values for encrypt, decrypt, and sign operations on a CryptoKey.",
+      "description": "A KeyAccessJustificationsPolicy specifies zero or more allowed AccessReason values for encrypt, decrypt, and sign operations on a CryptoKey or KeyAccessJustificationsPolicyConfig (the default Key Access Justifications policy).",
       "type": "object",
       "properties": {
         "allowedAccessReasons": {
-          "description": "The list of allowed reasons for access to a CryptoKey. Zero allowed access reasons means all encrypt, decrypt, and sign operations for the CryptoKey associated with this policy will fail.",
+          "description": "The list of allowed reasons for access to a CryptoKey. Note that empty allowed_access_reasons has a different meaning depending on where this message appears. If this is under KeyAccessJustificationsPolicyConfig, it means allow-all. If this is under CryptoKey, it means deny-all.",
           "type": "array",
           "items": {
             "type": "string",
@@ -895,45 +889,45 @@
     },
     "ShowEffectiveKeyAccessJustificationsPolicyConfigResponse": {
       "id": "ShowEffectiveKeyAccessJustificationsPolicyConfigResponse",
-      "description": "Response message for KeyAccessJustificationsConfig.ShowEffectiveKeyAccessJustificationsPolicyConfig.",
+      "description": "Represents a response message for KeyAccessJustificationsConfig.ShowEffectiveKeyAccessJustificationsPolicyConfig.",
       "type": "object",
       "properties": {
         "effectiveKajPolicy": {
-          "description": "The effective KeyAccessJustificationsPolicyConfig.",
+          "description": "Contains the effective KeyAccessJustificationsPolicyConfig.",
           "$ref": "KeyAccessJustificationsPolicyConfig"
         }
       }
     },
     "ShowEffectiveKeyAccessJustificationsEnrollmentConfigResponse": {
       "id": "ShowEffectiveKeyAccessJustificationsEnrollmentConfigResponse",
-      "description": "Response message for KeyAccessJustificationsConfig.ShowEffectiveKeyAccessJustificationsEnrollmentConfig",
+      "description": "Represents a response message for KeyAccessJustificationsConfig.ShowEffectiveKeyAccessJustificationsEnrollmentConfig",
       "type": "object",
       "properties": {
         "hardwareConfig": {
-          "description": "The effective KeyAccessJustificationsEnrollmentConfig for hardware keys.",
+          "description": "Contains the effective KeyAccessJustificationsEnrollmentConfig for hardware keys.",
           "$ref": "KeyAccessJustificationsEnrollmentConfig"
         },
         "softwareConfig": {
-          "description": "The effective KeyAccessJustificationsEnrollmentConfig for software keys.",
+          "description": "Contains the effective KeyAccessJustificationsEnrollmentConfig for software keys.",
           "$ref": "KeyAccessJustificationsEnrollmentConfig"
         },
         "externalConfig": {
-          "description": "The effective KeyAccessJustificationsEnrollmentConfig for external keys.",
+          "description": "Contains the effective KeyAccessJustificationsEnrollmentConfig for external keys.",
           "$ref": "KeyAccessJustificationsEnrollmentConfig"
         }
       }
     },
     "KeyAccessJustificationsEnrollmentConfig": {
       "id": "KeyAccessJustificationsEnrollmentConfig",
-      "description": "The configuration of a protection level for a project's Key Access Justifications enrollment.",
+      "description": "Represents the configuration of a protection level for a project's Key Access Justifications enrollment.",
       "type": "object",
       "properties": {
         "auditLogging": {
-          "description": "Whether the project has KAJ logging enabled.",
+          "description": "Indicates whether the project has KAJ logging enabled.",
           "type": "boolean"
         },
         "policyEnforcement": {
-          "description": "Whether the project is enrolled in KAJ policy enforcement.",
+          "description": "Indicates whether the project is enrolled in KAJ policy enforcement.",
           "type": "boolean"
         }
       }
@@ -1080,7 +1074,7 @@
           "type": "string"
         },
         "keyAccessJustificationsPolicy": {
-          "description": "Optional. The policy used for Key Access Justifications Policy Enforcement. If this field is present and this key is enrolled in Key Access Justifications Policy Enforcement, the policy will be evaluated in encrypt, decrypt, and sign operations, and the operation will fail if rejected by the policy. The policy is defined by specifying zero or more allowed justification codes. https://cloud.google.com/assured-workloads/key-access-justifications/docs/justification-codes By default, this field is absent, and all justification codes are allowed.",
+          "description": "Optional. The policy used for Key Access Justifications Policy Enforcement. If this field is present and this key is enrolled in Key Access Justifications Policy Enforcement, the policy will be evaluated in encrypt, decrypt, and sign operations, and the operation will fail if rejected by the policy. The policy is defined by specifying zero or more allowed justification codes. https://cloud.google.com/assured-workloads/key-access-justifications/docs/justification-codes By default, this field is absent, and all justification codes are allowed. If the `key_access_justifications_policy.allowed_access_reasons` is empty (zero allowed justification code), all encrypt, decrypt, and sign operations will fail.",
           "$ref": "KeyAccessJustificationsPolicy"
         }
       }
@@ -3055,12 +3049,9 @@
       }
     }
   },
+  "title": "Cloud Key Management Service (KMS) API",
+  "basePath": "",
   "endpoints": [
-    {
-      "endpointUrl": "https://cloudkms.europe-west3.rep.googleapis.com/",
-      "location": "europe-west3",
-      "description": "Regional Endpoint"
-    },
     {
       "endpointUrl": "https://cloudkms.europe-west8.rep.googleapis.com/",
       "location": "europe-west8",
@@ -3117,11 +3108,6 @@
       "description": "Regional Endpoint"
     },
     {
-      "endpointUrl": "https://cloudkms.us-west8.rep.googleapis.com/",
-      "location": "us-west8",
-      "description": "Regional Endpoint"
-    },
-    {
       "endpointUrl": "https://cloudkms.us-east5.rep.googleapis.com/",
       "location": "us-east5",
       "description": "Regional Endpoint"
@@ -3147,6 +3133,16 @@
       "description": "Regional Endpoint"
     },
     {
+      "endpointUrl": "https://cloudkms.europe-west3.rep.googleapis.com/",
+      "location": "europe-west3",
+      "description": "Regional Endpoint"
+    },
+    {
+      "endpointUrl": "https://cloudkms.us-west8.rep.googleapis.com/",
+      "location": "us-west8",
+      "description": "Regional Endpoint"
+    },
+    {
       "endpointUrl": "https://cloudkms.us.rep.googleapis.com/",
       "location": "us",
       "description": "Regional Endpoint"
@@ -3162,11 +3158,10 @@
       "description": "Regional Endpoint"
     }
   ],
-  "mtlsRootUrl": "https://cloudkms.mtls.googleapis.com/",
-  "fullyEncodeReservedExpansion": true,
+  "revision": "20260312",
   "protocol": "rest",
-  "discoveryVersion": "v1",
-  "rootUrl": "https://cloudkms.googleapis.com/",
+  "baseUrl": "https://cloudkms.googleapis.com/",
+  "ownerDomain": "google.com",
   "resources": {
     "folders": {
       "methods": {
@@ -3238,7 +3233,7 @@
           "httpMethod": "GET",
           "parameters": {
             "name": {
-              "description": "Required. The name of the KeyAccessJustificationsPolicyConfig to get.",
+              "description": "Required. Specifies the name of the KeyAccessJustificationsPolicyConfig to get.",
               "pattern": "^folders/[^/]+/kajPolicyConfig$",
               "location": "path",
               "required": true,
@@ -3264,14 +3259,14 @@
           "httpMethod": "PATCH",
           "parameters": {
             "name": {
-              "description": "Identifier. The resource name for this KeyAccessJustificationsPolicyConfig in the format of \"{organizations|folders|projects}/*/kajPolicyConfig\".",
+              "description": "Identifier. Represents the resource name for this KeyAccessJustificationsPolicyConfig in the format of \"{organizations|folders|projects}/*/kajPolicyConfig\".",
               "pattern": "^folders/[^/]+/kajPolicyConfig$",
               "location": "path",
               "required": true,
               "type": "string"
             },
             "updateMask": {
-              "description": "Optional. The list of fields to update.",
+              "description": "Optional. Specifies the list of fields to update.",
               "location": "query",
               "type": "string",
               "format": "google-fieldmask"
@@ -3390,7 +3385,7 @@
           "httpMethod": "GET",
           "parameters": {
             "name": {
-              "description": "Required. The name of the KeyAccessJustificationsPolicyConfig to get.",
+              "description": "Required. Specifies the name of the KeyAccessJustificationsPolicyConfig to get.",
               "pattern": "^projects/[^/]+/kajPolicyConfig$",
               "location": "path",
               "required": true,
@@ -3416,14 +3411,14 @@
           "httpMethod": "PATCH",
           "parameters": {
             "name": {
-              "description": "Identifier. The resource name for this KeyAccessJustificationsPolicyConfig in the format of \"{organizations|folders|projects}/*/kajPolicyConfig\".",
+              "description": "Identifier. Represents the resource name for this KeyAccessJustificationsPolicyConfig in the format of \"{organizations|folders|projects}/*/kajPolicyConfig\".",
               "pattern": "^projects/[^/]+/kajPolicyConfig$",
               "location": "path",
               "required": true,
               "type": "string"
             },
             "updateMask": {
-              "description": "Optional. The list of fields to update.",
+              "description": "Optional. Specifies the list of fields to update.",
               "location": "query",
               "type": "string",
               "format": "google-fieldmask"
@@ -3451,7 +3446,7 @@
           "httpMethod": "GET",
           "parameters": {
             "project": {
-              "description": "Required. The number or id of the project to get the effective KeyAccessJustificationsPolicyConfig. In the format of \"projects/{|}\"",
+              "description": "Required. Specifies the number or id of the project to get the effective KeyAccessJustificationsPolicyConfig. In the format of \"projects/{|}\"",
               "pattern": "^projects/[^/]+$",
               "location": "path",
               "required": true,
@@ -3477,7 +3472,7 @@
           "httpMethod": "GET",
           "parameters": {
             "project": {
-              "description": "Required. The number or id of the project to get the effective KeyAccessJustificationsEnrollmentConfig for.",
+              "description": "Required. Specifies the number or id of the project to get the effective KeyAccessJustificationsEnrollmentConfig for.",
               "pattern": "^projects/[^/]+$",
               "location": "path",
               "required": true,
@@ -5844,7 +5839,7 @@
           "httpMethod": "GET",
           "parameters": {
             "name": {
-              "description": "Required. The name of the KeyAccessJustificationsPolicyConfig to get.",
+              "description": "Required. Specifies the name of the KeyAccessJustificationsPolicyConfig to get.",
               "pattern": "^organizations/[^/]+/kajPolicyConfig$",
               "location": "path",
               "required": true,
@@ -5870,14 +5865,14 @@
           "httpMethod": "PATCH",
           "parameters": {
             "name": {
-              "description": "Identifier. The resource name for this KeyAccessJustificationsPolicyConfig in the format of \"{organizations|folders|projects}/*/kajPolicyConfig\".",
+              "description": "Identifier. Represents the resource name for this KeyAccessJustificationsPolicyConfig in the format of \"{organizations|folders|projects}/*/kajPolicyConfig\".",
               "pattern": "^organizations/[^/]+/kajPolicyConfig$",
               "location": "path",
               "required": true,
               "type": "string"
             },
             "updateMask": {
-              "description": "Optional. The list of fields to update.",
+              "description": "Optional. Specifies the list of fields to update.",
               "location": "query",
               "type": "string",
               "format": "google-fieldmask"
@@ -5901,17 +5896,23 @@
       }
     }
   },
-  "batchPath": "batch",
-  "basePath": "",
   "canonicalName": "Cloud KMS",
+  "ownerName": "Google",
+  "id": "cloudkms:v1",
+  "discoveryVersion": "v1",
+  "kind": "discovery#restDescription",
   "description": "Manages keys and performs cryptographic operations in a central cloud service, for direct use by other cloud resources and applications. ",
-  "baseUrl": "https://cloudkms.googleapis.com/",
+  "batchPath": "batch",
   "servicePath": "",
-  "name": "cloudkms",
   "icons": {
     "x16": "http://www.google.com/images/icons/product/search-16.gif",
     "x32": "http://www.google.com/images/icons/product/search-32.gif"
   },
+  "version_module": true,
+  "fullyEncodeReservedExpansion": true,
+  "rootUrl": "https://cloudkms.googleapis.com/",
+  "mtlsRootUrl": "https://cloudkms.mtls.googleapis.com/",
+  "version": "v1",
   "auth": {
     "oauth2": {
       "scopes": {
@@ -5924,9 +5925,6 @@
       }
     }
   },
-  "documentationLink": "https://cloud.google.com/kms/",
-  "ownerName": "Google",
-  "id": "cloudkms:v1",
   "parameters": {
     "access_token": {
       "type": "string",
@@ -6003,5 +6001,7 @@
       ],
       "location": "query"
     }
-  }
+  },
+  "documentationLink": "https://cloud.google.com/kms/",
+  "name": "cloudkms"
 }
