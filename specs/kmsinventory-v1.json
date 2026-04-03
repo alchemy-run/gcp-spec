@@ -1,4 +1,218 @@
 {
+  "servicePath": "",
+  "discoveryVersion": "v1",
+  "mtlsRootUrl": "https://kmsinventory.mtls.googleapis.com/",
+  "baseUrl": "https://kmsinventory.googleapis.com/",
+  "resources": {
+    "projects": {
+      "resources": {
+        "cryptoKeys": {
+          "methods": {
+            "list": {
+              "id": "kmsinventory.projects.cryptoKeys.list",
+              "path": "v1/{+parent}/cryptoKeys",
+              "flatPath": "v1/projects/{projectsId}/cryptoKeys",
+              "httpMethod": "GET",
+              "parameters": {
+                "parent": {
+                  "description": "Required. The Google Cloud project for which to retrieve key metadata, in the format `projects/*`",
+                  "pattern": "^projects/[^/]+$",
+                  "location": "path",
+                  "required": true,
+                  "type": "string"
+                },
+                "pageSize": {
+                  "description": "Optional. The maximum number of keys to return. The service may return fewer than this value. If unspecified, at most 1000 keys will be returned. The maximum value is 1000; values above 1000 will be coerced to 1000.",
+                  "location": "query",
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "pageToken": {
+                  "description": "Optional. Pass this into a subsequent request in order to receive the next page of results.",
+                  "location": "query",
+                  "type": "string"
+                }
+              },
+              "parameterOrder": [
+                "parent"
+              ],
+              "response": {
+                "$ref": "GoogleCloudKmsInventoryV1ListCryptoKeysResponse"
+              },
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud-platform"
+              ],
+              "description": "Returns cryptographic keys managed by Cloud KMS in a given Cloud project. Note that this data is sourced from snapshots, meaning it may not completely reflect the actual state of key metadata at call time."
+            }
+          }
+        },
+        "locations": {
+          "resources": {
+            "keyRings": {
+              "resources": {
+                "cryptoKeys": {
+                  "methods": {
+                    "getProtectedResourcesSummary": {
+                      "id": "kmsinventory.projects.locations.keyRings.cryptoKeys.getProtectedResourcesSummary",
+                      "path": "v1/{+name}/protectedResourcesSummary",
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/keyRings/{keyRingsId}/cryptoKeys/{cryptoKeysId}/protectedResourcesSummary",
+                      "httpMethod": "GET",
+                      "parameters": {
+                        "name": {
+                          "description": "Required. The resource name of the CryptoKey.",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/keyRings/[^/]+/cryptoKeys/.*$",
+                          "location": "path",
+                          "required": true,
+                          "type": "string"
+                        },
+                        "fallbackScope": {
+                          "description": "Optional. The scope to use if the kms organization service account is not configured.",
+                          "location": "query",
+                          "type": "string",
+                          "enumDescriptions": [
+                            "Unspecified scope type.",
+                            "If set to `FALLBACK_SCOPE_PROJECT`, the API will fall back to using key's project as request scope if the kms organization service account is not configured."
+                          ],
+                          "enum": [
+                            "FALLBACK_SCOPE_UNSPECIFIED",
+                            "FALLBACK_SCOPE_PROJECT"
+                          ]
+                        }
+                      },
+                      "parameterOrder": [
+                        "name"
+                      ],
+                      "response": {
+                        "$ref": "GoogleCloudKmsInventoryV1ProtectedResourcesSummary"
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform"
+                      ],
+                      "description": "Returns aggregate information about the resources protected by the given Cloud KMS CryptoKey. By default, summary of resources within the same Cloud organization as the key will be returned, which requires the KMS organization service account to be configured(refer https://docs.cloud.google.com/kms/docs/view-key-usage#required-roles). If the KMS organization service account is not configured or key's project is not part of an organization, set fallback_scope to `FALLBACK_SCOPE_PROJECT` to retrieve a summary of protected resources within the key's project."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "protectedResources": {
+          "methods": {
+            "search": {
+              "id": "kmsinventory.projects.protectedResources.search",
+              "path": "v1/{+scope}/protectedResources:search",
+              "flatPath": "v1/projects/{projectsId}/protectedResources:search",
+              "httpMethod": "GET",
+              "parameters": {
+                "scope": {
+                  "description": "Required. A scope can be an organization or a project. Resources protected by the crypto key in provided scope will be returned. The following values are allowed: * organizations/{ORGANIZATION_NUMBER} (e.g., \"organizations/12345678\") * projects/{PROJECT_ID} (e.g., \"projects/foo-bar\") * projects/{PROJECT_NUMBER} (e.g., \"projects/12345678\")",
+                  "pattern": "^projects/[^/]+$",
+                  "location": "path",
+                  "required": true,
+                  "type": "string"
+                },
+                "cryptoKey": {
+                  "description": "Required. The resource name of the CryptoKey.",
+                  "location": "query",
+                  "type": "string"
+                },
+                "pageSize": {
+                  "description": "The maximum number of resources to return. The service may return fewer than this value. If unspecified, at most 500 resources will be returned. The maximum value is 500; values above 500 will be coerced to 500.",
+                  "location": "query",
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "pageToken": {
+                  "description": "A page token, received from a previous KeyTrackingService.SearchProtectedResources call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to KeyTrackingService.SearchProtectedResources must match the call that provided the page token.",
+                  "location": "query",
+                  "type": "string"
+                },
+                "resourceTypes": {
+                  "description": "Optional. A list of resource types that this request searches for. If empty, it will search all the [trackable resource types](https://cloud.google.com/kms/docs/view-key-usage#tracked-resource-types). Regular expressions are also supported. For example: * `compute.googleapis.com.*` snapshots resources whose type starts with `compute.googleapis.com`. * `.*Image` snapshots resources whose type ends with `Image`. * `.*Image.*` snapshots resources whose type contains `Image`. See [RE2](https://github.com/google/re2/wiki/Syntax) for all supported regular expression syntax. If the regular expression does not match any supported resource type, an INVALID_ARGUMENT error will be returned.",
+                  "location": "query",
+                  "repeated": true,
+                  "type": "string"
+                }
+              },
+              "parameterOrder": [
+                "scope"
+              ],
+              "response": {
+                "$ref": "GoogleCloudKmsInventoryV1SearchProtectedResourcesResponse"
+              },
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud-platform"
+              ],
+              "description": "Returns metadata about the resources protected by the given Cloud KMS CryptoKey in the given Cloud organization/project."
+            }
+          }
+        }
+      }
+    },
+    "organizations": {
+      "resources": {
+        "protectedResources": {
+          "methods": {
+            "search": {
+              "id": "kmsinventory.organizations.protectedResources.search",
+              "path": "v1/{+scope}/protectedResources:search",
+              "flatPath": "v1/organizations/{organizationsId}/protectedResources:search",
+              "httpMethod": "GET",
+              "parameters": {
+                "scope": {
+                  "description": "Required. A scope can be an organization or a project. Resources protected by the crypto key in provided scope will be returned. The following values are allowed: * organizations/{ORGANIZATION_NUMBER} (e.g., \"organizations/12345678\") * projects/{PROJECT_ID} (e.g., \"projects/foo-bar\") * projects/{PROJECT_NUMBER} (e.g., \"projects/12345678\")",
+                  "pattern": "^organizations/[^/]+$",
+                  "location": "path",
+                  "required": true,
+                  "type": "string"
+                },
+                "cryptoKey": {
+                  "description": "Required. The resource name of the CryptoKey.",
+                  "location": "query",
+                  "type": "string"
+                },
+                "pageSize": {
+                  "description": "The maximum number of resources to return. The service may return fewer than this value. If unspecified, at most 500 resources will be returned. The maximum value is 500; values above 500 will be coerced to 500.",
+                  "location": "query",
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "pageToken": {
+                  "description": "A page token, received from a previous KeyTrackingService.SearchProtectedResources call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to KeyTrackingService.SearchProtectedResources must match the call that provided the page token.",
+                  "location": "query",
+                  "type": "string"
+                },
+                "resourceTypes": {
+                  "description": "Optional. A list of resource types that this request searches for. If empty, it will search all the [trackable resource types](https://cloud.google.com/kms/docs/view-key-usage#tracked-resource-types). Regular expressions are also supported. For example: * `compute.googleapis.com.*` snapshots resources whose type starts with `compute.googleapis.com`. * `.*Image` snapshots resources whose type ends with `Image`. * `.*Image.*` snapshots resources whose type contains `Image`. See [RE2](https://github.com/google/re2/wiki/Syntax) for all supported regular expression syntax. If the regular expression does not match any supported resource type, an INVALID_ARGUMENT error will be returned.",
+                  "location": "query",
+                  "repeated": true,
+                  "type": "string"
+                }
+              },
+              "parameterOrder": [
+                "scope"
+              ],
+              "response": {
+                "$ref": "GoogleCloudKmsInventoryV1SearchProtectedResourcesResponse"
+              },
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud-platform"
+              ],
+              "description": "Returns metadata about the resources protected by the given Cloud KMS CryptoKey in the given Cloud organization/project."
+            }
+          }
+        }
+      }
+    }
+  },
+  "version": "v1",
+  "protocol": "rest",
+  "rootUrl": "https://kmsinventory.googleapis.com/",
+  "name": "kmsinventory",
+  "ownerDomain": "google.com",
+  "documentationLink": "https://cloud.google.com/kms/",
+  "revision": "20260329",
+  "canonicalName": "Kmsinventory",
   "fullyEncodeReservedExpansion": true,
   "schemas": {
     "GoogleCloudKmsInventoryV1ListCryptoKeysResponse": {
@@ -746,221 +960,27 @@
       }
     }
   },
-  "documentationLink": "https://cloud.google.com/kms/",
-  "canonicalName": "Kmsinventory",
-  "revision": "20260329",
-  "ownerDomain": "google.com",
-  "name": "kmsinventory",
-  "rootUrl": "https://kmsinventory.googleapis.com/",
-  "protocol": "rest",
-  "servicePath": "",
-  "version": "v1",
-  "resources": {
-    "projects": {
-      "resources": {
-        "cryptoKeys": {
-          "methods": {
-            "list": {
-              "id": "kmsinventory.projects.cryptoKeys.list",
-              "path": "v1/{+parent}/cryptoKeys",
-              "flatPath": "v1/projects/{projectsId}/cryptoKeys",
-              "httpMethod": "GET",
-              "parameters": {
-                "parent": {
-                  "description": "Required. The Google Cloud project for which to retrieve key metadata, in the format `projects/*`",
-                  "pattern": "^projects/[^/]+$",
-                  "location": "path",
-                  "required": true,
-                  "type": "string"
-                },
-                "pageSize": {
-                  "description": "Optional. The maximum number of keys to return. The service may return fewer than this value. If unspecified, at most 1000 keys will be returned. The maximum value is 1000; values above 1000 will be coerced to 1000.",
-                  "location": "query",
-                  "type": "integer",
-                  "format": "int32"
-                },
-                "pageToken": {
-                  "description": "Optional. Pass this into a subsequent request in order to receive the next page of results.",
-                  "location": "query",
-                  "type": "string"
-                }
-              },
-              "parameterOrder": [
-                "parent"
-              ],
-              "response": {
-                "$ref": "GoogleCloudKmsInventoryV1ListCryptoKeysResponse"
-              },
-              "scopes": [
-                "https://www.googleapis.com/auth/cloud-platform"
-              ],
-              "description": "Returns cryptographic keys managed by Cloud KMS in a given Cloud project. Note that this data is sourced from snapshots, meaning it may not completely reflect the actual state of key metadata at call time."
-            }
-          }
-        },
-        "locations": {
-          "resources": {
-            "keyRings": {
-              "resources": {
-                "cryptoKeys": {
-                  "methods": {
-                    "getProtectedResourcesSummary": {
-                      "id": "kmsinventory.projects.locations.keyRings.cryptoKeys.getProtectedResourcesSummary",
-                      "path": "v1/{+name}/protectedResourcesSummary",
-                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/keyRings/{keyRingsId}/cryptoKeys/{cryptoKeysId}/protectedResourcesSummary",
-                      "httpMethod": "GET",
-                      "parameters": {
-                        "name": {
-                          "description": "Required. The resource name of the CryptoKey.",
-                          "pattern": "^projects/[^/]+/locations/[^/]+/keyRings/[^/]+/cryptoKeys/.*$",
-                          "location": "path",
-                          "required": true,
-                          "type": "string"
-                        },
-                        "fallbackScope": {
-                          "description": "Optional. The scope to use if the kms organization service account is not configured.",
-                          "location": "query",
-                          "type": "string",
-                          "enumDescriptions": [
-                            "Unspecified scope type.",
-                            "If set to `FALLBACK_SCOPE_PROJECT`, the API will fall back to using key's project as request scope if the kms organization service account is not configured."
-                          ],
-                          "enum": [
-                            "FALLBACK_SCOPE_UNSPECIFIED",
-                            "FALLBACK_SCOPE_PROJECT"
-                          ]
-                        }
-                      },
-                      "parameterOrder": [
-                        "name"
-                      ],
-                      "response": {
-                        "$ref": "GoogleCloudKmsInventoryV1ProtectedResourcesSummary"
-                      },
-                      "scopes": [
-                        "https://www.googleapis.com/auth/cloud-platform"
-                      ],
-                      "description": "Returns aggregate information about the resources protected by the given Cloud KMS CryptoKey. By default, summary of resources within the same Cloud organization as the key will be returned, which requires the KMS organization service account to be configured(refer https://docs.cloud.google.com/kms/docs/view-key-usage#required-roles). If the KMS organization service account is not configured or key's project is not part of an organization, set fallback_scope to `FALLBACK_SCOPE_PROJECT` to retrieve a summary of protected resources within the key's project."
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "protectedResources": {
-          "methods": {
-            "search": {
-              "id": "kmsinventory.projects.protectedResources.search",
-              "path": "v1/{+scope}/protectedResources:search",
-              "flatPath": "v1/projects/{projectsId}/protectedResources:search",
-              "httpMethod": "GET",
-              "parameters": {
-                "scope": {
-                  "description": "Required. A scope can be an organization or a project. Resources protected by the crypto key in provided scope will be returned. The following values are allowed: * organizations/{ORGANIZATION_NUMBER} (e.g., \"organizations/12345678\") * projects/{PROJECT_ID} (e.g., \"projects/foo-bar\") * projects/{PROJECT_NUMBER} (e.g., \"projects/12345678\")",
-                  "pattern": "^projects/[^/]+$",
-                  "location": "path",
-                  "required": true,
-                  "type": "string"
-                },
-                "cryptoKey": {
-                  "description": "Required. The resource name of the CryptoKey.",
-                  "location": "query",
-                  "type": "string"
-                },
-                "pageSize": {
-                  "description": "The maximum number of resources to return. The service may return fewer than this value. If unspecified, at most 500 resources will be returned. The maximum value is 500; values above 500 will be coerced to 500.",
-                  "location": "query",
-                  "type": "integer",
-                  "format": "int32"
-                },
-                "pageToken": {
-                  "description": "A page token, received from a previous KeyTrackingService.SearchProtectedResources call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to KeyTrackingService.SearchProtectedResources must match the call that provided the page token.",
-                  "location": "query",
-                  "type": "string"
-                },
-                "resourceTypes": {
-                  "description": "Optional. A list of resource types that this request searches for. If empty, it will search all the [trackable resource types](https://cloud.google.com/kms/docs/view-key-usage#tracked-resource-types). Regular expressions are also supported. For example: * `compute.googleapis.com.*` snapshots resources whose type starts with `compute.googleapis.com`. * `.*Image` snapshots resources whose type ends with `Image`. * `.*Image.*` snapshots resources whose type contains `Image`. See [RE2](https://github.com/google/re2/wiki/Syntax) for all supported regular expression syntax. If the regular expression does not match any supported resource type, an INVALID_ARGUMENT error will be returned.",
-                  "location": "query",
-                  "repeated": true,
-                  "type": "string"
-                }
-              },
-              "parameterOrder": [
-                "scope"
-              ],
-              "response": {
-                "$ref": "GoogleCloudKmsInventoryV1SearchProtectedResourcesResponse"
-              },
-              "scopes": [
-                "https://www.googleapis.com/auth/cloud-platform"
-              ],
-              "description": "Returns metadata about the resources protected by the given Cloud KMS CryptoKey in the given Cloud organization/project."
-            }
-          }
-        }
-      }
-    },
-    "organizations": {
-      "resources": {
-        "protectedResources": {
-          "methods": {
-            "search": {
-              "id": "kmsinventory.organizations.protectedResources.search",
-              "path": "v1/{+scope}/protectedResources:search",
-              "flatPath": "v1/organizations/{organizationsId}/protectedResources:search",
-              "httpMethod": "GET",
-              "parameters": {
-                "scope": {
-                  "description": "Required. A scope can be an organization or a project. Resources protected by the crypto key in provided scope will be returned. The following values are allowed: * organizations/{ORGANIZATION_NUMBER} (e.g., \"organizations/12345678\") * projects/{PROJECT_ID} (e.g., \"projects/foo-bar\") * projects/{PROJECT_NUMBER} (e.g., \"projects/12345678\")",
-                  "pattern": "^organizations/[^/]+$",
-                  "location": "path",
-                  "required": true,
-                  "type": "string"
-                },
-                "cryptoKey": {
-                  "description": "Required. The resource name of the CryptoKey.",
-                  "location": "query",
-                  "type": "string"
-                },
-                "pageSize": {
-                  "description": "The maximum number of resources to return. The service may return fewer than this value. If unspecified, at most 500 resources will be returned. The maximum value is 500; values above 500 will be coerced to 500.",
-                  "location": "query",
-                  "type": "integer",
-                  "format": "int32"
-                },
-                "pageToken": {
-                  "description": "A page token, received from a previous KeyTrackingService.SearchProtectedResources call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to KeyTrackingService.SearchProtectedResources must match the call that provided the page token.",
-                  "location": "query",
-                  "type": "string"
-                },
-                "resourceTypes": {
-                  "description": "Optional. A list of resource types that this request searches for. If empty, it will search all the [trackable resource types](https://cloud.google.com/kms/docs/view-key-usage#tracked-resource-types). Regular expressions are also supported. For example: * `compute.googleapis.com.*` snapshots resources whose type starts with `compute.googleapis.com`. * `.*Image` snapshots resources whose type ends with `Image`. * `.*Image.*` snapshots resources whose type contains `Image`. See [RE2](https://github.com/google/re2/wiki/Syntax) for all supported regular expression syntax. If the regular expression does not match any supported resource type, an INVALID_ARGUMENT error will be returned.",
-                  "location": "query",
-                  "repeated": true,
-                  "type": "string"
-                }
-              },
-              "parameterOrder": [
-                "scope"
-              ],
-              "response": {
-                "$ref": "GoogleCloudKmsInventoryV1SearchProtectedResourcesResponse"
-              },
-              "scopes": [
-                "https://www.googleapis.com/auth/cloud-platform"
-              ],
-              "description": "Returns metadata about the resources protected by the given Cloud KMS CryptoKey in the given Cloud organization/project."
-            }
-          }
+  "version_module": true,
+  "batchPath": "batch",
+  "description": "",
+  "kind": "discovery#restDescription",
+  "title": "KMS Inventory API",
+  "auth": {
+    "oauth2": {
+      "scopes": {
+        "https://www.googleapis.com/auth/cloud-platform": {
+          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
         }
       }
     }
   },
-  "baseUrl": "https://kmsinventory.googleapis.com/",
-  "discoveryVersion": "v1",
-  "mtlsRootUrl": "https://kmsinventory.mtls.googleapis.com/",
   "id": "kmsinventory:v1",
+  "ownerName": "Google",
+  "icons": {
+    "x16": "http://www.google.com/images/icons/product/search-16.gif",
+    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  },
+  "basePath": "",
   "parameters": {
     "access_token": {
       "type": "string",
@@ -1037,25 +1057,5 @@
       ],
       "location": "query"
     }
-  },
-  "ownerName": "Google",
-  "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
-  },
-  "basePath": "",
-  "description": "",
-  "auth": {
-    "oauth2": {
-      "scopes": {
-        "https://www.googleapis.com/auth/cloud-platform": {
-          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
-        }
-      }
-    }
-  },
-  "title": "KMS Inventory API",
-  "kind": "discovery#restDescription",
-  "batchPath": "batch",
-  "version_module": true
+  }
 }
