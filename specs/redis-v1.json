@@ -1,82 +1,8 @@
 {
-  "id": "redis:v1",
-  "parameters": {
-    "access_token": {
-      "type": "string",
-      "description": "OAuth access token.",
-      "location": "query"
-    },
-    "alt": {
-      "type": "string",
-      "description": "Data format for response.",
-      "default": "json",
-      "enum": [
-        "json",
-        "media",
-        "proto"
-      ],
-      "enumDescriptions": [
-        "Responses with Content-Type of application/json",
-        "Media download with context-dependent Content-Type",
-        "Responses with Content-Type of application/x-protobuf"
-      ],
-      "location": "query"
-    },
-    "callback": {
-      "type": "string",
-      "description": "JSONP",
-      "location": "query"
-    },
-    "fields": {
-      "type": "string",
-      "description": "Selector specifying which fields to include in a partial response.",
-      "location": "query"
-    },
-    "key": {
-      "type": "string",
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
-      "location": "query"
-    },
-    "oauth_token": {
-      "type": "string",
-      "description": "OAuth 2.0 token for the current user.",
-      "location": "query"
-    },
-    "prettyPrint": {
-      "type": "boolean",
-      "description": "Returns response with indentations and line breaks.",
-      "default": "true",
-      "location": "query"
-    },
-    "quotaUser": {
-      "type": "string",
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
-      "location": "query"
-    },
-    "upload_protocol": {
-      "type": "string",
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
-      "location": "query"
-    },
-    "uploadType": {
-      "type": "string",
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
-      "location": "query"
-    },
-    "$.xgafv": {
-      "type": "string",
-      "description": "V1 error format.",
-      "enum": [
-        "1",
-        "2"
-      ],
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ],
-      "location": "query"
-    }
-  },
+  "protocol": "rest",
+  "basePath": "",
+  "mtlsRootUrl": "https://redis.mtls.googleapis.com/",
+  "rootUrl": "https://redis.googleapis.com/",
   "schemas": {
     "ListOperationsResponse": {
       "id": "ListOperationsResponse",
@@ -306,12 +232,14 @@
           "enumDescriptions": [
             "Not set.",
             "IAM basic authorization mode",
-            "Authorization disabled mode"
+            "Authorization disabled mode",
+            "Token based authorization mode"
           ],
           "enum": [
             "AUTH_MODE_UNSPECIFIED",
             "AUTH_MODE_IAM_AUTH",
-            "AUTH_MODE_DISABLED"
+            "AUTH_MODE_DISABLED",
+            "AUTH_MODE_TOKEN_AUTH"
           ]
         },
         "transitEncryptionMode": {
@@ -1719,6 +1647,147 @@
         "backupId": {
           "description": "Optional. The id of the backup to be created. If not specified, the default value ([YYYYMMDDHHMMSS]_[Shortened Cluster UID] is used.",
           "type": "string"
+        }
+      }
+    },
+    "ListTokenAuthUsersResponse": {
+      "id": "ListTokenAuthUsersResponse",
+      "description": "Response message for ListTokenAuthUsers.",
+      "type": "object",
+      "properties": {
+        "tokenAuthUsers": {
+          "description": "A list of token auth users in the project.",
+          "type": "array",
+          "items": {
+            "$ref": "TokenAuthUser"
+          }
+        },
+        "nextPageToken": {
+          "description": "Token to retrieve the next page of results, or empty if there are no more results in the list.",
+          "type": "string"
+        },
+        "unreachable": {
+          "description": "Unordered list. Token auth users that could not be reached.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "TokenAuthUser": {
+      "id": "TokenAuthUser",
+      "description": "Represents a token based auth user for the cluster.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Identifier. The resource name of the token based auth user. Format: projects/{project}/locations/{location}/clusters/{cluster}/tokenAuthUsers/{token_auth_user}",
+          "type": "string"
+        },
+        "state": {
+          "description": "Output only. The state of the token based auth user.",
+          "readOnly": true,
+          "type": "string",
+          "enumDescriptions": [
+            "Not set.",
+            "The auth user is active.",
+            "The auth user is being created.",
+            "The auth user is being updated.",
+            "The auth user is being deleted."
+          ],
+          "enum": [
+            "STATE_UNSPECIFIED",
+            "ACTIVE",
+            "CREATING",
+            "UPDATING",
+            "DELETING"
+          ]
+        }
+      }
+    },
+    "ListAuthTokensResponse": {
+      "id": "ListAuthTokensResponse",
+      "description": "Response message for ListAuthTokens.",
+      "type": "object",
+      "properties": {
+        "authTokens": {
+          "description": "A list of auth tokens in the project.",
+          "type": "array",
+          "items": {
+            "$ref": "AuthToken"
+          }
+        },
+        "nextPageToken": {
+          "description": "Token to retrieve the next page of results, or empty if there are no more results in the list.",
+          "type": "string"
+        },
+        "unreachable": {
+          "description": "Unordered list. Auth tokens that could not be reached.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "AuthToken": {
+      "id": "AuthToken",
+      "description": "Auth token for the cluster.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Identifier. Name of the auth token. Format: projects/{project}/locations/{location}/clusters/{cluster}/tokenAuthUsers/{token_auth_user}/authTokens/{auth_token}",
+          "type": "string"
+        },
+        "token": {
+          "description": "Output only. The service generated authentication token used to connect to the Redis cluster.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "createTime": {
+          "description": "Output only. Create time of the auth token.",
+          "readOnly": true,
+          "type": "string",
+          "format": "google-datetime"
+        },
+        "state": {
+          "description": "Output only. State of the auth token.",
+          "readOnly": true,
+          "type": "string",
+          "enumDescriptions": [
+            "Not set.",
+            "The auth token is active.",
+            "The auth token is being created.",
+            "The auth token is being deleted."
+          ],
+          "enum": [
+            "STATE_UNSPECIFIED",
+            "ACTIVE",
+            "CREATING",
+            "DELETING"
+          ]
+        }
+      }
+    },
+    "AddTokenAuthUserRequest": {
+      "id": "AddTokenAuthUserRequest",
+      "description": "Request message for AddTokenAuthUser.",
+      "type": "object",
+      "properties": {
+        "tokenAuthUser": {
+          "description": "Required. The id of the token auth user to add.",
+          "type": "string"
+        }
+      }
+    },
+    "AddAuthTokenRequest": {
+      "id": "AddAuthTokenRequest",
+      "description": "Request message for AddAuthToken.",
+      "type": "object",
+      "properties": {
+        "authToken": {
+          "description": "Required. The auth token to add.",
+          "$ref": "AuthToken"
         }
       }
     },
@@ -4661,33 +4730,17 @@
       "properties": {}
     }
   },
-  "protocol": "rest",
-  "auth": {
-    "oauth2": {
-      "scopes": {
-        "https://www.googleapis.com/auth/cloud-platform": {
-          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
-        }
-      }
-    }
-  },
-  "batchPath": "batch",
   "description": "Creates and manages Redis instances on the Google Cloud Platform.",
-  "basePath": "",
-  "canonicalName": "Cloud Redis",
-  "rootUrl": "https://redis.googleapis.com/",
-  "ownerName": "Google",
-  "revision": "20260324",
   "servicePath": "",
-  "name": "redis",
-  "documentationLink": "https://cloud.google.com/memorystore/docs/redis/",
-  "ownerDomain": "google.com",
-  "kind": "discovery#restDescription",
   "icons": {
     "x16": "http://www.google.com/images/icons/product/search-16.gif",
     "x32": "http://www.google.com/images/icons/product/search-32.gif"
   },
-  "version": "v1",
+  "title": "Google Cloud Memorystore for Redis API",
+  "version_module": true,
+  "ownerName": "Google",
+  "canonicalName": "Cloud Redis",
+  "name": "redis",
   "resources": {
     "projects": {
       "resources": {
@@ -4736,7 +4789,8 @@
                 "$ref": "ListLocationsResponse"
               },
               "scopes": [
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/redis.read-write"
               ],
               "description": "Lists information about the supported locations for this service. This method lists locations based on the resource scope provided in the [ListLocationsRequest.name] field: * **Global locations**: If `name` is empty, the method lists the public locations available to all projects. * **Project-specific locations**: If `name` follows the format `projects/{project}`, the method lists locations visible to that specific project. This includes public, private, or other project-specific locations enabled for the project. For gRPC and client library implementations, the resource name is passed as the `name` field. For direct service calls, the resource name is incorporated into the request path based on the specific service implementation and version."
             },
@@ -4761,7 +4815,8 @@
                 "$ref": "Location"
               },
               "scopes": [
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/redis.read-write"
               ],
               "description": "Gets information about a location."
             },
@@ -4786,7 +4841,8 @@
                 "$ref": "SharedRegionalCertificateAuthority"
               },
               "scopes": [
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/redis.read-write"
               ],
               "description": "Gets the details of regional certificate authority information for Redis cluster."
             }
@@ -4836,7 +4892,8 @@
                     "$ref": "ListOperationsResponse"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`."
                 },
@@ -4861,7 +4918,8 @@
                     "$ref": "Operation"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service."
                 },
@@ -4886,7 +4944,8 @@
                     "$ref": "Empty"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Deletes a long-running operation. This method indicates that the client is no longer interested in the operation result. It does not cancel the operation. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`."
                 },
@@ -4911,7 +4970,8 @@
                     "$ref": "Empty"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Starts asynchronous cancellation on a long-running operation. The server makes a best effort to cancel the operation, but success is not guaranteed. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`. Clients can use Operations.GetOperation or other methods to check whether the cancellation succeeded or whether the operation completed despite cancellation. On successful cancellation, the operation is not deleted; instead, it becomes an operation with an Operation.error value with a google.rpc.Status.code of `1`, corresponding to `Code.CANCELLED`."
                 }
@@ -4951,7 +5011,8 @@
                     "$ref": "ListClustersResponse"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Lists all Redis clusters owned by a project in either the specified location (region) or all locations. The location should have the following format: * `projects/{project_id}/locations/{location_id}` If `location_id` is specified as `-` (wildcard), then all regions available to the project are queried, and the results are aggregated."
                 },
@@ -4976,7 +5037,8 @@
                     "$ref": "Cluster"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Gets the details of a specific Redis cluster."
                 },
@@ -5015,7 +5077,8 @@
                     "$ref": "Operation"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Updates the metadata and configuration of a specific Redis cluster. Completed longrunning.Operation will contain the new cluster object in the response field. The returned operation is automatically deleted after a few hours, so there is no need to call DeleteOperation."
                 },
@@ -5045,7 +5108,8 @@
                     "$ref": "Operation"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Deletes a specific Redis cluster. Cluster stops serving and data is deleted."
                 },
@@ -5083,7 +5147,8 @@
                     "$ref": "Operation"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Creates a Redis cluster based on the specified properties. The creation is executed asynchronously and callers may check the returned operation to track its progress. Once the operation is completed the Redis cluster will be fully functional. The completed longrunning.Operation will contain the new cluster object in the response field. The returned operation is automatically deleted after a few hours, so there is no need to call DeleteOperation."
                 },
@@ -5108,7 +5173,8 @@
                     "$ref": "CertificateAuthority"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Gets the details of certificate authority information for Redis cluster."
                 },
@@ -5136,7 +5202,8 @@
                     "$ref": "Operation"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Reschedules upcoming maintenance event."
                 },
@@ -5164,9 +5231,288 @@
                     "$ref": "Operation"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Backup Redis Cluster. If this is the first time a backup is being created, a backup collection will be created at the backend, and this backup belongs to this collection. Both collection and backup will have a resource name. Backup will be executed for each shard. A replica (primary if nonHA) will be selected to perform the execution. Backup call will be rejected if there is an ongoing backup or update operation. Be aware that during preview, if the cluster's internal software version is too old, critical update will be performed before actual backup. Once the internal software version is updated to the minimum version required by the backup feature, subsequent backups will not require critical update. After preview, there will be no critical update needed for backup."
+                },
+                "addTokenAuthUser": {
+                  "id": "redis.projects.locations.clusters.addTokenAuthUser",
+                  "path": "v1/{+cluster}:addTokenAuthUser",
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/clusters/{clustersId}:addTokenAuthUser",
+                  "httpMethod": "POST",
+                  "parameters": {
+                    "cluster": {
+                      "description": "Required. The cluster resource that this token auth user will be added for. Format: projects/{project}/locations/{location}/clusters/{cluster}",
+                      "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+$",
+                      "location": "path",
+                      "required": true,
+                      "type": "string"
+                    }
+                  },
+                  "parameterOrder": [
+                    "cluster"
+                  ],
+                  "request": {
+                    "$ref": "AddTokenAuthUserRequest"
+                  },
+                  "response": {
+                    "$ref": "Operation"
+                  },
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
+                  ],
+                  "description": "Adds a token auth user for a token based auth enabled cluster."
+                }
+              },
+              "resources": {
+                "tokenAuthUsers": {
+                  "methods": {
+                    "list": {
+                      "id": "redis.projects.locations.clusters.tokenAuthUsers.list",
+                      "path": "v1/{+parent}/tokenAuthUsers",
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/clusters/{clustersId}/tokenAuthUsers",
+                      "httpMethod": "GET",
+                      "parameters": {
+                        "parent": {
+                          "description": "Required. The parent resource that this token based auth user will be listed for. Format: projects/{project}/locations/{location}/clusters/{cluster}",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+$",
+                          "location": "path",
+                          "required": true,
+                          "type": "string"
+                        },
+                        "pageSize": {
+                          "description": "Optional. The maximum number of items to return. If not specified, a default value of 1000 will be used by the service. Regardless of the page_size value, the response may include a partial list and a caller should only rely on response's The maximum value is 1000; values above 1000 will be coerced to 1000. `next_page_token` to determine if there are more clusters left to be queried.",
+                          "location": "query",
+                          "type": "integer",
+                          "format": "int32"
+                        },
+                        "pageToken": {
+                          "description": "Optional. The `next_page_token` value returned from a previous [ListTokenAuthUsers] request, if any.",
+                          "location": "query",
+                          "type": "string"
+                        },
+                        "filter": {
+                          "description": "Optional. Expression for filtering results.",
+                          "location": "query",
+                          "type": "string"
+                        },
+                        "orderBy": {
+                          "description": "Optional. Sort results by a defined order.",
+                          "location": "query",
+                          "type": "string"
+                        }
+                      },
+                      "parameterOrder": [
+                        "parent"
+                      ],
+                      "response": {
+                        "$ref": "ListTokenAuthUsersResponse"
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/redis.read-write"
+                      ],
+                      "description": "Lists all the token auth users for a token based auth enabled cluster."
+                    },
+                    "get": {
+                      "id": "redis.projects.locations.clusters.tokenAuthUsers.get",
+                      "path": "v1/{+name}",
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/clusters/{clustersId}/tokenAuthUsers/{tokenAuthUsersId}",
+                      "httpMethod": "GET",
+                      "parameters": {
+                        "name": {
+                          "description": "Required. The name of token auth user for a token based auth enabled cluster. Format: projects/{project}/locations/{location}/clusters/{cluster}/tokenAuthUsers/{token_auth_user}",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+/tokenAuthUsers/[^/]+$",
+                          "location": "path",
+                          "required": true,
+                          "type": "string"
+                        }
+                      },
+                      "parameterOrder": [
+                        "name"
+                      ],
+                      "response": {
+                        "$ref": "TokenAuthUser"
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/redis.read-write"
+                      ],
+                      "description": "Gets a specific token auth user for a basic auth enabled cluster."
+                    },
+                    "delete": {
+                      "id": "redis.projects.locations.clusters.tokenAuthUsers.delete",
+                      "path": "v1/{+name}",
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/clusters/{clustersId}/tokenAuthUsers/{tokenAuthUsersId}",
+                      "httpMethod": "DELETE",
+                      "parameters": {
+                        "name": {
+                          "description": "Required. The name of the token auth user to delete. Format: projects/{project}/locations/{location}/clusters/{cluster}/tokenAuthUsers/{token_auth_user}",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+/tokenAuthUsers/[^/]+$",
+                          "location": "path",
+                          "required": true,
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "description": "Optional. An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. The server will guarantee that for at least 60 minutes after the first request. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
+                          "location": "query",
+                          "type": "string"
+                        },
+                        "force": {
+                          "description": "Optional. If set to true, any child auth tokens of this user will also be deleted. Otherwise, the request will only work if the user has no auth tokens.",
+                          "location": "query",
+                          "type": "boolean"
+                        }
+                      },
+                      "parameterOrder": [
+                        "name"
+                      ],
+                      "response": {
+                        "$ref": "Operation"
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/redis.read-write"
+                      ],
+                      "description": "Deletes a token auth user for a token based auth enabled cluster."
+                    },
+                    "addAuthToken": {
+                      "id": "redis.projects.locations.clusters.tokenAuthUsers.addAuthToken",
+                      "path": "v1/{+tokenAuthUser}:addAuthToken",
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/clusters/{clustersId}/tokenAuthUsers/{tokenAuthUsersId}:addAuthToken",
+                      "httpMethod": "POST",
+                      "parameters": {
+                        "tokenAuthUser": {
+                          "description": "Required. The name of the token auth user resource that this auth token will be added for. Format: projects/{project}/locations/{location}/clusters/{cluster}/tokenAuthUsers/{token_auth_user}",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+/tokenAuthUsers/[^/]+$",
+                          "location": "path",
+                          "required": true,
+                          "type": "string"
+                        }
+                      },
+                      "parameterOrder": [
+                        "tokenAuthUser"
+                      ],
+                      "request": {
+                        "$ref": "AddAuthTokenRequest"
+                      },
+                      "response": {
+                        "$ref": "Operation"
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/redis.read-write"
+                      ],
+                      "description": "Adds a auth token for a user of a token based auth enabled cluster."
+                    }
+                  },
+                  "resources": {
+                    "authTokens": {
+                      "methods": {
+                        "list": {
+                          "id": "redis.projects.locations.clusters.tokenAuthUsers.authTokens.list",
+                          "path": "v1/{+parent}/authTokens",
+                          "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/clusters/{clustersId}/tokenAuthUsers/{tokenAuthUsersId}/authTokens",
+                          "httpMethod": "GET",
+                          "parameters": {
+                            "parent": {
+                              "description": "Required. The parent resource that this auth token will be listed for. Format: projects/{project}/locations/{location}/clusters/{cluster}/tokenAuthUsers/{token_auth_user}",
+                              "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+/tokenAuthUsers/[^/]+$",
+                              "location": "path",
+                              "required": true,
+                              "type": "string"
+                            },
+                            "pageSize": {
+                              "description": "Optional. The maximum number of items to return. The maximum value is 1000; values above 1000 will be coerced to 1000. If not specified, a default value of 1000 will be used by the service. Regardless of the page_size value, the response may include a partial list and a caller should only rely on response's `next_page_token` to determine if there are more clusters left to be queried.",
+                              "location": "query",
+                              "type": "integer",
+                              "format": "int32"
+                            },
+                            "pageToken": {
+                              "description": "Optional. The `next_page_token` value returned from a previous [ListTokenAuthUsers] request, if any.",
+                              "location": "query",
+                              "type": "string"
+                            },
+                            "filter": {
+                              "description": "Optional. Expression for filtering results.",
+                              "location": "query",
+                              "type": "string"
+                            },
+                            "orderBy": {
+                              "description": "Optional. Sort results by a defined order.",
+                              "location": "query",
+                              "type": "string"
+                            }
+                          },
+                          "parameterOrder": [
+                            "parent"
+                          ],
+                          "response": {
+                            "$ref": "ListAuthTokensResponse"
+                          },
+                          "scopes": [
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/redis.read-write"
+                          ],
+                          "description": "Lists all the auth tokens for a specific token auth user."
+                        },
+                        "get": {
+                          "id": "redis.projects.locations.clusters.tokenAuthUsers.authTokens.get",
+                          "path": "v1/{+name}",
+                          "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/clusters/{clustersId}/tokenAuthUsers/{tokenAuthUsersId}/authTokens/{authTokensId}",
+                          "httpMethod": "GET",
+                          "parameters": {
+                            "name": {
+                              "description": "Required. The name of auth token for a token based auth enabled cluster. Format: projects/{project}/locations/{location}/clusters/{cluster}/tokenAuthUsers/{token_auth_user}/authTokens/{auth_token}",
+                              "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+/tokenAuthUsers/[^/]+/authTokens/[^/]+$",
+                              "location": "path",
+                              "required": true,
+                              "type": "string"
+                            }
+                          },
+                          "parameterOrder": [
+                            "name"
+                          ],
+                          "response": {
+                            "$ref": "AuthToken"
+                          },
+                          "scopes": [
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/redis.read-write"
+                          ],
+                          "description": "Gets a specific auth token for a specific token auth user."
+                        },
+                        "delete": {
+                          "id": "redis.projects.locations.clusters.tokenAuthUsers.authTokens.delete",
+                          "path": "v1/{+name}",
+                          "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/clusters/{clustersId}/tokenAuthUsers/{tokenAuthUsersId}/authTokens/{authTokensId}",
+                          "httpMethod": "DELETE",
+                          "parameters": {
+                            "name": {
+                              "description": "Required. The name of the token auth user resource that this auth token will be deleted from. Format: projects/{project}/locations/{location}/clusters/{cluster}/tokenAuthUsers/{token_auth_user}/authTokens/{auth_token}",
+                              "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+/tokenAuthUsers/[^/]+/authTokens/[^/]+$",
+                              "location": "path",
+                              "required": true,
+                              "type": "string"
+                            }
+                          },
+                          "parameterOrder": [
+                            "name"
+                          ],
+                          "response": {
+                            "$ref": "Operation"
+                          },
+                          "scopes": [
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/redis.read-write"
+                          ],
+                          "description": "Removes a auth token for a user of a token based auth enabled instance."
+                        }
+                      }
+                    }
+                  }
                 }
               }
             },
@@ -5204,7 +5550,8 @@
                     "$ref": "ListAclPoliciesResponse"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Lists all ACL Policies owned by a project in either the specified location (region) or all locations. The location should have the following format: * `projects/{project_id}/locations/{location_id}` If `location_id` is specified as `-` (wildcard), then all regions available to the project are queried, and the results are aggregated."
                 },
@@ -5229,7 +5576,8 @@
                     "$ref": "AclPolicy"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Gets the details of a specific Redis Cluster ACL Policy."
                 },
@@ -5268,7 +5616,8 @@
                     "$ref": "Operation"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Updates the ACL policy. The operation applies the updated ACL policy to all of the linked clusters. If Memorystore can apply the policy to all clusters, then the operation returns a SUCCESS status. If Memorystore can't apply the policy to all clusters, then to ensure eventual consistency, Memorystore uses reconciliation to apply the policy to the failed clusters. Completed longrunning.Operation will contain the new ACL Policy object in the response field."
                 },
@@ -5303,7 +5652,8 @@
                     "$ref": "Operation"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Deletes a specific Acl Policy. This action will delete the Acl Policy and all the rules associated with it. An ACL policy cannot be deleted if it is attached to a cluster."
                 },
@@ -5341,7 +5691,8 @@
                     "$ref": "AclPolicy"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Creates an ACL Policy. The creation is executed synchronously and the policy is available for use immediately after the RPC returns."
                 }
@@ -5381,7 +5732,9 @@
                     "$ref": "ListBackupCollectionsResponse"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-only",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Lists all backup collections owned by a consumer project in either the specified location (region) or all locations. If `location_id` is specified as `-` (wildcard), then all regions available to the project are queried, and the results are aggregated."
                 },
@@ -5406,7 +5759,9 @@
                     "$ref": "BackupCollection"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-only",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Get a backup collection."
                 }
@@ -5446,7 +5801,9 @@
                         "$ref": "ListBackupsResponse"
                       },
                       "scopes": [
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/redis.read-only",
+                        "https://www.googleapis.com/auth/redis.read-write"
                       ],
                       "description": "Lists all backups owned by a backup collection."
                     },
@@ -5471,7 +5828,9 @@
                         "$ref": "Backup"
                       },
                       "scopes": [
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/redis.read-only",
+                        "https://www.googleapis.com/auth/redis.read-write"
                       ],
                       "description": "Gets the details of a specific backup."
                     },
@@ -5501,7 +5860,8 @@
                         "$ref": "Operation"
                       },
                       "scopes": [
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/redis.read-write"
                       ],
                       "description": "Deletes a specific backup."
                     },
@@ -5529,7 +5889,8 @@
                         "$ref": "Operation"
                       },
                       "scopes": [
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/redis.read-write"
                       ],
                       "description": "Exports a specific backup to a customer target Cloud Storage URI."
                     }
@@ -5571,7 +5932,9 @@
                     "$ref": "ListInstancesResponse"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-only",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Lists all Redis instances owned by a project in either the specified location (region) or all locations. The location should have the following format: * `projects/{project_id}/locations/{location_id}` If `location_id` is specified as `-` (wildcard), then all regions available to the project are queried, and the results are aggregated."
                 },
@@ -5596,7 +5959,9 @@
                     "$ref": "Instance"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-only",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Gets the details of a specific Redis instance."
                 },
@@ -5621,7 +5986,9 @@
                     "$ref": "InstanceAuthString"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-only",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Gets the AUTH string for a Redis instance. If AUTH is not enabled for the instance the response will be empty. This information is not included in the details returned to GetInstance."
                 },
@@ -5654,7 +6021,8 @@
                     "$ref": "Operation"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Creates a Redis instance based on the specified tier and memory size. By default, the instance is accessible from the project's [default network](https://cloud.google.com/vpc/docs/vpc). The creation is executed asynchronously and callers may check the returned operation to track its progress. Once the operation is completed the Redis instance will be fully functional. Completed longrunning.Operation will contain the new instance object in the response field. The returned operation is automatically deleted after a few hours, so there is no need to call DeleteOperation."
                 },
@@ -5688,7 +6056,8 @@
                     "$ref": "Operation"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Updates the metadata and configuration of a specific Redis instance. Completed longrunning.Operation will contain the new instance object in the response field. The returned operation is automatically deleted after a few hours, so there is no need to call DeleteOperation."
                 },
@@ -5716,7 +6085,8 @@
                     "$ref": "Operation"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Upgrades Redis instance to the newer Redis version specified in the request."
                 },
@@ -5744,7 +6114,8 @@
                     "$ref": "Operation"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Import a Redis RDB snapshot file from Cloud Storage into a Redis instance. Redis may stop serving during this operation. Instance state will be IMPORTING for entire operation. When complete, the instance will contain only data from the imported file. The returned operation is automatically deleted after a few hours, so there is no need to call DeleteOperation."
                 },
@@ -5772,7 +6143,8 @@
                     "$ref": "Operation"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Export Redis instance data into a Redis RDB format file in Cloud Storage. Redis will continue serving during this operation. The returned operation is automatically deleted after a few hours, so there is no need to call DeleteOperation."
                 },
@@ -5800,7 +6172,8 @@
                     "$ref": "Operation"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Initiates a failover of the primary node to current replica node for a specific STANDARD tier Cloud Memorystore for Redis instance."
                 },
@@ -5825,7 +6198,8 @@
                     "$ref": "Operation"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Deletes a specific Redis instance. Instance stops serving and data is deleted."
                 },
@@ -5853,7 +6227,8 @@
                     "$ref": "Operation"
                   },
                   "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/redis.read-write"
                   ],
                   "description": "Reschedule maintenance for a given instance in a given project and location."
                 }
@@ -5864,10 +6239,106 @@
       }
     }
   },
-  "version_module": true,
-  "fullyEncodeReservedExpansion": true,
-  "discoveryVersion": "v1",
+  "documentationLink": "https://cloud.google.com/memorystore/docs/redis/",
+  "version": "v1",
+  "parameters": {
+    "access_token": {
+      "type": "string",
+      "description": "OAuth access token.",
+      "location": "query"
+    },
+    "alt": {
+      "type": "string",
+      "description": "Data format for response.",
+      "default": "json",
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ],
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ],
+      "location": "query"
+    },
+    "callback": {
+      "type": "string",
+      "description": "JSONP",
+      "location": "query"
+    },
+    "fields": {
+      "type": "string",
+      "description": "Selector specifying which fields to include in a partial response.",
+      "location": "query"
+    },
+    "key": {
+      "type": "string",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+      "location": "query"
+    },
+    "oauth_token": {
+      "type": "string",
+      "description": "OAuth 2.0 token for the current user.",
+      "location": "query"
+    },
+    "prettyPrint": {
+      "type": "boolean",
+      "description": "Returns response with indentations and line breaks.",
+      "default": "true",
+      "location": "query"
+    },
+    "quotaUser": {
+      "type": "string",
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
+      "location": "query"
+    },
+    "upload_protocol": {
+      "type": "string",
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
+      "location": "query"
+    },
+    "uploadType": {
+      "type": "string",
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
+      "location": "query"
+    },
+    "$.xgafv": {
+      "type": "string",
+      "description": "V1 error format.",
+      "enum": [
+        "1",
+        "2"
+      ],
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ],
+      "location": "query"
+    }
+  },
+  "kind": "discovery#restDescription",
+  "id": "redis:v1",
+  "ownerDomain": "google.com",
+  "revision": "20260331",
   "baseUrl": "https://redis.googleapis.com/",
-  "title": "Google Cloud Memorystore for Redis API",
-  "mtlsRootUrl": "https://redis.mtls.googleapis.com/"
+  "discoveryVersion": "v1",
+  "fullyEncodeReservedExpansion": true,
+  "batchPath": "batch",
+  "auth": {
+    "oauth2": {
+      "scopes": {
+        "https://www.googleapis.com/auth/cloud-platform": {
+          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
+        },
+        "https://www.googleapis.com/auth/redis.read-only": {
+          "description": "See your Google Cloud Memorystore for Redis data and the email address of your Google Account"
+        },
+        "https://www.googleapis.com/auth/redis.read-write": {
+          "description": "See, edit, configure, and delete your Google Cloud Memorystore for Redis data and see the email address for your Google Account"
+        }
+      }
+    }
+  }
 }
