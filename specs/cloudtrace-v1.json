@@ -1,12 +1,153 @@
 {
+  "version_module": true,
+  "servicePath": "",
+  "ownerName": "Google",
   "basePath": "",
-  "fullyEncodeReservedExpansion": true,
-  "documentationLink": "https://cloud.google.com/trace/",
-  "batchPath": "batch",
-  "discoveryVersion": "v1",
+  "icons": {
+    "x16": "http://www.google.com/images/icons/product/search-16.gif",
+    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  },
+  "mtlsRootUrl": "https://cloudtrace.mtls.googleapis.com/",
   "rootUrl": "https://cloudtrace.googleapis.com/",
-  "revision": "20260327",
+  "discoveryVersion": "v1",
   "baseUrl": "https://cloudtrace.googleapis.com/",
+  "fullyEncodeReservedExpansion": true,
+  "schemas": {
+    "ListTracesResponse": {
+      "id": "ListTracesResponse",
+      "description": "The response message for the `ListTraces` method.",
+      "type": "object",
+      "properties": {
+        "traces": {
+          "description": "List of trace records as specified by the view parameter.",
+          "type": "array",
+          "items": {
+            "$ref": "Trace"
+          }
+        },
+        "nextPageToken": {
+          "description": "If defined, indicates that there are more traces that match the request and that this value should be passed to the next request to continue retrieving additional traces.",
+          "type": "string"
+        }
+      }
+    },
+    "Trace": {
+      "id": "Trace",
+      "description": "A trace describes how long it takes for an application to perform an operation. It consists of a set of spans, each of which represent a single timed event within the operation.",
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "description": "Project ID of the Cloud project where the trace data is stored.",
+          "type": "string"
+        },
+        "traceId": {
+          "description": "Globally unique identifier for the trace. This identifier is a 128-bit numeric value formatted as a 32-byte hex string. For example, `382d4f4c6b7bb2f4a972559d9085001d`. The numeric value should not be zero.",
+          "type": "string"
+        },
+        "spans": {
+          "description": "Collection of spans in the trace.",
+          "type": "array",
+          "items": {
+            "$ref": "TraceSpan"
+          }
+        }
+      }
+    },
+    "TraceSpan": {
+      "id": "TraceSpan",
+      "description": "A span represents a single timed event within a trace. Spans can be nested and form a trace tree. Often, a trace contains a root span that describes the end-to-end latency of an operation and, optionally, one or more subspans for its suboperations. Spans do not need to be contiguous. There may be gaps between spans in a trace.",
+      "type": "object",
+      "properties": {
+        "spanId": {
+          "description": "Identifier for the span. Must be a 64-bit integer other than 0 and unique within a trace. For example, `2205310701640571284`.",
+          "type": "string",
+          "format": "uint64"
+        },
+        "kind": {
+          "description": "Distinguishes between spans generated in a particular context. For example, two spans with the same name may be distinguished using `RPC_CLIENT` and `RPC_SERVER` to identify queueing latency associated with the span.",
+          "type": "string",
+          "enumDescriptions": [
+            "Unspecified.",
+            "Indicates that the span covers server-side handling of an RPC or other remote network request.",
+            "Indicates that the span covers the client-side wrapper around an RPC or other remote request."
+          ],
+          "enum": [
+            "SPAN_KIND_UNSPECIFIED",
+            "RPC_SERVER",
+            "RPC_CLIENT"
+          ]
+        },
+        "name": {
+          "description": "Name of the span. Must be less than 128 bytes. The span name is sanitized and displayed in the Trace tool in the Google Cloud Platform Console. The name may be a method name or some other per-call site name. For the same executable and the same call point, a best practice is to use a consistent name, which makes it easier to correlate cross-trace spans.",
+          "type": "string"
+        },
+        "startTime": {
+          "description": "Start time of the span in seconds and nanoseconds from the UNIX epoch.",
+          "type": "string",
+          "format": "google-datetime"
+        },
+        "endTime": {
+          "description": "End time of the span in seconds and nanoseconds from the UNIX epoch.",
+          "type": "string",
+          "format": "google-datetime"
+        },
+        "parentSpanId": {
+          "description": "Optional. ID of the parent span, if any.",
+          "type": "string",
+          "format": "uint64"
+        },
+        "labels": {
+          "description": "Collection of labels associated with the span. Label keys must be less than 128 bytes. Label values must be less than 16 KiB. Some keys might have predefined meaning, and you can also create your own. For more information, see [Cloud Trace labels](https://cloud.google.com/trace/docs/trace-labels).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Traces": {
+      "id": "Traces",
+      "description": "List of new or updated traces.",
+      "type": "object",
+      "properties": {
+        "traces": {
+          "description": "List of traces.",
+          "type": "array",
+          "items": {
+            "$ref": "Trace"
+          }
+        }
+      }
+    },
+    "Empty": {
+      "id": "Empty",
+      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
+      "type": "object",
+      "properties": {}
+    }
+  },
+  "documentationLink": "https://cloud.google.com/trace/",
+  "description": "Sends application trace data to Cloud Trace for viewing. Trace data is collected for all App Engine applications by default. Trace data from other applications can be provided using this API. This library is used to interact with the Cloud Trace API directly. If you are looking to instrument your application for Cloud Trace, we recommend using OpenTelemetry. ",
+  "batchPath": "batch",
+  "auth": {
+    "oauth2": {
+      "scopes": {
+        "https://www.googleapis.com/auth/cloud-platform": {
+          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
+        },
+        "https://www.googleapis.com/auth/trace.append": {
+          "description": "Write Trace data for a project or application"
+        },
+        "https://www.googleapis.com/auth/trace.readonly": {
+          "description": "Read Trace data for a project or application"
+        }
+      }
+    }
+  },
+  "version": "v1",
+  "kind": "discovery#restDescription",
+  "id": "cloudtrace:v1",
+  "protocol": "rest",
   "resources": {
     "projects": {
       "methods": {
@@ -154,38 +295,10 @@
       }
     }
   },
-  "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
-  },
-  "mtlsRootUrl": "https://cloudtrace.mtls.googleapis.com/",
-  "protocol": "rest",
-  "ownerDomain": "google.com",
-  "canonicalName": "Cloud Trace",
-  "version": "v1",
-  "description": "Sends application trace data to Cloud Trace for viewing. Trace data is collected for all App Engine applications by default. Trace data from other applications can be provided using this API. This library is used to interact with the Cloud Trace API directly. If you are looking to instrument your application for Cloud Trace, we recommend using OpenTelemetry. ",
-  "version_module": true,
-  "id": "cloudtrace:v1",
-  "auth": {
-    "oauth2": {
-      "scopes": {
-        "https://www.googleapis.com/auth/cloud-platform": {
-          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
-        },
-        "https://www.googleapis.com/auth/trace.append": {
-          "description": "Write Trace data for a project or application"
-        },
-        "https://www.googleapis.com/auth/trace.readonly": {
-          "description": "Read Trace data for a project or application"
-        }
-      }
-    }
-  },
-  "kind": "discovery#restDescription",
-  "title": "Cloud Trace API",
   "name": "cloudtrace",
-  "ownerName": "Google",
-  "servicePath": "",
+  "canonicalName": "Cloud Trace",
+  "title": "Cloud Trace API",
+  "revision": "20260327",
   "parameters": {
     "access_token": {
       "type": "string",
@@ -263,118 +376,5 @@
       "location": "query"
     }
   },
-  "schemas": {
-    "ListTracesResponse": {
-      "id": "ListTracesResponse",
-      "description": "The response message for the `ListTraces` method.",
-      "type": "object",
-      "properties": {
-        "traces": {
-          "description": "List of trace records as specified by the view parameter.",
-          "type": "array",
-          "items": {
-            "$ref": "Trace"
-          }
-        },
-        "nextPageToken": {
-          "description": "If defined, indicates that there are more traces that match the request and that this value should be passed to the next request to continue retrieving additional traces.",
-          "type": "string"
-        }
-      }
-    },
-    "Trace": {
-      "id": "Trace",
-      "description": "A trace describes how long it takes for an application to perform an operation. It consists of a set of spans, each of which represent a single timed event within the operation.",
-      "type": "object",
-      "properties": {
-        "projectId": {
-          "description": "Project ID of the Cloud project where the trace data is stored.",
-          "type": "string"
-        },
-        "traceId": {
-          "description": "Globally unique identifier for the trace. This identifier is a 128-bit numeric value formatted as a 32-byte hex string. For example, `382d4f4c6b7bb2f4a972559d9085001d`. The numeric value should not be zero.",
-          "type": "string"
-        },
-        "spans": {
-          "description": "Collection of spans in the trace.",
-          "type": "array",
-          "items": {
-            "$ref": "TraceSpan"
-          }
-        }
-      }
-    },
-    "TraceSpan": {
-      "id": "TraceSpan",
-      "description": "A span represents a single timed event within a trace. Spans can be nested and form a trace tree. Often, a trace contains a root span that describes the end-to-end latency of an operation and, optionally, one or more subspans for its suboperations. Spans do not need to be contiguous. There may be gaps between spans in a trace.",
-      "type": "object",
-      "properties": {
-        "spanId": {
-          "description": "Identifier for the span. Must be a 64-bit integer other than 0 and unique within a trace. For example, `2205310701640571284`.",
-          "type": "string",
-          "format": "uint64"
-        },
-        "kind": {
-          "description": "Distinguishes between spans generated in a particular context. For example, two spans with the same name may be distinguished using `RPC_CLIENT` and `RPC_SERVER` to identify queueing latency associated with the span.",
-          "type": "string",
-          "enumDescriptions": [
-            "Unspecified.",
-            "Indicates that the span covers server-side handling of an RPC or other remote network request.",
-            "Indicates that the span covers the client-side wrapper around an RPC or other remote request."
-          ],
-          "enum": [
-            "SPAN_KIND_UNSPECIFIED",
-            "RPC_SERVER",
-            "RPC_CLIENT"
-          ]
-        },
-        "name": {
-          "description": "Name of the span. Must be less than 128 bytes. The span name is sanitized and displayed in the Trace tool in the Google Cloud Platform Console. The name may be a method name or some other per-call site name. For the same executable and the same call point, a best practice is to use a consistent name, which makes it easier to correlate cross-trace spans.",
-          "type": "string"
-        },
-        "startTime": {
-          "description": "Start time of the span in seconds and nanoseconds from the UNIX epoch.",
-          "type": "string",
-          "format": "google-datetime"
-        },
-        "endTime": {
-          "description": "End time of the span in seconds and nanoseconds from the UNIX epoch.",
-          "type": "string",
-          "format": "google-datetime"
-        },
-        "parentSpanId": {
-          "description": "Optional. ID of the parent span, if any.",
-          "type": "string",
-          "format": "uint64"
-        },
-        "labels": {
-          "description": "Collection of labels associated with the span. Label keys must be less than 128 bytes. Label values must be less than 16 KiB. Some keys might have predefined meaning, and you can also create your own. For more information, see [Cloud Trace labels](https://cloud.google.com/trace/docs/trace-labels).",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "Traces": {
-      "id": "Traces",
-      "description": "List of new or updated traces.",
-      "type": "object",
-      "properties": {
-        "traces": {
-          "description": "List of traces.",
-          "type": "array",
-          "items": {
-            "$ref": "Trace"
-          }
-        }
-      }
-    },
-    "Empty": {
-      "id": "Empty",
-      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
-      "type": "object",
-      "properties": {}
-    }
-  }
+  "ownerDomain": "google.com"
 }
