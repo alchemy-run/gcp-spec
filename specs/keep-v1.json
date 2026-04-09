@@ -1,418 +1,187 @@
 {
   "basePath": "",
-  "id": "keep:v1",
-  "mtlsRootUrl": "https://keep.mtls.googleapis.com/",
-  "title": "Google Keep API",
-  "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
-  },
-  "canonicalName": "Keep",
-  "resources": {
-    "notes": {
-      "methods": {
-        "get": {
-          "parameterOrder": [
-            "name"
-          ],
-          "path": "v1/{+name}",
-          "scopes": [
-            "https://www.googleapis.com/auth/keep",
-            "https://www.googleapis.com/auth/keep.readonly"
-          ],
-          "description": "Gets a note.",
-          "flatPath": "v1/notes/{notesId}",
-          "parameters": {
-            "name": {
-              "location": "path",
-              "description": "Required. Name of the resource.",
-              "pattern": "^notes/[^/]+$",
-              "type": "string",
-              "required": true
-            }
-          },
-          "id": "keep.notes.get",
-          "httpMethod": "GET",
-          "response": {
-            "$ref": "Note"
+  "version_module": true,
+  "revision": "20260401",
+  "schemas": {
+    "Attachment": {
+      "id": "Attachment",
+      "properties": {
+        "name": {
+          "description": "The resource name;",
+          "type": "string"
+        },
+        "mimeType": {
+          "description": "The MIME types (IANA media types) in which the attachment is available.",
+          "type": "array",
+          "items": {
+            "type": "string"
           }
-        },
-        "create": {
-          "id": "keep.notes.create",
-          "httpMethod": "POST",
-          "response": {
-            "$ref": "Note"
-          },
-          "path": "v1/notes",
-          "request": {
-            "$ref": "Note"
-          },
-          "parameterOrder": [],
-          "flatPath": "v1/notes",
-          "parameters": {},
-          "description": "Creates a new note.",
-          "scopes": [
-            "https://www.googleapis.com/auth/keep"
-          ]
-        },
-        "list": {
-          "id": "keep.notes.list",
-          "httpMethod": "GET",
-          "response": {
-            "$ref": "ListNotesResponse"
-          },
-          "parameterOrder": [],
-          "path": "v1/notes",
-          "scopes": [
-            "https://www.googleapis.com/auth/keep",
-            "https://www.googleapis.com/auth/keep.readonly"
-          ],
-          "description": "Lists notes. Every list call returns a page of results with `page_size` as the upper bound of returned items. A `page_size` of zero allows the server to choose the upper bound. The ListNotesResponse contains at most `page_size` entries. If there are more things left to list, it provides a `next_page_token` value. (Page tokens are opaque values.) To get the next page of results, copy the result's `next_page_token` into the next request's `page_token`. Repeat until the `next_page_token` returned with a page of results is empty. ListNotes return consistent results in the face of concurrent changes, or signals that it cannot with an ABORTED error.",
-          "flatPath": "v1/notes",
-          "parameters": {
-            "pageToken": {
-              "description": "The previous page's `next_page_token` field.",
-              "location": "query",
-              "type": "string"
-            },
-            "filter": {
-              "location": "query",
-              "type": "string",
-              "description": "Filter for list results. If no filter is supplied, the `trashed` filter is applied by default. Valid fields to filter by are: `create_time`, `update_time`, `trash_time`, and `trashed`. Filter syntax follows the [Google AIP filtering spec](https://aip.dev/160)."
-            },
-            "pageSize": {
-              "location": "query",
-              "type": "integer",
-              "description": "The maximum number of results to return.",
-              "format": "int32"
-            }
-          }
-        },
-        "delete": {
-          "response": {
-            "$ref": "Empty"
-          },
-          "id": "keep.notes.delete",
-          "httpMethod": "DELETE",
-          "description": "Deletes a note. Caller must have the `OWNER` role on the note to delete. Deleting a note removes the resource immediately and cannot be undone. Any collaborators will lose access to the note.",
-          "flatPath": "v1/notes/{notesId}",
-          "parameters": {
-            "name": {
-              "location": "path",
-              "description": "Required. Name of the note to delete.",
-              "pattern": "^notes/[^/]+$",
-              "type": "string",
-              "required": true
-            }
-          },
-          "scopes": [
-            "https://www.googleapis.com/auth/keep"
-          ],
-          "path": "v1/{+name}",
-          "parameterOrder": [
-            "name"
-          ]
         }
       },
-      "resources": {
-        "permissions": {
-          "methods": {
-            "batchCreate": {
-              "response": {
-                "$ref": "BatchCreatePermissionsResponse"
-              },
-              "id": "keep.notes.permissions.batchCreate",
-              "httpMethod": "POST",
-              "flatPath": "v1/notes/{notesId}/permissions:batchCreate",
-              "parameters": {
-                "parent": {
-                  "location": "path",
-                  "pattern": "^notes/[^/]+$",
-                  "type": "string",
-                  "description": "The parent resource shared by all Permissions being created. Format: `notes/{note}` If this is set, the parent field in the CreatePermission messages must either be empty or match this field.",
-                  "required": true
-                }
-              },
-              "description": "Creates one or more permissions on the note. Only permissions with the `WRITER` role may be created. If adding any permission fails, then the entire request fails and no changes are made.",
-              "scopes": [
-                "https://www.googleapis.com/auth/keep"
-              ],
-              "path": "v1/{+parent}/permissions:batchCreate",
-              "request": {
-                "$ref": "BatchCreatePermissionsRequest"
-              },
-              "parameterOrder": [
-                "parent"
-              ]
-            },
-            "batchDelete": {
-              "id": "keep.notes.permissions.batchDelete",
-              "httpMethod": "POST",
-              "response": {
-                "$ref": "Empty"
-              },
-              "path": "v1/{+parent}/permissions:batchDelete",
-              "request": {
-                "$ref": "BatchDeletePermissionsRequest"
-              },
-              "parameterOrder": [
-                "parent"
-              ],
-              "description": "Deletes one or more permissions on the note. The specified entities will immediately lose access. A permission with the `OWNER` role can't be removed. If removing a permission fails, then the entire request fails and no changes are made. Returns a 400 bad request error if a specified permission does not exist on the note.",
-              "flatPath": "v1/notes/{notesId}/permissions:batchDelete",
-              "parameters": {
-                "parent": {
-                  "description": "The parent resource shared by all permissions being deleted. Format: `notes/{note}` If this is set, the parent of all of the permissions specified in the DeletePermissionRequest messages must match this field.",
-                  "pattern": "^notes/[^/]+$",
-                  "type": "string",
-                  "required": true,
-                  "location": "path"
-                }
-              },
-              "scopes": [
-                "https://www.googleapis.com/auth/keep"
-              ]
-            }
-          }
-        }
-      }
-    },
-    "media": {
-      "methods": {
-        "download": {
-          "response": {
-            "$ref": "Attachment"
-          },
-          "id": "keep.media.download",
-          "httpMethod": "GET",
-          "scopes": [
-            "https://www.googleapis.com/auth/keep",
-            "https://www.googleapis.com/auth/keep.readonly"
-          ],
-          "flatPath": "v1/notes/{notesId}/attachments/{attachmentsId}",
-          "parameters": {
-            "name": {
-              "description": "Required. The name of the attachment.",
-              "pattern": "^notes/[^/]+/attachments/[^/]+$",
-              "type": "string",
-              "required": true,
-              "location": "path"
-            },
-            "mimeType": {
-              "description": "The IANA MIME type format requested. The requested MIME type must be one specified in the attachment.mime_type. Required when downloading attachment media and ignored otherwise.",
-              "location": "query",
-              "type": "string"
-            }
-          },
-          "useMediaDownloadService": true,
-          "description": "Gets an attachment. To download attachment media via REST requires the alt=media query parameter. Returns a 400 bad request error if attachment media is not available in the requested MIME type.",
-          "parameterOrder": [
-            "name"
-          ],
-          "path": "v1/{+name}",
-          "supportsMediaDownload": true
-        }
-      }
-    }
-  },
-  "discoveryVersion": "v1",
-  "protocol": "rest",
-  "fullyEncodeReservedExpansion": true,
-  "ownerName": "Google",
-  "batchPath": "batch",
-  "parameters": {
-    "alt": {
-      "enumDescriptions": [
-        "Responses with Content-Type of application/json",
-        "Media download with context-dependent Content-Type",
-        "Responses with Content-Type of application/x-protobuf"
-      ],
-      "location": "query",
-      "default": "json",
-      "enum": [
-        "json",
-        "media",
-        "proto"
-      ],
-      "description": "Data format for response.",
-      "type": "string"
-    },
-    "$.xgafv": {
-      "description": "V1 error format.",
-      "type": "string",
-      "enum": [
-        "1",
-        "2"
-      ],
-      "location": "query",
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ]
-    },
-    "oauth_token": {
-      "description": "OAuth 2.0 token for the current user.",
-      "type": "string",
-      "location": "query"
-    },
-    "quotaUser": {
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
-      "type": "string",
-      "location": "query"
-    },
-    "uploadType": {
-      "type": "string",
-      "location": "query",
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\")."
-    },
-    "access_token": {
-      "type": "string",
-      "location": "query",
-      "description": "OAuth access token."
-    },
-    "prettyPrint": {
-      "default": "true",
-      "type": "boolean",
-      "location": "query",
-      "description": "Returns response with indentations and line breaks."
-    },
-    "fields": {
-      "description": "Selector specifying which fields to include in a partial response.",
-      "type": "string",
-      "location": "query"
-    },
-    "key": {
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
-      "type": "string",
-      "location": "query"
-    },
-    "upload_protocol": {
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
-      "type": "string",
-      "location": "query"
-    },
-    "callback": {
-      "description": "JSONP",
-      "type": "string",
-      "location": "query"
-    }
-  },
-  "kind": "discovery#restDescription",
-  "rootUrl": "https://keep.googleapis.com/",
-  "servicePath": "",
-  "baseUrl": "https://keep.googleapis.com/",
-  "version": "v1",
-  "name": "keep",
-  "version_module": true,
-  "documentationLink": "https://developers.google.com/workspace/keep/api",
-  "schemas": {
-    "Family": {
-      "id": "Family",
-      "description": "Describes a single Google Family.",
-      "type": "object",
-      "properties": {}
+      "description": "An attachment to a note.",
+      "type": "object"
     },
     "BatchCreatePermissionsResponse": {
+      "description": "The response for creating permissions on a note.",
       "type": "object",
       "id": "BatchCreatePermissionsResponse",
-      "description": "The response for creating permissions on a note.",
       "properties": {
         "permissions": {
-          "type": "array",
           "description": "Permissions created.",
+          "type": "array",
           "items": {
             "$ref": "Permission"
           }
         }
       }
     },
-    "Note": {
+    "BatchDeletePermissionsRequest": {
+      "description": "The request to remove one or more permissions from a note. A permission with the `OWNER` role can't be removed. If removing a permission fails, then the entire request fails and no changes are made. Returns a 400 bad request error if a specified permission does not exist on the note.",
       "type": "object",
-      "id": "Note",
-      "description": "A single note.",
+      "id": "BatchDeletePermissionsRequest",
       "properties": {
-        "permissions": {
-          "description": "Output only. The list of permissions set on the note. Contains at least one entry for the note owner.",
-          "items": {
-            "$ref": "Permission"
-          },
+        "names": {
+          "description": "Required. The names of the permissions to delete. Format: `notes/{note}/permissions/{permission}`",
           "type": "array",
-          "readOnly": true
-        },
-        "title": {
-          "type": "string",
-          "description": "The title of the note. Length must be less than 1,000 characters."
-        },
-        "updateTime": {
-          "type": "string",
-          "description": "Output only. When this note was last modified.",
-          "format": "google-datetime",
-          "readOnly": true
-        },
-        "trashTime": {
-          "type": "string",
-          "description": "Output only. When this note was trashed. If `trashed`, the note is eventually deleted. If the note is not trashed, this field is not set (and the trashed field is `false`).",
-          "format": "google-datetime",
-          "readOnly": true
-        },
-        "attachments": {
-          "type": "array",
-          "description": "Output only. The attachments attached to this note.",
           "items": {
-            "$ref": "Attachment"
-          },
-          "readOnly": true
-        },
-        "body": {
-          "description": "The body of the note.",
-          "$ref": "Section"
-        },
-        "createTime": {
-          "type": "string",
-          "description": "Output only. When this note was created.",
-          "format": "google-datetime",
-          "readOnly": true
-        },
-        "name": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. The resource name of this note. See general note on identifiers in KeepService."
-        },
-        "trashed": {
-          "readOnly": true,
-          "type": "boolean",
-          "description": "Output only. `true` if this note has been trashed. If trashed, the note is eventually deleted."
+            "type": "string"
+          }
         }
       }
     },
+    "Section": {
+      "id": "Section",
+      "properties": {
+        "list": {
+          "$ref": "ListContent",
+          "description": "Used if this section's content is a list."
+        },
+        "text": {
+          "description": "Used if this section's content is a block of text. The length of the text content must be less than 20,000 characters.",
+          "$ref": "TextContent"
+        }
+      },
+      "description": "The content of the note.",
+      "type": "object"
+    },
+    "Group": {
+      "description": "Describes a single Group.",
+      "type": "object",
+      "id": "Group",
+      "properties": {
+        "email": {
+          "description": "The group email.",
+          "type": "string"
+        }
+      }
+    },
+    "CreatePermissionRequest": {
+      "id": "CreatePermissionRequest",
+      "properties": {
+        "parent": {
+          "description": "Required. The parent note where this permission will be created. Format: `notes/{note}`",
+          "type": "string"
+        },
+        "permission": {
+          "$ref": "Permission",
+          "description": "Required. The permission to create. One of Permission.email, User.email or Group.email must be supplied."
+        }
+      },
+      "description": "The request to add a single permission on the note.",
+      "type": "object"
+    },
     "BatchCreatePermissionsRequest": {
+      "description": "The request to add one or more permissions on the note. Currently, only the `WRITER` role may be specified. If adding a permission fails, then the entire request fails and no changes are made.",
       "type": "object",
       "id": "BatchCreatePermissionsRequest",
-      "description": "The request to add one or more permissions on the note. Currently, only the `WRITER` role may be specified. If adding a permission fails, then the entire request fails and no changes are made.",
       "properties": {
         "requests": {
           "description": "The request message specifying the resources to create.",
+          "type": "array",
           "items": {
             "$ref": "CreatePermissionRequest"
-          },
-          "type": "array"
+          }
         }
       }
     },
+    "ListItem": {
+      "description": "A single list item in a note's list.",
+      "type": "object",
+      "id": "ListItem",
+      "properties": {
+        "childListItems": {
+          "description": "If set, list of list items nested under this list item. Only one level of nesting is allowed.",
+          "type": "array",
+          "items": {
+            "$ref": "ListItem"
+          }
+        },
+        "checked": {
+          "description": "Whether this item has been checked off or not.",
+          "type": "boolean"
+        },
+        "text": {
+          "$ref": "TextContent",
+          "description": "The text of this item. Length must be less than 1,000 characters."
+        }
+      }
+    },
+    "ListNotesResponse": {
+      "description": "The response when listing a page of notes.",
+      "type": "object",
+      "id": "ListNotesResponse",
+      "properties": {
+        "notes": {
+          "description": "A page of notes.",
+          "type": "array",
+          "items": {
+            "$ref": "Note"
+          }
+        },
+        "nextPageToken": {
+          "description": "Next page's `page_token` field.",
+          "type": "string"
+        }
+      }
+    },
+    "Family": {
+      "id": "Family",
+      "properties": {},
+      "description": "Describes a single Google Family.",
+      "type": "object"
+    },
     "Empty": {
       "id": "Empty",
+      "properties": {},
       "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
-      "type": "object",
-      "properties": {}
+      "type": "object"
+    },
+    "ListContent": {
+      "id": "ListContent",
+      "properties": {
+        "listItems": {
+          "description": "The items in the list. The number of items must be less than 1,000.",
+          "type": "array",
+          "items": {
+            "$ref": "ListItem"
+          }
+        }
+      },
+      "description": "The list of items for a single list note.",
+      "type": "object"
     },
     "Permission": {
-      "id": "Permission",
       "description": "A single permission on the note. Associates a `member` with a `role`.",
       "type": "object",
+      "id": "Permission",
       "properties": {
-        "name": {
-          "type": "string",
-          "description": "Output only. The resource name.",
+        "email": {
+          "description": "The email associated with the member. If set on create, the `email` field in the `User` or `Group` message must either be empty or match this field. On read, may be unset if the member does not have an associated email.",
+          "type": "string"
+        },
+        "deleted": {
+          "description": "Output only. Whether this member has been deleted. If the member is recovered, this value is set to false and the recovered member retains the role on the note.",
+          "type": "boolean",
           "readOnly": true
         },
         "role": {
@@ -429,50 +198,91 @@
           "description": "The role granted by this permission. The role determines the entity’s ability to read, write, and share notes.",
           "type": "string"
         },
-        "email": {
-          "description": "The email associated with the member. If set on create, the `email` field in the `User` or `Group` message must either be empty or match this field. On read, may be unset if the member does not have an associated email.",
+        "group": {
+          "readOnly": true,
+          "description": "Output only. The group to which this role applies.",
+          "$ref": "Group"
+        },
+        "name": {
+          "readOnly": true,
+          "description": "Output only. The resource name.",
           "type": "string"
         },
-        "group": {
-          "description": "Output only. The group to which this role applies.",
-          "$ref": "Group",
+        "family": {
+          "description": "Output only. The Google Family to which this role applies.",
+          "$ref": "Family",
           "readOnly": true
         },
         "user": {
-          "description": "Output only. The user to whom this role applies.",
+          "readOnly": true,
           "$ref": "User",
-          "readOnly": true
-        },
-        "family": {
-          "readOnly": true,
-          "$ref": "Family",
-          "description": "Output only. The Google Family to which this role applies."
-        },
-        "deleted": {
-          "readOnly": true,
-          "type": "boolean",
-          "description": "Output only. Whether this member has been deleted. If the member is recovered, this value is set to false and the recovered member retains the role on the note."
+          "description": "Output only. The user to whom this role applies."
         }
       }
     },
-    "ListContent": {
+    "Note": {
+      "id": "Note",
       "properties": {
-        "listItems": {
+        "trashed": {
+          "readOnly": true,
+          "description": "Output only. `true` if this note has been trashed. If trashed, the note is eventually deleted.",
+          "type": "boolean"
+        },
+        "attachments": {
+          "description": "Output only. The attachments attached to this note.",
           "type": "array",
-          "description": "The items in the list. The number of items must be less than 1,000.",
           "items": {
-            "$ref": "ListItem"
-          }
+            "$ref": "Attachment"
+          },
+          "readOnly": true
+        },
+        "name": {
+          "description": "Output only. The resource name of this note. See general note on identifiers in KeepService.",
+          "type": "string",
+          "readOnly": true
+        },
+        "permissions": {
+          "description": "Output only. The list of permissions set on the note. Contains at least one entry for the note owner.",
+          "type": "array",
+          "items": {
+            "$ref": "Permission"
+          },
+          "readOnly": true
+        },
+        "title": {
+          "description": "The title of the note. Length must be less than 1,000 characters.",
+          "type": "string"
+        },
+        "updateTime": {
+          "readOnly": true,
+          "format": "google-datetime",
+          "description": "Output only. When this note was last modified.",
+          "type": "string"
+        },
+        "trashTime": {
+          "readOnly": true,
+          "format": "google-datetime",
+          "description": "Output only. When this note was trashed. If `trashed`, the note is eventually deleted. If the note is not trashed, this field is not set (and the trashed field is `false`).",
+          "type": "string"
+        },
+        "body": {
+          "description": "The body of the note.",
+          "$ref": "Section"
+        },
+        "createTime": {
+          "description": "Output only. When this note was created.",
+          "type": "string",
+          "readOnly": true,
+          "format": "google-datetime"
         }
       },
-      "id": "ListContent",
-      "description": "The list of items for a single list note.",
+      "description": "A single note.",
       "type": "object"
     },
     "TextContent": {
+      "description": "The block of text for a single text section or list item.",
       "type": "object",
       "id": "TextContent",
-      "description": "The block of text for a single text section or list item.",
       "properties": {
         "text": {
           "description": "The text of the note. The limits on this vary with the specific field using this type.",
@@ -480,144 +290,334 @@
         }
       }
     },
-    "Attachment": {
-      "id": "Attachment",
-      "description": "An attachment to a note.",
-      "type": "object",
-      "properties": {
-        "name": {
-          "description": "The resource name;",
-          "type": "string"
-        },
-        "mimeType": {
-          "description": "The MIME types (IANA media types) in which the attachment is available.",
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        }
-      }
-    },
-    "BatchDeletePermissionsRequest": {
-      "id": "BatchDeletePermissionsRequest",
-      "description": "The request to remove one or more permissions from a note. A permission with the `OWNER` role can't be removed. If removing a permission fails, then the entire request fails and no changes are made. Returns a 400 bad request error if a specified permission does not exist on the note.",
-      "type": "object",
-      "properties": {
-        "names": {
-          "type": "array",
-          "description": "Required. The names of the permissions to delete. Format: `notes/{note}/permissions/{permission}`",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "Group": {
-      "id": "Group",
-      "description": "Describes a single Group.",
-      "type": "object",
+    "User": {
+      "id": "User",
       "properties": {
         "email": {
-          "type": "string",
-          "description": "The group email."
-        }
-      }
-    },
-    "ListNotesResponse": {
-      "properties": {
-        "notes": {
-          "type": "array",
-          "description": "A page of notes.",
-          "items": {
-            "$ref": "Note"
-          }
-        },
-        "nextPageToken": {
-          "description": "Next page's `page_token` field.",
+          "description": "The user's email.",
           "type": "string"
         }
       },
-      "type": "object",
-      "id": "ListNotesResponse",
-      "description": "The response when listing a page of notes."
-    },
-    "ListItem": {
-      "id": "ListItem",
-      "description": "A single list item in a note's list.",
-      "type": "object",
-      "properties": {
-        "text": {
-          "$ref": "TextContent",
-          "description": "The text of this item. Length must be less than 1,000 characters."
-        },
-        "checked": {
-          "description": "Whether this item has been checked off or not.",
-          "type": "boolean"
-        },
-        "childListItems": {
-          "type": "array",
-          "description": "If set, list of list items nested under this list item. Only one level of nesting is allowed.",
-          "items": {
-            "$ref": "ListItem"
-          }
-        }
-      }
-    },
-    "User": {
-      "type": "object",
-      "id": "User",
       "description": "Describes a single user.",
-      "properties": {
-        "email": {
-          "type": "string",
-          "description": "The user's email."
-        }
-      }
-    },
-    "CreatePermissionRequest": {
-      "id": "CreatePermissionRequest",
-      "description": "The request to add a single permission on the note.",
-      "type": "object",
-      "properties": {
-        "parent": {
-          "description": "Required. The parent note where this permission will be created. Format: `notes/{note}`",
-          "type": "string"
-        },
-        "permission": {
-          "$ref": "Permission",
-          "description": "Required. The permission to create. One of Permission.email, User.email or Group.email must be supplied."
-        }
-      }
-    },
-    "Section": {
-      "type": "object",
-      "id": "Section",
-      "description": "The content of the note.",
-      "properties": {
-        "text": {
-          "$ref": "TextContent",
-          "description": "Used if this section's content is a block of text. The length of the text content must be less than 20,000 characters."
-        },
-        "list": {
-          "description": "Used if this section's content is a list.",
-          "$ref": "ListContent"
-        }
-      }
+      "type": "object"
     }
   },
-  "revision": "20260401",
+  "fullyEncodeReservedExpansion": true,
+  "mtlsRootUrl": "https://keep.mtls.googleapis.com/",
+  "icons": {
+    "x16": "http://www.google.com/images/icons/product/search-16.gif",
+    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  },
+  "title": "Google Keep API",
+  "description": "The Google Keep API is used in an enterprise environment to manage Google Keep content and resolve issues identified by cloud security software.",
+  "name": "keep",
+  "rootUrl": "https://keep.googleapis.com/",
+  "documentationLink": "https://developers.google.com/workspace/keep/api",
   "auth": {
     "oauth2": {
       "scopes": {
-        "https://www.googleapis.com/auth/keep.readonly": {
-          "description": "View all your Google Keep data"
-        },
         "https://www.googleapis.com/auth/keep": {
           "description": "See, edit, create and permanently delete all your Google Keep data"
+        },
+        "https://www.googleapis.com/auth/keep.readonly": {
+          "description": "View all your Google Keep data"
         }
       }
     }
   },
+  "discoveryVersion": "v1",
+  "baseUrl": "https://keep.googleapis.com/",
+  "kind": "discovery#restDescription",
   "ownerDomain": "google.com",
-  "description": "The Google Keep API is used in an enterprise environment to manage Google Keep content and resolve issues identified by cloud security software."
+  "servicePath": "",
+  "canonicalName": "Keep",
+  "ownerName": "Google",
+  "protocol": "rest",
+  "parameters": {
+    "callback": {
+      "location": "query",
+      "type": "string",
+      "description": "JSONP"
+    },
+    "key": {
+      "location": "query",
+      "type": "string",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token."
+    },
+    "oauth_token": {
+      "location": "query",
+      "type": "string",
+      "description": "OAuth 2.0 token for the current user."
+    },
+    "$.xgafv": {
+      "enum": [
+        "1",
+        "2"
+      ],
+      "type": "string",
+      "description": "V1 error format.",
+      "location": "query",
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ]
+    },
+    "alt": {
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ],
+      "type": "string",
+      "description": "Data format for response.",
+      "default": "json",
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ],
+      "location": "query"
+    },
+    "access_token": {
+      "location": "query",
+      "type": "string",
+      "description": "OAuth access token."
+    },
+    "fields": {
+      "type": "string",
+      "description": "Selector specifying which fields to include in a partial response.",
+      "location": "query"
+    },
+    "upload_protocol": {
+      "location": "query",
+      "type": "string",
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\")."
+    },
+    "prettyPrint": {
+      "location": "query",
+      "default": "true",
+      "type": "boolean",
+      "description": "Returns response with indentations and line breaks."
+    },
+    "quotaUser": {
+      "location": "query",
+      "type": "string",
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters."
+    },
+    "uploadType": {
+      "location": "query",
+      "type": "string",
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\")."
+    }
+  },
+  "id": "keep:v1",
+  "resources": {
+    "notes": {
+      "resources": {
+        "permissions": {
+          "methods": {
+            "batchDelete": {
+              "response": {
+                "$ref": "Empty"
+              },
+              "parameters": {
+                "parent": {
+                  "description": "The parent resource shared by all permissions being deleted. Format: `notes/{note}` If this is set, the parent of all of the permissions specified in the DeletePermissionRequest messages must match this field.",
+                  "required": true,
+                  "type": "string",
+                  "location": "path",
+                  "pattern": "^notes/[^/]+$"
+                }
+              },
+              "path": "v1/{+parent}/permissions:batchDelete",
+              "id": "keep.notes.permissions.batchDelete",
+              "description": "Deletes one or more permissions on the note. The specified entities will immediately lose access. A permission with the `OWNER` role can't be removed. If removing a permission fails, then the entire request fails and no changes are made. Returns a 400 bad request error if a specified permission does not exist on the note.",
+              "httpMethod": "POST",
+              "flatPath": "v1/notes/{notesId}/permissions:batchDelete",
+              "parameterOrder": [
+                "parent"
+              ],
+              "scopes": [
+                "https://www.googleapis.com/auth/keep"
+              ],
+              "request": {
+                "$ref": "BatchDeletePermissionsRequest"
+              }
+            },
+            "batchCreate": {
+              "id": "keep.notes.permissions.batchCreate",
+              "description": "Creates one or more permissions on the note. Only permissions with the `WRITER` role may be created. If adding any permission fails, then the entire request fails and no changes are made.",
+              "httpMethod": "POST",
+              "flatPath": "v1/notes/{notesId}/permissions:batchCreate",
+              "parameterOrder": [
+                "parent"
+              ],
+              "scopes": [
+                "https://www.googleapis.com/auth/keep"
+              ],
+              "request": {
+                "$ref": "BatchCreatePermissionsRequest"
+              },
+              "response": {
+                "$ref": "BatchCreatePermissionsResponse"
+              },
+              "parameters": {
+                "parent": {
+                  "description": "The parent resource shared by all Permissions being created. Format: `notes/{note}` If this is set, the parent field in the CreatePermission messages must either be empty or match this field.",
+                  "required": true,
+                  "type": "string",
+                  "location": "path",
+                  "pattern": "^notes/[^/]+$"
+                }
+              },
+              "path": "v1/{+parent}/permissions:batchCreate"
+            }
+          }
+        }
+      },
+      "methods": {
+        "get": {
+          "response": {
+            "$ref": "Note"
+          },
+          "parameters": {
+            "name": {
+              "description": "Required. Name of the resource.",
+              "required": true,
+              "type": "string",
+              "location": "path",
+              "pattern": "^notes/[^/]+$"
+            }
+          },
+          "path": "v1/{+name}",
+          "flatPath": "v1/notes/{notesId}",
+          "parameterOrder": [
+            "name"
+          ],
+          "scopes": [
+            "https://www.googleapis.com/auth/keep",
+            "https://www.googleapis.com/auth/keep.readonly"
+          ],
+          "id": "keep.notes.get",
+          "description": "Gets a note.",
+          "httpMethod": "GET"
+        },
+        "create": {
+          "response": {
+            "$ref": "Note"
+          },
+          "parameters": {},
+          "path": "v1/notes",
+          "flatPath": "v1/notes",
+          "parameterOrder": [],
+          "scopes": [
+            "https://www.googleapis.com/auth/keep"
+          ],
+          "request": {
+            "$ref": "Note"
+          },
+          "id": "keep.notes.create",
+          "description": "Creates a new note.",
+          "httpMethod": "POST"
+        },
+        "delete": {
+          "path": "v1/{+name}",
+          "parameters": {
+            "name": {
+              "description": "Required. Name of the note to delete.",
+              "required": true,
+              "type": "string",
+              "pattern": "^notes/[^/]+$",
+              "location": "path"
+            }
+          },
+          "response": {
+            "$ref": "Empty"
+          },
+          "flatPath": "v1/notes/{notesId}",
+          "parameterOrder": [
+            "name"
+          ],
+          "scopes": [
+            "https://www.googleapis.com/auth/keep"
+          ],
+          "httpMethod": "DELETE",
+          "description": "Deletes a note. Caller must have the `OWNER` role on the note to delete. Deleting a note removes the resource immediately and cannot be undone. Any collaborators will lose access to the note.",
+          "id": "keep.notes.delete"
+        },
+        "list": {
+          "path": "v1/notes",
+          "response": {
+            "$ref": "ListNotesResponse"
+          },
+          "parameters": {
+            "pageSize": {
+              "description": "The maximum number of results to return.",
+              "type": "integer",
+              "location": "query",
+              "format": "int32"
+            },
+            "pageToken": {
+              "location": "query",
+              "description": "The previous page's `next_page_token` field.",
+              "type": "string"
+            },
+            "filter": {
+              "location": "query",
+              "description": "Filter for list results. If no filter is supplied, the `trashed` filter is applied by default. Valid fields to filter by are: `create_time`, `update_time`, `trash_time`, and `trashed`. Filter syntax follows the [Google AIP filtering spec](https://aip.dev/160).",
+              "type": "string"
+            }
+          },
+          "flatPath": "v1/notes",
+          "parameterOrder": [],
+          "scopes": [
+            "https://www.googleapis.com/auth/keep",
+            "https://www.googleapis.com/auth/keep.readonly"
+          ],
+          "description": "Lists notes. Every list call returns a page of results with `page_size` as the upper bound of returned items. A `page_size` of zero allows the server to choose the upper bound. The ListNotesResponse contains at most `page_size` entries. If there are more things left to list, it provides a `next_page_token` value. (Page tokens are opaque values.) To get the next page of results, copy the result's `next_page_token` into the next request's `page_token`. Repeat until the `next_page_token` returned with a page of results is empty. ListNotes return consistent results in the face of concurrent changes, or signals that it cannot with an ABORTED error.",
+          "httpMethod": "GET",
+          "id": "keep.notes.list"
+        }
+      }
+    },
+    "media": {
+      "methods": {
+        "download": {
+          "flatPath": "v1/notes/{notesId}/attachments/{attachmentsId}",
+          "parameterOrder": [
+            "name"
+          ],
+          "useMediaDownloadService": true,
+          "scopes": [
+            "https://www.googleapis.com/auth/keep",
+            "https://www.googleapis.com/auth/keep.readonly"
+          ],
+          "description": "Gets an attachment. To download attachment media via REST requires the alt=media query parameter. Returns a 400 bad request error if attachment media is not available in the requested MIME type.",
+          "httpMethod": "GET",
+          "id": "keep.media.download",
+          "path": "v1/{+name}",
+          "response": {
+            "$ref": "Attachment"
+          },
+          "parameters": {
+            "name": {
+              "location": "path",
+              "pattern": "^notes/[^/]+/attachments/[^/]+$",
+              "description": "Required. The name of the attachment.",
+              "required": true,
+              "type": "string"
+            },
+            "mimeType": {
+              "location": "query",
+              "description": "The IANA MIME type format requested. The requested MIME type must be one specified in the attachment.mime_type. Required when downloading attachment media and ignored otherwise.",
+              "type": "string"
+            }
+          },
+          "supportsMediaDownload": true
+        }
+      }
+    }
+  },
+  "version": "v1",
+  "batchPath": "batch"
 }
