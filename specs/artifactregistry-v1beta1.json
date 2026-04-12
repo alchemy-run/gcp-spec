@@ -1,15 +1,232 @@
 {
-  "protocol": "rest",
+  "canonicalName": "Artifact Registry",
+  "ownerDomain": "google.com",
+  "icons": {
+    "x16": "http://www.google.com/images/icons/product/search-16.gif",
+    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  },
+  "revision": "20260403",
+  "auth": {
+    "oauth2": {
+      "scopes": {
+        "https://www.googleapis.com/auth/cloud-platform.read-only": {
+          "description": "View your data across Google Cloud services and see the email address of your Google Account"
+        },
+        "https://www.googleapis.com/auth/cloud-platform": {
+          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
+        }
+      }
+    }
+  },
+  "description": "Store and manage build artifacts in a scalable and integrated service built on Google infrastructure.",
+  "mtlsRootUrl": "https://artifactregistry.mtls.googleapis.com/",
+  "documentationLink": "https://cloud.google.com/artifacts/docs/",
+  "version_module": true,
+  "discoveryVersion": "v1",
+  "basePath": "",
   "schemas": {
+    "ListFilesResponse": {
+      "id": "ListFilesResponse",
+      "description": "The response from listing files.",
+      "properties": {
+        "files": {
+          "items": {
+            "$ref": "File"
+          },
+          "description": "The files returned.",
+          "type": "array"
+        },
+        "nextPageToken": {
+          "description": "The token to retrieve the next page of files, or empty if there are no more files to return.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Hash": {
+      "description": "A hash of file content.",
+      "properties": {
+        "type": {
+          "description": "The algorithm used to compute the hash value.",
+          "type": "string",
+          "enumDescriptions": [
+            "Unspecified.",
+            "SHA256 hash.",
+            "MD5 hash.",
+            "Dirsum SHA256 hash."
+          ],
+          "enum": [
+            "HASH_TYPE_UNSPECIFIED",
+            "SHA256",
+            "MD5",
+            "DIRSUM_SHA256"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "format": "byte",
+          "description": "The hash value."
+        }
+      },
+      "id": "Hash",
+      "type": "object"
+    },
+    "Version": {
+      "description": "The body of a version resource. A version resource represents a collection of components, such as files and other data. This may correspond to a version in many package management schemes.",
+      "properties": {
+        "relatedTags": {
+          "items": {
+            "$ref": "Tag"
+          },
+          "description": "Output only. A list of related tags. Will contain up to 100 tags that reference this version.",
+          "type": "array"
+        },
+        "createTime": {
+          "description": "The time when the version was created.",
+          "type": "string",
+          "format": "google-datetime"
+        },
+        "name": {
+          "description": "The name of the version, for example: `projects/p1/locations/us-central1/repositories/repo1/packages/pkg1/versions/art1`. If the package or version ID parts contain slashes, the slashes are escaped.",
+          "type": "string"
+        },
+        "updateTime": {
+          "type": "string",
+          "format": "google-datetime",
+          "description": "The time when the version was last updated."
+        },
+        "description": {
+          "description": "Optional. Description of the version, as specified in its metadata.",
+          "type": "string"
+        }
+      },
+      "id": "Version",
+      "type": "object"
+    },
+    "File": {
+      "type": "object",
+      "id": "File",
+      "description": "Files store content that is potentially associated with Packages or Versions.",
+      "properties": {
+        "createTime": {
+          "readOnly": true,
+          "type": "string",
+          "format": "google-datetime",
+          "description": "Output only. The time when the File was created."
+        },
+        "name": {
+          "description": "The name of the file, for example: `projects/p1/locations/us-central1/repositories/repo1/files/a%2Fb%2Fc.txt`. If the file ID part contains slashes, they are escaped.",
+          "type": "string"
+        },
+        "sizeBytes": {
+          "description": "The size of the File in bytes.",
+          "type": "string",
+          "format": "int64"
+        },
+        "owner": {
+          "description": "The name of the Package or Version that owns this file, if any.",
+          "type": "string"
+        },
+        "hashes": {
+          "items": {
+            "$ref": "Hash"
+          },
+          "description": "The hashes of the file content.",
+          "type": "array"
+        },
+        "updateTime": {
+          "readOnly": true,
+          "type": "string",
+          "format": "google-datetime",
+          "description": "Output only. The time when the File was last updated."
+        }
+      }
+    },
+    "ListRepositoriesResponse": {
+      "description": "The response from listing repositories.",
+      "properties": {
+        "repositories": {
+          "type": "array",
+          "description": "The repositories returned.",
+          "items": {
+            "$ref": "Repository"
+          }
+        },
+        "nextPageToken": {
+          "description": "The token to retrieve the next page of repositories, or empty if there are no more repositories to return.",
+          "type": "string"
+        }
+      },
+      "id": "ListRepositoriesResponse",
+      "type": "object"
+    },
+    "Operation": {
+      "type": "object",
+      "id": "Operation",
+      "description": "This resource represents a long-running operation that is the result of a network API call.",
+      "properties": {
+        "name": {
+          "description": "The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`.",
+          "type": "string"
+        },
+        "metadata": {
+          "description": "Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata. Any method that returns a long-running operation should document the metadata type, if any.",
+          "additionalProperties": {
+            "type": "any",
+            "description": "Properties of the object. Contains field @type with type URL."
+          },
+          "type": "object"
+        },
+        "done": {
+          "description": "If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available.",
+          "type": "boolean"
+        },
+        "error": {
+          "description": "The error result of the operation in case of failure or cancellation.",
+          "$ref": "Status"
+        },
+        "response": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "any",
+            "description": "Properties of the object. Contains field @type with type URL."
+          },
+          "description": "The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`."
+        }
+      }
+    },
     "Repository": {
       "type": "object",
+      "description": "A Repository for storing artifacts with a specific format.",
       "properties": {
+        "kmsKeyName": {
+          "description": "The Cloud KMS resource name of the customer managed encryption key that's used to encrypt the contents of the Repository. Has the form: `projects/my-project/locations/my-region/keyRings/my-kr/cryptoKeys/my-key`. This value may not be changed after the Repository has been created.",
+          "type": "string"
+        },
+        "sizeBytes": {
+          "description": "Output only. The size, in bytes, of all artifact storage in this repository. Repositories that are generally available or in public preview use this to calculate storage costs.",
+          "readOnly": true,
+          "type": "string",
+          "format": "int64"
+        },
         "satisfiesPzi": {
-          "type": "boolean",
           "description": "Output only. Whether or not this repository satisfies PZI.",
-          "readOnly": true
+          "readOnly": true,
+          "type": "boolean"
+        },
+        "name": {
+          "description": "The name of the repository, for example: `projects/p1/locations/us-central1/repositories/repo1`. For each location in a project, repository names must be unique.",
+          "type": "string"
+        },
+        "createTime": {
+          "readOnly": true,
+          "type": "string",
+          "format": "google-datetime",
+          "description": "Output only. The time when the repository was created."
         },
         "format": {
+          "description": "Optional. The format of packages that are stored in the repository.",
+          "type": "string",
           "enumDescriptions": [
             "Unspecified package format.",
             "Docker package format.",
@@ -29,22 +246,18 @@
             "YUM",
             "GOOGET",
             "PYTHON"
-          ],
-          "type": "string",
-          "description": "Optional. The format of packages that are stored in the repository."
+          ]
         },
-        "createTime": {
-          "format": "google-datetime",
-          "type": "string",
-          "description": "Output only. The time when the repository was created.",
-          "readOnly": true
+        "description": {
+          "description": "The user-provided description of the repository.",
+          "type": "string"
         },
         "labels": {
-          "type": "object",
           "additionalProperties": {
             "type": "string"
           },
-          "description": "Labels with user-defined metadata. This field may contain up to 64 entries. Label keys and values may be no longer than 63 characters. Label keys must begin with a lowercase letter and may only contain lowercase letters, numeric characters, underscores, and dashes."
+          "description": "Labels with user-defined metadata. This field may contain up to 64 entries. Label keys and values may be no longer than 63 characters. Label keys must begin with a lowercase letter and may only contain lowercase letters, numeric characters, underscores, and dashes.",
+          "type": "object"
         },
         "updateTime": {
           "description": "Output only. The time when the repository was last updated.",
@@ -53,104 +266,65 @@
           "format": "google-datetime"
         },
         "satisfiesPzs": {
-          "description": "Output only. Whether or not this repository satisfies PZS.",
           "readOnly": true,
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Output only. Whether or not this repository satisfies PZS."
+        }
+      },
+      "id": "Repository"
+    },
+    "Empty": {
+      "type": "object",
+      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
+      "properties": {},
+      "id": "Empty"
+    },
+    "ListLocationsResponse": {
+      "type": "object",
+      "description": "The response message for Locations.ListLocations.",
+      "properties": {
+        "locations": {
+          "type": "array",
+          "items": {
+            "$ref": "Location"
+          },
+          "description": "A list of locations that matches the specified filter in the request."
         },
-        "kmsKeyName": {
-          "type": "string",
-          "description": "The Cloud KMS resource name of the customer managed encryption key that's used to encrypt the contents of the Repository. Has the form: `projects/my-project/locations/my-region/keyRings/my-kr/cryptoKeys/my-key`. This value may not be changed after the Repository has been created."
-        },
-        "sizeBytes": {
-          "description": "Output only. The size, in bytes, of all artifact storage in this repository. Repositories that are generally available or in public preview use this to calculate storage costs.",
-          "readOnly": true,
-          "type": "string",
-          "format": "int64"
-        },
-        "name": {
-          "type": "string",
-          "description": "The name of the repository, for example: `projects/p1/locations/us-central1/repositories/repo1`. For each location in a project, repository names must be unique."
-        },
-        "description": {
-          "description": "The user-provided description of the repository.",
+        "nextPageToken": {
+          "description": "The standard List next-page token.",
           "type": "string"
         }
       },
-      "id": "Repository",
-      "description": "A Repository for storing artifacts with a specific format."
+      "id": "ListLocationsResponse"
     },
-    "TestIamPermissionsResponse": {
-      "description": "Response message for `TestIamPermissions` method.",
-      "id": "TestIamPermissionsResponse",
+    "TestIamPermissionsRequest": {
       "type": "object",
+      "id": "TestIamPermissionsRequest",
+      "description": "Request message for `TestIamPermissions` method.",
       "properties": {
         "permissions": {
-          "description": "A subset of `TestPermissionsRequest.permissions` that the caller is allowed.",
           "type": "array",
+          "description": "The set of permissions to check for the `resource`. Permissions with wildcards (such as `*` or `storage.*`) are not allowed. For more information see [IAM Overview](https://cloud.google.com/iam/docs/overview#permissions).",
           "items": {
             "type": "string"
           }
         }
       }
     },
-    "ListFilesResponse": {
-      "id": "ListFilesResponse",
-      "description": "The response from listing files.",
+    "SetIamPolicyRequest": {
       "type": "object",
+      "description": "Request message for `SetIamPolicy` method.",
       "properties": {
-        "files": {
-          "description": "The files returned.",
-          "type": "array",
-          "items": {
-            "$ref": "File"
-          }
-        },
-        "nextPageToken": {
-          "description": "The token to retrieve the next page of files, or empty if there are no more files to return.",
-          "type": "string"
-        }
-      }
-    },
-    "ListVersionsResponse": {
-      "id": "ListVersionsResponse",
-      "description": "The response from listing versions.",
-      "type": "object",
-      "properties": {
-        "versions": {
-          "description": "The versions returned.",
-          "type": "array",
-          "items": {
-            "$ref": "Version"
-          }
-        },
-        "nextPageToken": {
-          "description": "The token to retrieve the next page of versions, or empty if there are no more versions to return.",
-          "type": "string"
-        }
-      }
-    },
-    "ListPackagesResponse": {
-      "type": "object",
-      "properties": {
-        "nextPageToken": {
-          "description": "The token to retrieve the next page of packages, or empty if there are no more packages to return.",
-          "type": "string"
-        },
-        "packages": {
-          "description": "The packages returned.",
-          "type": "array",
-          "items": {
-            "$ref": "Package"
-          }
+        "policy": {
+          "description": "REQUIRED: The complete policy to be applied to the `resource`. The size of the policy is limited to a few 10s of KB. An empty policy is a valid policy but certain Google Cloud services (such as Projects) might reject them.",
+          "$ref": "Policy"
         }
       },
-      "id": "ListPackagesResponse",
-      "description": "The response from listing packages."
+      "id": "SetIamPolicyRequest"
     },
     "Policy": {
-      "description": "An Identity and Access Management (IAM) policy, which specifies access controls for Google Cloud resources. A `Policy` is a collection of `bindings`. A `binding` binds one or more `members`, or principals, to a single `role`. Principals can be user accounts, service accounts, Google groups, and domains (such as G Suite). A `role` is a named list of permissions; each `role` can be an IAM predefined role or a user-created custom role. For some types of Google Cloud resources, a `binding` can also specify a `condition`, which is a logical expression that allows access to a resource only if the expression evaluates to `true`. A condition can add constraints based on attributes of the request, the resource, or both. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies). **JSON example:** ``` { \"bindings\": [ { \"role\": \"roles/resourcemanager.organizationAdmin\", \"members\": [ \"user:mike@example.com\", \"group:admins@example.com\", \"domain:google.com\", \"serviceAccount:my-project-id@appspot.gserviceaccount.com\" ] }, { \"role\": \"roles/resourcemanager.organizationViewer\", \"members\": [ \"user:eve@example.com\" ], \"condition\": { \"title\": \"expirable access\", \"description\": \"Does not grant access after Sep 2020\", \"expression\": \"request.time < timestamp('2020-10-01T00:00:00.000Z')\", } } ], \"etag\": \"BwWWja0YfJA=\", \"version\": 3 } ``` **YAML example:** ``` bindings: - members: - user:mike@example.com - group:admins@example.com - domain:google.com - serviceAccount:my-project-id@appspot.gserviceaccount.com role: roles/resourcemanager.organizationAdmin - members: - user:eve@example.com role: roles/resourcemanager.organizationViewer condition: title: expirable access description: Does not grant access after Sep 2020 expression: request.time < timestamp('2020-10-01T00:00:00.000Z') etag: BwWWja0YfJA= version: 3 ``` For a description of IAM and its features, see the [IAM documentation](https://cloud.google.com/iam/docs/).",
       "id": "Policy",
-      "type": "object",
+      "description": "An Identity and Access Management (IAM) policy, which specifies access controls for Google Cloud resources. A `Policy` is a collection of `bindings`. A `binding` binds one or more `members`, or principals, to a single `role`. Principals can be user accounts, service accounts, Google groups, and domains (such as G Suite). A `role` is a named list of permissions; each `role` can be an IAM predefined role or a user-created custom role. For some types of Google Cloud resources, a `binding` can also specify a `condition`, which is a logical expression that allows access to a resource only if the expression evaluates to `true`. A condition can add constraints based on attributes of the request, the resource, or both. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies). **JSON example:** ``` { \"bindings\": [ { \"role\": \"roles/resourcemanager.organizationAdmin\", \"members\": [ \"user:mike@example.com\", \"group:admins@example.com\", \"domain:google.com\", \"serviceAccount:my-project-id@appspot.gserviceaccount.com\" ] }, { \"role\": \"roles/resourcemanager.organizationViewer\", \"members\": [ \"user:eve@example.com\" ], \"condition\": { \"title\": \"expirable access\", \"description\": \"Does not grant access after Sep 2020\", \"expression\": \"request.time < timestamp('2020-10-01T00:00:00.000Z')\", } } ], \"etag\": \"BwWWja0YfJA=\", \"version\": 3 } ``` **YAML example:** ``` bindings: - members: - user:mike@example.com - group:admins@example.com - domain:google.com - serviceAccount:my-project-id@appspot.gserviceaccount.com role: roles/resourcemanager.organizationAdmin - members: - user:eve@example.com role: roles/resourcemanager.organizationViewer condition: title: expirable access description: Does not grant access after Sep 2020 expression: request.time < timestamp('2020-10-01T00:00:00.000Z') etag: BwWWja0YfJA= version: 3 ``` For a description of IAM and its features, see the [IAM documentation](https://cloud.google.com/iam/docs/).",
       "properties": {
         "bindings": {
           "type": "array",
@@ -159,260 +333,87 @@
           },
           "description": "Associates a list of `members`, or principals, with a `role`. Optionally, may specify a `condition` that determines how and when the `bindings` are applied. Each of the `bindings` must contain at least one principal. The `bindings` in a `Policy` can refer to up to 1,500 principals; up to 250 of these principals can be Google groups. Each occurrence of a principal counts towards these limits. For example, if the `bindings` grant 50 different roles to `user:alice@example.com`, and not to any other principal, then you can add another 1,450 principals to the `bindings` in the `Policy`."
         },
-        "version": {
-          "format": "int32",
-          "type": "integer",
-          "description": "Specifies the format of the policy. Valid values are `0`, `1`, and `3`. Requests that specify an invalid value are rejected. Any operation that affects conditional role bindings must specify version `3`. This requirement applies to the following operations: * Getting a policy that includes a conditional role binding * Adding a conditional role binding to a policy * Changing a conditional role binding in a policy * Removing any role binding, with or without a condition, from a policy that includes conditions **Important:** If you use IAM Conditions, you must include the `etag` field whenever you call `setIamPolicy`. If you omit this field, then IAM allows you to overwrite a version `3` policy with a version `1` policy, and all of the conditions in the version `3` policy are lost. If a policy does not include any conditions, operations on that policy may specify any valid version or leave the field unset. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies)."
-        },
         "etag": {
+          "description": "`etag` is used for optimistic concurrency control as a way to help prevent simultaneous updates of a policy from overwriting each other. It is strongly suggested that systems make use of the `etag` in the read-modify-write cycle to perform policy updates in order to avoid race conditions: An `etag` is returned in the response to `getIamPolicy`, and systems are expected to put that etag in the request to `setIamPolicy` to ensure that their change will be applied to the same version of the policy. **Important:** If you use IAM Conditions, you must include the `etag` field whenever you call `setIamPolicy`. If you omit this field, then IAM allows you to overwrite a version `3` policy with a version `1` policy, and all of the conditions in the version `3` policy are lost.",
           "type": "string",
-          "format": "byte",
-          "description": "`etag` is used for optimistic concurrency control as a way to help prevent simultaneous updates of a policy from overwriting each other. It is strongly suggested that systems make use of the `etag` in the read-modify-write cycle to perform policy updates in order to avoid race conditions: An `etag` is returned in the response to `getIamPolicy`, and systems are expected to put that etag in the request to `setIamPolicy` to ensure that their change will be applied to the same version of the policy. **Important:** If you use IAM Conditions, you must include the `etag` field whenever you call `setIamPolicy`. If you omit this field, then IAM allows you to overwrite a version `3` policy with a version `1` policy, and all of the conditions in the version `3` policy are lost."
-        }
-      }
-    },
-    "Empty": {
-      "type": "object",
-      "properties": {},
-      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
-      "id": "Empty"
-    },
-    "Location": {
-      "id": "Location",
-      "description": "A resource that represents a Google Cloud location.",
-      "type": "object",
-      "properties": {
-        "locationId": {
-          "description": "The canonical id for this location. For example: `\"us-east1\"`.",
-          "type": "string"
+          "format": "byte"
         },
-        "metadata": {
-          "additionalProperties": {
-            "type": "any",
-            "description": "Properties of the object. Contains field @type with type URL."
-          },
-          "type": "object",
-          "description": "Service-specific metadata. For example the available capacity at the given location."
-        },
-        "labels": {
-          "description": "Cross-service attributes for the location. For example {\"cloud.googleapis.com/region\": \"us-east1\"}",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "name": {
-          "type": "string",
-          "description": "Resource name for the location, which may vary between implementations. For example: `\"projects/example-project/locations/us-east1\"`"
-        },
-        "displayName": {
-          "description": "The friendly name for this location, typically a nearby city name. For example, \"Tokyo\".",
-          "type": "string"
-        }
-      }
-    },
-    "Hash": {
-      "type": "object",
-      "properties": {
-        "type": {
-          "description": "The algorithm used to compute the hash value.",
-          "enumDescriptions": [
-            "Unspecified.",
-            "SHA256 hash.",
-            "MD5 hash.",
-            "Dirsum SHA256 hash."
-          ],
-          "enum": [
-            "HASH_TYPE_UNSPECIFIED",
-            "SHA256",
-            "MD5",
-            "DIRSUM_SHA256"
-          ],
-          "type": "string"
-        },
-        "value": {
-          "format": "byte",
-          "type": "string",
-          "description": "The hash value."
+        "version": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Specifies the format of the policy. Valid values are `0`, `1`, and `3`. Requests that specify an invalid value are rejected. Any operation that affects conditional role bindings must specify version `3`. This requirement applies to the following operations: * Getting a policy that includes a conditional role binding * Adding a conditional role binding to a policy * Changing a conditional role binding in a policy * Removing any role binding, with or without a condition, from a policy that includes conditions **Important:** If you use IAM Conditions, you must include the `etag` field whenever you call `setIamPolicy`. If you omit this field, then IAM allows you to overwrite a version `3` policy with a version `1` policy, and all of the conditions in the version `3` policy are lost. If a policy does not include any conditions, operations on that policy may specify any valid version or leave the field unset. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies)."
         }
       },
-      "id": "Hash",
-      "description": "A hash of file content."
-    },
-    "TestIamPermissionsRequest": {
-      "id": "TestIamPermissionsRequest",
-      "description": "Request message for `TestIamPermissions` method.",
-      "type": "object",
-      "properties": {
-        "permissions": {
-          "description": "The set of permissions to check for the `resource`. Permissions with wildcards (such as `*` or `storage.*`) are not allowed. For more information see [IAM Overview](https://cloud.google.com/iam/docs/overview#permissions).",
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
+      "type": "object"
     },
     "Status": {
-      "id": "Status",
       "description": "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
-      "type": "object",
       "properties": {
-        "details": {
-          "type": "array",
-          "items": {
-            "additionalProperties": {
-              "description": "Properties of the object. Contains field @type with type URL.",
-              "type": "any"
-            },
-            "type": "object"
-          },
-          "description": "A list of messages that carry the error details. There is a common set of message types for APIs to use."
+        "message": {
+          "description": "A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.",
+          "type": "string"
         },
         "code": {
-          "description": "The status code, which should be an enum value of google.rpc.Code.",
           "type": "integer",
-          "format": "int32"
+          "format": "int32",
+          "description": "The status code, which should be an enum value of google.rpc.Code."
         },
-        "message": {
-          "type": "string",
-          "description": "A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client."
-        }
-      }
-    },
-    "Binding": {
-      "type": "object",
-      "properties": {
-        "role": {
-          "description": "Role that is assigned to the list of `members`, or principals. For example, `roles/viewer`, `roles/editor`, or `roles/owner`. For an overview of the IAM roles and permissions, see the [IAM documentation](https://cloud.google.com/iam/docs/roles-overview). For a list of the available pre-defined roles, see [here](https://cloud.google.com/iam/docs/understanding-roles).",
-          "type": "string"
-        },
-        "condition": {
-          "description": "The condition that is associated with this binding. If the condition evaluates to `true`, then this binding applies to the current request. If the condition evaluates to `false`, then this binding does not apply to the current request. However, a different role binding might grant the same role to one or more of the principals in this binding. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies).",
-          "$ref": "Expr"
-        },
-        "members": {
+        "details": {
           "type": "array",
+          "description": "A list of messages that carry the error details. There is a common set of message types for APIs to use.",
           "items": {
-            "type": "string"
-          },
-          "description": "Specifies the principals requesting access for a Google Cloud resource. `members` can have the following values: * `allUsers`: A special identifier that represents anyone who is on the internet; with or without a Google account. * `allAuthenticatedUsers`: A special identifier that represents anyone who is authenticated with a Google account or a service account. Does not include identities that come from external identity providers (IdPs) through identity federation. * `user:{emailid}`: An email address that represents a specific Google account. For example, `alice@example.com` . * `serviceAccount:{emailid}`: An email address that represents a Google service account. For example, `my-other-app@appspot.gserviceaccount.com`. * `serviceAccount:{projectid}.svc.id.goog[{namespace}/{kubernetes-sa}]`: An identifier for a [Kubernetes service account](https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts). For example, `my-project.svc.id.goog[my-namespace/my-kubernetes-sa]`. * `group:{emailid}`: An email address that represents a Google group. For example, `admins@example.com`. * `domain:{domain}`: The G Suite domain (primary) that represents all the users of that domain. For example, `google.com` or `example.com`. * `principal://iam.googleapis.com/locations/global/workforcePools/{pool_id}/subject/{subject_attribute_value}`: A single identity in a workforce identity pool. * `principalSet://iam.googleapis.com/locations/global/workforcePools/{pool_id}/group/{group_id}`: All workforce identities in a group. * `principalSet://iam.googleapis.com/locations/global/workforcePools/{pool_id}/attribute.{attribute_name}/{attribute_value}`: All workforce identities with a specific attribute value. * `principalSet://iam.googleapis.com/locations/global/workforcePools/{pool_id}/*`: All identities in a workforce identity pool. * `principal://iam.googleapis.com/projects/{project_number}/locations/global/workloadIdentityPools/{pool_id}/subject/{subject_attribute_value}`: A single identity in a workload identity pool. * `principalSet://iam.googleapis.com/projects/{project_number}/locations/global/workloadIdentityPools/{pool_id}/group/{group_id}`: A workload identity pool group. * `principalSet://iam.googleapis.com/projects/{project_number}/locations/global/workloadIdentityPools/{pool_id}/attribute.{attribute_name}/{attribute_value}`: All identities in a workload identity pool with a certain attribute. * `principalSet://iam.googleapis.com/projects/{project_number}/locations/global/workloadIdentityPools/{pool_id}/*`: All identities in a workload identity pool. * `deleted:user:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a user that has been recently deleted. For example, `alice@example.com?uid=123456789012345678901`. If the user is recovered, this value reverts to `user:{emailid}` and the recovered user retains the role in the binding. * `deleted:serviceAccount:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a service account that has been recently deleted. For example, `my-other-app@appspot.gserviceaccount.com?uid=123456789012345678901`. If the service account is undeleted, this value reverts to `serviceAccount:{emailid}` and the undeleted service account retains the role in the binding. * `deleted:group:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a Google group that has been recently deleted. For example, `admins@example.com?uid=123456789012345678901`. If the group is recovered, this value reverts to `group:{emailid}` and the recovered group retains the role in the binding. * `deleted:principal://iam.googleapis.com/locations/global/workforcePools/{pool_id}/subject/{subject_attribute_value}`: Deleted single identity in a workforce identity pool. For example, `deleted:principal://iam.googleapis.com/locations/global/workforcePools/my-pool-id/subject/my-subject-attribute-value`."
-        }
-      },
-      "id": "Binding",
-      "description": "Associates `members`, or principals, with a `role`."
-    },
-    "File": {
-      "type": "object",
-      "properties": {
-        "sizeBytes": {
-          "format": "int64",
-          "type": "string",
-          "description": "The size of the File in bytes."
-        },
-        "name": {
-          "type": "string",
-          "description": "The name of the file, for example: `projects/p1/locations/us-central1/repositories/repo1/files/a%2Fb%2Fc.txt`. If the file ID part contains slashes, they are escaped."
-        },
-        "owner": {
-          "type": "string",
-          "description": "The name of the Package or Version that owns this file, if any."
-        },
-        "hashes": {
-          "description": "The hashes of the file content.",
-          "type": "array",
-          "items": {
-            "$ref": "Hash"
+            "additionalProperties": {
+              "type": "any",
+              "description": "Properties of the object. Contains field @type with type URL."
+            },
+            "type": "object"
           }
-        },
-        "updateTime": {
-          "description": "Output only. The time when the File was last updated.",
-          "readOnly": true,
-          "format": "google-datetime",
-          "type": "string"
-        },
-        "createTime": {
-          "description": "Output only. The time when the File was created.",
-          "readOnly": true,
-          "type": "string",
-          "format": "google-datetime"
         }
       },
-      "id": "File",
-      "description": "Files store content that is potentially associated with Packages or Versions."
+      "id": "Status",
+      "type": "object"
     },
-    "Tag": {
-      "description": "Tags point to a version and represent an alternative name that can be used to access the version.",
-      "id": "Tag",
-      "type": "object",
+    "ListTagsResponse": {
+      "description": "The response from listing tags.",
       "properties": {
-        "version": {
-          "type": "string",
-          "description": "The name of the version the tag refers to, for example: `projects/p1/locations/us-central1/repositories/repo1/packages/pkg1/versions/sha256:5243811` If the package or version ID parts contain slashes, the slashes are escaped."
-        },
-        "name": {
-          "type": "string",
-          "description": "The name of the tag, for example: \"projects/p1/locations/us-central1/repositories/repo1/packages/pkg1/tags/tag1\". If the package part contains slashes, the slashes are escaped. The tag part can only have characters in [a-zA-Z0-9\\-._~:@], anything else must be URL encoded."
-        }
-      }
-    },
-    "Version": {
-      "description": "The body of a version resource. A version resource represents a collection of components, such as files and other data. This may correspond to a version in many package management schemes.",
-      "id": "Version",
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "The name of the version, for example: `projects/p1/locations/us-central1/repositories/repo1/packages/pkg1/versions/art1`. If the package or version ID parts contain slashes, the slashes are escaped."
-        },
-        "description": {
-          "description": "Optional. Description of the version, as specified in its metadata.",
-          "type": "string"
-        },
-        "updateTime": {
-          "description": "The time when the version was last updated.",
-          "type": "string",
-          "format": "google-datetime"
-        },
-        "createTime": {
-          "description": "The time when the version was created.",
-          "type": "string",
-          "format": "google-datetime"
-        },
-        "relatedTags": {
-          "type": "array",
+        "tags": {
           "items": {
             "$ref": "Tag"
           },
-          "description": "Output only. A list of related tags. Will contain up to 100 tags that reference this version."
+          "description": "The tags returned.",
+          "type": "array"
+        },
+        "nextPageToken": {
+          "description": "The token to retrieve the next page of tags, or empty if there are no more tags to return.",
+          "type": "string"
+        }
+      },
+      "id": "ListTagsResponse",
+      "type": "object"
+    },
+    "Tag": {
+      "type": "object",
+      "id": "Tag",
+      "description": "Tags point to a version and represent an alternative name that can be used to access the version.",
+      "properties": {
+        "name": {
+          "description": "The name of the tag, for example: \"projects/p1/locations/us-central1/repositories/repo1/packages/pkg1/tags/tag1\". If the package part contains slashes, the slashes are escaped. The tag part can only have characters in [a-zA-Z0-9\\-._~:@], anything else must be URL encoded.",
+          "type": "string"
+        },
+        "version": {
+          "description": "The name of the version the tag refers to, for example: `projects/p1/locations/us-central1/repositories/repo1/packages/pkg1/versions/sha256:5243811` If the package or version ID parts contain slashes, the slashes are escaped.",
+          "type": "string"
         }
       }
     },
-    "ListLocationsResponse": {
-      "type": "object",
-      "properties": {
-        "nextPageToken": {
-          "description": "The standard List next-page token.",
-          "type": "string"
-        },
-        "locations": {
-          "type": "array",
-          "items": {
-            "$ref": "Location"
-          },
-          "description": "A list of locations that matches the specified filter in the request."
-        }
-      },
-      "description": "The response message for Locations.ListLocations.",
-      "id": "ListLocationsResponse"
-    },
     "Package": {
-      "type": "object",
+      "id": "Package",
+      "description": "Packages are named collections of versions.",
       "properties": {
         "createTime": {
-          "format": "google-datetime",
+          "description": "The time when the package was created.",
           "type": "string",
-          "description": "The time when the package was created."
+          "format": "google-datetime"
         },
         "name": {
           "description": "The name of the package, for example: `projects/p1/locations/us-central1/repositories/repo1/packages/pkg1`. If the package ID part contains slashes, the slashes are escaped.",
@@ -423,260 +424,157 @@
           "type": "string"
         },
         "updateTime": {
+          "description": "The time when the package was last updated. This includes publishing a new version of the package.",
           "type": "string",
-          "format": "google-datetime",
-          "description": "The time when the package was last updated. This includes publishing a new version of the package."
+          "format": "google-datetime"
         }
       },
-      "description": "Packages are named collections of versions.",
-      "id": "Package"
+      "type": "object"
     },
-    "ListRepositoriesResponse": {
+    "TestIamPermissionsResponse": {
       "type": "object",
+      "description": "Response message for `TestIamPermissions` method.",
       "properties": {
-        "repositories": {
-          "description": "The repositories returned.",
-          "type": "array",
+        "permissions": {
           "items": {
-            "$ref": "Repository"
-          }
+            "type": "string"
+          },
+          "description": "A subset of `TestPermissionsRequest.permissions` that the caller is allowed.",
+          "type": "array"
+        }
+      },
+      "id": "TestIamPermissionsResponse"
+    },
+    "ListPackagesResponse": {
+      "type": "object",
+      "id": "ListPackagesResponse",
+      "description": "The response from listing packages.",
+      "properties": {
+        "packages": {
+          "items": {
+            "$ref": "Package"
+          },
+          "description": "The packages returned.",
+          "type": "array"
         },
         "nextPageToken": {
-          "description": "The token to retrieve the next page of repositories, or empty if there are no more repositories to return.",
+          "description": "The token to retrieve the next page of packages, or empty if there are no more packages to return.",
+          "type": "string"
+        }
+      }
+    },
+    "Binding": {
+      "description": "Associates `members`, or principals, with a `role`.",
+      "properties": {
+        "role": {
+          "description": "Role that is assigned to the list of `members`, or principals. For example, `roles/viewer`, `roles/editor`, or `roles/owner`. For an overview of the IAM roles and permissions, see the [IAM documentation](https://cloud.google.com/iam/docs/roles-overview). For a list of the available pre-defined roles, see [here](https://cloud.google.com/iam/docs/understanding-roles).",
+          "type": "string"
+        },
+        "condition": {
+          "description": "The condition that is associated with this binding. If the condition evaluates to `true`, then this binding applies to the current request. If the condition evaluates to `false`, then this binding does not apply to the current request. However, a different role binding might grant the same role to one or more of the principals in this binding. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies).",
+          "$ref": "Expr"
+        },
+        "members": {
+          "description": "Specifies the principals requesting access for a Google Cloud resource. `members` can have the following values: * `allUsers`: A special identifier that represents anyone who is on the internet; with or without a Google account. * `allAuthenticatedUsers`: A special identifier that represents anyone who is authenticated with a Google account or a service account. Does not include identities that come from external identity providers (IdPs) through identity federation. * `user:{emailid}`: An email address that represents a specific Google account. For example, `alice@example.com` . * `serviceAccount:{emailid}`: An email address that represents a Google service account. For example, `my-other-app@appspot.gserviceaccount.com`. * `serviceAccount:{projectid}.svc.id.goog[{namespace}/{kubernetes-sa}]`: An identifier for a [Kubernetes service account](https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts). For example, `my-project.svc.id.goog[my-namespace/my-kubernetes-sa]`. * `group:{emailid}`: An email address that represents a Google group. For example, `admins@example.com`. * `domain:{domain}`: The G Suite domain (primary) that represents all the users of that domain. For example, `google.com` or `example.com`. * `principal://iam.googleapis.com/locations/global/workforcePools/{pool_id}/subject/{subject_attribute_value}`: A single identity in a workforce identity pool. * `principalSet://iam.googleapis.com/locations/global/workforcePools/{pool_id}/group/{group_id}`: All workforce identities in a group. * `principalSet://iam.googleapis.com/locations/global/workforcePools/{pool_id}/attribute.{attribute_name}/{attribute_value}`: All workforce identities with a specific attribute value. * `principalSet://iam.googleapis.com/locations/global/workforcePools/{pool_id}/*`: All identities in a workforce identity pool. * `principal://iam.googleapis.com/projects/{project_number}/locations/global/workloadIdentityPools/{pool_id}/subject/{subject_attribute_value}`: A single identity in a workload identity pool. * `principalSet://iam.googleapis.com/projects/{project_number}/locations/global/workloadIdentityPools/{pool_id}/group/{group_id}`: A workload identity pool group. * `principalSet://iam.googleapis.com/projects/{project_number}/locations/global/workloadIdentityPools/{pool_id}/attribute.{attribute_name}/{attribute_value}`: All identities in a workload identity pool with a certain attribute. * `principalSet://iam.googleapis.com/projects/{project_number}/locations/global/workloadIdentityPools/{pool_id}/*`: All identities in a workload identity pool. * `deleted:user:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a user that has been recently deleted. For example, `alice@example.com?uid=123456789012345678901`. If the user is recovered, this value reverts to `user:{emailid}` and the recovered user retains the role in the binding. * `deleted:serviceAccount:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a service account that has been recently deleted. For example, `my-other-app@appspot.gserviceaccount.com?uid=123456789012345678901`. If the service account is undeleted, this value reverts to `serviceAccount:{emailid}` and the undeleted service account retains the role in the binding. * `deleted:group:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a Google group that has been recently deleted. For example, `admins@example.com?uid=123456789012345678901`. If the group is recovered, this value reverts to `group:{emailid}` and the recovered group retains the role in the binding. * `deleted:principal://iam.googleapis.com/locations/global/workforcePools/{pool_id}/subject/{subject_attribute_value}`: Deleted single identity in a workforce identity pool. For example, `deleted:principal://iam.googleapis.com/locations/global/workforcePools/my-pool-id/subject/my-subject-attribute-value`.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "id": "Binding",
+      "type": "object"
+    },
+    "ListVersionsResponse": {
+      "type": "object",
+      "description": "The response from listing versions.",
+      "properties": {
+        "versions": {
+          "type": "array",
+          "items": {
+            "$ref": "Version"
+          },
+          "description": "The versions returned."
+        },
+        "nextPageToken": {
+          "description": "The token to retrieve the next page of versions, or empty if there are no more versions to return.",
           "type": "string"
         }
       },
-      "id": "ListRepositoriesResponse",
-      "description": "The response from listing repositories."
-    },
-    "ListTagsResponse": {
-      "type": "object",
-      "properties": {
-        "nextPageToken": {
-          "type": "string",
-          "description": "The token to retrieve the next page of tags, or empty if there are no more tags to return."
-        },
-        "tags": {
-          "type": "array",
-          "items": {
-            "$ref": "Tag"
-          },
-          "description": "The tags returned."
-        }
-      },
-      "id": "ListTagsResponse",
-      "description": "The response from listing tags."
+      "id": "ListVersionsResponse"
     },
     "Expr": {
-      "description": "Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec. Example (Comparison): title: \"Summary size limit\" description: \"Determines if a summary is less than 100 chars\" expression: \"document.summary.size() < 100\" Example (Equality): title: \"Requestor is owner\" description: \"Determines if requestor is the document owner\" expression: \"document.owner == request.auth.claims.email\" Example (Logic): title: \"Public documents\" description: \"Determine whether the document should be publicly visible\" expression: \"document.type != 'private' && document.type != 'internal'\" Example (Data Manipulation): title: \"Notification string\" description: \"Create a notification string with a timestamp.\" expression: \"'New message received at ' + string(document.create_time)\" The exact variables and functions that may be referenced within an expression are determined by the service that evaluates it. See the service documentation for additional information.",
-      "id": "Expr",
       "type": "object",
+      "description": "Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec. Example (Comparison): title: \"Summary size limit\" description: \"Determines if a summary is less than 100 chars\" expression: \"document.summary.size() < 100\" Example (Equality): title: \"Requestor is owner\" description: \"Determines if requestor is the document owner\" expression: \"document.owner == request.auth.claims.email\" Example (Logic): title: \"Public documents\" description: \"Determine whether the document should be publicly visible\" expression: \"document.type != 'private' && document.type != 'internal'\" Example (Data Manipulation): title: \"Notification string\" description: \"Create a notification string with a timestamp.\" expression: \"'New message received at ' + string(document.create_time)\" The exact variables and functions that may be referenced within an expression are determined by the service that evaluates it. See the service documentation for additional information.",
       "properties": {
         "expression": {
-          "type": "string",
-          "description": "Textual representation of an expression in Common Expression Language syntax."
+          "description": "Textual representation of an expression in Common Expression Language syntax.",
+          "type": "string"
         },
         "title": {
           "description": "Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.",
           "type": "string"
         },
         "description": {
-          "type": "string",
-          "description": "Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI."
+          "description": "Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI.",
+          "type": "string"
         },
         "location": {
           "description": "Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.",
           "type": "string"
         }
-      }
-    },
-    "SetIamPolicyRequest": {
-      "type": "object",
-      "properties": {
-        "policy": {
-          "description": "REQUIRED: The complete policy to be applied to the `resource`. The size of the policy is limited to a few 10s of KB. An empty policy is a valid policy but certain Google Cloud services (such as Projects) might reject them.",
-          "$ref": "Policy"
-        }
       },
-      "description": "Request message for `SetIamPolicy` method.",
-      "id": "SetIamPolicyRequest"
+      "id": "Expr"
     },
-    "Operation": {
-      "type": "object",
+    "Location": {
+      "description": "A resource that represents a Google Cloud location.",
       "properties": {
-        "done": {
-          "description": "If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available.",
-          "type": "boolean"
+        "name": {
+          "description": "Resource name for the location, which may vary between implementations. For example: `\"projects/example-project/locations/us-east1\"`",
+          "type": "string"
+        },
+        "locationId": {
+          "description": "The canonical id for this location. For example: `\"us-east1\"`.",
+          "type": "string"
         },
         "metadata": {
-          "description": "Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata. Any method that returns a long-running operation should document the metadata type, if any.",
           "additionalProperties": {
-            "description": "Properties of the object. Contains field @type with type URL.",
-            "type": "any"
+            "type": "any",
+            "description": "Properties of the object. Contains field @type with type URL."
           },
+          "description": "Service-specific metadata. For example the available capacity at the given location.",
           "type": "object"
         },
-        "error": {
-          "description": "The error result of the operation in case of failure or cancellation.",
-          "$ref": "Status"
-        },
-        "name": {
-          "type": "string",
-          "description": "The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`."
-        },
-        "response": {
-          "description": "The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.",
+        "labels": {
           "type": "object",
           "additionalProperties": {
-            "description": "Properties of the object. Contains field @type with type URL.",
-            "type": "any"
-          }
+            "type": "string"
+          },
+          "description": "Cross-service attributes for the location. For example {\"cloud.googleapis.com/region\": \"us-east1\"}"
+        },
+        "displayName": {
+          "description": "The friendly name for this location, typically a nearby city name. For example, \"Tokyo\".",
+          "type": "string"
         }
       },
-      "id": "Operation",
-      "description": "This resource represents a long-running operation that is the result of a network API call."
+      "id": "Location",
+      "type": "object"
     }
   },
-  "baseUrl": "https://artifactregistry.googleapis.com/",
-  "title": "Artifact Registry API",
-  "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
-  },
-  "mtlsRootUrl": "https://artifactregistry.mtls.googleapis.com/",
-  "parameters": {
-    "callback": {
-      "description": "JSONP",
-      "location": "query",
-      "type": "string"
-    },
-    "uploadType": {
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
-      "location": "query",
-      "type": "string"
-    },
-    "quotaUser": {
-      "type": "string",
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
-      "location": "query"
-    },
-    "prettyPrint": {
-      "type": "boolean",
-      "default": "true",
-      "description": "Returns response with indentations and line breaks.",
-      "location": "query"
-    },
-    "access_token": {
-      "description": "OAuth access token.",
-      "location": "query",
-      "type": "string"
-    },
-    "upload_protocol": {
-      "type": "string",
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
-      "location": "query"
-    },
-    "$.xgafv": {
-      "location": "query",
-      "type": "string",
-      "enum": [
-        "1",
-        "2"
-      ],
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ],
-      "description": "V1 error format."
-    },
-    "fields": {
-      "type": "string",
-      "description": "Selector specifying which fields to include in a partial response.",
-      "location": "query"
-    },
-    "key": {
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
-      "location": "query",
-      "type": "string"
-    },
-    "alt": {
-      "description": "Data format for response.",
-      "enum": [
-        "json",
-        "media",
-        "proto"
-      ],
-      "enumDescriptions": [
-        "Responses with Content-Type of application/json",
-        "Media download with context-dependent Content-Type",
-        "Responses with Content-Type of application/x-protobuf"
-      ],
-      "type": "string",
-      "default": "json",
-      "location": "query"
-    },
-    "oauth_token": {
-      "type": "string",
-      "description": "OAuth 2.0 token for the current user.",
-      "location": "query"
-    }
-  },
-  "rootUrl": "https://artifactregistry.googleapis.com/",
-  "documentationLink": "https://cloud.google.com/artifacts/docs/",
+  "ownerName": "Google",
+  "protocol": "rest",
   "kind": "discovery#restDescription",
-  "version_module": true,
-  "discoveryVersion": "v1",
-  "description": "Store and manage build artifacts in a scalable and integrated service built on Google infrastructure.",
-  "auth": {
-    "oauth2": {
-      "scopes": {
-        "https://www.googleapis.com/auth/cloud-platform.read-only": {
-          "description": "View your data across Google Cloud services and see the email address of your Google Account"
-        },
-        "https://www.googleapis.com/auth/cloud-platform": {
-          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
-        }
-      }
-    }
-  },
-  "basePath": "",
   "resources": {
     "projects": {
       "resources": {
         "locations": {
           "methods": {
             "list": {
-              "path": "v1beta1/{+name}/locations",
-              "description": "Lists information about the supported locations for this service. This method lists locations based on the resource scope provided in the [ListLocationsRequest.name] field: * **Global locations**: If `name` is empty, the method lists the public locations available to all projects. * **Project-specific locations**: If `name` follows the format `projects/{project}`, the method lists locations visible to that specific project. This includes public, private, or other project-specific locations enabled for the project. For gRPC and client library implementations, the resource name is passed as the `name` field. For direct service calls, the resource name is incorporated into the request path based on the specific service implementation and version.",
               "id": "artifactregistry.projects.locations.list",
-              "scopes": [
-                "https://www.googleapis.com/auth/cloud-platform",
-                "https://www.googleapis.com/auth/cloud-platform.read-only"
+              "parameterOrder": [
+                "name"
               ],
-              "httpMethod": "GET",
-              "response": {
-                "$ref": "ListLocationsResponse"
-              },
-              "flatPath": "v1beta1/projects/{projectsId}/locations",
               "parameters": {
-                "filter": {
-                  "description": "A filter to narrow down results to a preferred subset. The filtering language accepts strings like `\"displayName=tokyo\"`, and is documented in more detail in [AIP-160](https://google.aip.dev/160).",
-                  "location": "query",
-                  "type": "string"
-                },
-                "name": {
-                  "location": "path",
-                  "type": "string",
-                  "pattern": "^projects/[^/]+$",
-                  "required": true,
-                  "description": "The resource that owns the locations collection, if applicable."
-                },
-                "pageSize": {
-                  "type": "integer",
-                  "format": "int32",
-                  "description": "The maximum number of results to return. If not set, the service selects a default.",
-                  "location": "query"
-                },
                 "pageToken": {
                   "type": "string",
                   "description": "A page token received from the `next_page_token` field in the response. Send that page token to receive the subsequent page.",
@@ -687,271 +585,305 @@
                   "location": "query",
                   "repeated": true,
                   "type": "string"
-                }
-              },
-              "parameterOrder": [
-                "name"
-              ]
-            },
-            "get": {
-              "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}",
-              "parameters": {
+                },
                 "name": {
-                  "location": "path",
+                  "pattern": "^projects/[^/]+$",
                   "type": "string",
-                  "pattern": "^projects/[^/]+/locations/[^/]+$",
-                  "required": true,
-                  "description": "Resource name for the location."
+                  "description": "The resource that owns the locations collection, if applicable.",
+                  "location": "path",
+                  "required": true
+                },
+                "filter": {
+                  "type": "string",
+                  "location": "query",
+                  "description": "A filter to narrow down results to a preferred subset. The filtering language accepts strings like `\"displayName=tokyo\"`, and is documented in more detail in [AIP-160](https://google.aip.dev/160)."
+                },
+                "pageSize": {
+                  "type": "integer",
+                  "format": "int32",
+                  "location": "query",
+                  "description": "The maximum number of results to return. If not set, the service selects a default."
                 }
               },
-              "parameterOrder": [
-                "name"
-              ],
-              "path": "v1beta1/{+name}",
-              "description": "Gets information about a location.",
-              "id": "artifactregistry.projects.locations.get",
+              "httpMethod": "GET",
+              "path": "v1beta1/{+name}/locations",
+              "flatPath": "v1beta1/projects/{projectsId}/locations",
               "scopes": [
                 "https://www.googleapis.com/auth/cloud-platform",
                 "https://www.googleapis.com/auth/cloud-platform.read-only"
               ],
+              "description": "Lists information about the supported locations for this service. This method lists locations based on the resource scope provided in the [ListLocationsRequest.name] field: * **Global locations**: If `name` is empty, the method lists the public locations available to all projects. * **Project-specific locations**: If `name` follows the format `projects/{project}`, the method lists locations visible to that specific project. This includes public, private, or other project-specific locations enabled for the project. For gRPC and client library implementations, the resource name is passed as the `name` field. For direct service calls, the resource name is incorporated into the request path based on the specific service implementation and version.",
+              "response": {
+                "$ref": "ListLocationsResponse"
+              }
+            },
+            "get": {
+              "id": "artifactregistry.projects.locations.get",
+              "parameterOrder": [
+                "name"
+              ],
+              "parameters": {
+                "name": {
+                  "location": "path",
+                  "required": true,
+                  "description": "Resource name for the location.",
+                  "pattern": "^projects/[^/]+/locations/[^/]+$",
+                  "type": "string"
+                }
+              },
               "httpMethod": "GET",
+              "path": "v1beta1/{+name}",
+              "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}",
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/cloud-platform.read-only"
+              ],
               "response": {
                 "$ref": "Location"
-              }
+              },
+              "description": "Gets information about a location."
             }
           },
           "resources": {
-            "operations": {
-              "methods": {
-                "get": {
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "parameters": {
-                    "name": {
-                      "required": true,
-                      "description": "The name of the operation resource.",
-                      "type": "string",
-                      "pattern": "^projects/[^/]+/locations/[^/]+/operations/[^/]+$",
-                      "location": "path"
-                    }
-                  },
-                  "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/operations/{operationsId}",
-                  "httpMethod": "GET",
-                  "response": {
-                    "$ref": "Operation"
-                  },
-                  "path": "v1beta1/{+name}",
-                  "description": "Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.",
-                  "id": "artifactregistry.projects.locations.operations.get",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform",
-                    "https://www.googleapis.com/auth/cloud-platform.read-only"
-                  ]
-                }
-              }
-            },
             "repositories": {
               "methods": {
                 "get": {
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "parameters": {
-                    "name": {
-                      "description": "Required. The name of the repository to retrieve.",
-                      "required": true,
-                      "location": "path",
-                      "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+$",
-                      "type": "string"
-                    }
-                  },
-                  "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}",
-                  "httpMethod": "GET",
+                  "description": "Gets a repository.",
                   "response": {
                     "$ref": "Repository"
                   },
-                  "id": "artifactregistry.projects.locations.repositories.get",
                   "scopes": [
                     "https://www.googleapis.com/auth/cloud-platform",
                     "https://www.googleapis.com/auth/cloud-platform.read-only"
                   ],
                   "path": "v1beta1/{+name}",
-                  "description": "Gets a repository."
+                  "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}",
+                  "httpMethod": "GET",
+                  "parameters": {
+                    "name": {
+                      "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+$",
+                      "type": "string",
+                      "description": "Required. The name of the repository to retrieve.",
+                      "location": "path",
+                      "required": true
+                    }
+                  },
+                  "id": "artifactregistry.projects.locations.repositories.get",
+                  "parameterOrder": [
+                    "name"
+                  ]
                 },
                 "delete": {
-                  "httpMethod": "DELETE",
+                  "description": "Deletes a repository and all of its contents. The returned Operation will finish once the repository has been deleted. It will not have any Operation metadata and will return a google.protobuf.Empty response.",
                   "response": {
                     "$ref": "Operation"
                   },
-                  "id": "artifactregistry.projects.locations.repositories.delete",
                   "scopes": [
                     "https://www.googleapis.com/auth/cloud-platform"
                   ],
                   "path": "v1beta1/{+name}",
-                  "description": "Deletes a repository and all of its contents. The returned Operation will finish once the repository has been deleted. It will not have any Operation metadata and will return a google.protobuf.Empty response.",
+                  "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}",
+                  "httpMethod": "DELETE",
                   "parameters": {
                     "name": {
-                      "location": "path",
-                      "type": "string",
                       "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+$",
+                      "type": "string",
+                      "location": "path",
                       "required": true,
                       "description": "Required. The name of the repository to delete."
                     }
                   },
-                  "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}",
+                  "id": "artifactregistry.projects.locations.repositories.delete",
                   "parameterOrder": [
                     "name"
                   ]
                 },
-                "testIamPermissions": {
+                "patch": {
+                  "path": "v1beta1/{+name}",
+                  "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "response": {
+                    "$ref": "Repository"
+                  },
+                  "request": {
+                    "$ref": "Repository"
+                  },
+                  "description": "Updates a repository.",
+                  "id": "artifactregistry.projects.locations.repositories.patch",
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "parameters": {
+                    "name": {
+                      "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+$",
+                      "type": "string",
+                      "description": "The name of the repository, for example: `projects/p1/locations/us-central1/repositories/repo1`. For each location in a project, repository names must be unique.",
+                      "location": "path",
+                      "required": true
+                    },
+                    "updateMask": {
+                      "type": "string",
+                      "format": "google-fieldmask",
+                      "location": "query",
+                      "description": "The update mask applies to the resource. For the `FieldMask` definition, see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask"
+                    }
+                  },
+                  "httpMethod": "PATCH"
+                },
+                "getIamPolicy": {
+                  "id": "artifactregistry.projects.locations.repositories.getIamPolicy",
                   "parameterOrder": [
                     "resource"
                   ],
-                  "request": {
-                    "$ref": "TestIamPermissionsRequest"
-                  },
-                  "parameters": {
-                    "resource": {
-                      "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+$",
-                      "type": "string",
-                      "location": "path",
-                      "description": "REQUIRED: The resource for which the policy detail is being requested. See [Resource names](https://cloud.google.com/apis/design/resource_names) for the appropriate value for this field.",
-                      "required": true
-                    }
-                  },
-                  "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}:testIamPermissions",
-                  "httpMethod": "POST",
-                  "response": {
-                    "$ref": "TestIamPermissionsResponse"
-                  },
-                  "path": "v1beta1/{+resource}:testIamPermissions",
-                  "description": "Tests if the caller has a list of permissions on a resource.",
-                  "id": "artifactregistry.projects.locations.repositories.testIamPermissions",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform",
-                    "https://www.googleapis.com/auth/cloud-platform.read-only"
-                  ]
-                },
-                "getIamPolicy": {
-                  "path": "v1beta1/{+resource}:getIamPolicy",
-                  "description": "Gets the IAM policy for a given resource.",
-                  "id": "artifactregistry.projects.locations.repositories.getIamPolicy",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform",
-                    "https://www.googleapis.com/auth/cloud-platform.read-only"
-                  ],
-                  "httpMethod": "GET",
-                  "response": {
-                    "$ref": "Policy"
-                  },
-                  "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}:getIamPolicy",
                   "parameters": {
                     "resource": {
                       "description": "REQUIRED: The resource for which the policy is being requested. See [Resource names](https://cloud.google.com/apis/design/resource_names) for the appropriate value for this field.",
-                      "required": true,
                       "location": "path",
+                      "required": true,
                       "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+$",
                       "type": "string"
                     },
                     "options.requestedPolicyVersion": {
+                      "location": "query",
                       "description": "Optional. The maximum policy version that will be used to format the policy. Valid values are 0, 1, and 3. Requests specifying an invalid value will be rejected. Requests for policies with any conditional role bindings must specify version 3. Policies with no conditional role bindings may specify any valid value or leave the field unset. The policy in the response might use the policy version that you specified, or it might use a lower policy version. For example, if you specify version 3, but the policy has no conditional role bindings, the response uses version 1. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies).",
-                      "location": "query",
-                      "format": "int32",
-                      "type": "integer"
-                    }
-                  },
-                  "parameterOrder": [
-                    "resource"
-                  ]
-                },
-                "list": {
-                  "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories",
-                  "parameters": {
-                    "pageSize": {
-                      "description": "The maximum number of repositories to return. Maximum page size is 1,000.",
-                      "location": "query",
                       "type": "integer",
                       "format": "int32"
-                    },
-                    "pageToken": {
-                      "type": "string",
-                      "description": "The next_page_token value returned from a previous list request, if any.",
-                      "location": "query"
-                    },
-                    "parent": {
+                    }
+                  },
+                  "httpMethod": "GET",
+                  "path": "v1beta1/{+resource}:getIamPolicy",
+                  "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}:getIamPolicy",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/cloud-platform.read-only"
+                  ],
+                  "response": {
+                    "$ref": "Policy"
+                  },
+                  "description": "Gets the IAM policy for a given resource."
+                },
+                "testIamPermissions": {
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/cloud-platform.read-only"
+                  ],
+                  "path": "v1beta1/{+resource}:testIamPermissions",
+                  "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}:testIamPermissions",
+                  "request": {
+                    "$ref": "TestIamPermissionsRequest"
+                  },
+                  "description": "Tests if the caller has a list of permissions on a resource.",
+                  "response": {
+                    "$ref": "TestIamPermissionsResponse"
+                  },
+                  "id": "artifactregistry.projects.locations.repositories.testIamPermissions",
+                  "parameterOrder": [
+                    "resource"
+                  ],
+                  "httpMethod": "POST",
+                  "parameters": {
+                    "resource": {
+                      "location": "path",
                       "required": true,
-                      "description": "Required. The name of the parent resource whose repositories will be listed.",
-                      "type": "string",
-                      "pattern": "^projects/[^/]+/locations/[^/]+$",
-                      "location": "path"
-                    },
-                    "orderBy": {
-                      "description": "Optional. The field to order the results by.",
-                      "location": "query",
+                      "description": "REQUIRED: The resource for which the policy detail is being requested. See [Resource names](https://cloud.google.com/apis/design/resource_names) for the appropriate value for this field.",
+                      "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+$",
+                      "type": "string"
+                    }
+                  }
+                },
+                "setIamPolicy": {
+                  "path": "v1beta1/{+resource}:setIamPolicy",
+                  "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}:setIamPolicy",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "response": {
+                    "$ref": "Policy"
+                  },
+                  "request": {
+                    "$ref": "SetIamPolicyRequest"
+                  },
+                  "description": "Updates the IAM policy for a given resource.",
+                  "id": "artifactregistry.projects.locations.repositories.setIamPolicy",
+                  "parameterOrder": [
+                    "resource"
+                  ],
+                  "parameters": {
+                    "resource": {
+                      "location": "path",
+                      "required": true,
+                      "description": "REQUIRED: The resource for which the policy is being specified. See [Resource names](https://cloud.google.com/apis/design/resource_names) for the appropriate value for this field.",
+                      "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+$",
                       "type": "string"
                     }
                   },
+                  "httpMethod": "POST"
+                },
+                "list": {
+                  "id": "artifactregistry.projects.locations.repositories.list",
                   "parameterOrder": [
                     "parent"
                   ],
-                  "id": "artifactregistry.projects.locations.repositories.list",
+                  "httpMethod": "GET",
+                  "parameters": {
+                    "pageToken": {
+                      "location": "query",
+                      "description": "The next_page_token value returned from a previous list request, if any.",
+                      "type": "string"
+                    },
+                    "orderBy": {
+                      "location": "query",
+                      "description": "Optional. The field to order the results by.",
+                      "type": "string"
+                    },
+                    "pageSize": {
+                      "location": "query",
+                      "description": "The maximum number of repositories to return. Maximum page size is 1,000.",
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "parent": {
+                      "description": "Required. The name of the parent resource whose repositories will be listed.",
+                      "location": "path",
+                      "required": true,
+                      "pattern": "^projects/[^/]+/locations/[^/]+$",
+                      "type": "string"
+                    }
+                  },
                   "scopes": [
                     "https://www.googleapis.com/auth/cloud-platform",
                     "https://www.googleapis.com/auth/cloud-platform.read-only"
                   ],
                   "path": "v1beta1/{+parent}/repositories",
-                  "description": "Lists repositories.",
-                  "httpMethod": "GET",
+                  "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories",
                   "response": {
                     "$ref": "ListRepositoriesResponse"
-                  }
-                },
-                "patch": {
-                  "httpMethod": "PATCH",
-                  "response": {
-                    "$ref": "Repository"
                   },
-                  "path": "v1beta1/{+name}",
-                  "description": "Updates a repository.",
-                  "id": "artifactregistry.projects.locations.repositories.patch",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "request": {
-                    "$ref": "Repository"
-                  },
-                  "parameters": {
-                    "name": {
-                      "description": "The name of the repository, for example: `projects/p1/locations/us-central1/repositories/repo1`. For each location in a project, repository names must be unique.",
-                      "required": true,
-                      "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+$",
-                      "type": "string",
-                      "location": "path"
-                    },
-                    "updateMask": {
-                      "description": "The update mask applies to the resource. For the `FieldMask` definition, see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask",
-                      "location": "query",
-                      "format": "google-fieldmask",
-                      "type": "string"
-                    }
-                  },
-                  "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}"
+                  "description": "Lists repositories."
                 },
                 "create": {
                   "request": {
                     "$ref": "Repository"
                   },
+                  "description": "Creates a repository. The returned Operation will finish once the repository has been created. Its response will be the created Repository.",
+                  "response": {
+                    "$ref": "Operation"
+                  },
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "path": "v1beta1/{+parent}/repositories",
+                  "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories",
+                  "httpMethod": "POST",
                   "parameters": {
                     "parent": {
+                      "location": "path",
                       "required": true,
                       "description": "Required. The name of the parent resource where the repository will be created.",
-                      "location": "path",
-                      "type": "string",
-                      "pattern": "^projects/[^/]+/locations/[^/]+$"
+                      "pattern": "^projects/[^/]+/locations/[^/]+$",
+                      "type": "string"
                     },
                     "repositoryId": {
                       "type": "string",
@@ -959,462 +891,120 @@
                       "location": "query"
                     }
                   },
-                  "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories",
+                  "id": "artifactregistry.projects.locations.repositories.create",
                   "parameterOrder": [
                     "parent"
-                  ],
-                  "httpMethod": "POST",
-                  "response": {
-                    "$ref": "Operation"
-                  },
-                  "path": "v1beta1/{+parent}/repositories",
-                  "description": "Creates a repository. The returned Operation will finish once the repository has been created. Its response will be the created Repository.",
-                  "id": "artifactregistry.projects.locations.repositories.create",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
                   ]
-                },
-                "setIamPolicy": {
-                  "parameterOrder": [
-                    "resource"
-                  ],
-                  "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}:setIamPolicy",
-                  "parameters": {
-                    "resource": {
-                      "required": true,
-                      "description": "REQUIRED: The resource for which the policy is being specified. See [Resource names](https://cloud.google.com/apis/design/resource_names) for the appropriate value for this field.",
-                      "location": "path",
-                      "type": "string",
-                      "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+$"
-                    }
-                  },
-                  "request": {
-                    "$ref": "SetIamPolicyRequest"
-                  },
-                  "id": "artifactregistry.projects.locations.repositories.setIamPolicy",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "path": "v1beta1/{+resource}:setIamPolicy",
-                  "description": "Updates the IAM policy for a given resource.",
-                  "httpMethod": "POST",
-                  "response": {
-                    "$ref": "Policy"
-                  }
                 }
               },
               "resources": {
-                "files": {
+                "packages": {
                   "methods": {
-                    "list": {
-                      "path": "v1beta1/{+parent}/files",
-                      "description": "Lists files.",
-                      "id": "artifactregistry.projects.locations.repositories.files.list",
-                      "scopes": [
-                        "https://www.googleapis.com/auth/cloud-platform",
-                        "https://www.googleapis.com/auth/cloud-platform.read-only"
-                      ],
-                      "httpMethod": "GET",
-                      "response": {
-                        "$ref": "ListFilesResponse"
-                      },
-                      "parameterOrder": [
-                        "parent"
-                      ],
-                      "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/files",
-                      "parameters": {
-                        "filter": {
-                          "description": "An expression for filtering the results of the request. Filter rules are case insensitive. The fields eligible for filtering are: * `name` * `owner` * `annotations` Examples of using a filter: To filter the results of your request to files with the name `my_file.txt` in project `my-project` in the `us-central` region, in repository `my-repo`, append the following filter expression to your request: * `name=\"projects/my-project/locations/us-central1/repositories/my-repo/files/my-file.txt\"` You can also use wildcards to match any number of characters before or after the value: * `name=\"projects/my-project/locations/us-central1/repositories/my-repo/files/my-*\"` * `name=\"projects/my-project/locations/us-central1/repositories/my-repo/files/*file.txt\"` * `name=\"projects/my-project/locations/us-central1/repositories/my-repo/files/*file*\"` To filter the results of your request to files owned by the version `1.0` in package `pkg1`, append the following filter expression to your request: * `owner=\"projects/my-project/locations/us-central1/repositories/my-repo/packages/my-package/versions/1.0\"` To filter the results of your request to files with the annotation key-value pair [`external_link`: `external_link_value`], append the following filter expression to your request: * `\"annotations.external_link:external_link_value\"` To filter just for a specific annotation key `external_link`, append the following filter expression to your request: * `\"annotations.external_link\"` If the annotation key or value contains special characters, you can escape them by surrounding the value with backticks. For example, to filter the results of your request to files with the annotation key-value pair [`external.link`:`https://example.com/my-file`], append the following filter expression to your request: * `` \"annotations.`external.link`:`https://example.com/my-file`\" `` You can also filter with annotations with a wildcard to match any number of characters before or after the value: * `` \"annotations.*_link:`*example.com*`\" ``",
-                          "location": "query",
-                          "type": "string"
-                        },
-                        "pageSize": {
-                          "description": "The maximum number of files to return. Maximum page size is 1,000.",
-                          "location": "query",
-                          "format": "int32",
-                          "type": "integer"
-                        },
-                        "pageToken": {
-                          "description": "The next_page_token value returned from a previous list request, if any.",
-                          "location": "query",
-                          "type": "string"
-                        },
-                        "parent": {
-                          "type": "string",
-                          "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+$",
-                          "location": "path",
-                          "required": true,
-                          "description": "Required. The name of the repository whose files will be listed. For example: \"projects/p1/locations/us-central1/repositories/repo1"
-                        }
-                      }
-                    },
                     "get": {
+                      "httpMethod": "GET",
                       "parameters": {
                         "name": {
-                          "required": true,
-                          "description": "Required. The name of the file to retrieve.",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+/packages/[^/]+$",
                           "type": "string",
-                          "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+/files/.*$",
-                          "location": "path"
+                          "description": "Required. The name of the package to retrieve.",
+                          "location": "path",
+                          "required": true
                         }
                       },
-                      "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/files/{filesId}",
+                      "id": "artifactregistry.projects.locations.repositories.packages.get",
                       "parameterOrder": [
                         "name"
                       ],
-                      "httpMethod": "GET",
                       "response": {
-                        "$ref": "File"
+                        "$ref": "Package"
                       },
-                      "id": "artifactregistry.projects.locations.repositories.files.get",
+                      "description": "Gets a package.",
                       "scopes": [
                         "https://www.googleapis.com/auth/cloud-platform",
                         "https://www.googleapis.com/auth/cloud-platform.read-only"
                       ],
                       "path": "v1beta1/{+name}",
-                      "description": "Gets a file."
-                    }
-                  }
-                },
-                "packages": {
-                  "methods": {
-                    "list": {
-                      "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages",
+                      "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages/{packagesId}"
+                    },
+                    "delete": {
+                      "id": "artifactregistry.projects.locations.repositories.packages.delete",
+                      "parameterOrder": [
+                        "name"
+                      ],
+                      "httpMethod": "DELETE",
                       "parameters": {
-                        "pageSize": {
-                          "description": "The maximum number of packages to return. Maximum page size is 1,000.",
-                          "location": "query",
-                          "type": "integer",
-                          "format": "int32"
+                        "name": {
+                          "description": "Required. The name of the package to delete.",
+                          "location": "path",
+                          "required": true,
+                          "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+/packages/[^/]+$",
+                          "type": "string"
+                        }
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform"
+                      ],
+                      "path": "v1beta1/{+name}",
+                      "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages/{packagesId}",
+                      "response": {
+                        "$ref": "Operation"
+                      },
+                      "description": "Deletes a package and all of its versions and tags. The returned operation will complete once the package has been deleted."
+                    },
+                    "list": {
+                      "httpMethod": "GET",
+                      "parameters": {
+                        "parent": {
+                          "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+$",
+                          "type": "string",
+                          "description": "Required. The name of the parent resource whose packages will be listed.",
+                          "location": "path",
+                          "required": true
                         },
                         "pageToken": {
                           "type": "string",
                           "description": "The next_page_token value returned from a previous list request, if any.",
                           "location": "query"
                         },
-                        "parent": {
-                          "description": "Required. The name of the parent resource whose packages will be listed.",
-                          "required": true,
-                          "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+$",
-                          "type": "string",
-                          "location": "path"
-                        },
                         "orderBy": {
                           "description": "Optional. The field to order the results by.",
                           "location": "query",
                           "type": "string"
+                        },
+                        "pageSize": {
+                          "type": "integer",
+                          "format": "int32",
+                          "location": "query",
+                          "description": "The maximum number of packages to return. Maximum page size is 1,000."
                         }
                       },
+                      "id": "artifactregistry.projects.locations.repositories.packages.list",
                       "parameterOrder": [
                         "parent"
                       ],
-                      "path": "v1beta1/{+parent}/packages",
-                      "description": "Lists packages.",
-                      "id": "artifactregistry.projects.locations.repositories.packages.list",
-                      "scopes": [
-                        "https://www.googleapis.com/auth/cloud-platform",
-                        "https://www.googleapis.com/auth/cloud-platform.read-only"
-                      ],
-                      "httpMethod": "GET",
                       "response": {
                         "$ref": "ListPackagesResponse"
-                      }
-                    },
-                    "get": {
-                      "httpMethod": "GET",
-                      "response": {
-                        "$ref": "Package"
                       },
-                      "id": "artifactregistry.projects.locations.repositories.packages.get",
+                      "description": "Lists packages.",
                       "scopes": [
                         "https://www.googleapis.com/auth/cloud-platform",
                         "https://www.googleapis.com/auth/cloud-platform.read-only"
                       ],
-                      "path": "v1beta1/{+name}",
-                      "description": "Gets a package.",
-                      "parameters": {
-                        "name": {
-                          "description": "Required. The name of the package to retrieve.",
-                          "required": true,
-                          "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+/packages/[^/]+$",
-                          "type": "string",
-                          "location": "path"
-                        }
-                      },
-                      "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages/{packagesId}",
-                      "parameterOrder": [
-                        "name"
-                      ]
-                    },
-                    "delete": {
-                      "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages/{packagesId}",
-                      "parameters": {
-                        "name": {
-                          "location": "path",
-                          "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+/packages/[^/]+$",
-                          "type": "string",
-                          "description": "Required. The name of the package to delete.",
-                          "required": true
-                        }
-                      },
-                      "parameterOrder": [
-                        "name"
-                      ],
-                      "id": "artifactregistry.projects.locations.repositories.packages.delete",
-                      "scopes": [
-                        "https://www.googleapis.com/auth/cloud-platform"
-                      ],
-                      "path": "v1beta1/{+name}",
-                      "description": "Deletes a package and all of its versions and tags. The returned operation will complete once the package has been deleted.",
-                      "httpMethod": "DELETE",
-                      "response": {
-                        "$ref": "Operation"
-                      }
+                      "path": "v1beta1/{+parent}/packages",
+                      "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages"
                     }
                   },
                   "resources": {
-                    "tags": {
-                      "methods": {
-                        "get": {
-                          "parameterOrder": [
-                            "name"
-                          ],
-                          "parameters": {
-                            "name": {
-                              "required": true,
-                              "description": "The name of the tag to retrieve.",
-                              "location": "path",
-                              "type": "string",
-                              "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+/packages/[^/]+/tags/[^/]+$"
-                            }
-                          },
-                          "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages/{packagesId}/tags/{tagsId}",
-                          "httpMethod": "GET",
-                          "response": {
-                            "$ref": "Tag"
-                          },
-                          "path": "v1beta1/{+name}",
-                          "description": "Gets a tag.",
-                          "id": "artifactregistry.projects.locations.repositories.packages.tags.get",
-                          "scopes": [
-                            "https://www.googleapis.com/auth/cloud-platform",
-                            "https://www.googleapis.com/auth/cloud-platform.read-only"
-                          ]
-                        },
-                        "delete": {
-                          "httpMethod": "DELETE",
-                          "response": {
-                            "$ref": "Empty"
-                          },
-                          "id": "artifactregistry.projects.locations.repositories.packages.tags.delete",
-                          "scopes": [
-                            "https://www.googleapis.com/auth/cloud-platform"
-                          ],
-                          "path": "v1beta1/{+name}",
-                          "description": "Deletes a tag.",
-                          "parameterOrder": [
-                            "name"
-                          ],
-                          "parameters": {
-                            "name": {
-                              "location": "path",
-                              "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+/packages/[^/]+/tags/[^/]+$",
-                              "type": "string",
-                              "description": "The name of the tag to delete.",
-                              "required": true
-                            }
-                          },
-                          "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages/{packagesId}/tags/{tagsId}"
-                        },
-                        "create": {
-                          "parameters": {
-                            "parent": {
-                              "description": "The name of the parent resource where the tag will be created.",
-                              "required": true,
-                              "location": "path",
-                              "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+/packages/[^/]+$",
-                              "type": "string"
-                            },
-                            "tagId": {
-                              "description": "The tag id to use for this repository.",
-                              "location": "query",
-                              "type": "string"
-                            }
-                          },
-                          "request": {
-                            "$ref": "Tag"
-                          },
-                          "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages/{packagesId}/tags",
-                          "parameterOrder": [
-                            "parent"
-                          ],
-                          "httpMethod": "POST",
-                          "response": {
-                            "$ref": "Tag"
-                          },
-                          "id": "artifactregistry.projects.locations.repositories.packages.tags.create",
-                          "scopes": [
-                            "https://www.googleapis.com/auth/cloud-platform"
-                          ],
-                          "path": "v1beta1/{+parent}/tags",
-                          "description": "Creates a tag."
-                        },
-                        "list": {
-                          "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages/{packagesId}/tags",
-                          "parameters": {
-                            "pageSize": {
-                              "type": "integer",
-                              "format": "int32",
-                              "description": "The maximum number of tags to return. Maximum page size is 1,000.",
-                              "location": "query"
-                            },
-                            "pageToken": {
-                              "description": "The next_page_token value returned from a previous list request, if any.",
-                              "location": "query",
-                              "type": "string"
-                            },
-                            "filter": {
-                              "type": "string",
-                              "description": "An expression for filtering the results of the request. Filter rules are case insensitive. The fields eligible for filtering are: * `name` * `version` Examples of using a filter: To filter the results of your request to tags with the name `my-tag` in package `my-package` in repository `my-repo` in project \"`y-project` in the us-central region, append the following filter expression to your request: * `name=\"projects/my-project/locations/us-central1/repositories/my-repo/packages/my-package/tags/my-tag\"` You can also use wildcards to match any number of characters before or after the value: * `name=\"projects/my-project/locations/us-central1/repositories/my-repo/packages/my-package/tags/my*\"` * `name=\"projects/my-project/locations/us-central1/repositories/my-repo/packages/my-package/tags/*tag\"` * `name=\"projects/my-project/locations/us-central1/repositories/my-repo/packages/my-package/tags/*tag*\"` To filter the results of your request to tags applied to the version `1.0` in package `my-package`, append the following filter expression to your request: * `version=\"projects/my-project/locations/us-central1/repositories/my-repo/packages/my-package/versions/1.0\"`",
-                              "location": "query"
-                            },
-                            "parent": {
-                              "description": "The name of the parent package whose tags will be listed. For example: `projects/p1/locations/us-central1/repositories/repo1/packages/pkg1`.",
-                              "required": true,
-                              "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+/packages/[^/]+$",
-                              "type": "string",
-                              "location": "path"
-                            }
-                          },
-                          "parameterOrder": [
-                            "parent"
-                          ],
-                          "id": "artifactregistry.projects.locations.repositories.packages.tags.list",
-                          "scopes": [
-                            "https://www.googleapis.com/auth/cloud-platform",
-                            "https://www.googleapis.com/auth/cloud-platform.read-only"
-                          ],
-                          "path": "v1beta1/{+parent}/tags",
-                          "description": "Lists tags.",
-                          "httpMethod": "GET",
-                          "response": {
-                            "$ref": "ListTagsResponse"
-                          }
-                        },
-                        "patch": {
-                          "httpMethod": "PATCH",
-                          "response": {
-                            "$ref": "Tag"
-                          },
-                          "path": "v1beta1/{+name}",
-                          "description": "Updates a tag.",
-                          "id": "artifactregistry.projects.locations.repositories.packages.tags.patch",
-                          "scopes": [
-                            "https://www.googleapis.com/auth/cloud-platform"
-                          ],
-                          "parameterOrder": [
-                            "name"
-                          ],
-                          "request": {
-                            "$ref": "Tag"
-                          },
-                          "parameters": {
-                            "name": {
-                              "location": "path",
-                              "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+/packages/[^/]+/tags/[^/]+$",
-                              "type": "string",
-                              "description": "The name of the tag, for example: \"projects/p1/locations/us-central1/repositories/repo1/packages/pkg1/tags/tag1\". If the package part contains slashes, the slashes are escaped. The tag part can only have characters in [a-zA-Z0-9\\-._~:@], anything else must be URL encoded.",
-                              "required": true
-                            },
-                            "updateMask": {
-                              "description": "The update mask applies to the resource. For the `FieldMask` definition, see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask",
-                              "location": "query",
-                              "type": "string",
-                              "format": "google-fieldmask"
-                            }
-                          },
-                          "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages/{packagesId}/tags/{tagsId}"
-                        }
-                      }
-                    },
                     "versions": {
                       "methods": {
-                        "list": {
-                          "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages/{packagesId}/versions",
-                          "parameters": {
-                            "parent": {
-                              "type": "string",
-                              "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+/packages/[^/]+$",
-                              "location": "path",
-                              "required": true,
-                              "description": "The name of the parent resource whose versions will be listed."
-                            },
-                            "orderBy": {
-                              "type": "string",
-                              "description": "Optional. The field to order the results by.",
-                              "location": "query"
-                            },
-                            "pageSize": {
-                              "type": "integer",
-                              "format": "int32",
-                              "description": "The maximum number of versions to return. Maximum page size is 1,000.",
-                              "location": "query"
-                            },
-                            "pageToken": {
-                              "type": "string",
-                              "description": "The next_page_token value returned from a previous list request, if any.",
-                              "location": "query"
-                            },
-                            "view": {
-                              "description": "The view that should be returned in the response.",
-                              "location": "query",
-                              "enumDescriptions": [
-                                "The default / unset value. The API will default to the BASIC view.",
-                                "Includes basic information about the version, but not any related tags.",
-                                "Include everything."
-                              ],
-                              "enum": [
-                                "VERSION_VIEW_UNSPECIFIED",
-                                "BASIC",
-                                "FULL"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "parameterOrder": [
-                            "parent"
-                          ],
-                          "id": "artifactregistry.projects.locations.repositories.packages.versions.list",
-                          "scopes": [
-                            "https://www.googleapis.com/auth/cloud-platform",
-                            "https://www.googleapis.com/auth/cloud-platform.read-only"
-                          ],
-                          "path": "v1beta1/{+parent}/versions",
-                          "description": "Lists versions.",
-                          "httpMethod": "GET",
-                          "response": {
-                            "$ref": "ListVersionsResponse"
-                          }
-                        },
                         "get": {
-                          "httpMethod": "GET",
-                          "response": {
-                            "$ref": "Version"
-                          },
-                          "id": "artifactregistry.projects.locations.repositories.packages.versions.get",
-                          "scopes": [
-                            "https://www.googleapis.com/auth/cloud-platform",
-                            "https://www.googleapis.com/auth/cloud-platform.read-only"
-                          ],
-                          "path": "v1beta1/{+name}",
-                          "description": "Gets a version",
                           "parameters": {
                             "name": {
-                              "required": true,
-                              "description": "The name of the version to retrieve.",
-                              "type": "string",
                               "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+/packages/[^/]+/versions/[^/]+$",
-                              "location": "path"
+                              "type": "string",
+                              "location": "path",
+                              "required": true,
+                              "description": "The name of the version to retrieve."
                             },
                             "view": {
                               "description": "The view that should be returned in the response.",
@@ -1432,44 +1022,378 @@
                               ]
                             }
                           },
-                          "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages/{packagesId}/versions/{versionsId}",
+                          "httpMethod": "GET",
+                          "id": "artifactregistry.projects.locations.repositories.packages.versions.get",
                           "parameterOrder": [
                             "name"
+                          ],
+                          "description": "Gets a version",
+                          "response": {
+                            "$ref": "Version"
+                          },
+                          "path": "v1beta1/{+name}",
+                          "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages/{packagesId}/versions/{versionsId}",
+                          "scopes": [
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/cloud-platform.read-only"
                           ]
                         },
                         "delete": {
-                          "id": "artifactregistry.projects.locations.repositories.packages.versions.delete",
                           "scopes": [
                             "https://www.googleapis.com/auth/cloud-platform"
                           ],
                           "path": "v1beta1/{+name}",
-                          "description": "Deletes a version and all of its content. The returned operation will complete once the version has been deleted.",
-                          "httpMethod": "DELETE",
+                          "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages/{packagesId}/versions/{versionsId}",
                           "response": {
                             "$ref": "Operation"
                           },
+                          "description": "Deletes a version and all of its content. The returned operation will complete once the version has been deleted.",
+                          "id": "artifactregistry.projects.locations.repositories.packages.versions.delete",
                           "parameterOrder": [
                             "name"
                           ],
-                          "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages/{packagesId}/versions/{versionsId}",
+                          "httpMethod": "DELETE",
                           "parameters": {
                             "name": {
-                              "description": "The name of the version to delete.",
-                              "required": true,
                               "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+/packages/[^/]+/versions/[^/]+$",
                               "type": "string",
-                              "location": "path"
+                              "location": "path",
+                              "required": true,
+                              "description": "The name of the version to delete."
                             },
                             "force": {
+                              "type": "boolean",
                               "description": "By default, a version that is tagged may not be deleted. If force=true, the version and any tags pointing to the version are deleted.",
+                              "location": "query"
+                            }
+                          }
+                        },
+                        "list": {
+                          "scopes": [
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/cloud-platform.read-only"
+                          ],
+                          "path": "v1beta1/{+parent}/versions",
+                          "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages/{packagesId}/versions",
+                          "response": {
+                            "$ref": "ListVersionsResponse"
+                          },
+                          "description": "Lists versions.",
+                          "id": "artifactregistry.projects.locations.repositories.packages.versions.list",
+                          "parameterOrder": [
+                            "parent"
+                          ],
+                          "httpMethod": "GET",
+                          "parameters": {
+                            "parent": {
+                              "description": "The name of the parent resource whose versions will be listed.",
+                              "location": "path",
+                              "required": true,
+                              "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+/packages/[^/]+$",
+                              "type": "string"
+                            },
+                            "pageToken": {
                               "location": "query",
-                              "type": "boolean"
+                              "description": "The next_page_token value returned from a previous list request, if any.",
+                              "type": "string"
+                            },
+                            "view": {
+                              "type": "string",
+                              "enumDescriptions": [
+                                "The default / unset value. The API will default to the BASIC view.",
+                                "Includes basic information about the version, but not any related tags.",
+                                "Include everything."
+                              ],
+                              "enum": [
+                                "VERSION_VIEW_UNSPECIFIED",
+                                "BASIC",
+                                "FULL"
+                              ],
+                              "description": "The view that should be returned in the response.",
+                              "location": "query"
+                            },
+                            "orderBy": {
+                              "location": "query",
+                              "description": "Optional. The field to order the results by.",
+                              "type": "string"
+                            },
+                            "pageSize": {
+                              "description": "The maximum number of versions to return. Maximum page size is 1,000.",
+                              "location": "query",
+                              "type": "integer",
+                              "format": "int32"
                             }
                           }
                         }
                       }
+                    },
+                    "tags": {
+                      "methods": {
+                        "create": {
+                          "id": "artifactregistry.projects.locations.repositories.packages.tags.create",
+                          "parameterOrder": [
+                            "parent"
+                          ],
+                          "parameters": {
+                            "parent": {
+                              "location": "path",
+                              "required": true,
+                              "description": "The name of the parent resource where the tag will be created.",
+                              "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+/packages/[^/]+$",
+                              "type": "string"
+                            },
+                            "tagId": {
+                              "location": "query",
+                              "description": "The tag id to use for this repository.",
+                              "type": "string"
+                            }
+                          },
+                          "httpMethod": "POST",
+                          "path": "v1beta1/{+parent}/tags",
+                          "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages/{packagesId}/tags",
+                          "scopes": [
+                            "https://www.googleapis.com/auth/cloud-platform"
+                          ],
+                          "request": {
+                            "$ref": "Tag"
+                          },
+                          "description": "Creates a tag.",
+                          "response": {
+                            "$ref": "Tag"
+                          }
+                        },
+                        "list": {
+                          "id": "artifactregistry.projects.locations.repositories.packages.tags.list",
+                          "parameterOrder": [
+                            "parent"
+                          ],
+                          "httpMethod": "GET",
+                          "parameters": {
+                            "pageToken": {
+                              "location": "query",
+                              "description": "The next_page_token value returned from a previous list request, if any.",
+                              "type": "string"
+                            },
+                            "filter": {
+                              "description": "An expression for filtering the results of the request. Filter rules are case insensitive. The fields eligible for filtering are: * `name` * `version` Examples of using a filter: To filter the results of your request to tags with the name `my-tag` in package `my-package` in repository `my-repo` in project \"`y-project` in the us-central region, append the following filter expression to your request: * `name=\"projects/my-project/locations/us-central1/repositories/my-repo/packages/my-package/tags/my-tag\"` You can also use wildcards to match any number of characters before or after the value: * `name=\"projects/my-project/locations/us-central1/repositories/my-repo/packages/my-package/tags/my*\"` * `name=\"projects/my-project/locations/us-central1/repositories/my-repo/packages/my-package/tags/*tag\"` * `name=\"projects/my-project/locations/us-central1/repositories/my-repo/packages/my-package/tags/*tag*\"` To filter the results of your request to tags applied to the version `1.0` in package `my-package`, append the following filter expression to your request: * `version=\"projects/my-project/locations/us-central1/repositories/my-repo/packages/my-package/versions/1.0\"`",
+                              "location": "query",
+                              "type": "string"
+                            },
+                            "pageSize": {
+                              "location": "query",
+                              "description": "The maximum number of tags to return. Maximum page size is 1,000.",
+                              "type": "integer",
+                              "format": "int32"
+                            },
+                            "parent": {
+                              "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+/packages/[^/]+$",
+                              "type": "string",
+                              "description": "The name of the parent package whose tags will be listed. For example: `projects/p1/locations/us-central1/repositories/repo1/packages/pkg1`.",
+                              "location": "path",
+                              "required": true
+                            }
+                          },
+                          "scopes": [
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/cloud-platform.read-only"
+                          ],
+                          "path": "v1beta1/{+parent}/tags",
+                          "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages/{packagesId}/tags",
+                          "description": "Lists tags.",
+                          "response": {
+                            "$ref": "ListTagsResponse"
+                          }
+                        },
+                        "patch": {
+                          "scopes": [
+                            "https://www.googleapis.com/auth/cloud-platform"
+                          ],
+                          "path": "v1beta1/{+name}",
+                          "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages/{packagesId}/tags/{tagsId}",
+                          "response": {
+                            "$ref": "Tag"
+                          },
+                          "request": {
+                            "$ref": "Tag"
+                          },
+                          "description": "Updates a tag.",
+                          "id": "artifactregistry.projects.locations.repositories.packages.tags.patch",
+                          "parameterOrder": [
+                            "name"
+                          ],
+                          "httpMethod": "PATCH",
+                          "parameters": {
+                            "name": {
+                              "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+/packages/[^/]+/tags/[^/]+$",
+                              "type": "string",
+                              "location": "path",
+                              "required": true,
+                              "description": "The name of the tag, for example: \"projects/p1/locations/us-central1/repositories/repo1/packages/pkg1/tags/tag1\". If the package part contains slashes, the slashes are escaped. The tag part can only have characters in [a-zA-Z0-9\\-._~:@], anything else must be URL encoded."
+                            },
+                            "updateMask": {
+                              "description": "The update mask applies to the resource. For the `FieldMask` definition, see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask",
+                              "location": "query",
+                              "type": "string",
+                              "format": "google-fieldmask"
+                            }
+                          }
+                        },
+                        "delete": {
+                          "id": "artifactregistry.projects.locations.repositories.packages.tags.delete",
+                          "parameterOrder": [
+                            "name"
+                          ],
+                          "parameters": {
+                            "name": {
+                              "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+/packages/[^/]+/tags/[^/]+$",
+                              "type": "string",
+                              "description": "The name of the tag to delete.",
+                              "location": "path",
+                              "required": true
+                            }
+                          },
+                          "httpMethod": "DELETE",
+                          "path": "v1beta1/{+name}",
+                          "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages/{packagesId}/tags/{tagsId}",
+                          "scopes": [
+                            "https://www.googleapis.com/auth/cloud-platform"
+                          ],
+                          "response": {
+                            "$ref": "Empty"
+                          },
+                          "description": "Deletes a tag."
+                        },
+                        "get": {
+                          "id": "artifactregistry.projects.locations.repositories.packages.tags.get",
+                          "parameterOrder": [
+                            "name"
+                          ],
+                          "parameters": {
+                            "name": {
+                              "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+/packages/[^/]+/tags/[^/]+$",
+                              "type": "string",
+                              "description": "The name of the tag to retrieve.",
+                              "location": "path",
+                              "required": true
+                            }
+                          },
+                          "httpMethod": "GET",
+                          "path": "v1beta1/{+name}",
+                          "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/packages/{packagesId}/tags/{tagsId}",
+                          "scopes": [
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/cloud-platform.read-only"
+                          ],
+                          "response": {
+                            "$ref": "Tag"
+                          },
+                          "description": "Gets a tag."
+                        }
+                      }
                     }
                   }
+                },
+                "files": {
+                  "methods": {
+                    "list": {
+                      "response": {
+                        "$ref": "ListFilesResponse"
+                      },
+                      "description": "Lists files.",
+                      "path": "v1beta1/{+parent}/files",
+                      "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/files",
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/cloud-platform.read-only"
+                      ],
+                      "parameters": {
+                        "filter": {
+                          "location": "query",
+                          "description": "An expression for filtering the results of the request. Filter rules are case insensitive. The fields eligible for filtering are: * `name` * `owner` * `annotations` Examples of using a filter: To filter the results of your request to files with the name `my_file.txt` in project `my-project` in the `us-central` region, in repository `my-repo`, append the following filter expression to your request: * `name=\"projects/my-project/locations/us-central1/repositories/my-repo/files/my-file.txt\"` You can also use wildcards to match any number of characters before or after the value: * `name=\"projects/my-project/locations/us-central1/repositories/my-repo/files/my-*\"` * `name=\"projects/my-project/locations/us-central1/repositories/my-repo/files/*file.txt\"` * `name=\"projects/my-project/locations/us-central1/repositories/my-repo/files/*file*\"` To filter the results of your request to files owned by the version `1.0` in package `pkg1`, append the following filter expression to your request: * `owner=\"projects/my-project/locations/us-central1/repositories/my-repo/packages/my-package/versions/1.0\"` To filter the results of your request to files with the annotation key-value pair [`external_link`: `external_link_value`], append the following filter expression to your request: * `\"annotations.external_link:external_link_value\"` To filter just for a specific annotation key `external_link`, append the following filter expression to your request: * `\"annotations.external_link\"` If the annotation key or value contains special characters, you can escape them by surrounding the value with backticks. For example, to filter the results of your request to files with the annotation key-value pair [`external.link`:`https://example.com/my-file`], append the following filter expression to your request: * `` \"annotations.`external.link`:`https://example.com/my-file`\" `` You can also filter with annotations with a wildcard to match any number of characters before or after the value: * `` \"annotations.*_link:`*example.com*`\" ``",
+                          "type": "string"
+                        },
+                        "pageSize": {
+                          "description": "The maximum number of files to return. Maximum page size is 1,000.",
+                          "location": "query",
+                          "type": "integer",
+                          "format": "int32"
+                        },
+                        "pageToken": {
+                          "type": "string",
+                          "location": "query",
+                          "description": "The next_page_token value returned from a previous list request, if any."
+                        },
+                        "parent": {
+                          "location": "path",
+                          "required": true,
+                          "description": "Required. The name of the repository whose files will be listed. For example: \"projects/p1/locations/us-central1/repositories/repo1",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+$",
+                          "type": "string"
+                        }
+                      },
+                      "httpMethod": "GET",
+                      "id": "artifactregistry.projects.locations.repositories.files.list",
+                      "parameterOrder": [
+                        "parent"
+                      ]
+                    },
+                    "get": {
+                      "id": "artifactregistry.projects.locations.repositories.files.get",
+                      "parameterOrder": [
+                        "name"
+                      ],
+                      "parameters": {
+                        "name": {
+                          "location": "path",
+                          "required": true,
+                          "description": "Required. The name of the file to retrieve.",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/repositories/[^/]+/files/.*$",
+                          "type": "string"
+                        }
+                      },
+                      "httpMethod": "GET",
+                      "path": "v1beta1/{+name}",
+                      "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/repositories/{repositoriesId}/files/{filesId}",
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/cloud-platform.read-only"
+                      ],
+                      "response": {
+                        "$ref": "File"
+                      },
+                      "description": "Gets a file."
+                    }
+                  }
+                }
+              }
+            },
+            "operations": {
+              "methods": {
+                "get": {
+                  "parameters": {
+                    "name": {
+                      "description": "The name of the operation resource.",
+                      "location": "path",
+                      "required": true,
+                      "pattern": "^projects/[^/]+/locations/[^/]+/operations/[^/]+$",
+                      "type": "string"
+                    }
+                  },
+                  "httpMethod": "GET",
+                  "id": "artifactregistry.projects.locations.operations.get",
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "description": "Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.",
+                  "response": {
+                    "$ref": "Operation"
+                  },
+                  "path": "v1beta1/{+name}",
+                  "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/operations/{operationsId}",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/cloud-platform.read-only"
+                  ]
                 }
               }
             }
@@ -1478,18 +1402,12 @@
       }
     }
   },
-  "id": "artifactregistry:v1beta1",
-  "ownerName": "Google",
-  "canonicalName": "Artifact Registry",
-  "revision": "20260403",
-  "servicePath": "",
-  "batchPath": "batch",
   "name": "artifactregistry",
-  "ownerDomain": "google.com",
+  "rootUrl": "https://artifactregistry.googleapis.com/",
   "endpoints": [
     {
-      "location": "africa-south1",
       "description": "Regional Endpoint",
+      "location": "africa-south1",
       "endpointUrl": "https://artifactregistry.africa-south1.rep.googleapis.com/"
     },
     {
@@ -1503,8 +1421,8 @@
       "endpointUrl": "https://artifactregistry.asia-east2.rep.googleapis.com/"
     },
     {
-      "location": "asia-northeast1",
       "description": "Regional Endpoint",
+      "location": "asia-northeast1",
       "endpointUrl": "https://artifactregistry.asia-northeast1.rep.googleapis.com/"
     },
     {
@@ -1513,8 +1431,8 @@
       "description": "Regional Endpoint"
     },
     {
-      "location": "asia-northeast3",
       "description": "Regional Endpoint",
+      "location": "asia-northeast3",
       "endpointUrl": "https://artifactregistry.asia-northeast3.rep.googleapis.com/"
     },
     {
@@ -1524,12 +1442,12 @@
     },
     {
       "endpointUrl": "https://artifactregistry.asia-south2.rep.googleapis.com/",
-      "location": "asia-south2",
-      "description": "Regional Endpoint"
+      "description": "Regional Endpoint",
+      "location": "asia-south2"
     },
     {
-      "location": "asia-southeast1",
       "description": "Regional Endpoint",
+      "location": "asia-southeast1",
       "endpointUrl": "https://artifactregistry.asia-southeast1.rep.googleapis.com/"
     },
     {
@@ -1538,14 +1456,14 @@
       "endpointUrl": "https://artifactregistry.asia-southeast2.rep.googleapis.com/"
     },
     {
-      "endpointUrl": "https://artifactregistry.australia-southeast1.rep.googleapis.com/",
+      "description": "Regional Endpoint",
       "location": "australia-southeast1",
-      "description": "Regional Endpoint"
+      "endpointUrl": "https://artifactregistry.australia-southeast1.rep.googleapis.com/"
     },
     {
       "endpointUrl": "https://artifactregistry.australia-southeast2.rep.googleapis.com/",
-      "location": "australia-southeast2",
-      "description": "Regional Endpoint"
+      "description": "Regional Endpoint",
+      "location": "australia-southeast2"
     },
     {
       "endpointUrl": "https://artifactregistry.europe-central2.rep.googleapis.com/",
@@ -1553,14 +1471,14 @@
       "description": "Regional Endpoint"
     },
     {
-      "location": "europe-north1",
       "description": "Regional Endpoint",
+      "location": "europe-north1",
       "endpointUrl": "https://artifactregistry.europe-north1.rep.googleapis.com/"
     },
     {
-      "location": "europe-north2",
+      "endpointUrl": "https://artifactregistry.europe-north2.rep.googleapis.com/",
       "description": "Regional Endpoint",
-      "endpointUrl": "https://artifactregistry.europe-north2.rep.googleapis.com/"
+      "location": "europe-north2"
     },
     {
       "location": "europe-southwest1",
@@ -1568,9 +1486,9 @@
       "endpointUrl": "https://artifactregistry.europe-southwest1.rep.googleapis.com/"
     },
     {
-      "endpointUrl": "https://artifactregistry.europe-west1.rep.googleapis.com/",
+      "description": "Regional Endpoint",
       "location": "europe-west1",
-      "description": "Regional Endpoint"
+      "endpointUrl": "https://artifactregistry.europe-west1.rep.googleapis.com/"
     },
     {
       "location": "europe-west10",
@@ -1578,8 +1496,8 @@
       "endpointUrl": "https://artifactregistry.europe-west10.rep.googleapis.com/"
     },
     {
-      "location": "europe-west12",
       "description": "Regional Endpoint",
+      "location": "europe-west12",
       "endpointUrl": "https://artifactregistry.europe-west12.rep.googleapis.com/"
     },
     {
@@ -1593,9 +1511,9 @@
       "endpointUrl": "https://artifactregistry.europe-west3.rep.googleapis.com/"
     },
     {
-      "endpointUrl": "https://artifactregistry.europe-west4.rep.googleapis.com/",
+      "description": "Regional Endpoint",
       "location": "europe-west4",
-      "description": "Regional Endpoint"
+      "endpointUrl": "https://artifactregistry.europe-west4.rep.googleapis.com/"
     },
     {
       "endpointUrl": "https://artifactregistry.europe-west6.rep.googleapis.com/",
@@ -1603,19 +1521,19 @@
       "description": "Regional Endpoint"
     },
     {
-      "location": "europe-west8",
       "description": "Regional Endpoint",
+      "location": "europe-west8",
       "endpointUrl": "https://artifactregistry.europe-west8.rep.googleapis.com/"
     },
     {
-      "endpointUrl": "https://artifactregistry.europe-west9.rep.googleapis.com/",
       "location": "europe-west9",
-      "description": "Regional Endpoint"
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://artifactregistry.europe-west9.rep.googleapis.com/"
     },
     {
       "endpointUrl": "https://artifactregistry.me-central1.rep.googleapis.com/",
-      "location": "me-central1",
-      "description": "Regional Endpoint"
+      "description": "Regional Endpoint",
+      "location": "me-central1"
     },
     {
       "location": "me-west1",
@@ -1638,9 +1556,9 @@
       "endpointUrl": "https://artifactregistry.northamerica-south1.rep.googleapis.com/"
     },
     {
-      "endpointUrl": "https://artifactregistry.southamerica-east1.rep.googleapis.com/",
+      "description": "Regional Endpoint",
       "location": "southamerica-east1",
-      "description": "Regional Endpoint"
+      "endpointUrl": "https://artifactregistry.southamerica-east1.rep.googleapis.com/"
     },
     {
       "endpointUrl": "https://artifactregistry.southamerica-west1.rep.googleapis.com/",
@@ -1653,19 +1571,19 @@
       "endpointUrl": "https://artifactregistry.us-central1.rep.googleapis.com/"
     },
     {
-      "endpointUrl": "https://artifactregistry.us-central2.rep.googleapis.com/",
+      "description": "Regional Endpoint",
       "location": "us-central2",
-      "description": "Regional Endpoint"
+      "endpointUrl": "https://artifactregistry.us-central2.rep.googleapis.com/"
     },
     {
-      "location": "us-east1",
+      "endpointUrl": "https://artifactregistry.us-east1.rep.googleapis.com/",
       "description": "Regional Endpoint",
-      "endpointUrl": "https://artifactregistry.us-east1.rep.googleapis.com/"
+      "location": "us-east1"
     },
     {
       "endpointUrl": "https://artifactregistry.us-east4.rep.googleapis.com/",
-      "location": "us-east4",
-      "description": "Regional Endpoint"
+      "description": "Regional Endpoint",
+      "location": "us-east4"
     },
     {
       "endpointUrl": "https://artifactregistry.us-east5.rep.googleapis.com/",
@@ -1673,56 +1591,138 @@
       "description": "Regional Endpoint"
     },
     {
+      "endpointUrl": "https://artifactregistry.us-south1.rep.googleapis.com/",
       "location": "us-south1",
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://artifactregistry.us-south1.rep.googleapis.com/"
+      "description": "Regional Endpoint"
     },
     {
-      "location": "us-west1",
+      "endpointUrl": "https://artifactregistry.us-west1.rep.googleapis.com/",
       "description": "Regional Endpoint",
-      "endpointUrl": "https://artifactregistry.us-west1.rep.googleapis.com/"
+      "location": "us-west1"
     },
     {
+      "description": "Regional Endpoint",
       "location": "us-west2",
-      "description": "Regional Endpoint",
       "endpointUrl": "https://artifactregistry.us-west2.rep.googleapis.com/"
     },
     {
+      "endpointUrl": "https://artifactregistry.us-west3.rep.googleapis.com/",
       "location": "us-west3",
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://artifactregistry.us-west3.rep.googleapis.com/"
+      "description": "Regional Endpoint"
     },
     {
-      "location": "us-west4",
       "description": "Regional Endpoint",
+      "location": "us-west4",
       "endpointUrl": "https://artifactregistry.us-west4.rep.googleapis.com/"
     },
     {
-      "location": "us-west8",
+      "endpointUrl": "https://artifactregistry.us-west8.rep.googleapis.com/",
       "description": "Regional Endpoint",
-      "endpointUrl": "https://artifactregistry.us-west8.rep.googleapis.com/"
+      "location": "us-west8"
     },
     {
-      "location": "me-central2",
+      "endpointUrl": "https://artifactregistry.me-central2.rep.googleapis.com/",
       "description": "Regional Endpoint",
-      "endpointUrl": "https://artifactregistry.me-central2.rep.googleapis.com/"
+      "location": "me-central2"
     },
     {
       "endpointUrl": "https://artifactregistry.us-east7.rep.googleapis.com/",
-      "location": "us-east7",
-      "description": "Regional Endpoint"
-    },
-    {
-      "location": "us",
       "description": "Regional Endpoint",
-      "endpointUrl": "https://artifactregistry.us.rep.googleapis.com/"
+      "location": "us-east7"
     },
     {
-      "endpointUrl": "https://artifactregistry.eu.rep.googleapis.com/",
+      "endpointUrl": "https://artifactregistry.us.rep.googleapis.com/",
+      "description": "Regional Endpoint",
+      "location": "us"
+    },
+    {
+      "description": "Regional Endpoint",
       "location": "eu",
-      "description": "Regional Endpoint"
+      "endpointUrl": "https://artifactregistry.eu.rep.googleapis.com/"
     }
   ],
+  "servicePath": "",
+  "baseUrl": "https://artifactregistry.googleapis.com/",
   "version": "v1beta1",
+  "title": "Artifact Registry API",
+  "id": "artifactregistry:v1beta1",
+  "batchPath": "batch",
+  "parameters": {
+    "fields": {
+      "type": "string",
+      "description": "Selector specifying which fields to include in a partial response.",
+      "location": "query"
+    },
+    "alt": {
+      "default": "json",
+      "location": "query",
+      "description": "Data format for response.",
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ],
+      "type": "string",
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ]
+    },
+    "prettyPrint": {
+      "description": "Returns response with indentations and line breaks.",
+      "default": "true",
+      "location": "query",
+      "type": "boolean"
+    },
+    "upload_protocol": {
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
+      "location": "query",
+      "type": "string"
+    },
+    "callback": {
+      "location": "query",
+      "description": "JSONP",
+      "type": "string"
+    },
+    "uploadType": {
+      "type": "string",
+      "location": "query",
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\")."
+    },
+    "oauth_token": {
+      "location": "query",
+      "description": "OAuth 2.0 token for the current user.",
+      "type": "string"
+    },
+    "quotaUser": {
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
+      "location": "query",
+      "type": "string"
+    },
+    "access_token": {
+      "type": "string",
+      "description": "OAuth access token.",
+      "location": "query"
+    },
+    "$.xgafv": {
+      "type": "string",
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ],
+      "enum": [
+        "1",
+        "2"
+      ],
+      "description": "V1 error format.",
+      "location": "query"
+    },
+    "key": {
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+      "location": "query",
+      "type": "string"
+    }
+  },
   "fullyEncodeReservedExpansion": true
 }
