@@ -1,51 +1,226 @@
 {
-  "discoveryVersion": "v1",
-  "name": "merchantapi",
+  "mtlsRootUrl": "https://merchantapi.mtls.googleapis.com/",
+  "icons": {
+    "x16": "http://www.google.com/images/icons/product/search-16.gif",
+    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  },
+  "parameters": {
+    "key": {
+      "type": "string",
+      "location": "query",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token."
+    },
+    "fields": {
+      "location": "query",
+      "description": "Selector specifying which fields to include in a partial response.",
+      "type": "string"
+    },
+    "oauth_token": {
+      "location": "query",
+      "description": "OAuth 2.0 token for the current user.",
+      "type": "string"
+    },
+    "callback": {
+      "type": "string",
+      "description": "JSONP",
+      "location": "query"
+    },
+    "prettyPrint": {
+      "type": "boolean",
+      "default": "true",
+      "location": "query",
+      "description": "Returns response with indentations and line breaks."
+    },
+    "access_token": {
+      "location": "query",
+      "description": "OAuth access token.",
+      "type": "string"
+    },
+    "alt": {
+      "default": "json",
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ],
+      "type": "string",
+      "description": "Data format for response.",
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ],
+      "location": "query"
+    },
+    "uploadType": {
+      "location": "query",
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
+      "type": "string"
+    },
+    "upload_protocol": {
+      "type": "string",
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
+      "location": "query"
+    },
+    "$.xgafv": {
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ],
+      "type": "string",
+      "enum": [
+        "1",
+        "2"
+      ],
+      "location": "query",
+      "description": "V1 error format."
+    },
+    "quotaUser": {
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
+      "location": "query",
+      "type": "string"
+    }
+  },
+  "servicePath": "",
+  "version": "notifications_v1beta",
+  "baseUrl": "https://merchantapi.googleapis.com/",
+  "canonicalName": "Merchant",
+  "documentationLink": "https://developers.google.com/merchant/api",
+  "ownerDomain": "google.com",
+  "version_module": true,
+  "description": "Programmatically manage your Merchant Center Accounts.",
+  "basePath": "",
+  "title": "Merchant API",
   "schemas": {
+    "ListNotificationSubscriptionsResponse": {
+      "id": "ListNotificationSubscriptionsResponse",
+      "type": "object",
+      "description": "Response message for the ListNotificationSubscription method.",
+      "properties": {
+        "notificationSubscriptions": {
+          "description": "The list of notification subscriptions requested by the merchant.",
+          "type": "array",
+          "items": {
+            "$ref": "NotificationSubscription"
+          }
+        },
+        "nextPageToken": {
+          "description": "A token, which can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages.",
+          "type": "string"
+        }
+      }
+    },
+    "ProductStatusChangeMessage": {
+      "type": "object",
+      "id": "ProductStatusChangeMessage",
+      "description": "The message that the merchant will receive to notify about product status change event",
+      "properties": {
+        "changes": {
+          "description": "A message to describe the change that happened to the product",
+          "type": "array",
+          "items": {
+            "$ref": "ProductChange"
+          }
+        },
+        "resourceType": {
+          "type": "string",
+          "enumDescriptions": [
+            "Unspecified resource",
+            "Resource type : product"
+          ],
+          "enum": [
+            "RESOURCE_UNSPECIFIED",
+            "PRODUCT"
+          ],
+          "description": "The resource that changed, in this case it will always be `Product`."
+        },
+        "attribute": {
+          "enum": [
+            "ATTRIBUTE_UNSPECIFIED",
+            "STATUS"
+          ],
+          "description": "The attribute in the resource that changed, in this case it will be always `Status`.",
+          "type": "string",
+          "enumDescriptions": [
+            "Unspecified attribute",
+            "Status of the changed entity"
+          ]
+        },
+        "resourceId": {
+          "description": "The product id.",
+          "type": "string"
+        },
+        "managingAccount": {
+          "description": "The account that manages the merchant's account. can be the same as merchant id if it is standalone account. Format : `accounts/{service_provider_id}`",
+          "type": "string"
+        },
+        "account": {
+          "type": "string",
+          "description": "The target account that owns the entity that changed. Format : `accounts/{merchant_id}`"
+        },
+        "resource": {
+          "description": "The product name. Format: `accounts/{account}/products/{product}`",
+          "type": "string"
+        },
+        "expirationTime": {
+          "type": "string",
+          "description": "Optional. The product expiration time. This field will not be set if the notification is sent for a product deletion event.",
+          "format": "google-datetime"
+        },
+        "eventTime": {
+          "description": "The time at which the event was generated. If you want to order the notification messages you receive you should rely on this field not on the order of receiving the notifications.",
+          "format": "google-datetime",
+          "type": "string"
+        }
+      }
+    },
     "NotificationSubscription": {
       "description": "Represents a notification subscription owned by a Merchant account. See [Decode notifications](/merchant/api/guides/accounts/notifications#decode_notifications) for information on how to decode the notification payload and how to interpret its contents.",
-      "type": "object",
       "properties": {
         "name": {
           "description": "Output only. The `name` of the notification configuration. Generated by the Content API upon creation of a new `NotificationSubscription`. The `account` represents the merchant ID of the merchant that owns the configuration. Format: `accounts/{account}/notificationsubscriptions/{notification_subscription}`",
           "type": "string",
           "readOnly": true
         },
-        "callBackUri": {
-          "description": "URL to be used to push the notification to the merchant.",
-          "type": "string"
+        "allManagedAccounts": {
+          "type": "boolean",
+          "description": "If this value is true, the requesting account is notified of the specified event for all managed accounts (can be subaccounts or other linked accounts) including newly added accounts on a daily basis."
+        },
+        "registeredEvent": {
+          "enum": [
+            "NOTIFICATION_EVENT_TYPE_UNSPECIFIED",
+            "PRODUCT_STATUS_CHANGE"
+          ],
+          "description": "The event that the merchant wants to be notified about.",
+          "type": "string",
+          "enumDescriptions": [
+            "Notifications event type is unspecified.",
+            "Notification of product status changes, for example when product becomes disapproved."
+          ]
         },
         "targetAccount": {
           "description": "The `name` of the account you want to receive notifications for. Format: `accounts/{account}`",
           "type": "string"
         },
-        "allManagedAccounts": {
-          "description": "If this value is true, the requesting account is notified of the specified event for all managed accounts (can be subaccounts or other linked accounts) including newly added accounts on a daily basis.",
-          "type": "boolean"
-        },
-        "registeredEvent": {
-          "description": "The event that the merchant wants to be notified about.",
+        "callBackUri": {
           "type": "string",
-          "enum": [
-            "NOTIFICATION_EVENT_TYPE_UNSPECIFIED",
-            "PRODUCT_STATUS_CHANGE"
-          ],
-          "enumDescriptions": [
-            "Notifications event type is unspecified.",
-            "Notification of product status changes, for example when product becomes disapproved."
-          ]
+          "description": "URL to be used to push the notification to the merchant."
         }
       },
-      "id": "NotificationSubscription"
+      "id": "NotificationSubscription",
+      "type": "object"
+    },
+    "Empty": {
+      "id": "Empty",
+      "type": "object",
+      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
+      "properties": {}
     },
     "ProductChange": {
+      "description": "The change that happened to the product including old value, new value, country code as the region code and reporting context.",
       "properties": {
         "oldValue": {
           "description": "The old value of the changed resource or attribute. If empty, it means that the product was created. Will have one of these values : (`approved`, `pending`, `disapproved`, ``)",
-          "type": "string"
-        },
-        "newValue": {
-          "description": "The new value of the changed resource or attribute. If empty, it means that the product was deleted. Will have one of these values : (`approved`, `pending`, `disapproved`, ``)",
           "type": "string"
         },
         "reportingContext": {
@@ -72,29 +247,6 @@
             false,
             false
           ],
-          "enumDescriptions": [
-            "Not specified.",
-            "[Shopping ads](https://support.google.com/merchants/answer/6149970).",
-            "Deprecated: Use `DEMAND_GEN_ADS` instead. [Discovery and Demand Gen ads](https://support.google.com/merchants/answer/13389785).",
-            "[Demand Gen ads](https://support.google.com/merchants/answer/13389785).",
-            "[Demand Gen ads on Discover surface](https://support.google.com/merchants/answer/13389785).",
-            "[Video ads](https://support.google.com/google-ads/answer/6340491).",
-            "[Display ads](https://support.google.com/merchants/answer/6069387).",
-            "[Local inventory ads](https://support.google.com/merchants/answer/3271956).",
-            "[Vehicle inventory ads](https://support.google.com/merchants/answer/11544533).",
-            "[Free product listings](https://support.google.com/merchants/answer/9199328).",
-            "[Free product listings on UCP checkout](https://developers.google.com/merchant/ucp).",
-            "[Free local product listings](https://support.google.com/merchants/answer/9825611).",
-            "[Free local vehicle listings](https://support.google.com/merchants/answer/11544533).",
-            "[Youtube Affiliate](https://support.google.com/youtube/answer/13376398).",
-            "[YouTube Shopping](https://support.google.com/merchants/answer/13478370).",
-            "[Cloud retail](https://cloud.google.com/solutions/retail).",
-            "[Local cloud retail](https://cloud.google.com/solutions/retail).",
-            "[Product Reviews](https://support.google.com/merchants/answer/14620732).",
-            "[Merchant Reviews](https://developers.google.com/merchant-review-feeds).",
-            "YouTube Checkout ."
-          ],
-          "description": "Reporting contexts that have the change (if applicable). Currently this field supports only (`SHOPPING_ADS`, `LOCAL_INVENTORY_ADS`, `YOUTUBE_SHOPPING`, `YOUTUBE_CHECKOUT`, `YOUTUBE_AFFILIATE`) from the enum value [ReportingContextEnum](/merchant/api/reference/rest/Shared.Types/ReportingContextEnum)",
           "enum": [
             "REPORTING_CONTEXT_ENUM_UNSPECIFIED",
             "SHOPPING_ADS",
@@ -116,114 +268,53 @@
             "PRODUCT_REVIEWS",
             "MERCHANT_REVIEWS",
             "YOUTUBE_CHECKOUT"
+          ],
+          "description": "Reporting contexts that have the change (if applicable). Currently this field supports only (`SHOPPING_ADS`, `LOCAL_INVENTORY_ADS`, `YOUTUBE_SHOPPING`, `YOUTUBE_CHECKOUT`, `YOUTUBE_AFFILIATE`) from the enum value [ReportingContextEnum](/merchant/api/reference/rest/Shared.Types/ReportingContextEnum)",
+          "enumDescriptions": [
+            "Not specified.",
+            "[Shopping ads](https://support.google.com/merchants/answer/6149970).",
+            "Deprecated: Use `DEMAND_GEN_ADS` instead. [Discovery and Demand Gen ads](https://support.google.com/merchants/answer/13389785).",
+            "[Demand Gen ads](https://support.google.com/merchants/answer/13389785).",
+            "[Demand Gen ads on Discover surface](https://support.google.com/merchants/answer/13389785).",
+            "[Video ads](https://support.google.com/google-ads/answer/6340491).",
+            "[Display ads](https://support.google.com/merchants/answer/6069387).",
+            "[Local inventory ads](https://support.google.com/merchants/answer/3271956).",
+            "[Vehicle inventory ads](https://support.google.com/merchants/answer/11544533).",
+            "[Free product listings](https://support.google.com/merchants/answer/9199328).",
+            "[Free product listings on UCP checkout](https://developers.google.com/merchant/ucp).",
+            "[Free local product listings](https://support.google.com/merchants/answer/9825611).",
+            "[Free local vehicle listings](https://support.google.com/merchants/answer/11544533).",
+            "[Youtube Affiliate](https://support.google.com/youtube/answer/13376398).",
+            "[YouTube Shopping](https://support.google.com/merchants/answer/13478370).",
+            "[Cloud retail](https://cloud.google.com/solutions/retail).",
+            "[Local cloud retail](https://cloud.google.com/solutions/retail).",
+            "[Product Reviews](https://support.google.com/merchants/answer/14620732).",
+            "[Merchant Reviews](https://developers.google.com/merchant-review-feeds).",
+            "YouTube Checkout ."
           ]
         },
         "regionCode": {
-          "description": "Countries that have the change (if applicable). Represented in the ISO 3166 format.",
+          "type": "string",
+          "description": "Countries that have the change (if applicable). Represented in the ISO 3166 format."
+        },
+        "newValue": {
+          "description": "The new value of the changed resource or attribute. If empty, it means that the product was deleted. Will have one of these values : (`approved`, `pending`, `disapproved`, ``)",
           "type": "string"
         }
       },
-      "description": "The change that happened to the product including old value, new value, country code as the region code and reporting context.",
       "type": "object",
       "id": "ProductChange"
-    },
-    "ProductStatusChangeMessage": {
-      "description": "The message that the merchant will receive to notify about product status change event",
-      "type": "object",
-      "properties": {
-        "changes": {
-          "description": "A message to describe the change that happened to the product",
-          "type": "array",
-          "items": {
-            "$ref": "ProductChange"
-          }
-        },
-        "attribute": {
-          "enumDescriptions": [
-            "Unspecified attribute",
-            "Status of the changed entity"
-          ],
-          "enum": [
-            "ATTRIBUTE_UNSPECIFIED",
-            "STATUS"
-          ],
-          "description": "The attribute in the resource that changed, in this case it will be always `Status`.",
-          "type": "string"
-        },
-        "managingAccount": {
-          "description": "The account that manages the merchant's account. can be the same as merchant id if it is standalone account. Format : `accounts/{service_provider_id}`",
-          "type": "string"
-        },
-        "resource": {
-          "description": "The product name. Format: `accounts/{account}/products/{product}`",
-          "type": "string"
-        },
-        "resourceId": {
-          "description": "The product id.",
-          "type": "string"
-        },
-        "resourceType": {
-          "description": "The resource that changed, in this case it will always be `Product`.",
-          "type": "string",
-          "enum": [
-            "RESOURCE_UNSPECIFIED",
-            "PRODUCT"
-          ],
-          "enumDescriptions": [
-            "Unspecified resource",
-            "Resource type : product"
-          ]
-        },
-        "eventTime": {
-          "description": "The time at which the event was generated. If you want to order the notification messages you receive you should rely on this field not on the order of receiving the notifications.",
-          "type": "string",
-          "format": "google-datetime"
-        },
-        "account": {
-          "description": "The target account that owns the entity that changed. Format : `accounts/{merchant_id}`",
-          "type": "string"
-        },
-        "expirationTime": {
-          "description": "Optional. The product expiration time. This field will not be set if the notification is sent for a product deletion event.",
-          "type": "string",
-          "format": "google-datetime"
-        }
-      },
-      "id": "ProductStatusChangeMessage"
-    },
-    "Empty": {
-      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
-      "type": "object",
-      "properties": {},
-      "id": "Empty"
-    },
-    "ListNotificationSubscriptionsResponse": {
-      "id": "ListNotificationSubscriptionsResponse",
-      "description": "Response message for the ListNotificationSubscription method.",
-      "type": "object",
-      "properties": {
-        "notificationSubscriptions": {
-          "description": "The list of notification subscriptions requested by the merchant.",
-          "type": "array",
-          "items": {
-            "$ref": "NotificationSubscription"
-          }
-        },
-        "nextPageToken": {
-          "description": "A token, which can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages.",
-          "type": "string"
-        }
-      }
     }
   },
-  "id": "merchantapi:notifications_v1beta",
-  "servicePath": "",
-  "ownerDomain": "google.com",
-  "version": "notifications_v1beta",
-  "revision": "20260408",
-  "protocol": "rest",
-  "description": "Programmatically manage your Merchant Center Accounts.",
   "fullyEncodeReservedExpansion": true,
+  "name": "merchantapi",
+  "kind": "discovery#restDescription",
+  "discoveryVersion": "v1",
+  "rootUrl": "https://merchantapi.googleapis.com/",
+  "revision": "20260411",
+  "id": "merchantapi:notifications_v1beta",
+  "protocol": "rest",
+  "batchPath": "batch",
   "auth": {
     "oauth2": {
       "scopes": {
@@ -233,157 +324,97 @@
       }
     }
   },
-  "title": "Merchant API",
-  "ownerName": "Google",
-  "parameters": {
-    "fields": {
-      "type": "string",
-      "description": "Selector specifying which fields to include in a partial response.",
-      "location": "query"
-    },
-    "oauth_token": {
-      "type": "string",
-      "description": "OAuth 2.0 token for the current user.",
-      "location": "query"
-    },
-    "upload_protocol": {
-      "type": "string",
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
-      "location": "query"
-    },
-    "prettyPrint": {
-      "type": "boolean",
-      "description": "Returns response with indentations and line breaks.",
-      "location": "query",
-      "default": "true"
-    },
-    "uploadType": {
-      "type": "string",
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
-      "location": "query"
-    },
-    "access_token": {
-      "type": "string",
-      "description": "OAuth access token.",
-      "location": "query"
-    },
-    "$.xgafv": {
-      "type": "string",
-      "enum": [
-        "1",
-        "2"
-      ],
-      "description": "V1 error format.",
-      "location": "query",
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ]
-    },
-    "key": {
-      "type": "string",
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
-      "location": "query"
-    },
-    "quotaUser": {
-      "type": "string",
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
-      "location": "query"
-    },
-    "alt": {
-      "enumDescriptions": [
-        "Responses with Content-Type of application/json",
-        "Media download with context-dependent Content-Type",
-        "Responses with Content-Type of application/x-protobuf"
-      ],
-      "enum": [
-        "json",
-        "media",
-        "proto"
-      ],
-      "description": "Data format for response.",
-      "location": "query",
-      "default": "json",
-      "type": "string"
-    },
-    "callback": {
-      "type": "string",
-      "description": "JSONP",
-      "location": "query"
-    }
-  },
-  "version_module": true,
-  "baseUrl": "https://merchantapi.googleapis.com/",
-  "icons": {
-    "x32": "http://www.google.com/images/icons/product/search-32.gif",
-    "x16": "http://www.google.com/images/icons/product/search-16.gif"
-  },
-  "rootUrl": "https://merchantapi.googleapis.com/",
-  "mtlsRootUrl": "https://merchantapi.mtls.googleapis.com/",
-  "documentationLink": "https://developers.google.com/merchant/api",
   "resources": {
     "accounts": {
       "resources": {
         "notificationsubscriptions": {
           "methods": {
-            "get": {
-              "flatPath": "notifications/v1beta/accounts/{accountsId}/notificationsubscriptions/{notificationsubscriptionsId}",
-              "path": "notifications/v1beta/{+name}",
-              "httpMethod": "GET",
-              "description": "Gets notification subscriptions for an account.",
-              "parameters": {
-                "name": {
-                  "pattern": "^accounts/[^/]+/notificationsubscriptions/[^/]+$",
-                  "type": "string",
-                  "required": true,
-                  "description": "Required. The `name` of the notification subscription.",
-                  "location": "path"
-                }
-              },
-              "id": "merchantapi.accounts.notificationsubscriptions.get",
-              "parameterOrder": [
-                "name"
-              ],
-              "scopes": [
-                "https://www.googleapis.com/auth/content"
-              ],
-              "response": {
-                "$ref": "NotificationSubscription"
-              }
-            },
             "patch": {
-              "response": {
-                "$ref": "NotificationSubscription"
-              },
-              "id": "merchantapi.accounts.notificationsubscriptions.patch",
-              "parameterOrder": [
-                "name"
-              ],
               "scopes": [
                 "https://www.googleapis.com/auth/content"
               ],
+              "parameterOrder": [
+                "name"
+              ],
+              "id": "merchantapi.accounts.notificationsubscriptions.patch",
               "request": {
                 "$ref": "NotificationSubscription"
               },
+              "response": {
+                "$ref": "NotificationSubscription"
+              },
+              "flatPath": "notifications/v1beta/accounts/{accountsId}/notificationsubscriptions/{notificationsubscriptionsId}",
+              "httpMethod": "PATCH",
+              "description": "Updates an existing notification subscription for a merchant.",
+              "path": "notifications/v1beta/{+name}",
               "parameters": {
+                "updateMask": {
+                  "location": "query",
+                  "format": "google-fieldmask",
+                  "description": "List of fields being updated.",
+                  "type": "string"
+                },
                 "name": {
-                  "required": true,
+                  "description": "Output only. The `name` of the notification configuration. Generated by the Content API upon creation of a new `NotificationSubscription`. The `account` represents the merchant ID of the merchant that owns the configuration. Format: `accounts/{account}/notificationsubscriptions/{notification_subscription}`",
+                  "location": "path",
                   "pattern": "^accounts/[^/]+/notificationsubscriptions/[^/]+$",
                   "type": "string",
-                  "description": "Output only. The `name` of the notification configuration. Generated by the Content API upon creation of a new `NotificationSubscription`. The `account` represents the merchant ID of the merchant that owns the configuration. Format: `accounts/{account}/notificationsubscriptions/{notification_subscription}`",
-                  "location": "path"
-                },
-                "updateMask": {
-                  "description": "List of fields being updated.",
-                  "location": "query",
+                  "required": true
+                }
+              }
+            },
+            "get": {
+              "id": "merchantapi.accounts.notificationsubscriptions.get",
+              "response": {
+                "$ref": "NotificationSubscription"
+              },
+              "parameterOrder": [
+                "name"
+              ],
+              "scopes": [
+                "https://www.googleapis.com/auth/content"
+              ],
+              "parameters": {
+                "name": {
+                  "pattern": "^accounts/[^/]+/notificationsubscriptions/[^/]+$",
                   "type": "string",
-                  "format": "google-fieldmask"
+                  "description": "Required. The `name` of the notification subscription.",
+                  "location": "path",
+                  "required": true
                 }
               },
-              "description": "Updates an existing notification subscription for a merchant.",
-              "httpMethod": "PATCH",
+              "path": "notifications/v1beta/{+name}",
               "flatPath": "notifications/v1beta/accounts/{accountsId}/notificationsubscriptions/{notificationsubscriptionsId}",
-              "path": "notifications/v1beta/{+name}"
+              "httpMethod": "GET",
+              "description": "Gets notification subscriptions for an account."
+            },
+            "create": {
+              "parameters": {
+                "parent": {
+                  "required": true,
+                  "location": "path",
+                  "description": "Required. The merchant account that owns the new notification subscription. Format: `accounts/{account}`",
+                  "pattern": "^accounts/[^/]+$",
+                  "type": "string"
+                }
+              },
+              "path": "notifications/v1beta/{+parent}/notificationsubscriptions",
+              "flatPath": "notifications/v1beta/accounts/{accountsId}/notificationsubscriptions",
+              "httpMethod": "POST",
+              "description": "Creates a notification subscription for a business. For standalone or subaccounts accounts, the business can create a subscription for self. For MCAs, the business can create a subscription for all managed accounts or for a specific subaccount. See [Decode notifications](/merchant/api/guides/accounts/notifications#decode_notifications) for information on how to decode the notification payload and how to interpret its contents. We will allow the following types of notification subscriptions to exist together (per business as a subscriber per event type): 1. Subscription for all managed accounts + subscription for self. 2. Multiple \"partial\" subscriptions for managed accounts + subscription for self. we will not allow (per business as a subscriber per event type): 1. Multiple self subscriptions. 2. Multiple \"all managed accounts\" subscriptions. 3. \"All managed accounts\" subscription and partial subscriptions at the same time. 4. Multiple partial subscriptions for the same target account.",
+              "response": {
+                "$ref": "NotificationSubscription"
+              },
+              "id": "merchantapi.accounts.notificationsubscriptions.create",
+              "request": {
+                "$ref": "NotificationSubscription"
+              },
+              "parameterOrder": [
+                "parent"
+              ],
+              "scopes": [
+                "https://www.googleapis.com/auth/content"
+              ]
             },
             "delete": {
               "response": {
@@ -398,89 +429,58 @@
               ],
               "parameters": {
                 "name": {
+                  "description": "Required. The name of the notification subscription to be deleted.",
+                  "location": "path",
                   "pattern": "^accounts/[^/]+/notificationsubscriptions/[^/]+$",
                   "type": "string",
-                  "required": true,
-                  "description": "Required. The name of the notification subscription to be deleted.",
-                  "location": "path"
+                  "required": true
                 }
               },
-              "description": "Deletes a notification subscription for a merchant.",
-              "httpMethod": "DELETE",
+              "path": "notifications/v1beta/{+name}",
               "flatPath": "notifications/v1beta/accounts/{accountsId}/notificationsubscriptions/{notificationsubscriptionsId}",
-              "path": "notifications/v1beta/{+name}"
+              "httpMethod": "DELETE",
+              "description": "Deletes a notification subscription for a merchant."
             },
             "list": {
+              "scopes": [
+                "https://www.googleapis.com/auth/content"
+              ],
+              "id": "merchantapi.accounts.notificationsubscriptions.list",
+              "response": {
+                "$ref": "ListNotificationSubscriptionsResponse"
+              },
+              "parameterOrder": [
+                "parent"
+              ],
+              "flatPath": "notifications/v1beta/accounts/{accountsId}/notificationsubscriptions",
+              "httpMethod": "GET",
               "description": "Gets all the notification subscriptions for a merchant.",
               "parameters": {
                 "parent": {
-                  "description": "Required. The merchant account who owns the notification subscriptions. Format: `accounts/{account}`",
-                  "location": "path",
                   "pattern": "^accounts/[^/]+$",
                   "type": "string",
+                  "description": "Required. The merchant account who owns the notification subscriptions. Format: `accounts/{account}`",
+                  "location": "path",
                   "required": true
-                },
-                "pageSize": {
-                  "description": "The maximum number of notification subscriptions to return in a page. The default value for `page_size` is 100. The maximum value is `200`. Values above `200` will be coerced to `200`.",
-                  "location": "query",
-                  "type": "integer",
-                  "format": "int32"
                 },
                 "pageToken": {
                   "description": "Token (if provided) to retrieve the subsequent page. All other parameters must match the original call that provided the page token.",
                   "location": "query",
                   "type": "string"
+                },
+                "pageSize": {
+                  "description": "The maximum number of notification subscriptions to return in a page. The default value for `page_size` is 100. The maximum value is `200`. Values above `200` will be coerced to `200`.",
+                  "location": "query",
+                  "format": "int32",
+                  "type": "integer"
                 }
               },
-              "path": "notifications/v1beta/{+parent}/notificationsubscriptions",
-              "flatPath": "notifications/v1beta/accounts/{accountsId}/notificationsubscriptions",
-              "httpMethod": "GET",
-              "response": {
-                "$ref": "ListNotificationSubscriptionsResponse"
-              },
-              "id": "merchantapi.accounts.notificationsubscriptions.list",
-              "parameterOrder": [
-                "parent"
-              ],
-              "scopes": [
-                "https://www.googleapis.com/auth/content"
-              ]
-            },
-            "create": {
-              "request": {
-                "$ref": "NotificationSubscription"
-              },
-              "id": "merchantapi.accounts.notificationsubscriptions.create",
-              "parameterOrder": [
-                "parent"
-              ],
-              "scopes": [
-                "https://www.googleapis.com/auth/content"
-              ],
-              "response": {
-                "$ref": "NotificationSubscription"
-              },
-              "path": "notifications/v1beta/{+parent}/notificationsubscriptions",
-              "flatPath": "notifications/v1beta/accounts/{accountsId}/notificationsubscriptions",
-              "httpMethod": "POST",
-              "description": "Creates a notification subscription for a business. For standalone or subaccounts accounts, the business can create a subscription for self. For MCAs, the business can create a subscription for all managed accounts or for a specific subaccount. See [Decode notifications](/merchant/api/guides/accounts/notifications#decode_notifications) for information on how to decode the notification payload and how to interpret its contents. We will allow the following types of notification subscriptions to exist together (per business as a subscriber per event type): 1. Subscription for all managed accounts + subscription for self. 2. Multiple \"partial\" subscriptions for managed accounts + subscription for self. we will not allow (per business as a subscriber per event type): 1. Multiple self subscriptions. 2. Multiple \"all managed accounts\" subscriptions. 3. \"All managed accounts\" subscription and partial subscriptions at the same time. 4. Multiple partial subscriptions for the same target account.",
-              "parameters": {
-                "parent": {
-                  "required": true,
-                  "pattern": "^accounts/[^/]+$",
-                  "type": "string",
-                  "description": "Required. The merchant account that owns the new notification subscription. Format: `accounts/{account}`",
-                  "location": "path"
-                }
-              }
+              "path": "notifications/v1beta/{+parent}/notificationsubscriptions"
             }
           }
         }
       }
     }
   },
-  "basePath": "",
-  "canonicalName": "Merchant",
-  "batchPath": "batch",
-  "kind": "discovery#restDescription"
+  "ownerName": "Google"
 }
