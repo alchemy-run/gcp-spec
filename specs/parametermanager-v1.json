@@ -1,845 +1,460 @@
 {
-  "description": "Parameter Manager is a single source of truth to store, access and manage the lifecycle of your workload parameters. Parameter Manager aims to make management of sensitive application parameters effortless for customers without diminishing focus on security.",
-  "schemas": {
-    "ParameterVersionPayload": {
-      "description": "Message for storing a ParameterVersion resource's payload data",
-      "properties": {
-        "data": {
-          "format": "byte",
-          "type": "string",
-          "description": "Required. bytes data for storing payload."
-        }
-      },
-      "id": "ParameterVersionPayload",
-      "type": "object"
-    },
-    "Parameter": {
-      "id": "Parameter",
-      "type": "object",
-      "description": "Message describing Parameter resource",
-      "properties": {
-        "createTime": {
-          "readOnly": true,
-          "format": "google-datetime",
-          "type": "string",
-          "description": "Output only. [Output only] Create time stamp"
-        },
-        "updateTime": {
-          "description": "Output only. [Output only] Update time stamp",
-          "readOnly": true,
-          "format": "google-datetime",
-          "type": "string"
-        },
-        "name": {
-          "description": "Identifier. [Output only] The resource name of the Parameter in the format `projects/*/locations/*/parameters/*`.",
-          "type": "string"
-        },
-        "labels": {
-          "description": "Optional. Labels as key value pairs",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "format": {
-          "enumDescriptions": [
-            "The default / unset value. The API will default to the UNFORMATTED format.",
-            "Unformatted.",
-            "YAML format.",
-            "JSON format."
-          ],
-          "type": "string",
-          "description": "Optional. Specifies the format of a Parameter.",
-          "enum": [
-            "PARAMETER_FORMAT_UNSPECIFIED",
-            "UNFORMATTED",
-            "YAML",
-            "JSON"
-          ]
-        },
-        "policyMember": {
-          "readOnly": true,
-          "$ref": "ResourcePolicyMember",
-          "description": "Output only. [Output-only] policy member strings of a Google Cloud resource."
-        },
-        "kmsKey": {
-          "description": "Optional. Customer managed encryption key (CMEK) to use for encrypting the Parameter Versions. If not set, the default Google-managed encryption key will be used. Cloud KMS CryptoKeys must reside in the same location as the Parameter. The expected format is `projects/*/locations/*/keyRings/*/cryptoKeys/*`.",
-          "type": "string"
-        }
-      }
-    },
-    "ListLocationsResponse": {
-      "description": "The response message for Locations.ListLocations.",
-      "properties": {
-        "locations": {
-          "description": "A list of locations that matches the specified filter in the request.",
-          "items": {
-            "$ref": "Location"
-          },
-          "type": "array"
-        },
-        "nextPageToken": {
-          "description": "The standard List next-page token.",
-          "type": "string"
-        }
-      },
-      "id": "ListLocationsResponse",
-      "type": "object"
-    },
-    "Location": {
-      "description": "A resource that represents a Google Cloud location.",
-      "properties": {
-        "metadata": {
-          "description": "Service-specific metadata. For example the available capacity at the given location.",
-          "type": "object",
-          "additionalProperties": {
-            "type": "any",
-            "description": "Properties of the object. Contains field @type with type URL."
-          }
-        },
-        "locationId": {
-          "description": "The canonical id for this location. For example: `\"us-east1\"`.",
-          "type": "string"
-        },
-        "labels": {
-          "description": "Cross-service attributes for the location. For example {\"cloud.googleapis.com/region\": \"us-east1\"}",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "name": {
-          "description": "Resource name for the location, which may vary between implementations. For example: `\"projects/example-project/locations/us-east1\"`",
-          "type": "string"
-        },
-        "displayName": {
-          "description": "The friendly name for this location, typically a nearby city name. For example, \"Tokyo\".",
-          "type": "string"
-        }
-      },
-      "id": "Location",
-      "type": "object"
-    },
-    "Empty": {
-      "id": "Empty",
-      "type": "object",
-      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
-      "properties": {}
-    },
-    "ListParametersResponse": {
-      "description": "Message for response to listing Parameters",
-      "properties": {
-        "parameters": {
-          "description": "The list of Parameters",
-          "items": {
-            "$ref": "Parameter"
-          },
-          "type": "array"
-        },
-        "nextPageToken": {
-          "description": "A token identifying a page of results the server should return.",
-          "type": "string"
-        },
-        "unreachable": {
-          "type": "array",
-          "description": "Unordered list. Locations that could not be reached.",
-          "items": {
-            "type": "string"
-          }
-        }
-      },
-      "id": "ListParametersResponse",
-      "type": "object"
-    },
-    "ResourcePolicyMember": {
-      "description": "Output-only policy member strings of a Google Cloud resource's built-in identity.",
-      "properties": {
-        "iamPolicyNamePrincipal": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. IAM policy binding member referring to a Google Cloud resource by user-assigned name (https://google.aip.dev/122). If a resource is deleted and recreated with the same name, the binding will be applicable to the new resource. Example: `principal://parametermanager.googleapis.com/projects/12345/name/locations/us-central1-a/parameters/my-parameter`"
-        },
-        "iamPolicyUidPrincipal": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. IAM policy binding member referring to a Google Cloud resource by system-assigned unique identifier (https://google.aip.dev/148#uid). If a resource is deleted and recreated with the same name, the binding will not be applicable to the new resource Example: `principal://parametermanager.googleapis.com/projects/12345/uid/locations/us-central1-a/parameters/a918fed5`"
-        }
-      },
-      "id": "ResourcePolicyMember",
-      "type": "object"
-    },
-    "ListParameterVersionsResponse": {
-      "description": "Message for response to listing ParameterVersions",
-      "properties": {
-        "unreachable": {
-          "description": "Unordered list. Locations that could not be reached.",
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
-        "parameterVersions": {
-          "type": "array",
-          "description": "The list of ParameterVersions",
-          "items": {
-            "$ref": "ParameterVersion"
-          }
-        },
-        "nextPageToken": {
-          "description": "A token identifying a page of results the server should return.",
-          "type": "string"
-        }
-      },
-      "id": "ListParameterVersionsResponse",
-      "type": "object"
-    },
-    "RenderParameterVersionResponse": {
-      "description": "Message describing RenderParameterVersionResponse resource",
-      "properties": {
-        "payload": {
-          "description": "Payload content of a ParameterVersion resource.",
-          "$ref": "ParameterVersionPayload"
-        },
-        "renderedPayload": {
-          "readOnly": true,
-          "format": "byte",
-          "type": "string",
-          "description": "Output only. Server generated rendered version of the user provided payload data (ParameterVersionPayload) which has substitutions of all (if any) references to a SecretManager SecretVersion resources. This substitution only works for a Parameter which is in JSON or YAML format."
-        },
-        "parameterVersion": {
-          "type": "string",
-          "readOnly": true,
-          "description": "Output only. Resource identifier of a ParameterVersion in the format `projects/*/locations/*/parameters/*/versions/*`."
-        }
-      },
-      "id": "RenderParameterVersionResponse",
-      "type": "object"
-    },
-    "ParameterVersion": {
-      "description": "Message describing ParameterVersion resource",
-      "properties": {
-        "disabled": {
-          "description": "Optional. Disabled boolean to determine if a ParameterVersion acts as a metadata only resource (payload is never returned if disabled is true). If true any calls will always default to BASIC view even if the user explicitly passes FULL view as part of the request. A render call on a disabled resource fails with an error. Default value is False.",
-          "type": "boolean"
-        },
-        "createTime": {
-          "description": "Output only. [Output only] Create time stamp",
-          "readOnly": true,
-          "format": "google-datetime",
-          "type": "string"
-        },
-        "updateTime": {
-          "description": "Output only. [Output only] Update time stamp",
-          "readOnly": true,
-          "format": "google-datetime",
-          "type": "string"
-        },
-        "kmsKeyVersion": {
-          "type": "string",
-          "readOnly": true,
-          "description": "Optional. Output only. [Output only] The resource name of the KMS key version used to encrypt the ParameterVersion payload. This field is populated only if the Parameter resource has customer managed encryption key (CMEK) configured."
-        },
-        "payload": {
-          "description": "Required. Immutable. Payload content of a ParameterVersion resource. This is only returned when the request provides the View value of FULL (default for GET request).",
-          "$ref": "ParameterVersionPayload"
-        },
-        "name": {
-          "description": "Identifier. [Output only] The resource name of the ParameterVersion in the format `projects/*/locations/*/parameters/*/versions/*`.",
-          "type": "string"
-        }
-      },
-      "id": "ParameterVersion",
-      "type": "object"
-    }
-  },
-  "auth": {
-    "oauth2": {
-      "scopes": {
-        "https://www.googleapis.com/auth/cloud-platform": {
-          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
-        }
-      }
-    }
-  },
+  "basePath": "",
   "canonicalName": "Parameter Manager",
-  "version_module": true,
   "discoveryVersion": "v1",
-  "batchPath": "batch",
   "protocol": "rest",
-  "ownerDomain": "google.com",
-  "id": "parametermanager:v1",
-  "baseUrl": "https://parametermanager.googleapis.com/",
-  "endpoints": [
-    {
-      "location": "us-central1",
-      "endpointUrl": "https://parametermanager.us-central1.rep.googleapis.com/",
-      "description": "Regional Endpoint"
-    },
-    {
-      "location": "europe-west1",
-      "endpointUrl": "https://parametermanager.europe-west1.rep.googleapis.com/",
-      "description": "Regional Endpoint"
-    },
-    {
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.europe-west4.rep.googleapis.com/",
-      "location": "europe-west4"
-    },
-    {
-      "endpointUrl": "https://parametermanager.us-east4.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "us-east4"
-    },
-    {
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.europe-west2.rep.googleapis.com/",
-      "location": "europe-west2"
-    },
-    {
-      "location": "europe-west3",
-      "endpointUrl": "https://parametermanager.europe-west3.rep.googleapis.com/",
-      "description": "Regional Endpoint"
-    },
-    {
-      "location": "us-east7",
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.us-east7.rep.googleapis.com/"
-    },
-    {
-      "location": "us-central2",
-      "endpointUrl": "https://parametermanager.us-central2.rep.googleapis.com/",
-      "description": "Regional Endpoint"
-    },
-    {
-      "location": "us-east1",
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.us-east1.rep.googleapis.com/"
-    },
-    {
-      "location": "us-east5",
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.us-east5.rep.googleapis.com/"
-    },
-    {
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.us-south1.rep.googleapis.com/",
-      "location": "us-south1"
-    },
-    {
-      "location": "us-west1",
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.us-west1.rep.googleapis.com/"
-    },
-    {
-      "location": "us-west2",
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.us-west2.rep.googleapis.com/"
-    },
-    {
-      "location": "us-west3",
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.us-west3.rep.googleapis.com/"
-    },
-    {
-      "location": "us-west4",
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.us-west4.rep.googleapis.com/"
-    },
-    {
-      "endpointUrl": "https://parametermanager.asia-northeast1.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "asia-northeast1"
-    },
-    {
-      "location": "australia-southeast1",
-      "endpointUrl": "https://parametermanager.australia-southeast1.rep.googleapis.com/",
-      "description": "Regional Endpoint"
-    },
-    {
-      "endpointUrl": "https://parametermanager.australia-southeast2.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "australia-southeast2"
-    },
-    {
-      "location": "europe-west6",
-      "endpointUrl": "https://parametermanager.europe-west6.rep.googleapis.com/",
-      "description": "Regional Endpoint"
-    },
-    {
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.europe-west8.rep.googleapis.com/",
-      "location": "europe-west8"
-    },
-    {
-      "endpointUrl": "https://parametermanager.europe-west9.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "europe-west9"
-    },
-    {
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.me-central2.rep.googleapis.com/",
-      "location": "me-central2"
-    },
-    {
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.me-west1.rep.googleapis.com/",
-      "location": "me-west1"
-    },
-    {
-      "location": "northamerica-northeast1",
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.northamerica-northeast1.rep.googleapis.com/"
-    },
-    {
-      "endpointUrl": "https://parametermanager.northamerica-northeast2.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "northamerica-northeast2"
-    },
-    {
-      "location": "europe-west12",
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.europe-west12.rep.googleapis.com/"
-    },
-    {
-      "location": "africa-south1",
-      "endpointUrl": "https://parametermanager.africa-south1.rep.googleapis.com/",
-      "description": "Regional Endpoint"
-    },
-    {
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.asia-southeast1.rep.googleapis.com/",
-      "location": "asia-southeast1"
-    },
-    {
-      "location": "asia-southeast2",
-      "endpointUrl": "https://parametermanager.asia-southeast2.rep.googleapis.com/",
-      "description": "Regional Endpoint"
-    },
-    {
-      "location": "me-central1",
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.me-central1.rep.googleapis.com/"
-    },
-    {
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.southamerica-east1.rep.googleapis.com/",
-      "location": "southamerica-east1"
-    },
-    {
-      "location": "asia-south1",
-      "endpointUrl": "https://parametermanager.asia-south1.rep.googleapis.com/",
-      "description": "Regional Endpoint"
-    },
-    {
-      "location": "europe-west10",
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.europe-west10.rep.googleapis.com/"
-    },
-    {
-      "location": "europe-north1",
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.europe-north1.rep.googleapis.com/"
-    },
-    {
-      "endpointUrl": "https://parametermanager.europe-central2.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "europe-central2"
-    },
-    {
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.europe-southwest1.rep.googleapis.com/",
-      "location": "europe-southwest1"
-    },
-    {
-      "location": "asia-south2",
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.asia-south2.rep.googleapis.com/"
-    },
-    {
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.asia-east1.rep.googleapis.com/",
-      "location": "asia-east1"
-    },
-    {
-      "location": "asia-east2",
-      "endpointUrl": "https://parametermanager.asia-east2.rep.googleapis.com/",
-      "description": "Regional Endpoint"
-    },
-    {
-      "endpointUrl": "https://parametermanager.asia-northeast2.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "asia-northeast2"
-    },
-    {
-      "location": "asia-northeast3",
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.asia-northeast3.rep.googleapis.com/"
-    },
-    {
-      "endpointUrl": "https://parametermanager.northamerica-south1.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "northamerica-south1"
-    },
-    {
-      "location": "southamerica-west1",
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.southamerica-west1.rep.googleapis.com/"
-    },
-    {
-      "endpointUrl": "https://parametermanager.europe-north2.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "europe-north2"
-    },
-    {
-      "endpointUrl": "https://parametermanager.europe-west15.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "europe-west15"
-    },
-    {
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.us.rep.googleapis.com/",
-      "location": "us"
-    },
-    {
-      "endpointUrl": "https://parametermanager.eu.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "eu"
-    },
-    {
-      "location": "ca",
-      "description": "Regional Endpoint",
-      "endpointUrl": "https://parametermanager.ca.rep.googleapis.com/"
-    },
-    {
-      "location": "in",
-      "endpointUrl": "https://parametermanager.in.rep.googleapis.com/",
-      "description": "Regional Endpoint"
-    }
-  ],
   "documentationLink": "https://cloud.google.com/secret-manager/parameter-manager/docs/overview",
-  "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
-  },
-  "version": "v1",
-  "servicePath": "",
-  "title": "Parameter Manager API",
   "name": "parametermanager",
   "resources": {
     "projects": {
       "resources": {
         "locations": {
           "methods": {
+            "list": {
+              "httpMethod": "GET",
+              "parameters": {
+                "extraLocationTypes": {
+                  "type": "string",
+                  "description": "Optional. Do not use this field. It is unsupported and is ignored unless explicitly documented otherwise. This is primarily for internal usage.",
+                  "repeated": true,
+                  "location": "query"
+                },
+                "name": {
+                  "description": "The resource that owns the locations collection, if applicable.",
+                  "type": "string",
+                  "pattern": "^projects/[^/]+$",
+                  "location": "path",
+                  "required": true
+                },
+                "pageToken": {
+                  "type": "string",
+                  "description": "A page token received from the `next_page_token` field in the response. Send that page token to receive the subsequent page.",
+                  "location": "query"
+                },
+                "filter": {
+                  "description": "A filter to narrow down results to a preferred subset. The filtering language accepts strings like `\"displayName=tokyo\"`, and is documented in more detail in [AIP-160](https://google.aip.dev/160).",
+                  "type": "string",
+                  "location": "query"
+                },
+                "pageSize": {
+                  "location": "query",
+                  "format": "int32",
+                  "type": "integer",
+                  "description": "The maximum number of results to return. If not set, the service selects a default."
+                }
+              },
+              "flatPath": "v1/projects/{projectsId}/locations",
+              "id": "parametermanager.projects.locations.list",
+              "parameterOrder": [
+                "name"
+              ],
+              "path": "v1/{+name}/locations",
+              "response": {
+                "$ref": "ListLocationsResponse"
+              },
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud-platform"
+              ],
+              "description": "Lists information about the supported locations for this service. This method lists locations based on the resource scope provided in the [ListLocationsRequest.name] field: * **Global locations**: If `name` is empty, the method lists the public locations available to all projects. * **Project-specific locations**: If `name` follows the format `projects/{project}`, the method lists locations visible to that specific project. This includes public, private, or other project-specific locations enabled for the project. For gRPC and client library implementations, the resource name is passed as the `name` field. For direct service calls, the resource name is incorporated into the request path based on the specific service implementation and version."
+            },
             "get": {
+              "httpMethod": "GET",
+              "flatPath": "v1/projects/{projectsId}/locations/{locationsId}",
+              "parameters": {
+                "name": {
+                  "required": true,
+                  "pattern": "^projects/[^/]+/locations/[^/]+$",
+                  "location": "path",
+                  "type": "string",
+                  "description": "Resource name for the location."
+                }
+              },
+              "id": "parametermanager.projects.locations.get",
+              "path": "v1/{+name}",
               "parameterOrder": [
                 "name"
               ],
               "response": {
                 "$ref": "Location"
               },
-              "id": "parametermanager.projects.locations.get",
-              "flatPath": "v1/projects/{projectsId}/locations/{locationsId}",
-              "description": "Gets information about a location.",
               "scopes": [
                 "https://www.googleapis.com/auth/cloud-platform"
               ],
-              "parameters": {
-                "name": {
-                  "pattern": "^projects/[^/]+/locations/[^/]+$",
-                  "description": "Resource name for the location.",
-                  "required": true,
-                  "location": "path",
-                  "type": "string"
-                }
-              },
-              "httpMethod": "GET",
-              "path": "v1/{+name}"
-            },
-            "list": {
-              "path": "v1/{+name}/locations",
-              "httpMethod": "GET",
-              "parameters": {
-                "filter": {
-                  "location": "query",
-                  "type": "string",
-                  "description": "A filter to narrow down results to a preferred subset. The filtering language accepts strings like `\"displayName=tokyo\"`, and is documented in more detail in [AIP-160](https://google.aip.dev/160)."
-                },
-                "pageToken": {
-                  "location": "query",
-                  "type": "string",
-                  "description": "A page token received from the `next_page_token` field in the response. Send that page token to receive the subsequent page."
-                },
-                "extraLocationTypes": {
-                  "description": "Optional. Do not use this field. It is unsupported and is ignored unless explicitly documented otherwise. This is primarily for internal usage.",
-                  "repeated": true,
-                  "location": "query",
-                  "type": "string"
-                },
-                "name": {
-                  "required": true,
-                  "location": "path",
-                  "type": "string",
-                  "description": "The resource that owns the locations collection, if applicable.",
-                  "pattern": "^projects/[^/]+$"
-                },
-                "pageSize": {
-                  "description": "The maximum number of results to return. If not set, the service selects a default.",
-                  "location": "query",
-                  "type": "integer",
-                  "format": "int32"
-                }
-              },
-              "scopes": [
-                "https://www.googleapis.com/auth/cloud-platform"
-              ],
-              "description": "Lists information about the supported locations for this service. This method lists locations based on the resource scope provided in the [ListLocationsRequest.name] field: * **Global locations**: If `name` is empty, the method lists the public locations available to all projects. * **Project-specific locations**: If `name` follows the format `projects/{project}`, the method lists locations visible to that specific project. This includes public, private, or other project-specific locations enabled for the project. For gRPC and client library implementations, the resource name is passed as the `name` field. For direct service calls, the resource name is incorporated into the request path based on the specific service implementation and version.",
-              "id": "parametermanager.projects.locations.list",
-              "flatPath": "v1/projects/{projectsId}/locations",
-              "response": {
-                "$ref": "ListLocationsResponse"
-              },
-              "parameterOrder": [
-                "name"
-              ]
+              "description": "Gets information about a location."
             }
           },
           "resources": {
             "parameters": {
               "methods": {
-                "create": {
+                "list": {
+                  "id": "parametermanager.projects.locations.parameters.list",
+                  "path": "v1/{+parent}/parameters",
+                  "parameterOrder": [
+                    "parent"
+                  ],
+                  "httpMethod": "GET",
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/parameters",
+                  "parameters": {
+                    "pageToken": {
+                      "description": "Optional. A page token, received from a previous `ListParameters` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListParameters` must match the call that provided the page token.",
+                      "type": "string",
+                      "location": "query"
+                    },
+                    "pageSize": {
+                      "location": "query",
+                      "format": "int32",
+                      "type": "integer",
+                      "description": "Optional. Requested page size. Server may return fewer items than requested. If unspecified, server will pick an appropriate default."
+                    },
+                    "filter": {
+                      "description": "Optional. Filtering results",
+                      "type": "string",
+                      "location": "query"
+                    },
+                    "parent": {
+                      "type": "string",
+                      "description": "Required. Parent value for ListParametersRequest in the format `projects/*/locations/*`.",
+                      "required": true,
+                      "pattern": "^projects/[^/]+/locations/[^/]+$",
+                      "location": "path"
+                    },
+                    "orderBy": {
+                      "location": "query",
+                      "type": "string",
+                      "description": "Optional. Hint for how to order the results"
+                    }
+                  },
+                  "description": "Lists Parameters in a given project and location.",
+                  "response": {
+                    "$ref": "ListParametersResponse"
+                  },
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ]
+                },
+                "patch": {
+                  "httpMethod": "PATCH",
+                  "parameters": {
+                    "name": {
+                      "required": true,
+                      "pattern": "^projects/[^/]+/locations/[^/]+/parameters/[^/]+$",
+                      "location": "path",
+                      "type": "string",
+                      "description": "Identifier. [Output only] The resource name of the Parameter in the format `projects/*/locations/*/parameters/*`."
+                    },
+                    "updateMask": {
+                      "location": "query",
+                      "format": "google-fieldmask",
+                      "description": "Optional. Field mask is used to specify the fields to be overwritten in the Parameter resource by the update. The fields specified in the update_mask are relative to the resource, not the full request. A mutable field will be overwritten if it is in the mask. If the user does not provide a mask then all mutable fields present in the request will be overwritten.",
+                      "type": "string"
+                    },
+                    "requestId": {
+                      "description": "Optional. An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. The server will guarantee that for at least 60 minutes since the first request. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
+                      "type": "string",
+                      "location": "query"
+                    }
+                  },
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/parameters/{parametersId}",
+                  "id": "parametermanager.projects.locations.parameters.patch",
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "path": "v1/{+name}",
+                  "response": {
+                    "$ref": "Parameter"
+                  },
                   "scopes": [
                     "https://www.googleapis.com/auth/cloud-platform"
                   ],
+                  "description": "Updates a single Parameter.",
+                  "request": {
+                    "$ref": "Parameter"
+                  }
+                },
+                "create": {
+                  "description": "Creates a new Parameter in a given project and location.",
+                  "request": {
+                    "$ref": "Parameter"
+                  },
+                  "response": {
+                    "$ref": "Parameter"
+                  },
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "id": "parametermanager.projects.locations.parameters.create",
+                  "parameterOrder": [
+                    "parent"
+                  ],
+                  "path": "v1/{+parent}/parameters",
+                  "httpMethod": "POST",
                   "parameters": {
-                    "parameterId": {
-                      "location": "query",
-                      "type": "string",
-                      "description": "Required. Id of the Parameter resource"
-                    },
                     "requestId": {
                       "location": "query",
                       "type": "string",
                       "description": "Optional. An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. The server will guarantee that for at least 60 minutes since the first request. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000)."
                     },
                     "parent": {
-                      "location": "path",
                       "type": "string",
-                      "required": true,
                       "description": "Required. Value for parent in the format `projects/*/locations/*`.",
-                      "pattern": "^projects/[^/]+/locations/[^/]+$"
-                    }
-                  },
-                  "httpMethod": "POST",
-                  "path": "v1/{+parent}/parameters",
-                  "request": {
-                    "$ref": "Parameter"
-                  },
-                  "parameterOrder": [
-                    "parent"
-                  ],
-                  "response": {
-                    "$ref": "Parameter"
-                  },
-                  "id": "parametermanager.projects.locations.parameters.create",
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/parameters",
-                  "description": "Creates a new Parameter in a given project and location."
-                },
-                "delete": {
-                  "id": "parametermanager.projects.locations.parameters.delete",
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/parameters/{parametersId}",
-                  "description": "Deletes a single Parameter.",
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "response": {
-                    "$ref": "Empty"
-                  },
-                  "path": "v1/{+name}",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "httpMethod": "DELETE",
-                  "parameters": {
-                    "name": {
-                      "description": "Required. Name of the resource in the format `projects/*/locations/*/parameters/*`.",
-                      "pattern": "^projects/[^/]+/locations/[^/]+/parameters/[^/]+$",
                       "required": true,
-                      "location": "path",
-                      "type": "string"
-                    },
-                    "requestId": {
-                      "location": "query",
-                      "type": "string",
-                      "description": "Optional. An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. The server will guarantee that for at least 60 minutes after the first request. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000)."
-                    }
-                  }
-                },
-                "list": {
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "parameters": {
-                    "pageSize": {
-                      "format": "int32",
-                      "location": "query",
-                      "type": "integer",
-                      "description": "Optional. Requested page size. Server may return fewer items than requested. If unspecified, server will pick an appropriate default."
-                    },
-                    "orderBy": {
-                      "location": "query",
-                      "type": "string",
-                      "description": "Optional. Hint for how to order the results"
-                    },
-                    "parent": {
                       "pattern": "^projects/[^/]+/locations/[^/]+$",
-                      "description": "Required. Parent value for ListParametersRequest in the format `projects/*/locations/*`.",
-                      "required": true,
-                      "location": "path",
-                      "type": "string"
+                      "location": "path"
                     },
-                    "pageToken": {
+                    "parameterId": {
                       "location": "query",
-                      "type": "string",
-                      "description": "Optional. A page token, received from a previous `ListParameters` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListParameters` must match the call that provided the page token."
-                    },
-                    "filter": {
-                      "description": "Optional. Filtering results",
-                      "location": "query",
+                      "description": "Required. Id of the Parameter resource",
                       "type": "string"
                     }
                   },
-                  "httpMethod": "GET",
-                  "path": "v1/{+parent}/parameters",
-                  "parameterOrder": [
-                    "parent"
-                  ],
-                  "response": {
-                    "$ref": "ListParametersResponse"
-                  },
-                  "id": "parametermanager.projects.locations.parameters.list",
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/parameters",
-                  "description": "Lists Parameters in a given project and location."
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/parameters"
                 },
                 "get": {
                   "path": "v1/{+name}",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
+                  "parameterOrder": [
+                    "name"
                   ],
+                  "id": "parametermanager.projects.locations.parameters.get",
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/parameters/{parametersId}",
                   "parameters": {
                     "name": {
-                      "description": "Required. Name of the resource in the format `projects/*/locations/*/parameters/*`.",
                       "pattern": "^projects/[^/]+/locations/[^/]+/parameters/[^/]+$",
-                      "required": true,
                       "location": "path",
+                      "required": true,
+                      "description": "Required. Name of the resource in the format `projects/*/locations/*/parameters/*`.",
                       "type": "string"
                     }
                   },
                   "httpMethod": "GET",
-                  "id": "parametermanager.projects.locations.parameters.get",
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/parameters/{parametersId}",
                   "description": "Gets details of a single Parameter.",
-                  "parameterOrder": [
-                    "name"
-                  ],
                   "response": {
                     "$ref": "Parameter"
-                  }
-                },
-                "patch": {
-                  "description": "Updates a single Parameter.",
-                  "id": "parametermanager.projects.locations.parameters.patch",
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/parameters/{parametersId}",
-                  "response": {
-                    "$ref": "Parameter"
-                  },
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "path": "v1/{+name}",
-                  "request": {
-                    "$ref": "Parameter"
-                  },
-                  "httpMethod": "PATCH",
-                  "parameters": {
-                    "updateMask": {
-                      "format": "google-fieldmask",
-                      "location": "query",
-                      "type": "string",
-                      "description": "Optional. Field mask is used to specify the fields to be overwritten in the Parameter resource by the update. The fields specified in the update_mask are relative to the resource, not the full request. A mutable field will be overwritten if it is in the mask. If the user does not provide a mask then all mutable fields present in the request will be overwritten."
-                    },
-                    "name": {
-                      "description": "Identifier. [Output only] The resource name of the Parameter in the format `projects/*/locations/*/parameters/*`.",
-                      "pattern": "^projects/[^/]+/locations/[^/]+/parameters/[^/]+$",
-                      "location": "path",
-                      "type": "string",
-                      "required": true
-                    },
-                    "requestId": {
-                      "description": "Optional. An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. The server will guarantee that for at least 60 minutes since the first request. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
-                      "location": "query",
-                      "type": "string"
-                    }
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/cloud-platform"
                   ]
+                },
+                "delete": {
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/parameters/{parametersId}",
+                  "parameters": {
+                    "name": {
+                      "type": "string",
+                      "description": "Required. Name of the resource in the format `projects/*/locations/*/parameters/*`.",
+                      "required": true,
+                      "pattern": "^projects/[^/]+/locations/[^/]+/parameters/[^/]+$",
+                      "location": "path"
+                    },
+                    "requestId": {
+                      "location": "query",
+                      "description": "Optional. An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. The server will guarantee that for at least 60 minutes after the first request. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
+                      "type": "string"
+                    }
+                  },
+                  "httpMethod": "DELETE",
+                  "path": "v1/{+name}",
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "id": "parametermanager.projects.locations.parameters.delete",
+                  "response": {
+                    "$ref": "Empty"
+                  },
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "description": "Deletes a single Parameter."
                 }
               },
               "resources": {
                 "versions": {
                   "methods": {
                     "get": {
-                      "path": "v1/{+name}",
-                      "scopes": [
-                        "https://www.googleapis.com/auth/cloud-platform"
-                      ],
-                      "httpMethod": "GET",
                       "parameters": {
                         "name": {
                           "description": "Required. Name of the resource in the format `projects/*/locations/*/parameters/*/versions/*`.",
+                          "type": "string",
                           "pattern": "^projects/[^/]+/locations/[^/]+/parameters/[^/]+/versions/[^/]+$",
                           "location": "path",
-                          "type": "string",
                           "required": true
                         },
                         "view": {
-                          "description": "Optional. View of the ParameterVersion. In the default FULL view, all metadata & payload associated with the ParameterVersion will be returned.",
                           "enumDescriptions": [
                             "The default / unset value. The API will default to the FULL view.",
                             "Include only the metadata for the resource.",
                             "Include metadata & other relevant payload data as well. This is the default view."
                           ],
                           "location": "query",
-                          "type": "string",
                           "enum": [
                             "VIEW_UNSPECIFIED",
                             "BASIC",
                             "FULL"
-                          ]
+                          ],
+                          "description": "Optional. View of the ParameterVersion. In the default FULL view, all metadata & payload associated with the ParameterVersion will be returned.",
+                          "type": "string"
                         }
                       },
-                      "id": "parametermanager.projects.locations.parameters.versions.get",
                       "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/parameters/{parametersId}/versions/{versionsId}",
-                      "description": "Gets details of a single ParameterVersion.",
+                      "httpMethod": "GET",
                       "parameterOrder": [
                         "name"
                       ],
+                      "path": "v1/{+name}",
+                      "id": "parametermanager.projects.locations.parameters.versions.get",
                       "response": {
                         "$ref": "ParameterVersion"
-                      }
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform"
+                      ],
+                      "description": "Gets details of a single ParameterVersion."
                     },
-                    "patch": {
+                    "delete": {
+                      "parameterOrder": [
+                        "name"
+                      ],
                       "path": "v1/{+name}",
+                      "id": "parametermanager.projects.locations.parameters.versions.delete",
+                      "parameters": {
+                        "name": {
+                          "type": "string",
+                          "description": "Required. Name of the resource in the format `projects/*/locations/*/parameters/*/versions/*`.",
+                          "required": true,
+                          "pattern": "^projects/[^/]+/locations/[^/]+/parameters/[^/]+/versions/[^/]+$",
+                          "location": "path"
+                        },
+                        "requestId": {
+                          "type": "string",
+                          "description": "Optional. An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. The server will guarantee that for at least 60 minutes after the first request. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
+                          "location": "query"
+                        }
+                      },
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/parameters/{parametersId}/versions/{versionsId}",
+                      "httpMethod": "DELETE",
+                      "description": "Deletes a single ParameterVersion.",
+                      "response": {
+                        "$ref": "Empty"
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform"
+                      ]
+                    },
+                    "create": {
                       "request": {
                         "$ref": "ParameterVersion"
                       },
+                      "description": "Creates a new ParameterVersion in a given project, location, and parameter.",
+                      "response": {
+                        "$ref": "ParameterVersion"
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform"
+                      ],
+                      "id": "parametermanager.projects.locations.parameters.versions.create",
+                      "path": "v1/{+parent}/versions",
+                      "parameterOrder": [
+                        "parent"
+                      ],
+                      "httpMethod": "POST",
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/parameters/{parametersId}/versions",
+                      "parameters": {
+                        "parameterVersionId": {
+                          "description": "Required. Id of the ParameterVersion resource",
+                          "type": "string",
+                          "location": "query"
+                        },
+                        "parent": {
+                          "required": true,
+                          "pattern": "^projects/[^/]+/locations/[^/]+/parameters/[^/]+$",
+                          "location": "path",
+                          "type": "string",
+                          "description": "Required. Value for parent in the format `projects/*/locations/*/parameters/*`."
+                        },
+                        "requestId": {
+                          "description": "Optional. An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. The server will guarantee that for at least 60 minutes since the first request. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
+                          "type": "string",
+                          "location": "query"
+                        }
+                      }
+                    },
+                    "render": {
+                      "response": {
+                        "$ref": "RenderParameterVersionResponse"
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform"
+                      ],
+                      "description": "Gets rendered version of a ParameterVersion.",
+                      "httpMethod": "GET",
+                      "parameters": {
+                        "name": {
+                          "pattern": "^projects/[^/]+/locations/[^/]+/parameters/[^/]+/versions/[^/]+$",
+                          "location": "path",
+                          "required": true,
+                          "description": "Required. Name of the resource",
+                          "type": "string"
+                        }
+                      },
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/parameters/{parametersId}/versions/{versionsId}:render",
+                      "id": "parametermanager.projects.locations.parameters.versions.render",
+                      "parameterOrder": [
+                        "name"
+                      ],
+                      "path": "v1/{+name}:render"
+                    },
+                    "list": {
+                      "path": "v1/{+parent}/versions",
+                      "parameterOrder": [
+                        "parent"
+                      ],
+                      "id": "parametermanager.projects.locations.parameters.versions.list",
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/parameters/{parametersId}/versions",
+                      "parameters": {
+                        "parent": {
+                          "description": "Required. Parent value for ListParameterVersionsRequest in the format `projects/*/locations/*/parameters/*`.",
+                          "type": "string",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/parameters/[^/]+$",
+                          "location": "path",
+                          "required": true
+                        },
+                        "orderBy": {
+                          "description": "Optional. Hint for how to order the results",
+                          "type": "string",
+                          "location": "query"
+                        },
+                        "pageToken": {
+                          "location": "query",
+                          "description": "Optional. A page token, received from a previous `ListParameterVersions` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListParameterVersions` must match the call that provided the page token.",
+                          "type": "string"
+                        },
+                        "pageSize": {
+                          "type": "integer",
+                          "description": "Optional. Requested page size. Server may return fewer items than requested. If unspecified, server will pick an appropriate default.",
+                          "location": "query",
+                          "format": "int32"
+                        },
+                        "filter": {
+                          "location": "query",
+                          "description": "Optional. Filtering results",
+                          "type": "string"
+                        }
+                      },
+                      "httpMethod": "GET",
+                      "description": "Lists ParameterVersions in a given project, location, and parameter.",
+                      "response": {
+                        "$ref": "ListParameterVersionsResponse"
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform"
+                      ]
+                    },
+                    "patch": {
                       "httpMethod": "PATCH",
                       "parameters": {
                         "updateMask": {
-                          "location": "query",
                           "type": "string",
-                          "format": "google-fieldmask",
-                          "description": "Optional. Field mask is used to specify the fields to be overwritten in the ParameterVersion resource by the update. The fields specified in the update_mask are relative to the resource, not the full request. A mutable field will be overwritten if it is in the mask. If the user does not provide a mask then all mutable fields present in the request will be overwritten."
+                          "description": "Optional. Field mask is used to specify the fields to be overwritten in the ParameterVersion resource by the update. The fields specified in the update_mask are relative to the resource, not the full request. A mutable field will be overwritten if it is in the mask. If the user does not provide a mask then all mutable fields present in the request will be overwritten.",
+                          "location": "query",
+                          "format": "google-fieldmask"
                         },
                         "requestId": {
                           "location": "query",
@@ -847,161 +462,26 @@
                           "description": "Optional. An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. The server will guarantee that for at least 60 minutes since the first request. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000)."
                         },
                         "name": {
-                          "pattern": "^projects/[^/]+/locations/[^/]+/parameters/[^/]+/versions/[^/]+$",
                           "description": "Identifier. [Output only] The resource name of the ParameterVersion in the format `projects/*/locations/*/parameters/*/versions/*`.",
-                          "required": true,
+                          "type": "string",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/parameters/[^/]+/versions/[^/]+$",
                           "location": "path",
-                          "type": "string"
+                          "required": true
                         }
+                      },
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/parameters/{parametersId}/versions/{versionsId}",
+                      "id": "parametermanager.projects.locations.parameters.versions.patch",
+                      "parameterOrder": [
+                        "name"
+                      ],
+                      "path": "v1/{+name}",
+                      "response": {
+                        "$ref": "ParameterVersion"
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/cloud-platform"
                       ],
                       "description": "Updates a single ParameterVersion.",
-                      "id": "parametermanager.projects.locations.parameters.versions.patch",
-                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/parameters/{parametersId}/versions/{versionsId}",
-                      "response": {
-                        "$ref": "ParameterVersion"
-                      },
-                      "parameterOrder": [
-                        "name"
-                      ]
-                    },
-                    "delete": {
-                      "path": "v1/{+name}",
-                      "parameters": {
-                        "name": {
-                          "pattern": "^projects/[^/]+/locations/[^/]+/parameters/[^/]+/versions/[^/]+$",
-                          "description": "Required. Name of the resource in the format `projects/*/locations/*/parameters/*/versions/*`.",
-                          "location": "path",
-                          "type": "string",
-                          "required": true
-                        },
-                        "requestId": {
-                          "location": "query",
-                          "type": "string",
-                          "description": "Optional. An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. The server will guarantee that for at least 60 minutes after the first request. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000)."
-                        }
-                      },
-                      "httpMethod": "DELETE",
-                      "scopes": [
-                        "https://www.googleapis.com/auth/cloud-platform"
-                      ],
-                      "description": "Deletes a single ParameterVersion.",
-                      "id": "parametermanager.projects.locations.parameters.versions.delete",
-                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/parameters/{parametersId}/versions/{versionsId}",
-                      "response": {
-                        "$ref": "Empty"
-                      },
-                      "parameterOrder": [
-                        "name"
-                      ]
-                    },
-                    "list": {
-                      "id": "parametermanager.projects.locations.parameters.versions.list",
-                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/parameters/{parametersId}/versions",
-                      "description": "Lists ParameterVersions in a given project, location, and parameter.",
-                      "parameterOrder": [
-                        "parent"
-                      ],
-                      "response": {
-                        "$ref": "ListParameterVersionsResponse"
-                      },
-                      "path": "v1/{+parent}/versions",
-                      "scopes": [
-                        "https://www.googleapis.com/auth/cloud-platform"
-                      ],
-                      "httpMethod": "GET",
-                      "parameters": {
-                        "filter": {
-                          "location": "query",
-                          "type": "string",
-                          "description": "Optional. Filtering results"
-                        },
-                        "pageToken": {
-                          "location": "query",
-                          "type": "string",
-                          "description": "Optional. A page token, received from a previous `ListParameterVersions` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListParameterVersions` must match the call that provided the page token."
-                        },
-                        "pageSize": {
-                          "location": "query",
-                          "type": "integer",
-                          "format": "int32",
-                          "description": "Optional. Requested page size. Server may return fewer items than requested. If unspecified, server will pick an appropriate default."
-                        },
-                        "parent": {
-                          "location": "path",
-                          "type": "string",
-                          "required": true,
-                          "description": "Required. Parent value for ListParameterVersionsRequest in the format `projects/*/locations/*/parameters/*`.",
-                          "pattern": "^projects/[^/]+/locations/[^/]+/parameters/[^/]+$"
-                        },
-                        "orderBy": {
-                          "description": "Optional. Hint for how to order the results",
-                          "location": "query",
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "render": {
-                      "scopes": [
-                        "https://www.googleapis.com/auth/cloud-platform"
-                      ],
-                      "httpMethod": "GET",
-                      "parameters": {
-                        "name": {
-                          "description": "Required. Name of the resource",
-                          "pattern": "^projects/[^/]+/locations/[^/]+/parameters/[^/]+/versions/[^/]+$",
-                          "location": "path",
-                          "type": "string",
-                          "required": true
-                        }
-                      },
-                      "path": "v1/{+name}:render",
-                      "parameterOrder": [
-                        "name"
-                      ],
-                      "response": {
-                        "$ref": "RenderParameterVersionResponse"
-                      },
-                      "id": "parametermanager.projects.locations.parameters.versions.render",
-                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/parameters/{parametersId}/versions/{versionsId}:render",
-                      "description": "Gets rendered version of a ParameterVersion."
-                    },
-                    "create": {
-                      "parameterOrder": [
-                        "parent"
-                      ],
-                      "response": {
-                        "$ref": "ParameterVersion"
-                      },
-                      "id": "parametermanager.projects.locations.parameters.versions.create",
-                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/parameters/{parametersId}/versions",
-                      "description": "Creates a new ParameterVersion in a given project, location, and parameter.",
-                      "scopes": [
-                        "https://www.googleapis.com/auth/cloud-platform"
-                      ],
-                      "httpMethod": "POST",
-                      "parameters": {
-                        "parent": {
-                          "location": "path",
-                          "type": "string",
-                          "required": true,
-                          "pattern": "^projects/[^/]+/locations/[^/]+/parameters/[^/]+$",
-                          "description": "Required. Value for parent in the format `projects/*/locations/*/parameters/*`."
-                        },
-                        "parameterVersionId": {
-                          "description": "Required. Id of the ParameterVersion resource",
-                          "location": "query",
-                          "type": "string"
-                        },
-                        "requestId": {
-                          "description": "Optional. An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. The server will guarantee that for at least 60 minutes since the first request. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
-                          "location": "query",
-                          "type": "string"
-                        }
-                      },
-                      "path": "v1/{+parent}/versions",
                       "request": {
                         "$ref": "ParameterVersion"
                       }
@@ -1015,88 +495,608 @@
       }
     }
   },
-  "fullyEncodeReservedExpansion": true,
-  "revision": "20260408",
-  "ownerName": "Google",
-  "kind": "discovery#restDescription",
+  "id": "parametermanager:v1",
+  "baseUrl": "https://parametermanager.googleapis.com/",
   "parameters": {
+    "uploadType": {
+      "location": "query",
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
+      "type": "string"
+    },
+    "key": {
+      "type": "string",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+      "location": "query"
+    },
+    "access_token": {
+      "location": "query",
+      "type": "string",
+      "description": "OAuth access token."
+    },
+    "prettyPrint": {
+      "description": "Returns response with indentations and line breaks.",
+      "type": "boolean",
+      "location": "query",
+      "default": "true"
+    },
+    "upload_protocol": {
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
+      "type": "string",
+      "location": "query"
+    },
     "callback": {
       "description": "JSONP",
       "type": "string",
       "location": "query"
     },
-    "upload_protocol": {
-      "type": "string",
+    "quotaUser": {
       "location": "query",
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\")."
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
+      "type": "string"
     },
-    "uploadType": {
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
+    "oauth_token": {
+      "location": "query",
+      "description": "OAuth 2.0 token for the current user.",
+      "type": "string"
+    },
+    "$.xgafv": {
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ],
+      "enum": [
+        "1",
+        "2"
+      ],
+      "location": "query",
       "type": "string",
+      "description": "V1 error format."
+    },
+    "fields": {
+      "type": "string",
+      "description": "Selector specifying which fields to include in a partial response.",
       "location": "query"
     },
-    "key": {
-      "type": "string",
-      "location": "query",
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token."
-    },
     "alt": {
-      "default": "json",
-      "description": "Data format for response.",
-      "type": "string",
-      "location": "query",
       "enumDescriptions": [
         "Responses with Content-Type of application/json",
         "Media download with context-dependent Content-Type",
         "Responses with Content-Type of application/x-protobuf"
       ],
+      "type": "string",
+      "description": "Data format for response.",
+      "default": "json",
       "enum": [
         "json",
         "media",
         "proto"
-      ]
-    },
-    "access_token": {
-      "description": "OAuth access token.",
-      "type": "string",
-      "location": "query"
-    },
-    "oauth_token": {
-      "type": "string",
-      "location": "query",
-      "description": "OAuth 2.0 token for the current user."
-    },
-    "$.xgafv": {
-      "description": "V1 error format.",
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
       ],
-      "type": "string",
-      "location": "query",
-      "enum": [
-        "1",
-        "2"
-      ]
-    },
-    "prettyPrint": {
-      "type": "boolean",
-      "location": "query",
-      "default": "true",
-      "description": "Returns response with indentations and line breaks."
-    },
-    "quotaUser": {
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
-      "type": "string",
       "location": "query"
-    },
-    "fields": {
-      "type": "string",
-      "location": "query",
-      "description": "Selector specifying which fields to include in a partial response."
     }
   },
-  "basePath": "",
+  "fullyEncodeReservedExpansion": true,
+  "mtlsRootUrl": "https://parametermanager.mtls.googleapis.com/",
+  "version": "v1",
+  "endpoints": [
+    {
+      "location": "us-central1",
+      "endpointUrl": "https://parametermanager.us-central1.rep.googleapis.com/",
+      "description": "Regional Endpoint"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://parametermanager.europe-west1.rep.googleapis.com/",
+      "location": "europe-west1"
+    },
+    {
+      "description": "Regional Endpoint",
+      "location": "europe-west4",
+      "endpointUrl": "https://parametermanager.europe-west4.rep.googleapis.com/"
+    },
+    {
+      "description": "Regional Endpoint",
+      "location": "us-east4",
+      "endpointUrl": "https://parametermanager.us-east4.rep.googleapis.com/"
+    },
+    {
+      "location": "europe-west2",
+      "endpointUrl": "https://parametermanager.europe-west2.rep.googleapis.com/",
+      "description": "Regional Endpoint"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://parametermanager.europe-west3.rep.googleapis.com/",
+      "location": "europe-west3"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://parametermanager.us-east7.rep.googleapis.com/",
+      "location": "us-east7"
+    },
+    {
+      "description": "Regional Endpoint",
+      "location": "us-central2",
+      "endpointUrl": "https://parametermanager.us-central2.rep.googleapis.com/"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://parametermanager.us-east1.rep.googleapis.com/",
+      "location": "us-east1"
+    },
+    {
+      "endpointUrl": "https://parametermanager.us-east5.rep.googleapis.com/",
+      "location": "us-east5",
+      "description": "Regional Endpoint"
+    },
+    {
+      "description": "Regional Endpoint",
+      "location": "us-south1",
+      "endpointUrl": "https://parametermanager.us-south1.rep.googleapis.com/"
+    },
+    {
+      "description": "Regional Endpoint",
+      "location": "us-west1",
+      "endpointUrl": "https://parametermanager.us-west1.rep.googleapis.com/"
+    },
+    {
+      "endpointUrl": "https://parametermanager.us-west2.rep.googleapis.com/",
+      "location": "us-west2",
+      "description": "Regional Endpoint"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://parametermanager.us-west3.rep.googleapis.com/",
+      "location": "us-west3"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://parametermanager.us-west4.rep.googleapis.com/",
+      "location": "us-west4"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://parametermanager.asia-northeast1.rep.googleapis.com/",
+      "location": "asia-northeast1"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://parametermanager.australia-southeast1.rep.googleapis.com/",
+      "location": "australia-southeast1"
+    },
+    {
+      "endpointUrl": "https://parametermanager.australia-southeast2.rep.googleapis.com/",
+      "location": "australia-southeast2",
+      "description": "Regional Endpoint"
+    },
+    {
+      "endpointUrl": "https://parametermanager.europe-west6.rep.googleapis.com/",
+      "location": "europe-west6",
+      "description": "Regional Endpoint"
+    },
+    {
+      "endpointUrl": "https://parametermanager.europe-west8.rep.googleapis.com/",
+      "location": "europe-west8",
+      "description": "Regional Endpoint"
+    },
+    {
+      "description": "Regional Endpoint",
+      "location": "europe-west9",
+      "endpointUrl": "https://parametermanager.europe-west9.rep.googleapis.com/"
+    },
+    {
+      "description": "Regional Endpoint",
+      "location": "me-central2",
+      "endpointUrl": "https://parametermanager.me-central2.rep.googleapis.com/"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://parametermanager.me-west1.rep.googleapis.com/",
+      "location": "me-west1"
+    },
+    {
+      "endpointUrl": "https://parametermanager.northamerica-northeast1.rep.googleapis.com/",
+      "location": "northamerica-northeast1",
+      "description": "Regional Endpoint"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://parametermanager.northamerica-northeast2.rep.googleapis.com/",
+      "location": "northamerica-northeast2"
+    },
+    {
+      "description": "Regional Endpoint",
+      "location": "europe-west12",
+      "endpointUrl": "https://parametermanager.europe-west12.rep.googleapis.com/"
+    },
+    {
+      "endpointUrl": "https://parametermanager.africa-south1.rep.googleapis.com/",
+      "location": "africa-south1",
+      "description": "Regional Endpoint"
+    },
+    {
+      "endpointUrl": "https://parametermanager.asia-southeast1.rep.googleapis.com/",
+      "location": "asia-southeast1",
+      "description": "Regional Endpoint"
+    },
+    {
+      "description": "Regional Endpoint",
+      "location": "asia-southeast2",
+      "endpointUrl": "https://parametermanager.asia-southeast2.rep.googleapis.com/"
+    },
+    {
+      "endpointUrl": "https://parametermanager.me-central1.rep.googleapis.com/",
+      "location": "me-central1",
+      "description": "Regional Endpoint"
+    },
+    {
+      "endpointUrl": "https://parametermanager.southamerica-east1.rep.googleapis.com/",
+      "location": "southamerica-east1",
+      "description": "Regional Endpoint"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://parametermanager.asia-south1.rep.googleapis.com/",
+      "location": "asia-south1"
+    },
+    {
+      "location": "europe-west10",
+      "endpointUrl": "https://parametermanager.europe-west10.rep.googleapis.com/",
+      "description": "Regional Endpoint"
+    },
+    {
+      "location": "europe-north1",
+      "endpointUrl": "https://parametermanager.europe-north1.rep.googleapis.com/",
+      "description": "Regional Endpoint"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://parametermanager.europe-central2.rep.googleapis.com/",
+      "location": "europe-central2"
+    },
+    {
+      "location": "europe-southwest1",
+      "endpointUrl": "https://parametermanager.europe-southwest1.rep.googleapis.com/",
+      "description": "Regional Endpoint"
+    },
+    {
+      "location": "asia-south2",
+      "endpointUrl": "https://parametermanager.asia-south2.rep.googleapis.com/",
+      "description": "Regional Endpoint"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://parametermanager.asia-east1.rep.googleapis.com/",
+      "location": "asia-east1"
+    },
+    {
+      "endpointUrl": "https://parametermanager.asia-east2.rep.googleapis.com/",
+      "location": "asia-east2",
+      "description": "Regional Endpoint"
+    },
+    {
+      "endpointUrl": "https://parametermanager.asia-northeast2.rep.googleapis.com/",
+      "location": "asia-northeast2",
+      "description": "Regional Endpoint"
+    },
+    {
+      "description": "Regional Endpoint",
+      "location": "asia-northeast3",
+      "endpointUrl": "https://parametermanager.asia-northeast3.rep.googleapis.com/"
+    },
+    {
+      "location": "northamerica-south1",
+      "endpointUrl": "https://parametermanager.northamerica-south1.rep.googleapis.com/",
+      "description": "Regional Endpoint"
+    },
+    {
+      "location": "southamerica-west1",
+      "endpointUrl": "https://parametermanager.southamerica-west1.rep.googleapis.com/",
+      "description": "Regional Endpoint"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://parametermanager.europe-north2.rep.googleapis.com/",
+      "location": "europe-north2"
+    },
+    {
+      "endpointUrl": "https://parametermanager.europe-west15.rep.googleapis.com/",
+      "location": "europe-west15",
+      "description": "Regional Endpoint"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://parametermanager.us.rep.googleapis.com/",
+      "location": "us"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://parametermanager.eu.rep.googleapis.com/",
+      "location": "eu"
+    },
+    {
+      "description": "Regional Endpoint",
+      "location": "ca",
+      "endpointUrl": "https://parametermanager.ca.rep.googleapis.com/"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://parametermanager.in.rep.googleapis.com/",
+      "location": "in"
+    }
+  ],
+  "version_module": true,
+  "batchPath": "batch",
+  "icons": {
+    "x32": "http://www.google.com/images/icons/product/search-32.gif",
+    "x16": "http://www.google.com/images/icons/product/search-16.gif"
+  },
+  "description": "Parameter Manager is a single source of truth to store, access and manage the lifecycle of your workload parameters. Parameter Manager aims to make management of sensitive application parameters effortless for customers without diminishing focus on security.",
+  "ownerDomain": "google.com",
+  "kind": "discovery#restDescription",
+  "servicePath": "",
+  "schemas": {
+    "ResourcePolicyMember": {
+      "description": "Output-only policy member strings of a Google Cloud resource's built-in identity.",
+      "type": "object",
+      "id": "ResourcePolicyMember",
+      "properties": {
+        "iamPolicyUidPrincipal": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Output only. IAM policy binding member referring to a Google Cloud resource by system-assigned unique identifier (https://google.aip.dev/148#uid). If a resource is deleted and recreated with the same name, the binding will not be applicable to the new resource Example: `principal://parametermanager.googleapis.com/projects/12345/uid/locations/us-central1-a/parameters/a918fed5`"
+        },
+        "iamPolicyNamePrincipal": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Output only. IAM policy binding member referring to a Google Cloud resource by user-assigned name (https://google.aip.dev/122). If a resource is deleted and recreated with the same name, the binding will be applicable to the new resource. Example: `principal://parametermanager.googleapis.com/projects/12345/name/locations/us-central1-a/parameters/my-parameter`"
+        }
+      }
+    },
+    "Empty": {
+      "id": "Empty",
+      "properties": {},
+      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
+      "type": "object"
+    },
+    "ParameterVersionPayload": {
+      "id": "ParameterVersionPayload",
+      "properties": {
+        "data": {
+          "format": "byte",
+          "description": "Required. bytes data for storing payload.",
+          "type": "string"
+        }
+      },
+      "description": "Message for storing a ParameterVersion resource's payload data",
+      "type": "object"
+    },
+    "Location": {
+      "type": "object",
+      "description": "A resource that represents a Google Cloud location.",
+      "id": "Location",
+      "properties": {
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "any",
+            "description": "Properties of the object. Contains field @type with type URL."
+          },
+          "description": "Service-specific metadata. For example the available capacity at the given location."
+        },
+        "name": {
+          "type": "string",
+          "description": "Resource name for the location, which may vary between implementations. For example: `\"projects/example-project/locations/us-east1\"`"
+        },
+        "locationId": {
+          "type": "string",
+          "description": "The canonical id for this location. For example: `\"us-east1\"`."
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Cross-service attributes for the location. For example {\"cloud.googleapis.com/region\": \"us-east1\"}"
+        },
+        "displayName": {
+          "description": "The friendly name for this location, typically a nearby city name. For example, \"Tokyo\".",
+          "type": "string"
+        }
+      }
+    },
+    "ParameterVersion": {
+      "type": "object",
+      "description": "Message describing ParameterVersion resource",
+      "id": "ParameterVersion",
+      "properties": {
+        "updateTime": {
+          "format": "google-datetime",
+          "description": "Output only. [Output only] Update time stamp",
+          "readOnly": true,
+          "type": "string"
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Optional. Disabled boolean to determine if a ParameterVersion acts as a metadata only resource (payload is never returned if disabled is true). If true any calls will always default to BASIC view even if the user explicitly passes FULL view as part of the request. A render call on a disabled resource fails with an error. Default value is False."
+        },
+        "name": {
+          "description": "Identifier. [Output only] The resource name of the ParameterVersion in the format `projects/*/locations/*/parameters/*/versions/*`.",
+          "type": "string"
+        },
+        "kmsKeyVersion": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Optional. Output only. [Output only] The resource name of the KMS key version used to encrypt the ParameterVersion payload. This field is populated only if the Parameter resource has customer managed encryption key (CMEK) configured."
+        },
+        "createTime": {
+          "format": "google-datetime",
+          "description": "Output only. [Output only] Create time stamp",
+          "readOnly": true,
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "ParameterVersionPayload",
+          "description": "Required. Immutable. Payload content of a ParameterVersion resource. This is only returned when the request provides the View value of FULL (default for GET request)."
+        }
+      }
+    },
+    "RenderParameterVersionResponse": {
+      "id": "RenderParameterVersionResponse",
+      "properties": {
+        "payload": {
+          "description": "Payload content of a ParameterVersion resource.",
+          "$ref": "ParameterVersionPayload"
+        },
+        "parameterVersion": {
+          "description": "Output only. Resource identifier of a ParameterVersion in the format `projects/*/locations/*/parameters/*/versions/*`.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "renderedPayload": {
+          "format": "byte",
+          "readOnly": true,
+          "type": "string",
+          "description": "Output only. Server generated rendered version of the user provided payload data (ParameterVersionPayload) which has substitutions of all (if any) references to a SecretManager SecretVersion resources. This substitution only works for a Parameter which is in JSON or YAML format."
+        }
+      },
+      "type": "object",
+      "description": "Message describing RenderParameterVersionResponse resource"
+    },
+    "ListParametersResponse": {
+      "id": "ListParametersResponse",
+      "properties": {
+        "nextPageToken": {
+          "description": "A token identifying a page of results the server should return.",
+          "type": "string"
+        },
+        "parameters": {
+          "type": "array",
+          "description": "The list of Parameters",
+          "items": {
+            "$ref": "Parameter"
+          }
+        },
+        "unreachable": {
+          "type": "array",
+          "description": "Unordered list. Locations that could not be reached.",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Message for response to listing Parameters",
+      "type": "object"
+    },
+    "Parameter": {
+      "id": "Parameter",
+      "properties": {
+        "updateTime": {
+          "format": "google-datetime",
+          "readOnly": true,
+          "type": "string",
+          "description": "Output only. [Output only] Update time stamp"
+        },
+        "name": {
+          "description": "Identifier. [Output only] The resource name of the Parameter in the format `projects/*/locations/*/parameters/*`.",
+          "type": "string"
+        },
+        "format": {
+          "description": "Optional. Specifies the format of a Parameter.",
+          "enumDescriptions": [
+            "The default / unset value. The API will default to the UNFORMATTED format.",
+            "Unformatted.",
+            "YAML format.",
+            "JSON format."
+          ],
+          "type": "string",
+          "enum": [
+            "PARAMETER_FORMAT_UNSPECIFIED",
+            "UNFORMATTED",
+            "YAML",
+            "JSON"
+          ]
+        },
+        "policyMember": {
+          "readOnly": true,
+          "$ref": "ResourcePolicyMember",
+          "description": "Output only. [Output-only] policy member strings of a Google Cloud resource."
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Optional. Labels as key value pairs"
+        },
+        "kmsKey": {
+          "description": "Optional. Customer managed encryption key (CMEK) to use for encrypting the Parameter Versions. If not set, the default Google-managed encryption key will be used. Cloud KMS CryptoKeys must reside in the same location as the Parameter. The expected format is `projects/*/locations/*/keyRings/*/cryptoKeys/*`.",
+          "type": "string"
+        },
+        "createTime": {
+          "format": "google-datetime",
+          "readOnly": true,
+          "type": "string",
+          "description": "Output only. [Output only] Create time stamp"
+        }
+      },
+      "type": "object",
+      "description": "Message describing Parameter resource"
+    },
+    "ListLocationsResponse": {
+      "id": "ListLocationsResponse",
+      "properties": {
+        "locations": {
+          "items": {
+            "$ref": "Location"
+          },
+          "description": "A list of locations that matches the specified filter in the request.",
+          "type": "array"
+        },
+        "nextPageToken": {
+          "type": "string",
+          "description": "The standard List next-page token."
+        }
+      },
+      "type": "object",
+      "description": "The response message for Locations.ListLocations."
+    },
+    "ListParameterVersionsResponse": {
+      "id": "ListParameterVersionsResponse",
+      "properties": {
+        "unreachable": {
+          "description": "Unordered list. Locations that could not be reached.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "parameterVersions": {
+          "description": "The list of ParameterVersions",
+          "type": "array",
+          "items": {
+            "$ref": "ParameterVersion"
+          }
+        },
+        "nextPageToken": {
+          "type": "string",
+          "description": "A token identifying a page of results the server should return."
+        }
+      },
+      "description": "Message for response to listing ParameterVersions",
+      "type": "object"
+    }
+  },
+  "auth": {
+    "oauth2": {
+      "scopes": {
+        "https://www.googleapis.com/auth/cloud-platform": {
+          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
+        }
+      }
+    }
+  },
+  "ownerName": "Google",
   "rootUrl": "https://parametermanager.googleapis.com/",
-  "mtlsRootUrl": "https://parametermanager.mtls.googleapis.com/"
+  "revision": "20260408",
+  "title": "Parameter Manager API"
 }
