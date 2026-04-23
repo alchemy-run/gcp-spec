@@ -1,39 +1,223 @@
 {
-  "discoveryVersion": "v1",
-  "ownerDomain": "google.com",
-  "protocol": "rest",
-  "canonicalName": "Play Integrity",
-  "mtlsRootUrl": "https://playintegrity.mtls.googleapis.com/",
-  "documentationLink": "https://developer.android.com/google/play/integrity",
-  "servicePath": "",
-  "title": "Google Play Integrity API",
-  "basePath": "",
   "fullyEncodeReservedExpansion": true,
-  "kind": "discovery#restDescription",
-  "version_module": true,
-  "name": "playintegrity",
   "ownerName": "Google",
-  "revision": "20260420",
+  "rootUrl": "https://playintegrity.googleapis.com/",
+  "protocol": "rest",
+  "mtlsRootUrl": "https://playintegrity.mtls.googleapis.com/",
+  "kind": "discovery#restDescription",
+  "documentationLink": "https://developer.android.com/google/play/integrity",
+  "name": "playintegrity",
+  "discoveryVersion": "v1",
+  "version_module": true,
+  "batchPath": "batch",
+  "revision": "20260421",
   "version": "v1",
-  "id": "playintegrity:v1",
+  "servicePath": "",
+  "icons": {
+    "x16": "http://www.google.com/images/icons/product/search-16.gif",
+    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  },
   "schemas": {
-    "AccountDetails": {
-      "description": "Contains the account information such as the licensing status for the user in the scope.",
-      "id": "AccountDetails",
+    "DecodePcIntegrityTokenResponse": {
+      "id": "DecodePcIntegrityTokenResponse",
+      "description": "Response containing the decoded PC integrity payload.",
       "type": "object",
       "properties": {
-        "accountActivity": {
-          "$ref": "AccountActivity",
-          "description": "(Restricted Access) Details about the account activity for the user in the scope.",
-          "deprecated": true
+        "tokenPayloadExternal": {
+          "$ref": "PcTokenPayloadExternal",
+          "description": "Plain token payload generated from the decoded integrity token."
+        }
+      }
+    },
+    "Values": {
+      "id": "Values",
+      "description": "Contains the recall bits values.",
+      "type": "object",
+      "properties": {
+        "bitFirst": {
+          "description": "Required. First recall bit value.",
+          "type": "boolean"
         },
-        "appLicensingVerdict": {
-          "enum": [
-            "UNKNOWN",
-            "LICENSED",
-            "UNLICENSED",
-            "UNEVALUATED"
+        "bitSecond": {
+          "description": "Required. Second recall bit value.",
+          "type": "boolean"
+        },
+        "bitThird": {
+          "description": "Required. Third recall bit value.",
+          "type": "boolean"
+        }
+      }
+    },
+    "PcDeviceIntegrity": {
+      "properties": {
+        "deviceRecognitionVerdict": {
+          "items": {
+            "enumDescriptions": [
+              "Unspecified device integrity.",
+              "App is running on Windows Device with Google Desktop Services."
+            ],
+            "enum": [
+              "DEVICE_RECOGNITION_VERDICT_UNSPECIFIED",
+              "MEETS_PC_INTEGRITY"
+            ],
+            "type": "string"
+          },
+          "description": "Details about the integrity of the device the app is running on.",
+          "type": "array"
+        }
+      },
+      "description": "Contains the device attestation information.",
+      "type": "object",
+      "id": "PcDeviceIntegrity"
+    },
+    "DecodePcIntegrityTokenRequest": {
+      "id": "DecodePcIntegrityTokenRequest",
+      "properties": {
+        "integrityToken": {
+          "description": "Encoded integrity token.",
+          "type": "string"
+        }
+      },
+      "description": "Request to decode the PC integrity token.",
+      "type": "object"
+    },
+    "DeviceIntegrity": {
+      "description": "Contains the device attestation information.",
+      "type": "object",
+      "properties": {
+        "recentDeviceActivity": {
+          "$ref": "RecentDeviceActivity",
+          "description": "Details about the device activity of the device the app is running on."
+        },
+        "deviceRecall": {
+          "$ref": "DeviceRecall",
+          "description": "Details about the device recall bits set by the developer."
+        },
+        "deviceRecognitionVerdict": {
+          "description": "Details about the integrity of the device the app is running on.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "UNKNOWN",
+              "MEETS_BASIC_INTEGRITY",
+              "MEETS_DEVICE_INTEGRITY",
+              "MEETS_STRONG_INTEGRITY",
+              "MEETS_VIRTUAL_INTEGRITY"
+            ],
+            "enumDescriptions": [
+              "Play does not have sufficient information to evaluate device integrity",
+              "App is running on a device that passes basic system integrity checks, but may not meet Android platform compatibility requirements and may not be approved to run Google Play services.",
+              "App is running on GMS Android device with Google Play services.",
+              "App is running on GMS Android device with Google Play services and has a strong guarantee of system integrity such as a hardware-backed keystore.",
+              "App is running on an Android emulator with Google Play services which meets core Android compatibility requirements."
+            ]
+          }
+        },
+        "deviceAttributes": {
+          "$ref": "DeviceAttributes",
+          "description": "Attributes of the device where the integrity token was generated."
+        },
+        "legacyDeviceRecognitionVerdict": {
+          "items": {
+            "type": "string",
+            "enumDescriptions": [
+              "Play does not have sufficient information to evaluate device integrity",
+              "App is running on a device that passes basic system integrity checks, but may not meet Android platform compatibility requirements and may not be approved to run Google Play services.",
+              "App is running on GMS Android device with Google Play services.",
+              "App is running on GMS Android device with Google Play services and has a strong guarantee of system integrity such as a hardware-backed keystore.",
+              "App is running on an Android emulator with Google Play services which meets core Android compatibility requirements."
+            ],
+            "enum": [
+              "UNKNOWN",
+              "MEETS_BASIC_INTEGRITY",
+              "MEETS_DEVICE_INTEGRITY",
+              "MEETS_STRONG_INTEGRITY",
+              "MEETS_VIRTUAL_INTEGRITY"
+            ]
+          },
+          "description": "Contains legacy details about the integrity of the device the app is running on. Only for devices with Android version T or higher and only for apps opted in to the new verdicts. Only available during the transition period to the new verdicts system and will be removed afterwards.",
+          "type": "array"
+        }
+      },
+      "id": "DeviceIntegrity"
+    },
+    "PcRequestDetails": {
+      "id": "PcRequestDetails",
+      "properties": {
+        "requestHash": {
+          "description": "Request hash that was provided in the request.",
+          "type": "string"
+        },
+        "requestPackageName": {
+          "description": "Required. Application package name this attestation was requested for. Note: This field makes no guarantees or promises on the caller integrity.",
+          "type": "string"
+        },
+        "requestTime": {
+          "format": "google-datetime",
+          "description": "Required. Timestamp, of the integrity application request.",
+          "type": "string"
+        }
+      },
+      "description": "Contains the integrity request information.",
+      "type": "object"
+    },
+    "AccountActivity": {
+      "deprecated": true,
+      "properties": {
+        "activityLevel": {
+          "description": "Required. Indicates the activity level of the account.",
+          "type": "string",
+          "enumDescriptions": [
+            "Activity level has not been set.",
+            "Account activity level is not evaluated.",
+            "Unusual activity for at least one of the user accounts on the device.",
+            "Insufficient activity to verify the user account on the device.",
+            "Typical activity for the user account or accounts on the device.",
+            "Typical for the user account or accounts on the device, with harder to replicate signals."
           ],
+          "enum": [
+            "ACTIVITY_LEVEL_UNSPECIFIED",
+            "UNEVALUATED",
+            "UNUSUAL",
+            "UNKNOWN",
+            "TYPICAL_BASIC",
+            "TYPICAL_STRONG"
+          ]
+        }
+      },
+      "id": "AccountActivity",
+      "description": "(Restricted Access) Contains a signal helping apps differentiating between likely genuine and likely non-genuine user traffic.",
+      "type": "object"
+    },
+    "WriteDates": {
+      "description": "Contains the recall bits write dates.",
+      "type": "object",
+      "properties": {
+        "yyyymmThird": {
+          "format": "int32",
+          "description": "Optional. Write time in YYYYMM format (in UTC, e.g. 202402) for the third bit. Note that this value won't be set if the third bit is false.",
+          "type": "integer"
+        },
+        "yyyymmSecond": {
+          "format": "int32",
+          "description": "Optional. Write time in YYYYMM format (in UTC, e.g. 202402) for the second bit. Note that this value won't be set if the second bit is false.",
+          "type": "integer"
+        },
+        "yyyymmFirst": {
+          "description": "Optional. Write time in YYYYMM format (in UTC, e.g. 202402) for the first bit. Note that this value won't be set if the first bit is false.",
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "id": "WriteDates"
+    },
+    "AccountDetails": {
+      "description": "Contains the account information such as the licensing status for the user in the scope.",
+      "type": "object",
+      "properties": {
+        "appLicensingVerdict": {
+          "description": "Required. Details about the licensing status of the user for the app in the scope.",
           "type": "string",
           "enumDescriptions": [
             "Play does not have sufficient information to evaluate licensing details",
@@ -41,107 +225,197 @@
             "The user does not have a valid license to use the app.",
             "Licensing details were not evaluated since a necessary requirement was missed. For example DeviceIntegrity did not meet the minimum bar or the application was not a known Play version."
           ],
-          "description": "Required. Details about the licensing status of the user for the app in the scope."
+          "enum": [
+            "UNKNOWN",
+            "LICENSED",
+            "UNLICENSED",
+            "UNEVALUATED"
+          ]
+        },
+        "accountActivity": {
+          "deprecated": true,
+          "$ref": "AccountActivity",
+          "description": "(Restricted Access) Details about the account activity for the user in the scope."
+        }
+      },
+      "id": "AccountDetails"
+    },
+    "TokenPayloadExternal": {
+      "id": "TokenPayloadExternal",
+      "description": "Contains basic app information and integrity signals like device attestation and licensing details.",
+      "type": "object",
+      "properties": {
+        "environmentDetails": {
+          "$ref": "EnvironmentDetails",
+          "description": "Details of the environment Play Integrity API runs in."
+        },
+        "deviceIntegrity": {
+          "description": "Required. Details about the device integrity.",
+          "$ref": "DeviceIntegrity"
+        },
+        "appIntegrity": {
+          "$ref": "AppIntegrity",
+          "description": "Required. Details about the application integrity."
+        },
+        "testingDetails": {
+          "description": "Indicates that this payload is generated for testing purposes and contains any additional data that is linked with testing status.",
+          "$ref": "TestingDetails"
+        },
+        "accountDetails": {
+          "description": "Required. Details about the Play Store account.",
+          "$ref": "AccountDetails"
+        },
+        "requestDetails": {
+          "description": "Required. Details about the integrity request.",
+          "$ref": "RequestDetails"
         }
       }
     },
-    "DeviceIntegrity": {
+    "DecodeIntegrityTokenRequest": {
+      "id": "DecodeIntegrityTokenRequest",
+      "description": "Request to decode the integrity token.",
       "type": "object",
       "properties": {
-        "deviceRecognitionVerdict": {
-          "description": "Details about the integrity of the device the app is running on.",
-          "items": {
-            "enum": [
-              "UNKNOWN",
-              "MEETS_BASIC_INTEGRITY",
-              "MEETS_DEVICE_INTEGRITY",
-              "MEETS_STRONG_INTEGRITY",
-              "MEETS_VIRTUAL_INTEGRITY"
-            ],
-            "type": "string",
-            "enumDescriptions": [
-              "Play does not have sufficient information to evaluate device integrity",
-              "App is running on a device that passes basic system integrity checks, but may not meet Android platform compatibility requirements and may not be approved to run Google Play services.",
-              "App is running on GMS Android device with Google Play services.",
-              "App is running on GMS Android device with Google Play services and has a strong guarantee of system integrity such as a hardware-backed keystore.",
-              "App is running on an Android emulator with Google Play services which meets core Android compatibility requirements."
-            ]
-          },
-          "type": "array"
-        },
-        "deviceRecall": {
-          "$ref": "DeviceRecall",
-          "description": "Details about the device recall bits set by the developer."
-        },
-        "legacyDeviceRecognitionVerdict": {
-          "description": "Contains legacy details about the integrity of the device the app is running on. Only for devices with Android version T or higher and only for apps opted in to the new verdicts. Only available during the transition period to the new verdicts system and will be removed afterwards.",
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enumDescriptions": [
-              "Play does not have sufficient information to evaluate device integrity",
-              "App is running on a device that passes basic system integrity checks, but may not meet Android platform compatibility requirements and may not be approved to run Google Play services.",
-              "App is running on GMS Android device with Google Play services.",
-              "App is running on GMS Android device with Google Play services and has a strong guarantee of system integrity such as a hardware-backed keystore.",
-              "App is running on an Android emulator with Google Play services which meets core Android compatibility requirements."
-            ],
-            "enum": [
-              "UNKNOWN",
-              "MEETS_BASIC_INTEGRITY",
-              "MEETS_DEVICE_INTEGRITY",
-              "MEETS_STRONG_INTEGRITY",
-              "MEETS_VIRTUAL_INTEGRITY"
-            ]
-          }
-        },
-        "deviceAttributes": {
-          "description": "Attributes of the device where the integrity token was generated.",
-          "$ref": "DeviceAttributes"
-        },
-        "recentDeviceActivity": {
-          "$ref": "RecentDeviceActivity",
-          "description": "Details about the device activity of the device the app is running on."
+        "integrityToken": {
+          "description": "Encoded integrity token.",
+          "type": "string"
         }
-      },
-      "id": "DeviceIntegrity",
-      "description": "Contains the device attestation information."
+      }
     },
-    "Values": {
-      "type": "object",
+    "PcTokenPayloadExternal": {
+      "id": "PcTokenPayloadExternal",
       "properties": {
-        "bitSecond": {
-          "description": "Required. Second recall bit value.",
-          "type": "boolean"
+        "deviceIntegrity": {
+          "$ref": "PcDeviceIntegrity",
+          "description": "Required. Details about the device integrity."
         },
-        "bitFirst": {
-          "description": "Required. First recall bit value.",
-          "type": "boolean"
+        "accountDetails": {
+          "description": "Details about the account information such as the licensing status.",
+          "$ref": "PcAccountDetails"
         },
-        "bitThird": {
-          "description": "Required. Third recall bit value.",
-          "type": "boolean"
+        "testingDetails": {
+          "description": "Indicates that this payload is generated for testing purposes and contains any additional data that is linked with testing status.",
+          "$ref": "PcTestingDetails"
+        },
+        "requestDetails": {
+          "$ref": "PcRequestDetails",
+          "description": "Required. Details about the integrity request."
         }
       },
-      "id": "Values",
-      "description": "Contains the recall bits values."
+      "description": "Contains PC device attestation details.",
+      "type": "object"
     },
-    "DecodeIntegrityTokenResponse": {
-      "type": "object",
+    "DeviceRecall": {
+      "id": "DeviceRecall",
       "properties": {
-        "tokenPayloadExternal": {
-          "description": "Plain token payload generated from the decoded integrity token.",
-          "$ref": "TokenPayloadExternal"
+        "values": {
+          "description": "Required. Contains the recall bits values.",
+          "$ref": "Values"
+        },
+        "writeDates": {
+          "description": "Required. Contains the recall bits write dates.",
+          "$ref": "WriteDates"
         }
       },
-      "id": "DecodeIntegrityTokenResponse",
-      "description": "Response containing the decoded integrity payload."
+      "description": "Contains the recall bits per device set by the developer.",
+      "type": "object"
+    },
+    "PcAccountDetails": {
+      "id": "PcAccountDetails",
+      "properties": {
+        "appLicensingVerdict": {
+          "enumDescriptions": [
+            "Play does not have sufficient information to evaluate licensing details",
+            "The user has a valid license to use the app.",
+            "The user does not have a valid license to use the app.",
+            "Licensing details were not evaluated since a necessary requirement was missed."
+          ],
+          "enum": [
+            "UNKNOWN",
+            "LICENSED",
+            "UNLICENSED",
+            "UNEVALUATED"
+          ],
+          "description": "Required. Details about the licensing status of the user for the app in the scope.",
+          "type": "string"
+        }
+      },
+      "description": "Contains the account information such as the licensing status for the user in the scope.",
+      "type": "object"
+    },
+    "RecentDeviceActivity": {
+      "id": "RecentDeviceActivity",
+      "description": "Recent device activity can help developers identify devices that have exhibited hyperactive attestation activity, which could be a sign of an attack or token farming.",
+      "type": "object",
+      "properties": {
+        "deviceActivityLevel": {
+          "description": "Required. Indicates the activity level of the device.",
+          "type": "string",
+          "enumDescriptions": [
+            "Device activity level has not been set.",
+            "Device activity level has not been evaluated.",
+            "Indicates the amount of used tokens. See the documentation for details.",
+            "Indicates the amount of used tokens. See the documentation for details.",
+            "Indicates the amount of used tokens. See the documentation for details.",
+            "Indicates the amount of used tokens. See the documentation for details."
+          ],
+          "enum": [
+            "DEVICE_ACTIVITY_LEVEL_UNSPECIFIED",
+            "UNEVALUATED",
+            "LEVEL_1",
+            "LEVEL_2",
+            "LEVEL_3",
+            "LEVEL_4"
+          ]
+        }
+      }
+    },
+    "WriteDeviceRecallRequest": {
+      "properties": {
+        "integrityToken": {
+          "description": "Required. Integrity token obtained from calling Play Integrity API.",
+          "type": "string"
+        },
+        "newValues": {
+          "description": "Required. The new values for the device recall bits to be written.",
+          "$ref": "Values"
+        }
+      },
+      "description": "Request to write device recall bits.",
+      "type": "object",
+      "id": "WriteDeviceRecallRequest"
+    },
+    "RequestDetails": {
+      "properties": {
+        "nonce": {
+          "description": "Nonce that was provided in the request (which is base64 web-safe no-wrap).",
+          "type": "string"
+        },
+        "requestHash": {
+          "description": "Request hash that was provided in the request.",
+          "type": "string"
+        },
+        "requestPackageName": {
+          "description": "Required. Application package name this attestation was requested for. Note: This field makes no guarantees or promises on the caller integrity. For details on application integrity, check application_integrity.",
+          "type": "string"
+        },
+        "timestampMillis": {
+          "format": "int64",
+          "description": "Required. Timestamp, in milliseconds, of the integrity application request.",
+          "type": "string"
+        }
+      },
+      "description": "Contains the integrity request information.",
+      "type": "object",
+      "id": "RequestDetails"
     },
     "EnvironmentDetails": {
-      "description": "Contains information about the environment Play Integrity API runs in, e.g. Play Protect verdict.",
       "id": "EnvironmentDetails",
+      "description": "Contains information about the environment Play Integrity API runs in, e.g. Play Protect verdict.",
       "type": "object",
       "properties": {
         "playProtectVerdict": {
+          "description": "The evaluation of Play Protect verdict.",
           "type": "string",
           "enumDescriptions": [
             "Play Protect verdict has not been set.",
@@ -160,37 +434,16 @@
             "MEDIUM_RISK",
             "HIGH_RISK",
             "POSSIBLE_RISK"
-          ],
-          "description": "The evaluation of Play Protect verdict."
+          ]
         },
         "appAccessRiskVerdict": {
-          "description": "The evaluation of the App Access Risk verdicts.",
-          "$ref": "AppAccessRiskVerdict"
+          "$ref": "AppAccessRiskVerdict",
+          "description": "The evaluation of the App Access Risk verdicts."
         }
       }
     },
-    "PcRequestDetails": {
-      "type": "object",
-      "properties": {
-        "requestHash": {
-          "type": "string",
-          "description": "Request hash that was provided in the request."
-        },
-        "requestTime": {
-          "type": "string",
-          "description": "Required. Timestamp, of the integrity application request.",
-          "format": "google-datetime"
-        },
-        "requestPackageName": {
-          "description": "Required. Application package name this attestation was requested for. Note: This field makes no guarantees or promises on the caller integrity.",
-          "type": "string"
-        }
-      },
-      "id": "PcRequestDetails",
-      "description": "Contains the integrity request information."
-    },
     "PcTestingDetails": {
-      "id": "PcTestingDetails",
+      "description": "Contains additional information generated for testing responses.",
       "type": "object",
       "properties": {
         "isTestingResponse": {
@@ -198,137 +451,72 @@
           "type": "boolean"
         }
       },
-      "description": "Contains additional information generated for testing responses."
+      "id": "PcTestingDetails"
     },
-    "DeviceRecall": {
+    "DecodeIntegrityTokenResponse": {
+      "id": "DecodeIntegrityTokenResponse",
+      "description": "Response containing the decoded integrity payload.",
       "type": "object",
       "properties": {
-        "writeDates": {
-          "$ref": "WriteDates",
-          "description": "Required. Contains the recall bits write dates."
-        },
-        "values": {
-          "description": "Required. Contains the recall bits values.",
-          "$ref": "Values"
-        }
-      },
-      "id": "DeviceRecall",
-      "description": "Contains the recall bits per device set by the developer."
-    },
-    "WriteDeviceRecallResponse": {
-      "description": "Response for the Write Device Recall action. Currently empty.",
-      "id": "WriteDeviceRecallResponse",
-      "type": "object",
-      "properties": {}
-    },
-    "PcDeviceIntegrity": {
-      "type": "object",
-      "properties": {
-        "deviceRecognitionVerdict": {
-          "description": "Details about the integrity of the device the app is running on.",
-          "items": {
-            "type": "string",
-            "enumDescriptions": [
-              "Unspecified device integrity.",
-              "App is running on Windows Device with Google Desktop Services."
-            ],
-            "enum": [
-              "DEVICE_RECOGNITION_VERDICT_UNSPECIFIED",
-              "MEETS_PC_INTEGRITY"
-            ]
-          },
-          "type": "array"
-        }
-      },
-      "id": "PcDeviceIntegrity",
-      "description": "Contains the device attestation information."
-    },
-    "WriteDeviceRecallRequest": {
-      "description": "Request to write device recall bits.",
-      "type": "object",
-      "properties": {
-        "integrityToken": {
-          "type": "string",
-          "description": "Required. Integrity token obtained from calling Play Integrity API."
-        },
-        "newValues": {
-          "$ref": "Values",
-          "description": "Required. The new values for the device recall bits to be written."
-        }
-      },
-      "id": "WriteDeviceRecallRequest"
-    },
-    "TokenPayloadExternal": {
-      "type": "object",
-      "properties": {
-        "requestDetails": {
-          "description": "Required. Details about the integrity request.",
-          "$ref": "RequestDetails"
-        },
-        "testingDetails": {
-          "$ref": "TestingDetails",
-          "description": "Indicates that this payload is generated for testing purposes and contains any additional data that is linked with testing status."
-        },
-        "deviceIntegrity": {
-          "description": "Required. Details about the device integrity.",
-          "$ref": "DeviceIntegrity"
-        },
-        "appIntegrity": {
-          "$ref": "AppIntegrity",
-          "description": "Required. Details about the application integrity."
-        },
-        "accountDetails": {
-          "$ref": "AccountDetails",
-          "description": "Required. Details about the Play Store account."
-        },
-        "environmentDetails": {
-          "description": "Details of the environment Play Integrity API runs in.",
-          "$ref": "EnvironmentDetails"
-        }
-      },
-      "id": "TokenPayloadExternal",
-      "description": "Contains basic app information and integrity signals like device attestation and licensing details."
-    },
-    "DecodeIntegrityTokenRequest": {
-      "description": "Request to decode the integrity token.",
-      "id": "DecodeIntegrityTokenRequest",
-      "type": "object",
-      "properties": {
-        "integrityToken": {
-          "description": "Encoded integrity token.",
-          "type": "string"
+        "tokenPayloadExternal": {
+          "$ref": "TokenPayloadExternal",
+          "description": "Plain token payload generated from the decoded integrity token."
         }
       }
     },
-    "WriteDates": {
-      "id": "WriteDates",
-      "type": "object",
+    "AppIntegrity": {
+      "id": "AppIntegrity",
       "properties": {
-        "yyyymmThird": {
-          "type": "integer",
-          "description": "Optional. Write time in YYYYMM format (in UTC, e.g. 202402) for the third bit. Note that this value won't be set if the third bit is false.",
-          "format": "int32"
+        "certificateSha256Digest": {
+          "description": "The SHA256 hash of the requesting app's signing certificates (base64 web-safe encoded). Set iff app_recognition_verdict != UNEVALUATED.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
-        "yyyymmFirst": {
-          "description": "Optional. Write time in YYYYMM format (in UTC, e.g. 202402) for the first bit. Note that this value won't be set if the first bit is false.",
-          "format": "int32",
-          "type": "integer"
+        "versionCode": {
+          "format": "int64",
+          "description": "Version code of the application. Set iff app_recognition_verdict != UNEVALUATED.",
+          "type": "string"
         },
-        "yyyymmSecond": {
-          "type": "integer",
-          "description": "Optional. Write time in YYYYMM format (in UTC, e.g. 202402) for the second bit. Note that this value won't be set if the second bit is false.",
-          "format": "int32"
+        "appRecognitionVerdict": {
+          "enum": [
+            "UNKNOWN",
+            "PLAY_RECOGNIZED",
+            "UNRECOGNIZED_VERSION",
+            "UNEVALUATED"
+          ],
+          "enumDescriptions": [
+            "Play does not have sufficient information to evaluate app integrity",
+            "The app and certificate match the versions distributed by Play.",
+            "The certificate or package name does not match Google Play records.",
+            "Application integrity was not evaluated since a necessary requirement was missed. For example DeviceIntegrity did not meet the minimum bar."
+          ],
+          "description": "Required. Details about the app recognition verdict",
+          "type": "string"
+        },
+        "packageName": {
+          "description": "Package name of the application under attestation. Set iff app_recognition_verdict != UNEVALUATED.",
+          "type": "string"
         }
       },
-      "description": "Contains the recall bits write dates."
+      "description": "Contains the application integrity information.",
+      "type": "object"
+    },
+    "WriteDeviceRecallResponse": {
+      "id": "WriteDeviceRecallResponse",
+      "properties": {},
+      "description": "Response for the Write Device Recall action. Currently empty.",
+      "type": "object"
     },
     "AppAccessRiskVerdict": {
+      "id": "AppAccessRiskVerdict",
+      "description": "Contains signals about others apps on the device which could be used to access or control the requesting app.",
       "type": "object",
       "properties": {
         "appsDetected": {
-          "description": "List of detected app types signalled for App Access Risk.",
-          "type": "array",
           "items": {
+            "type": "string",
             "enum": [
               "APPS_DETECTED_UNSPECIFIED",
               "KNOWN_INSTALLED",
@@ -340,7 +528,6 @@
               "UNKNOWN_OVERLAYS",
               "UNKNOWN_CONTROLLING"
             ],
-            "type": "string",
             "enumDescriptions": [
               "Apps detected is unspecified.",
               "One or more apps is installed by Google Play or preloaded on the system partition by the device manufacturer.",
@@ -352,316 +539,214 @@
               "One or more unknown apps, which were not installed by Google Play or preloaded on the device, is running that could be used to display overlays over the requesting app.",
               "One or more unknown apps, which were not installed by Google Play or preloaded on the device, is running that could be used to control the device, such as a remote support app."
             ]
-          }
+          },
+          "description": "List of detected app types signalled for App Access Risk.",
+          "type": "array"
         }
-      },
-      "id": "AppAccessRiskVerdict",
-      "description": "Contains signals about others apps on the device which could be used to access or control the requesting app."
-    },
-    "RequestDetails": {
-      "type": "object",
-      "properties": {
-        "requestPackageName": {
-          "description": "Required. Application package name this attestation was requested for. Note: This field makes no guarantees or promises on the caller integrity. For details on application integrity, check application_integrity.",
-          "type": "string"
-        },
-        "nonce": {
-          "type": "string",
-          "description": "Nonce that was provided in the request (which is base64 web-safe no-wrap)."
-        },
-        "timestampMillis": {
-          "type": "string",
-          "description": "Required. Timestamp, in milliseconds, of the integrity application request.",
-          "format": "int64"
-        },
-        "requestHash": {
-          "description": "Request hash that was provided in the request.",
-          "type": "string"
-        }
-      },
-      "id": "RequestDetails",
-      "description": "Contains the integrity request information."
-    },
-    "AccountActivity": {
-      "description": "(Restricted Access) Contains a signal helping apps differentiating between likely genuine and likely non-genuine user traffic.",
-      "properties": {
-        "activityLevel": {
-          "enum": [
-            "ACTIVITY_LEVEL_UNSPECIFIED",
-            "UNEVALUATED",
-            "UNUSUAL",
-            "UNKNOWN",
-            "TYPICAL_BASIC",
-            "TYPICAL_STRONG"
-          ],
-          "type": "string",
-          "enumDescriptions": [
-            "Activity level has not been set.",
-            "Account activity level is not evaluated.",
-            "Unusual activity for at least one of the user accounts on the device.",
-            "Insufficient activity to verify the user account on the device.",
-            "Typical activity for the user account or accounts on the device.",
-            "Typical for the user account or accounts on the device, with harder to replicate signals."
-          ],
-          "description": "Required. Indicates the activity level of the account."
-        }
-      },
-      "id": "AccountActivity",
-      "deprecated": true,
-      "type": "object"
+      }
     },
     "TestingDetails": {
-      "description": "Contains additional information generated for testing responses.",
-      "id": "TestingDetails",
-      "type": "object",
       "properties": {
         "isTestingResponse": {
-          "type": "boolean",
-          "description": "Required. Indicates that the information contained in this payload is a testing response that is statically overridden for a tester."
-        }
-      }
-    },
-    "RecentDeviceActivity": {
-      "description": "Recent device activity can help developers identify devices that have exhibited hyperactive attestation activity, which could be a sign of an attack or token farming.",
-      "id": "RecentDeviceActivity",
-      "type": "object",
-      "properties": {
-        "deviceActivityLevel": {
-          "type": "string",
-          "enumDescriptions": [
-            "Device activity level has not been set.",
-            "Device activity level has not been evaluated.",
-            "Indicates the amount of used tokens. See the documentation for details.",
-            "Indicates the amount of used tokens. See the documentation for details.",
-            "Indicates the amount of used tokens. See the documentation for details.",
-            "Indicates the amount of used tokens. See the documentation for details."
-          ],
-          "enum": [
-            "DEVICE_ACTIVITY_LEVEL_UNSPECIFIED",
-            "UNEVALUATED",
-            "LEVEL_1",
-            "LEVEL_2",
-            "LEVEL_3",
-            "LEVEL_4"
-          ],
-          "description": "Required. Indicates the activity level of the device."
-        }
-      }
-    },
-    "DecodePcIntegrityTokenResponse": {
-      "description": "Response containing the decoded PC integrity payload.",
-      "type": "object",
-      "properties": {
-        "tokenPayloadExternal": {
-          "description": "Plain token payload generated from the decoded integrity token.",
-          "$ref": "PcTokenPayloadExternal"
+          "description": "Required. Indicates that the information contained in this payload is a testing response that is statically overridden for a tester.",
+          "type": "boolean"
         }
       },
-      "id": "DecodePcIntegrityTokenResponse"
-    },
-    "PcAccountDetails": {
-      "description": "Contains the account information such as the licensing status for the user in the scope.",
+      "description": "Contains additional information generated for testing responses.",
       "type": "object",
-      "properties": {
-        "appLicensingVerdict": {
-          "description": "Required. Details about the licensing status of the user for the app in the scope.",
-          "enum": [
-            "UNKNOWN",
-            "LICENSED",
-            "UNLICENSED",
-            "UNEVALUATED"
-          ],
-          "type": "string",
-          "enumDescriptions": [
-            "Play does not have sufficient information to evaluate licensing details",
-            "The user has a valid license to use the app.",
-            "The user does not have a valid license to use the app.",
-            "Licensing details were not evaluated since a necessary requirement was missed."
-          ]
-        }
-      },
-      "id": "PcAccountDetails"
+      "id": "TestingDetails"
     },
     "DeviceAttributes": {
-      "description": "Contains information about the device for which the integrity token was generated, e.g. Android SDK version.",
-      "type": "object",
       "properties": {
         "sdkVersion": {
-          "type": "integer",
+          "format": "int32",
           "description": "Android SDK version of the device, as defined in the public Android documentation: https://developer.android.com/reference/android/os/Build.VERSION_CODES. It won't be set if a necessary requirement was missed. For example DeviceIntegrity did not meet the minimum bar.",
-          "format": "int32"
+          "type": "integer"
         }
       },
+      "description": "Contains information about the device for which the integrity token was generated, e.g. Android SDK version.",
+      "type": "object",
       "id": "DeviceAttributes"
+    }
+  },
+  "canonicalName": "Play Integrity",
+  "basePath": "",
+  "id": "playintegrity:v1",
+  "description": "The Play Integrity API helps you check that you're interacting with your genuine app on a genuine Android device powered by Google Play services. The Play Integrity API has replaced SafetyNet Attestation and Android Device Verification.",
+  "title": "Google Play Integrity API",
+  "parameters": {
+    "prettyPrint": {
+      "type": "boolean",
+      "description": "Returns response with indentations and line breaks.",
+      "default": "true",
+      "location": "query"
     },
-    "PcTokenPayloadExternal": {
-      "id": "PcTokenPayloadExternal",
-      "type": "object",
-      "properties": {
-        "accountDetails": {
-          "$ref": "PcAccountDetails",
-          "description": "Details about the account information such as the licensing status."
-        },
-        "testingDetails": {
-          "description": "Indicates that this payload is generated for testing purposes and contains any additional data that is linked with testing status.",
-          "$ref": "PcTestingDetails"
-        },
-        "requestDetails": {
-          "$ref": "PcRequestDetails",
-          "description": "Required. Details about the integrity request."
-        },
-        "deviceIntegrity": {
-          "$ref": "PcDeviceIntegrity",
-          "description": "Required. Details about the device integrity."
-        }
-      },
-      "description": "Contains PC device attestation details."
+    "$.xgafv": {
+      "enum": [
+        "1",
+        "2"
+      ],
+      "type": "string",
+      "description": "V1 error format.",
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ],
+      "location": "query"
     },
-    "DecodePcIntegrityTokenRequest": {
-      "description": "Request to decode the PC integrity token.",
-      "id": "DecodePcIntegrityTokenRequest",
-      "type": "object",
-      "properties": {
-        "integrityToken": {
-          "description": "Encoded integrity token.",
-          "type": "string"
-        }
-      }
+    "alt": {
+      "default": "json",
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ],
+      "location": "query",
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ],
+      "type": "string",
+      "description": "Data format for response."
     },
-    "AppIntegrity": {
-      "description": "Contains the application integrity information.",
-      "id": "AppIntegrity",
-      "type": "object",
-      "properties": {
-        "certificateSha256Digest": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array",
-          "description": "The SHA256 hash of the requesting app's signing certificates (base64 web-safe encoded). Set iff app_recognition_verdict != UNEVALUATED."
-        },
-        "appRecognitionVerdict": {
-          "enum": [
-            "UNKNOWN",
-            "PLAY_RECOGNIZED",
-            "UNRECOGNIZED_VERSION",
-            "UNEVALUATED"
-          ],
-          "type": "string",
-          "enumDescriptions": [
-            "Play does not have sufficient information to evaluate app integrity",
-            "The app and certificate match the versions distributed by Play.",
-            "The certificate or package name does not match Google Play records.",
-            "Application integrity was not evaluated since a necessary requirement was missed. For example DeviceIntegrity did not meet the minimum bar."
-          ],
-          "description": "Required. Details about the app recognition verdict"
-        },
-        "packageName": {
-          "description": "Package name of the application under attestation. Set iff app_recognition_verdict != UNEVALUATED.",
-          "type": "string"
-        },
-        "versionCode": {
-          "description": "Version code of the application. Set iff app_recognition_verdict != UNEVALUATED.",
-          "format": "int64",
-          "type": "string"
-        }
-      }
+    "uploadType": {
+      "type": "string",
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
+      "location": "query"
+    },
+    "access_token": {
+      "location": "query",
+      "type": "string",
+      "description": "OAuth access token."
+    },
+    "key": {
+      "location": "query",
+      "type": "string",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token."
+    },
+    "oauth_token": {
+      "type": "string",
+      "description": "OAuth 2.0 token for the current user.",
+      "location": "query"
+    },
+    "quotaUser": {
+      "type": "string",
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
+      "location": "query"
+    },
+    "upload_protocol": {
+      "location": "query",
+      "type": "string",
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\")."
+    },
+    "fields": {
+      "type": "string",
+      "description": "Selector specifying which fields to include in a partial response.",
+      "location": "query"
+    },
+    "callback": {
+      "location": "query",
+      "type": "string",
+      "description": "JSONP"
     }
   },
   "resources": {
     "v1": {
       "methods": {
         "decodeIntegrityToken": {
-          "path": "v1/{+packageName}:decodeIntegrityToken",
-          "httpMethod": "POST",
-          "flatPath": "v1/{v1Id}:decodeIntegrityToken",
-          "description": "Decodes the integrity token and returns the token payload.",
-          "request": {
-            "$ref": "DecodeIntegrityTokenRequest"
-          },
+          "id": "playintegrity.decodeIntegrityToken",
           "parameterOrder": [
             "packageName"
           ],
+          "httpMethod": "POST",
           "response": {
             "$ref": "DecodeIntegrityTokenResponse"
           },
-          "id": "playintegrity.decodeIntegrityToken",
-          "parameters": {
-            "packageName": {
-              "location": "path",
-              "type": "string",
-              "required": true,
-              "description": " Package name of the app the attached integrity token belongs to.",
-              "pattern": "^[^/]+$"
-            }
-          },
-          "scopes": [
-            "https://www.googleapis.com/auth/playintegrity"
-          ]
-        },
-        "decodePcIntegrityToken": {
-          "id": "playintegrity.decodePcIntegrityToken",
-          "parameters": {
-            "packageName": {
-              "required": true,
-              "pattern": "^[^/]+$",
-              "description": "Package name of the app the attached integrity token belongs to.",
-              "type": "string",
-              "location": "path"
-            }
-          },
+          "flatPath": "v1/{v1Id}:decodeIntegrityToken",
           "scopes": [
             "https://www.googleapis.com/auth/playintegrity"
           ],
+          "request": {
+            "$ref": "DecodeIntegrityTokenRequest"
+          },
+          "description": "Decodes the integrity token and returns the token payload.",
+          "parameters": {
+            "packageName": {
+              "pattern": "^[^/]+$",
+              "location": "path",
+              "required": true,
+              "description": " Package name of the app the attached integrity token belongs to.",
+              "type": "string"
+            }
+          },
+          "path": "v1/{+packageName}:decodeIntegrityToken"
+        },
+        "decodePcIntegrityToken": {
           "response": {
             "$ref": "DecodePcIntegrityTokenResponse"
           },
+          "httpMethod": "POST",
           "parameterOrder": [
             "packageName"
           ],
+          "id": "playintegrity.decodePcIntegrityToken",
+          "path": "v1/{+packageName}:decodePcIntegrityToken",
+          "parameters": {
+            "packageName": {
+              "pattern": "^[^/]+$",
+              "location": "path",
+              "required": true,
+              "description": "Package name of the app the attached integrity token belongs to.",
+              "type": "string"
+            }
+          },
+          "description": "Decodes the PC integrity token and returns the PC token payload.",
           "request": {
             "$ref": "DecodePcIntegrityTokenRequest"
           },
           "flatPath": "v1/{v1Id}:decodePcIntegrityToken",
-          "description": "Decodes the PC integrity token and returns the PC token payload.",
-          "path": "v1/{+packageName}:decodePcIntegrityToken",
-          "httpMethod": "POST"
+          "scopes": [
+            "https://www.googleapis.com/auth/playintegrity"
+          ]
         }
       }
     },
     "deviceRecall": {
       "methods": {
         "write": {
-          "id": "playintegrity.deviceRecall.write",
-          "parameters": {
-            "packageName": {
-              "description": "Required. Package name of the app the attached integrity token belongs to.",
-              "pattern": "^[^/]+$",
-              "required": true,
-              "location": "path",
-              "type": "string"
-            }
-          },
-          "scopes": [
-            "https://www.googleapis.com/auth/playintegrity"
-          ],
           "parameterOrder": [
             "packageName"
           ],
+          "id": "playintegrity.deviceRecall.write",
+          "httpMethod": "POST",
           "response": {
             "$ref": "WriteDeviceRecallResponse"
           },
-          "flatPath": "v1/{v1Id}/deviceRecall:write",
-          "description": "Writes recall bits for the device where Play Integrity API token is obtained. The endpoint is available to select Play partners in an early access program (EAP).",
           "request": {
             "$ref": "WriteDeviceRecallRequest"
           },
+          "flatPath": "v1/{v1Id}/deviceRecall:write",
+          "scopes": [
+            "https://www.googleapis.com/auth/playintegrity"
+          ],
+          "description": "Writes recall bits for the device where Play Integrity API token is obtained. The endpoint is available to select Play partners in an early access program (EAP).",
           "path": "v1/{+packageName}/deviceRecall:write",
-          "httpMethod": "POST"
+          "parameters": {
+            "packageName": {
+              "required": true,
+              "description": "Required. Package name of the app the attached integrity token belongs to.",
+              "type": "string",
+              "pattern": "^[^/]+$",
+              "location": "path"
+            }
+          }
         }
       }
     }
   },
+  "ownerDomain": "google.com",
+  "baseUrl": "https://playintegrity.googleapis.com/",
   "auth": {
     "oauth2": {
       "scopes": {
@@ -670,90 +755,5 @@
         }
       }
     }
-  },
-  "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
-  },
-  "baseUrl": "https://playintegrity.googleapis.com/",
-  "parameters": {
-    "oauth_token": {
-      "description": "OAuth 2.0 token for the current user.",
-      "type": "string",
-      "location": "query"
-    },
-    "uploadType": {
-      "type": "string",
-      "location": "query",
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\")."
-    },
-    "key": {
-      "location": "query",
-      "type": "string",
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token."
-    },
-    "quotaUser": {
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
-      "type": "string",
-      "location": "query"
-    },
-    "callback": {
-      "location": "query",
-      "type": "string",
-      "description": "JSONP"
-    },
-    "upload_protocol": {
-      "type": "string",
-      "location": "query",
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\")."
-    },
-    "$.xgafv": {
-      "description": "V1 error format.",
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ],
-      "type": "string",
-      "enum": [
-        "1",
-        "2"
-      ],
-      "location": "query"
-    },
-    "access_token": {
-      "description": "OAuth access token.",
-      "type": "string",
-      "location": "query"
-    },
-    "alt": {
-      "type": "string",
-      "default": "json",
-      "enum": [
-        "json",
-        "media",
-        "proto"
-      ],
-      "location": "query",
-      "enumDescriptions": [
-        "Responses with Content-Type of application/json",
-        "Media download with context-dependent Content-Type",
-        "Responses with Content-Type of application/x-protobuf"
-      ],
-      "description": "Data format for response."
-    },
-    "prettyPrint": {
-      "description": "Returns response with indentations and line breaks.",
-      "location": "query",
-      "type": "boolean",
-      "default": "true"
-    },
-    "fields": {
-      "location": "query",
-      "type": "string",
-      "description": "Selector specifying which fields to include in a partial response."
-    }
-  },
-  "batchPath": "batch",
-  "description": "The Play Integrity API helps you check that you're interacting with your genuine app on a genuine Android device powered by Google Play services. The Play Integrity API has replaced SafetyNet Attestation and Android Device Verification.",
-  "rootUrl": "https://playintegrity.googleapis.com/"
+  }
 }
