@@ -1,97 +1,626 @@
 {
-  "id": "observability:v1",
-  "basePath": "",
-  "ownerDomain": "google.com",
+  "protocol": "rest",
+  "discoveryVersion": "v1",
+  "schemas": {
+    "ListOperationsResponse": {
+      "id": "ListOperationsResponse",
+      "description": "The response message for Operations.ListOperations.",
+      "type": "object",
+      "properties": {
+        "operations": {
+          "type": "array",
+          "description": "A list of operations that matches the specified filter in the request.",
+          "items": {
+            "$ref": "Operation"
+          }
+        },
+        "nextPageToken": {
+          "type": "string",
+          "description": "The standard List next-page token."
+        },
+        "unreachable": {
+          "items": {
+            "type": "string"
+          },
+          "description": "Unordered list. Unreachable resources. Populated when the request sets `ListOperationsRequest.return_partial_success` and reads across collections. For example, when attempting to list all resources across all supported locations.",
+          "type": "array"
+        }
+      }
+    },
+    "ListBucketsResponse": {
+      "id": "ListBucketsResponse",
+      "description": "Response for listing buckets.",
+      "type": "object",
+      "properties": {
+        "buckets": {
+          "items": {
+            "$ref": "Bucket"
+          },
+          "type": "array",
+          "description": "Optional. The list of buckets."
+        },
+        "nextPageToken": {
+          "type": "string",
+          "description": "Optional. A token that can be sent as `page_token` to retrieve the next page. When this field is omitted, there are no subsequent pages."
+        }
+      }
+    },
+    "View": {
+      "type": "object",
+      "properties": {
+        "createTime": {
+          "readOnly": true,
+          "description": "Output only. Create timestamp.",
+          "type": "string",
+          "format": "google-datetime"
+        },
+        "name": {
+          "type": "string",
+          "description": "Identifier. Name of the view. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]/views/[VIEW_ID]"
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional. Description of the view."
+        },
+        "displayName": {
+          "description": "Optional. User friendly display name.",
+          "type": "string"
+        },
+        "updateTime": {
+          "description": "Output only. Update timestamp.",
+          "type": "string",
+          "format": "google-datetime",
+          "readOnly": true
+        }
+      },
+      "id": "View",
+      "description": "A view corresponds to a read-only representation of a subset of the data in a dataset."
+    },
+    "Status": {
+      "id": "Status",
+      "description": "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "The status code, which should be an enum value of google.rpc.Code.",
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "description": "A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.",
+          "type": "string"
+        },
+        "details": {
+          "description": "A list of messages that carry the error details. There is a common set of message types for APIs to use.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "any",
+              "description": "Properties of the object. Contains field @type with type URL."
+            }
+          }
+        }
+      }
+    },
+    "ListLocationsResponse": {
+      "id": "ListLocationsResponse",
+      "description": "The response message for Locations.ListLocations.",
+      "type": "object",
+      "properties": {
+        "locations": {
+          "items": {
+            "$ref": "Location"
+          },
+          "description": "A list of locations that matches the specified filter in the request.",
+          "type": "array"
+        },
+        "nextPageToken": {
+          "type": "string",
+          "description": "The standard List next-page token."
+        }
+      }
+    },
+    "CmekSettings": {
+      "id": "CmekSettings",
+      "description": "Settings for configuring CMEK for a bucket.",
+      "type": "object",
+      "properties": {
+        "kmsKey": {
+          "description": "Optional. The resource name for the configured Cloud KMS key. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/keyRings/[KEYRING]/cryptoKeys/[KEY] For example: projects/my-project/locations/us-central1/keyRings/my-ring/cryptoKeys/my-key",
+          "type": "string"
+        },
+        "serviceAccountId": {
+          "description": "Output only. The service account used to access the key.",
+          "type": "string",
+          "readOnly": true
+        },
+        "kmsKeyVersion": {
+          "description": "Output only. The CryptoKeyVersion resource name for the configured Cloud KMS key. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/keyRings/[KEYRING]/cryptoKeys/[KEY]/cryptoKeyVersions/[VERSION] For example: projects/my-project/locations/us-central1/keyRings/my-ring/cryptoKeys/my-key/cryptoKeyVersions/1 This read-only field is used to convey the specific configured CryptoKeyVersion of the `kms_key` that has been configured. It is populated when the CMEK settings are bound to a single key version.",
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "Link": {
+      "id": "Link",
+      "description": "A link lets a dataset be accessible to BigQuery via usage of linked datasets.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Identifier. Name of the link. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]/links/[LINK_ID]",
+          "type": "string"
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional. Description of the link."
+        },
+        "displayName": {
+          "description": "Optional. A user friendly display name.",
+          "type": "string"
+        },
+        "createTime": {
+          "description": "Output only. Create timestamp.",
+          "type": "string",
+          "format": "google-datetime",
+          "readOnly": true
+        }
+      }
+    },
+    "TraceScope": {
+      "id": "TraceScope",
+      "description": "A trace scope is a collection of resources whose traces are queried together.",
+      "type": "object",
+      "properties": {
+        "description": {
+          "description": "Optional. Describes this trace scope. The maximum length of the description is 8000 characters.",
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "description": "Identifier. The resource name of the trace scope. For example: projects/my-project/locations/global/traceScopes/my-trace-scope"
+        },
+        "createTime": {
+          "readOnly": true,
+          "description": "Output only. The creation timestamp of the trace scope.",
+          "type": "string",
+          "format": "google-datetime"
+        },
+        "updateTime": {
+          "readOnly": true,
+          "type": "string",
+          "format": "google-datetime",
+          "description": "Output only. The last update timestamp of the trace scope."
+        },
+        "resourceNames": {
+          "type": "array",
+          "description": "Required. Names of the projects that are included in this trace scope. * `projects/[PROJECT_ID]` A trace scope can include a maximum of 20 projects.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ListViewsResponse": {
+      "type": "object",
+      "properties": {
+        "views": {
+          "items": {
+            "$ref": "View"
+          },
+          "type": "array",
+          "description": "The list of views."
+        },
+        "nextPageToken": {
+          "description": "Optional. A token that can be sent as `page_token` to retrieve the next page. When this field is omitted, there are no subsequent pages.",
+          "type": "string"
+        }
+      },
+      "id": "ListViewsResponse",
+      "description": "Response for listing views."
+    },
+    "Operation": {
+      "id": "Operation",
+      "description": "This resource represents a long-running operation that is the result of a network API call.",
+      "type": "object",
+      "properties": {
+        "done": {
+          "description": "If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available.",
+          "type": "boolean"
+        },
+        "response": {
+          "additionalProperties": {
+            "type": "any",
+            "description": "Properties of the object. Contains field @type with type URL."
+          },
+          "description": "The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.",
+          "type": "object"
+        },
+        "name": {
+          "type": "string",
+          "description": "The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`."
+        },
+        "metadata": {
+          "description": "Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata. Any method that returns a long-running operation should document the metadata type, if any.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "any",
+            "description": "Properties of the object. Contains field @type with type URL."
+          }
+        },
+        "error": {
+          "description": "The error result of the operation in case of failure or cancellation.",
+          "$ref": "Status"
+        }
+      }
+    },
+    "OperationMetadata": {
+      "id": "OperationMetadata",
+      "description": "Represents the metadata of the long-running operation.",
+      "type": "object",
+      "properties": {
+        "requestedCancellation": {
+          "readOnly": true,
+          "description": "Output only. Identifies whether the user has requested cancellation of the operation. Operations that have been cancelled successfully have Operation.error value with a google.rpc.Status.code of 1, corresponding to `Code.CANCELLED`.",
+          "type": "boolean"
+        },
+        "endTime": {
+          "description": "Output only. The time the operation finished running.",
+          "type": "string",
+          "format": "google-datetime",
+          "readOnly": true
+        },
+        "verb": {
+          "type": "string",
+          "description": "Output only. Name of the verb executed by the operation.",
+          "readOnly": true
+        },
+        "createTime": {
+          "description": "Output only. The time the operation was created.",
+          "type": "string",
+          "format": "google-datetime",
+          "readOnly": true
+        },
+        "statusMessage": {
+          "description": "Output only. Human-readable status of the operation, if any.",
+          "type": "string",
+          "readOnly": true
+        },
+        "apiVersion": {
+          "readOnly": true,
+          "description": "Output only. API version used to start the operation.",
+          "type": "string"
+        },
+        "target": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Output only. Server-defined resource path for the target of the operation."
+        }
+      }
+    },
+    "Location": {
+      "id": "Location",
+      "description": "A resource that represents a Google Cloud location.",
+      "type": "object",
+      "properties": {
+        "labels": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Cross-service attributes for the location. For example {\"cloud.googleapis.com/region\": \"us-east1\"}",
+          "type": "object"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The friendly name for this location, typically a nearby city name. For example, \"Tokyo\"."
+        },
+        "metadata": {
+          "additionalProperties": {
+            "type": "any",
+            "description": "Properties of the object. Contains field @type with type URL."
+          },
+          "description": "Service-specific metadata. For example the available capacity at the given location.",
+          "type": "object"
+        },
+        "name": {
+          "type": "string",
+          "description": "Resource name for the location, which may vary between implementations. For example: `\"projects/example-project/locations/us-east1\"`"
+        },
+        "locationId": {
+          "description": "The canonical id for this location. For example: `\"us-east1\"`.",
+          "type": "string"
+        }
+      }
+    },
+    "Dataset": {
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "description": "Optional. User friendly display name.",
+          "type": "string"
+        },
+        "deleteTime": {
+          "readOnly": true,
+          "description": "Output only. Delete timestamp.",
+          "type": "string",
+          "format": "google-datetime"
+        },
+        "createTime": {
+          "readOnly": true,
+          "type": "string",
+          "format": "google-datetime",
+          "description": "Output only. Create timestamp."
+        },
+        "name": {
+          "description": "Identifier. Name of the dataset. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]",
+          "type": "string"
+        },
+        "description": {
+          "description": "Optional. Description of the dataset.",
+          "type": "string"
+        },
+        "purgeTime": {
+          "type": "string",
+          "format": "google-datetime",
+          "description": "Output only. Timestamp when the dataset in soft-deleted state is purged.",
+          "readOnly": true
+        }
+      },
+      "id": "Dataset",
+      "description": "A dataset is a collection of data that has a specific configuration. A dataset can be backed by multiple tables. One bucket can have multiple datasets."
+    },
+    "Settings": {
+      "type": "object",
+      "properties": {
+        "defaultStorageLocation": {
+          "description": "Optional. The location which should be used when any regional resources are provisioned by Google Cloud.",
+          "type": "string"
+        },
+        "kmsKeyName": {
+          "type": "string",
+          "description": "Optional. The resource name for the configured Cloud KMS key. KMS key name format: \"projects/[PROJECT_ID]/locations/[LOCATION]/keyRings/[KEYRING]/cryptoKeys/[KEY]\" For example: `\"projects/my-project/locations/us-central1/keyRings/my-ring/cryptoKeys/my-key\"`"
+        },
+        "name": {
+          "type": "string",
+          "description": "Identifier. The resource name of the settings."
+        },
+        "serviceAccountId": {
+          "type": "string",
+          "description": "Output only. The service account for the given resource container, such as project or folder. This will be used by Cloud Observability to perform actions in the container's project like access KMS keys or create Links. Always the same service account per resource container regardless of region.",
+          "readOnly": true
+        }
+      },
+      "id": "Settings",
+      "description": "Describes the settings associated with a project, organization, or folder."
+    },
+    "Scope": {
+      "id": "Scope",
+      "description": "Message describing Scope object",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Identifier. Name of the resource. The format is: projects/{project}/locations/{location}/scopes/{scope} The `{location}` field must be set to `global`. The `{scope}` field must be set to `_Default`."
+        },
+        "updateTime": {
+          "readOnly": true,
+          "description": "Output only. Update timestamp. Note: The Update timestamp for the default scope is initially unset.",
+          "type": "string",
+          "format": "google-datetime"
+        },
+        "traceScope": {
+          "type": "string",
+          "description": "Required. The resource name of the `TraceScope`. For example: projects/myproject/locations/global/traceScopes/my-trace-scope"
+        },
+        "logScope": {
+          "description": "Required. The full resource name of the `LogScope`. For example: //logging.googleapis.com/projects/myproject/locations/global/logScopes/my-log-scope",
+          "type": "string"
+        }
+      }
+    },
+    "ListLinksResponse": {
+      "type": "object",
+      "properties": {
+        "links": {
+          "description": "The list of links.",
+          "type": "array",
+          "items": {
+            "$ref": "Link"
+          }
+        },
+        "nextPageToken": {
+          "type": "string",
+          "description": "Optional. A token that can be sent as `page_token` to retrieve the next page. When this field is omitted, there are no subsequent pages."
+        }
+      },
+      "id": "ListLinksResponse",
+      "description": "Response for listing links."
+    },
+    "Bucket": {
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "description": "Optional. User friendly display name.",
+          "type": "string"
+        },
+        "deleteTime": {
+          "readOnly": true,
+          "type": "string",
+          "format": "google-datetime",
+          "description": "Output only. Delete timestamp."
+        },
+        "updateTime": {
+          "description": "Output only. Update timestamp.",
+          "type": "string",
+          "format": "google-datetime",
+          "readOnly": true
+        },
+        "cmekSettings": {
+          "description": "Optional. Settings for configuring CMEK on a bucket.",
+          "$ref": "CmekSettings"
+        },
+        "createTime": {
+          "description": "Output only. Create timestamp.",
+          "type": "string",
+          "format": "google-datetime",
+          "readOnly": true
+        },
+        "name": {
+          "description": "Identifier. Name of the bucket. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]",
+          "type": "string"
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional. Description of the bucket."
+        },
+        "purgeTime": {
+          "description": "Output only. Timestamp when the bucket in soft-deleted state is purged.",
+          "type": "string",
+          "format": "google-datetime",
+          "readOnly": true
+        }
+      },
+      "id": "Bucket",
+      "description": "Bucket configuration for storing observability data."
+    },
+    "CancelOperationRequest": {
+      "type": "object",
+      "properties": {},
+      "id": "CancelOperationRequest",
+      "description": "The request message for Operations.CancelOperation."
+    },
+    "ListDatasetsResponse": {
+      "type": "object",
+      "properties": {
+        "nextPageToken": {
+          "description": "A token that can be sent as `page_token` to retrieve the next page. When this field is omitted, there are no subsequent pages.",
+          "type": "string"
+        },
+        "datasets": {
+          "description": "The list of datasets.",
+          "type": "array",
+          "items": {
+            "$ref": "Dataset"
+          }
+        }
+      },
+      "id": "ListDatasetsResponse",
+      "description": "Response for listing datasets."
+    },
+    "Empty": {
+      "id": "Empty",
+      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
+      "type": "object",
+      "properties": {}
+    },
+    "ListTraceScopesResponse": {
+      "type": "object",
+      "properties": {
+        "nextPageToken": {
+          "description": "Optional. If there might be more results than appear in this response, then `next_page_token` is included. To get the next set of results, call the same method again using the value of `next_page_token` as `page_token`.",
+          "type": "string"
+        },
+        "traceScopes": {
+          "items": {
+            "$ref": "TraceScope"
+          },
+          "type": "array",
+          "description": "Optional. A list of trace scopes."
+        }
+      },
+      "id": "ListTraceScopesResponse",
+      "description": "Response for listing TraceScopes."
+    }
+  },
+  "version": "v1",
+  "icons": {
+    "x16": "http://www.google.com/images/icons/product/search-16.gif",
+    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  },
+  "mtlsRootUrl": "https://observability.mtls.googleapis.com/",
+  "ownerName": "Google",
   "rootUrl": "https://observability.googleapis.com/",
+  "baseUrl": "https://observability.googleapis.com/",
+  "auth": {
+    "oauth2": {
+      "scopes": {
+        "https://www.googleapis.com/auth/cloud-platform": {
+          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
+        }
+      }
+    }
+  },
+  "fullyEncodeReservedExpansion": true,
+  "name": "observability",
+  "version_module": true,
   "resources": {
     "projects": {
       "resources": {
         "locations": {
           "methods": {
-            "updateSettings": {
-              "httpMethod": "PATCH",
-              "description": "Update Settings",
-              "path": "v1/{+name}",
-              "parameters": {
-                "updateMask": {
-                  "description": "Optional. The field mask specifying which fields of the settings are to be updated.",
-                  "location": "query",
-                  "type": "string",
-                  "format": "google-fieldmask"
-                },
-                "name": {
-                  "type": "string",
-                  "description": "Identifier. The resource name of the settings.",
-                  "required": true,
-                  "pattern": "^projects/[^/]+/locations/[^/]+/settings$",
-                  "location": "path"
-                }
-              },
-              "id": "observability.projects.locations.updateSettings",
-              "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/settings",
-              "scopes": [
-                "https://www.googleapis.com/auth/cloud-platform"
-              ],
+            "getSettings": {
               "response": {
-                "$ref": "Operation"
-              },
-              "parameterOrder": [
-                "name"
-              ],
-              "request": {
                 "$ref": "Settings"
-              }
-            },
-            "get": {
+              },
+              "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/settings",
+              "parameters": {
+                "name": {
+                  "pattern": "^projects/[^/]+/locations/[^/]+/settings$",
+                  "type": "string",
+                  "description": "Required. Name of the settings to retrieve. Name format: \"projects/[PROJECT_ID]/locations/[LOCATION]/settings\" \"folders/[FOLDER_ID]/locations/[LOCATION]/settings\" \"organizations/[ORGANIZATION_ID]/locations/[LOCATION]/settings\"",
+                  "location": "path",
+                  "required": true
+                }
+              },
               "parameterOrder": [
                 "name"
               ],
-              "flatPath": "v1/projects/{projectsId}/locations/{locationsId}",
+              "id": "observability.projects.locations.getSettings",
+              "description": "Get Settings",
+              "path": "v1/{+name}",
               "scopes": [
                 "https://www.googleapis.com/auth/cloud-platform"
               ],
-              "response": {
-                "$ref": "Location"
-              },
-              "id": "observability.projects.locations.get",
-              "parameters": {
-                "name": {
-                  "type": "string",
-                  "description": "Resource name for the location.",
-                  "required": true,
-                  "pattern": "^projects/[^/]+/locations/[^/]+$",
-                  "location": "path"
-                }
-              },
-              "path": "v1/{+name}",
-              "httpMethod": "GET",
-              "description": "Gets information about a location."
+              "httpMethod": "GET"
             },
             "list": {
+              "parameterOrder": [
+                "name"
+              ],
+              "path": "v1/{+name}/locations",
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud-platform"
+              ],
+              "id": "observability.projects.locations.list",
+              "description": "Lists information about the supported locations for this service. This method lists locations based on the resource scope provided in the [ListLocationsRequest.name] field: * **Global locations**: If `name` is empty, the method lists the public locations available to all projects. * **Project-specific locations**: If `name` follows the format `projects/{project}`, the method lists locations visible to that specific project. This includes public, private, or other project-specific locations enabled for the project. For gRPC and client library implementations, the resource name is passed as the `name` field. For direct service calls, the resource name is incorporated into the request path based on the specific service implementation and version.",
+              "httpMethod": "GET",
+              "response": {
+                "$ref": "ListLocationsResponse"
+              },
               "parameters": {
-                "name": {
-                  "pattern": "^projects/[^/]+$",
-                  "location": "path",
-                  "required": true,
-                  "description": "The resource that owns the locations collection, if applicable.",
-                  "type": "string"
-                },
                 "filter": {
+                  "location": "query",
                   "description": "A filter to narrow down results to a preferred subset. The filtering language accepts strings like `\"displayName=tokyo\"`, and is documented in more detail in [AIP-160](https://google.aip.dev/160).",
-                  "location": "query",
                   "type": "string"
-                },
-                "extraLocationTypes": {
-                  "location": "query",
-                  "repeated": true,
-                  "type": "string",
-                  "description": "Optional. Do not use this field. It is unsupported and is ignored unless explicitly documented otherwise. This is primarily for internal usage."
                 },
                 "pageSize": {
-                  "format": "int32",
                   "location": "query",
+                  "description": "The maximum number of results to return. If not set, the service selects a default.",
                   "type": "integer",
-                  "description": "The maximum number of results to return. If not set, the service selects a default."
+                  "format": "int32"
+                },
+                "name": {
+                  "location": "path",
+                  "description": "The resource that owns the locations collection, if applicable.",
+                  "pattern": "^projects/[^/]+$",
+                  "type": "string",
+                  "required": true
+                },
+                "extraLocationTypes": {
+                  "description": "Optional. Do not use this field. It is unsupported and is ignored unless explicitly documented otherwise. This is primarily for internal usage.",
+                  "type": "string",
+                  "location": "query",
+                  "repeated": true
                 },
                 "pageToken": {
                   "location": "query",
@@ -99,410 +628,222 @@
                   "description": "A page token received from the `next_page_token` field in the response. Send that page token to receive the subsequent page."
                 }
               },
-              "httpMethod": "GET",
-              "description": "Lists information about the supported locations for this service. This method lists locations based on the resource scope provided in the [ListLocationsRequest.name] field: * **Global locations**: If `name` is empty, the method lists the public locations available to all projects. * **Project-specific locations**: If `name` follows the format `projects/{project}`, the method lists locations visible to that specific project. This includes public, private, or other project-specific locations enabled for the project. For gRPC and client library implementations, the resource name is passed as the `name` field. For direct service calls, the resource name is incorporated into the request path based on the specific service implementation and version.",
-              "path": "v1/{+name}/locations",
-              "parameterOrder": [
-                "name"
-              ],
-              "id": "observability.projects.locations.list",
-              "flatPath": "v1/projects/{projectsId}/locations",
-              "scopes": [
-                "https://www.googleapis.com/auth/cloud-platform"
-              ],
-              "response": {
-                "$ref": "ListLocationsResponse"
-              }
+              "flatPath": "v1/projects/{projectsId}/locations"
             },
-            "getSettings": {
-              "parameterOrder": [
-                "name"
-              ],
-              "response": {
+            "updateSettings": {
+              "request": {
                 "$ref": "Settings"
               },
+              "response": {
+                "$ref": "Operation"
+              },
+              "parameters": {
+                "name": {
+                  "required": true,
+                  "pattern": "^projects/[^/]+/locations/[^/]+/settings$",
+                  "type": "string",
+                  "description": "Identifier. The resource name of the settings.",
+                  "location": "path"
+                },
+                "updateMask": {
+                  "description": "Optional. The field mask specifying which fields of the settings are to be updated.",
+                  "type": "string",
+                  "format": "google-fieldmask",
+                  "location": "query"
+                }
+              },
               "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/settings",
+              "parameterOrder": [
+                "name"
+              ],
+              "path": "v1/{+name}",
               "scopes": [
                 "https://www.googleapis.com/auth/cloud-platform"
               ],
-              "id": "observability.projects.locations.getSettings",
+              "id": "observability.projects.locations.updateSettings",
+              "description": "Update Settings",
+              "httpMethod": "PATCH"
+            },
+            "get": {
+              "flatPath": "v1/projects/{projectsId}/locations/{locationsId}",
               "parameters": {
                 "name": {
+                  "location": "path",
+                  "pattern": "^projects/[^/]+/locations/[^/]+$",
                   "type": "string",
-                  "required": true,
-                  "description": "Required. Name of the settings to retrieve. Name format: \"projects/[PROJECT_ID]/locations/[LOCATION]/settings\" \"folders/[FOLDER_ID]/locations/[LOCATION]/settings\" \"organizations/[ORGANIZATION_ID]/locations/[LOCATION]/settings\"",
-                  "pattern": "^projects/[^/]+/locations/[^/]+/settings$",
-                  "location": "path"
+                  "description": "Resource name for the location.",
+                  "required": true
                 }
               },
-              "path": "v1/{+name}",
+              "response": {
+                "$ref": "Location"
+              },
               "httpMethod": "GET",
-              "description": "Get Settings"
+              "id": "observability.projects.locations.get",
+              "description": "Gets information about a location.",
+              "path": "v1/{+name}",
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud-platform"
+              ],
+              "parameterOrder": [
+                "name"
+              ]
             }
           },
           "resources": {
-            "buckets": {
+            "traceScopes": {
               "methods": {
-                "get": {
-                  "httpMethod": "GET",
-                  "description": "Get bucket resource.",
-                  "path": "v1/{+name}",
-                  "parameters": {
-                    "name": {
-                      "pattern": "^projects/[^/]+/locations/[^/]+/buckets/[^/]+$",
-                      "location": "path",
-                      "required": true,
-                      "description": "Required. Name of the bucket to retrieve. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]",
-                      "type": "string"
-                    }
-                  },
-                  "id": "observability.projects.locations.buckets.get",
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}",
+                "list": {
+                  "parameterOrder": [
+                    "parent"
+                  ],
+                  "id": "observability.projects.locations.traceScopes.list",
+                  "description": "List TraceScopes of a project in a particular location.",
+                  "path": "v1/{+parent}/traceScopes",
                   "scopes": [
                     "https://www.googleapis.com/auth/cloud-platform"
                   ],
+                  "httpMethod": "GET",
                   "response": {
-                    "$ref": "Bucket"
+                    "$ref": "ListTraceScopesResponse"
                   },
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/traceScopes",
+                  "parameters": {
+                    "parent": {
+                      "pattern": "^projects/[^/]+/locations/[^/]+$",
+                      "type": "string",
+                      "description": "Required. The full resource name of the location to look for trace scopes: projects/[PROJECT_ID]/locations/[LOCATION_ID] For example: projects/my-project/locations/global",
+                      "location": "path",
+                      "required": true
+                    },
+                    "pageToken": {
+                      "location": "query",
+                      "description": "Optional. If present, then retrieve the next batch of results from the preceding call to this method. `page_token` must be the value of `next_page_token` from the previous response. The values of other method parameters should be identical to those in the previous call.",
+                      "type": "string"
+                    },
+                    "pageSize": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "Optional. The maximum number of results to return from this request. Non-positive values are ignored. The presence of `next_page_token` in the response indicates that more results might be available.",
+                      "location": "query"
+                    }
+                  }
+                },
+                "create": {
+                  "id": "observability.projects.locations.traceScopes.create",
+                  "description": "Create a new TraceScope.",
+                  "path": "v1/{+parent}/traceScopes",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "httpMethod": "POST",
+                  "parameterOrder": [
+                    "parent"
+                  ],
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/traceScopes",
+                  "parameters": {
+                    "parent": {
+                      "description": "Required. The full resource name of the location where the trace scope should be created projects/[PROJECT_ID]/locations/[LOCATION_ID] For example: projects/my-project/locations/global",
+                      "pattern": "^projects/[^/]+/locations/[^/]+$",
+                      "type": "string",
+                      "location": "path",
+                      "required": true
+                    },
+                    "traceScopeId": {
+                      "location": "query",
+                      "type": "string",
+                      "description": "Required. A client-assigned identifier for the trace scope."
+                    }
+                  },
+                  "request": {
+                    "$ref": "TraceScope"
+                  },
+                  "response": {
+                    "$ref": "TraceScope"
+                  }
+                },
+                "get": {
+                  "id": "observability.projects.locations.traceScopes.get",
+                  "description": "Get TraceScope resource.",
+                  "path": "v1/{+name}",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "httpMethod": "GET",
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/traceScopes/{traceScopesId}",
+                  "parameters": {
+                    "name": {
+                      "location": "path",
+                      "pattern": "^projects/[^/]+/locations/[^/]+/traceScopes/[^/]+$",
+                      "type": "string",
+                      "description": "Required. The resource name of the trace scope: projects/[PROJECT_ID]/locations/[LOCATION_ID]/traceScopes/[TRACE_SCOPE_ID] For example: projects/my-project/locations/global/traceScopes/my-trace-scope",
+                      "required": true
+                    }
+                  },
+                  "response": {
+                    "$ref": "TraceScope"
+                  }
+                },
+                "delete": {
+                  "parameters": {
+                    "name": {
+                      "required": true,
+                      "pattern": "^projects/[^/]+/locations/[^/]+/traceScopes/[^/]+$",
+                      "type": "string",
+                      "description": "Required. The full resource name of the trace scope to delete: projects/[PROJECT_ID]/locations/[LOCATION_ID]/traceScopes/[TRACE_SCOPE_ID] For example: projects/my-project/locations/global/traceScopes/my-trace-scope",
+                      "location": "path"
+                    }
+                  },
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/traceScopes/{traceScopesId}",
+                  "response": {
+                    "$ref": "Empty"
+                  },
+                  "httpMethod": "DELETE",
+                  "path": "v1/{+name}",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "id": "observability.projects.locations.traceScopes.delete",
+                  "description": "Delete a TraceScope.",
                   "parameterOrder": [
                     "name"
                   ]
                 },
-                "list": {
-                  "httpMethod": "GET",
-                  "description": "List buckets of a project in a particular location.",
-                  "path": "v1/{+parent}/buckets",
-                  "parameters": {
-                    "showDeleted": {
-                      "location": "query",
-                      "type": "boolean",
-                      "description": "Optional. If true, then the response will include deleted buckets."
-                    },
-                    "parent": {
-                      "required": true,
-                      "description": "Required. The parent, which owns this collection of buckets. The format is: projects/[PROJECT_ID]/locations/[LOCATION]",
-                      "pattern": "^projects/[^/]+/locations/[^/]+$",
-                      "location": "path",
-                      "type": "string"
-                    },
-                    "pageSize": {
-                      "description": "Optional. The maximum number of buckets to return. If unspecified, then at most 100 buckets are returned. The maximum value is 1000; values above 1000 are coerced to 1000.",
-                      "location": "query",
-                      "type": "integer",
-                      "format": "int32"
-                    },
-                    "pageToken": {
-                      "location": "query",
-                      "type": "string",
-                      "description": "Optional. A page token, received from a previous `ListBuckets` call. Provide this to retrieve the subsequent page."
-                    }
-                  },
-                  "id": "observability.projects.locations.buckets.list",
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets",
+                "patch": {
+                  "path": "v1/{+name}",
                   "scopes": [
                     "https://www.googleapis.com/auth/cloud-platform"
                   ],
-                  "response": {
-                    "$ref": "ListBucketsResponse"
-                  },
+                  "id": "observability.projects.locations.traceScopes.patch",
+                  "description": "Update a TraceScope.",
+                  "httpMethod": "PATCH",
                   "parameterOrder": [
-                    "parent"
-                  ]
-                }
-              },
-              "resources": {
-                "datasets": {
-                  "methods": {
-                    "get": {
-                      "id": "observability.projects.locations.buckets.datasets.get",
-                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}/datasets/{datasetsId}",
-                      "scopes": [
-                        "https://www.googleapis.com/auth/cloud-platform"
-                      ],
-                      "response": {
-                        "$ref": "Dataset"
-                      },
-                      "parameterOrder": [
-                        "name"
-                      ],
-                      "httpMethod": "GET",
-                      "description": "Get a dataset.",
-                      "path": "v1/{+name}",
-                      "parameters": {
-                        "name": {
-                          "type": "string",
-                          "required": true,
-                          "description": "Required. Name of the dataset to retrieve. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]",
-                          "pattern": "^projects/[^/]+/locations/[^/]+/buckets/[^/]+/datasets/[^/]+$",
-                          "location": "path"
-                        }
-                      }
+                    "name"
+                  ],
+                  "parameters": {
+                    "name": {
+                      "required": true,
+                      "description": "Identifier. The resource name of the trace scope. For example: projects/my-project/locations/global/traceScopes/my-trace-scope",
+                      "pattern": "^projects/[^/]+/locations/[^/]+/traceScopes/[^/]+$",
+                      "type": "string",
+                      "location": "path"
                     },
-                    "list": {
-                      "parameters": {
-                        "pageSize": {
-                          "description": "Optional. The maximum number of datasets to return. If unspecified, then at most 100 datasets are returned. The maximum value is 1000; values above 1000 are coerced to 1000.",
-                          "format": "int32",
-                          "location": "query",
-                          "type": "integer"
-                        },
-                        "pageToken": {
-                          "description": "Optional. A page token, received from a previous `ListDatasets` call. Provide this to retrieve the subsequent page.",
-                          "location": "query",
-                          "type": "string"
-                        },
-                        "parent": {
-                          "pattern": "^projects/[^/]+/locations/[^/]+/buckets/[^/]+$",
-                          "location": "path",
-                          "description": "Required. The parent bucket that owns this collection of datasets. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]",
-                          "required": true,
-                          "type": "string"
-                        },
-                        "showDeleted": {
-                          "location": "query",
-                          "type": "boolean",
-                          "description": "Optional. If true, then the response will include deleted datasets."
-                        }
-                      },
-                      "path": "v1/{+parent}/datasets",
-                      "httpMethod": "GET",
-                      "description": "List datasets of a bucket.",
-                      "parameterOrder": [
-                        "parent"
-                      ],
-                      "response": {
-                        "$ref": "ListDatasetsResponse"
-                      },
-                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}/datasets",
-                      "scopes": [
-                        "https://www.googleapis.com/auth/cloud-platform"
-                      ],
-                      "id": "observability.projects.locations.buckets.datasets.list"
+                    "updateMask": {
+                      "location": "query",
+                      "type": "string",
+                      "format": "google-fieldmask",
+                      "description": "Optional. The list of fields to update."
                     }
                   },
-                  "resources": {
-                    "views": {
-                      "methods": {
-                        "get": {
-                          "response": {
-                            "$ref": "View"
-                          },
-                          "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}/datasets/{datasetsId}/views/{viewsId}",
-                          "scopes": [
-                            "https://www.googleapis.com/auth/cloud-platform"
-                          ],
-                          "id": "observability.projects.locations.buckets.datasets.views.get",
-                          "parameterOrder": [
-                            "name"
-                          ],
-                          "path": "v1/{+name}",
-                          "httpMethod": "GET",
-                          "description": "Get a view.",
-                          "parameters": {
-                            "name": {
-                              "type": "string",
-                              "required": true,
-                              "description": "Required. Name of the view to retrieve. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]/views/[VIEW_ID]",
-                              "pattern": "^projects/[^/]+/locations/[^/]+/buckets/[^/]+/datasets/[^/]+/views/[^/]+$",
-                              "location": "path"
-                            }
-                          }
-                        },
-                        "list": {
-                          "parameters": {
-                            "parent": {
-                              "description": "Required. Dataset whose views are to be listed. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]",
-                              "required": true,
-                              "pattern": "^projects/[^/]+/locations/[^/]+/buckets/[^/]+/datasets/[^/]+$",
-                              "location": "path",
-                              "type": "string"
-                            },
-                            "pageSize": {
-                              "description": "Optional. The maximum number of views to return. If unspecified, then at most 100 views are returned. The maximum value is 1000; values above 1000 are coerced to 1000.",
-                              "location": "query",
-                              "type": "integer",
-                              "format": "int32"
-                            },
-                            "pageToken": {
-                              "description": "Optional. A page token, received from a previous `ListViews` call. Provide this to retrieve the subsequent page.",
-                              "location": "query",
-                              "type": "string"
-                            }
-                          },
-                          "httpMethod": "GET",
-                          "description": "List views of a dataset.",
-                          "path": "v1/{+parent}/views",
-                          "parameterOrder": [
-                            "parent"
-                          ],
-                          "id": "observability.projects.locations.buckets.datasets.views.list",
-                          "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}/datasets/{datasetsId}/views",
-                          "scopes": [
-                            "https://www.googleapis.com/auth/cloud-platform"
-                          ],
-                          "response": {
-                            "$ref": "ListViewsResponse"
-                          }
-                        }
-                      }
-                    },
-                    "links": {
-                      "methods": {
-                        "create": {
-                          "httpMethod": "POST",
-                          "description": "Create a new link.",
-                          "path": "v1/{+parent}/links",
-                          "parameters": {
-                            "linkId": {
-                              "description": "Required. Id of the link to create.",
-                              "location": "query",
-                              "type": "string"
-                            },
-                            "parent": {
-                              "pattern": "^projects/[^/]+/locations/[^/]+/buckets/[^/]+/datasets/[^/]+$",
-                              "location": "path",
-                              "required": true,
-                              "description": "Required. Name of the containing dataset for this link. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]",
-                              "type": "string"
-                            }
-                          },
-                          "id": "observability.projects.locations.buckets.datasets.links.create",
-                          "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}/datasets/{datasetsId}/links",
-                          "scopes": [
-                            "https://www.googleapis.com/auth/cloud-platform"
-                          ],
-                          "response": {
-                            "$ref": "Operation"
-                          },
-                          "parameterOrder": [
-                            "parent"
-                          ],
-                          "request": {
-                            "$ref": "Link"
-                          }
-                        },
-                        "patch": {
-                          "response": {
-                            "$ref": "Operation"
-                          },
-                          "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}/datasets/{datasetsId}/links/{linksId}",
-                          "scopes": [
-                            "https://www.googleapis.com/auth/cloud-platform"
-                          ],
-                          "id": "observability.projects.locations.buckets.datasets.links.patch",
-                          "request": {
-                            "$ref": "Link"
-                          },
-                          "parameterOrder": [
-                            "name"
-                          ],
-                          "path": "v1/{+name}",
-                          "httpMethod": "PATCH",
-                          "description": "Update a link.",
-                          "parameters": {
-                            "updateMask": {
-                              "description": "Optional. The list of fields to update.",
-                              "format": "google-fieldmask",
-                              "location": "query",
-                              "type": "string"
-                            },
-                            "name": {
-                              "type": "string",
-                              "description": "Identifier. Name of the link. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]/links/[LINK_ID]",
-                              "required": true,
-                              "pattern": "^projects/[^/]+/locations/[^/]+/buckets/[^/]+/datasets/[^/]+/links/[^/]+$",
-                              "location": "path"
-                            }
-                          }
-                        },
-                        "get": {
-                          "parameterOrder": [
-                            "name"
-                          ],
-                          "id": "observability.projects.locations.buckets.datasets.links.get",
-                          "response": {
-                            "$ref": "Link"
-                          },
-                          "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}/datasets/{datasetsId}/links/{linksId}",
-                          "scopes": [
-                            "https://www.googleapis.com/auth/cloud-platform"
-                          ],
-                          "parameters": {
-                            "name": {
-                              "type": "string",
-                              "required": true,
-                              "description": "Required. Name of the link to retrieve. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]/links/[LINK_ID]",
-                              "pattern": "^projects/[^/]+/locations/[^/]+/buckets/[^/]+/datasets/[^/]+/links/[^/]+$",
-                              "location": "path"
-                            }
-                          },
-                          "httpMethod": "GET",
-                          "description": "Get a link.",
-                          "path": "v1/{+name}"
-                        },
-                        "delete": {
-                          "parameterOrder": [
-                            "name"
-                          ],
-                          "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}/datasets/{datasetsId}/links/{linksId}",
-                          "scopes": [
-                            "https://www.googleapis.com/auth/cloud-platform"
-                          ],
-                          "response": {
-                            "$ref": "Operation"
-                          },
-                          "id": "observability.projects.locations.buckets.datasets.links.delete",
-                          "parameters": {
-                            "name": {
-                              "pattern": "^projects/[^/]+/locations/[^/]+/buckets/[^/]+/datasets/[^/]+/links/[^/]+$",
-                              "location": "path",
-                              "required": true,
-                              "description": "Required. Name of the link to delete. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]/links/[LINK_ID]",
-                              "type": "string"
-                            }
-                          },
-                          "path": "v1/{+name}",
-                          "httpMethod": "DELETE",
-                          "description": "Delete a link."
-                        },
-                        "list": {
-                          "id": "observability.projects.locations.buckets.datasets.links.list",
-                          "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}/datasets/{datasetsId}/links",
-                          "scopes": [
-                            "https://www.googleapis.com/auth/cloud-platform"
-                          ],
-                          "response": {
-                            "$ref": "ListLinksResponse"
-                          },
-                          "parameterOrder": [
-                            "parent"
-                          ],
-                          "httpMethod": "GET",
-                          "description": "List links of a dataset.",
-                          "path": "v1/{+parent}/links",
-                          "parameters": {
-                            "parent": {
-                              "type": "string",
-                              "pattern": "^projects/[^/]+/locations/[^/]+/buckets/[^/]+/datasets/[^/]+$",
-                              "location": "path",
-                              "required": true,
-                              "description": "Required. The parent dataset that owns this collection of links. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]"
-                            },
-                            "pageSize": {
-                              "description": "Optional. The maximum number of links to return. If unspecified, then at most 100 links are returned. The maximum value is 1000; values above 1000 are coerced to 1000.",
-                              "format": "int32",
-                              "location": "query",
-                              "type": "integer"
-                            },
-                            "pageToken": {
-                              "location": "query",
-                              "type": "string",
-                              "description": "Optional. A page token, received from a previous `ListLinks` call. Provide this to retrieve the subsequent page."
-                            }
-                          }
-                        }
-                      }
-                    }
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/traceScopes/{traceScopesId}",
+                  "request": {
+                    "$ref": "TraceScope"
+                  },
+                  "response": {
+                    "$ref": "TraceScope"
                   }
                 }
               }
@@ -510,126 +851,126 @@
             "operations": {
               "methods": {
                 "list": {
+                  "parameterOrder": [
+                    "name"
+                  ],
                   "path": "v1/{+name}/operations",
-                  "httpMethod": "GET",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "id": "observability.projects.locations.operations.list",
                   "description": "Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`.",
+                  "httpMethod": "GET",
+                  "response": {
+                    "$ref": "ListOperationsResponse"
+                  },
                   "parameters": {
-                    "pageSize": {
-                      "format": "int32",
-                      "location": "query",
-                      "type": "integer",
-                      "description": "The standard list page size."
-                    },
-                    "pageToken": {
-                      "description": "The standard list page token.",
-                      "location": "query",
-                      "type": "string"
-                    },
-                    "name": {
-                      "type": "string",
-                      "required": true,
-                      "description": "The name of the operation's parent resource.",
-                      "pattern": "^projects/[^/]+/locations/[^/]+$",
-                      "location": "path"
-                    },
                     "filter": {
                       "location": "query",
                       "type": "string",
                       "description": "The standard list filter."
                     },
                     "returnPartialSuccess": {
-                      "description": "When set to `true`, operations that are reachable are returned as normal, and those that are unreachable are returned in the ListOperationsResponse.unreachable field. This can only be `true` when reading across collections. For example, when `parent` is set to `\"projects/example/locations/-\"`. This field is not supported by default and will result in an `UNIMPLEMENTED` error if set unless explicitly documented otherwise in service or product specific documentation.",
                       "location": "query",
-                      "type": "boolean"
+                      "type": "boolean",
+                      "description": "When set to `true`, operations that are reachable are returned as normal, and those that are unreachable are returned in the ListOperationsResponse.unreachable field. This can only be `true` when reading across collections. For example, when `parent` is set to `\"projects/example/locations/-\"`. This field is not supported by default and will result in an `UNIMPLEMENTED` error if set unless explicitly documented otherwise in service or product specific documentation."
+                    },
+                    "pageSize": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "The standard list page size.",
+                      "location": "query"
+                    },
+                    "pageToken": {
+                      "description": "The standard list page token.",
+                      "type": "string",
+                      "location": "query"
+                    },
+                    "name": {
+                      "required": true,
+                      "location": "path",
+                      "description": "The name of the operation's parent resource.",
+                      "pattern": "^projects/[^/]+/locations/[^/]+$",
+                      "type": "string"
                     }
                   },
-                  "response": {
-                    "$ref": "ListOperationsResponse"
-                  },
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/operations",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "id": "observability.projects.locations.operations.list",
-                  "parameterOrder": [
-                    "name"
-                  ]
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/operations"
                 },
                 "cancel": {
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/operations/{operationsId}:cancel",
+                  "path": "v1/{+name}:cancel",
                   "scopes": [
                     "https://www.googleapis.com/auth/cloud-platform"
                   ],
-                  "response": {
-                    "$ref": "Empty"
-                  },
                   "id": "observability.projects.locations.operations.cancel",
+                  "description": "Starts asynchronous cancellation on a long-running operation. The server makes a best effort to cancel the operation, but success is not guaranteed. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`. Clients can use Operations.GetOperation or other methods to check whether the cancellation succeeded or whether the operation completed despite cancellation. On successful cancellation, the operation is not deleted; instead, it becomes an operation with an Operation.error value with a google.rpc.Status.code of `1`, corresponding to `Code.CANCELLED`.",
+                  "httpMethod": "POST",
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "parameters": {
+                    "name": {
+                      "description": "The name of the operation resource to be cancelled.",
+                      "pattern": "^projects/[^/]+/locations/[^/]+/operations/[^/]+$",
+                      "type": "string",
+                      "location": "path",
+                      "required": true
+                    }
+                  },
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/operations/{operationsId}:cancel",
                   "request": {
                     "$ref": "CancelOperationRequest"
                   },
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "path": "v1/{+name}:cancel",
-                  "httpMethod": "POST",
-                  "description": "Starts asynchronous cancellation on a long-running operation. The server makes a best effort to cancel the operation, but success is not guaranteed. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`. Clients can use Operations.GetOperation or other methods to check whether the cancellation succeeded or whether the operation completed despite cancellation. On successful cancellation, the operation is not deleted; instead, it becomes an operation with an Operation.error value with a google.rpc.Status.code of `1`, corresponding to `Code.CANCELLED`.",
-                  "parameters": {
-                    "name": {
-                      "type": "string",
-                      "pattern": "^projects/[^/]+/locations/[^/]+/operations/[^/]+$",
-                      "location": "path",
-                      "required": true,
-                      "description": "The name of the operation resource to be cancelled."
-                    }
+                  "response": {
+                    "$ref": "Empty"
                   }
                 },
                 "get": {
-                  "httpMethod": "GET",
-                  "description": "Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.",
-                  "path": "v1/{+name}",
                   "parameters": {
                     "name": {
-                      "type": "string",
-                      "required": true,
-                      "description": "The name of the operation resource.",
+                      "location": "path",
                       "pattern": "^projects/[^/]+/locations/[^/]+/operations/[^/]+$",
-                      "location": "path"
+                      "type": "string",
+                      "description": "The name of the operation resource.",
+                      "required": true
                     }
                   },
-                  "id": "observability.projects.locations.operations.get",
                   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/operations/{operationsId}",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
                   "response": {
                     "$ref": "Operation"
                   },
+                  "httpMethod": "GET",
+                  "path": "v1/{+name}",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "id": "observability.projects.locations.operations.get",
+                  "description": "Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.",
                   "parameterOrder": [
                     "name"
                   ]
                 },
                 "delete": {
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "httpMethod": "DELETE",
+                  "id": "observability.projects.locations.operations.delete",
+                  "description": "Deletes a long-running operation. This method indicates that the client is no longer interested in the operation result. It does not cancel the operation. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`.",
+                  "path": "v1/{+name}",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
                   "response": {
                     "$ref": "Empty"
                   },
                   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/operations/{operationsId}",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "id": "observability.projects.locations.operations.delete",
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "path": "v1/{+name}",
-                  "httpMethod": "DELETE",
-                  "description": "Deletes a long-running operation. This method indicates that the client is no longer interested in the operation result. It does not cancel the operation. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`.",
                   "parameters": {
                     "name": {
-                      "type": "string",
-                      "pattern": "^projects/[^/]+/locations/[^/]+/operations/[^/]+$",
-                      "location": "path",
                       "required": true,
-                      "description": "The name of the operation resource to be deleted."
+                      "pattern": "^projects/[^/]+/locations/[^/]+/operations/[^/]+$",
+                      "type": "string",
+                      "description": "The name of the operation resource to be deleted.",
+                      "location": "path"
                     }
                   }
                 }
@@ -638,220 +979,429 @@
             "scopes": {
               "methods": {
                 "get": {
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "id": "observability.projects.locations.scopes.get",
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/scopes/{scopesId}",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "response": {
-                    "$ref": "Scope"
-                  },
                   "parameters": {
                     "name": {
-                      "type": "string",
-                      "pattern": "^projects/[^/]+/locations/[^/]+/scopes/[^/]+$",
                       "location": "path",
+                      "pattern": "^projects/[^/]+/locations/[^/]+/scopes/[^/]+$",
+                      "type": "string",
                       "description": "Required. Name of the resource. The format is: projects/{project}/locations/{location}/scopes/{scope} The `{location}` field must be set to `global`. The `{scope}` field must be set to `_Default`.",
                       "required": true
                     }
                   },
-                  "httpMethod": "GET",
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/scopes/{scopesId}",
+                  "response": {
+                    "$ref": "Scope"
+                  },
+                  "path": "v1/{+name}",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "id": "observability.projects.locations.scopes.get",
                   "description": "Gets details of a single Scope.",
-                  "path": "v1/{+name}"
+                  "httpMethod": "GET",
+                  "parameterOrder": [
+                    "name"
+                  ]
                 },
                 "patch": {
-                  "path": "v1/{+name}",
-                  "httpMethod": "PATCH",
-                  "description": "Updates the parameters of a single Scope.",
+                  "response": {
+                    "$ref": "Scope"
+                  },
+                  "request": {
+                    "$ref": "Scope"
+                  },
                   "parameters": {
                     "name": {
-                      "type": "string",
-                      "pattern": "^projects/[^/]+/locations/[^/]+/scopes/[^/]+$",
-                      "location": "path",
                       "required": true,
-                      "description": "Identifier. Name of the resource. The format is: projects/{project}/locations/{location}/scopes/{scope} The `{location}` field must be set to `global`. The `{scope}` field must be set to `_Default`."
+                      "location": "path",
+                      "description": "Identifier. Name of the resource. The format is: projects/{project}/locations/{location}/scopes/{scope} The `{location}` field must be set to `global`. The `{scope}` field must be set to `_Default`.",
+                      "pattern": "^projects/[^/]+/locations/[^/]+/scopes/[^/]+$",
+                      "type": "string"
                     },
                     "updateMask": {
                       "description": "Optional. Field mask is used to specify the fields to be overwritten in the Scope resource by the update. The fields specified in the update_mask are relative to the resource, not the full request. A field is overwritten when it is in the mask. If the user does not provide a mask, then all fields present in the request are overwritten.",
+                      "type": "string",
                       "format": "google-fieldmask",
-                      "location": "query",
-                      "type": "string"
+                      "location": "query"
                     }
                   },
                   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/scopes/{scopesId}",
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "httpMethod": "PATCH",
+                  "path": "v1/{+name}",
                   "scopes": [
                     "https://www.googleapis.com/auth/cloud-platform"
                   ],
-                  "response": {
-                    "$ref": "Scope"
-                  },
                   "id": "observability.projects.locations.scopes.patch",
-                  "request": {
-                    "$ref": "Scope"
-                  },
-                  "parameterOrder": [
-                    "name"
-                  ]
+                  "description": "Updates the parameters of a single Scope."
                 }
               }
             },
-            "traceScopes": {
+            "buckets": {
               "methods": {
-                "list": {
+                "get": {
+                  "httpMethod": "GET",
+                  "id": "observability.projects.locations.buckets.get",
+                  "description": "Get bucket resource.",
+                  "path": "v1/{+name}",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}",
                   "parameters": {
-                    "pageSize": {
-                      "location": "query",
-                      "type": "integer",
-                      "format": "int32",
-                      "description": "Optional. The maximum number of results to return from this request. Non-positive values are ignored. The presence of `next_page_token` in the response indicates that more results might be available."
-                    },
-                    "pageToken": {
-                      "location": "query",
-                      "type": "string",
-                      "description": "Optional. If present, then retrieve the next batch of results from the preceding call to this method. `page_token` must be the value of `next_page_token` from the previous response. The values of other method parameters should be identical to those in the previous call."
-                    },
-                    "parent": {
-                      "type": "string",
-                      "pattern": "^projects/[^/]+/locations/[^/]+$",
+                    "name": {
                       "location": "path",
-                      "description": "Required. The full resource name of the location to look for trace scopes: projects/[PROJECT_ID]/locations/[LOCATION_ID] For example: projects/my-project/locations/global",
+                      "pattern": "^projects/[^/]+/locations/[^/]+/buckets/[^/]+$",
+                      "type": "string",
+                      "description": "Required. Name of the bucket to retrieve. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]",
                       "required": true
                     }
                   },
-                  "httpMethod": "GET",
-                  "description": "List TraceScopes of a project in a particular location.",
-                  "path": "v1/{+parent}/traceScopes",
-                  "parameterOrder": [
-                    "parent"
-                  ],
-                  "id": "observability.projects.locations.traceScopes.list",
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/traceScopes",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
                   "response": {
-                    "$ref": "ListTraceScopesResponse"
+                    "$ref": "Bucket"
                   }
                 },
-                "patch": {
-                  "request": {
-                    "$ref": "TraceScope"
-                  },
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/traceScopes/{traceScopesId}",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "response": {
-                    "$ref": "TraceScope"
-                  },
-                  "id": "observability.projects.locations.traceScopes.patch",
-                  "parameters": {
-                    "updateMask": {
-                      "location": "query",
-                      "type": "string",
-                      "format": "google-fieldmask",
-                      "description": "Optional. The list of fields to update."
-                    },
-                    "name": {
-                      "type": "string",
-                      "description": "Identifier. The resource name of the trace scope. For example: projects/my-project/locations/global/traceScopes/my-trace-scope",
-                      "required": true,
-                      "pattern": "^projects/[^/]+/locations/[^/]+/traceScopes/[^/]+$",
-                      "location": "path"
-                    }
-                  },
-                  "path": "v1/{+name}",
-                  "httpMethod": "PATCH",
-                  "description": "Update a TraceScope."
-                },
-                "get": {
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/traceScopes/{traceScopesId}",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "response": {
-                    "$ref": "TraceScope"
-                  },
-                  "id": "observability.projects.locations.traceScopes.get",
-                  "parameters": {
-                    "name": {
-                      "type": "string",
-                      "required": true,
-                      "description": "Required. The resource name of the trace scope: projects/[PROJECT_ID]/locations/[LOCATION_ID]/traceScopes/[TRACE_SCOPE_ID] For example: projects/my-project/locations/global/traceScopes/my-trace-scope",
-                      "pattern": "^projects/[^/]+/locations/[^/]+/traceScopes/[^/]+$",
-                      "location": "path"
-                    }
-                  },
-                  "path": "v1/{+name}",
+                "list": {
                   "httpMethod": "GET",
-                  "description": "Get TraceScope resource."
-                },
-                "delete": {
-                  "parameters": {
-                    "name": {
-                      "required": true,
-                      "description": "Required. The full resource name of the trace scope to delete: projects/[PROJECT_ID]/locations/[LOCATION_ID]/traceScopes/[TRACE_SCOPE_ID] For example: projects/my-project/locations/global/traceScopes/my-trace-scope",
-                      "pattern": "^projects/[^/]+/locations/[^/]+/traceScopes/[^/]+$",
-                      "location": "path",
-                      "type": "string"
-                    }
-                  },
-                  "httpMethod": "DELETE",
-                  "description": "Delete a TraceScope.",
-                  "path": "v1/{+name}",
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "id": "observability.projects.locations.traceScopes.delete",
-                  "response": {
-                    "$ref": "Empty"
-                  },
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/traceScopes/{traceScopesId}",
+                  "path": "v1/{+parent}/buckets",
                   "scopes": [
                     "https://www.googleapis.com/auth/cloud-platform"
-                  ]
-                },
-                "create": {
-                  "request": {
-                    "$ref": "TraceScope"
-                  },
+                  ],
+                  "id": "observability.projects.locations.buckets.list",
+                  "description": "List buckets of a project in a particular location.",
                   "parameterOrder": [
                     "parent"
                   ],
-                  "response": {
-                    "$ref": "TraceScope"
-                  },
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/traceScopes",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "id": "observability.projects.locations.traceScopes.create",
                   "parameters": {
-                    "traceScopeId": {
-                      "description": "Required. A client-assigned identifier for the trace scope.",
-                      "location": "query",
-                      "type": "string"
-                    },
                     "parent": {
                       "required": true,
-                      "description": "Required. The full resource name of the location where the trace scope should be created projects/[PROJECT_ID]/locations/[LOCATION_ID] For example: projects/my-project/locations/global",
-                      "pattern": "^projects/[^/]+/locations/[^/]+$",
                       "location": "path",
-                      "type": "string"
+                      "pattern": "^projects/[^/]+/locations/[^/]+$",
+                      "type": "string",
+                      "description": "Required. The parent, which owns this collection of buckets. The format is: projects/[PROJECT_ID]/locations/[LOCATION]"
+                    },
+                    "showDeleted": {
+                      "type": "boolean",
+                      "description": "Optional. If true, then the response will include deleted buckets.",
+                      "location": "query"
+                    },
+                    "pageSize": {
+                      "description": "Optional. The maximum number of buckets to return. If unspecified, then at most 100 buckets are returned. The maximum value is 1000; values above 1000 are coerced to 1000.",
+                      "type": "integer",
+                      "format": "int32",
+                      "location": "query"
+                    },
+                    "pageToken": {
+                      "type": "string",
+                      "description": "Optional. A page token, received from a previous `ListBuckets` call. Provide this to retrieve the subsequent page.",
+                      "location": "query"
                     }
                   },
-                  "path": "v1/{+parent}/traceScopes",
-                  "httpMethod": "POST",
-                  "description": "Create a new TraceScope."
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets",
+                  "response": {
+                    "$ref": "ListBucketsResponse"
+                  }
+                }
+              },
+              "resources": {
+                "datasets": {
+                  "methods": {
+                    "list": {
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}/datasets",
+                      "parameters": {
+                        "parent": {
+                          "required": true,
+                          "description": "Required. The parent bucket that owns this collection of datasets. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/buckets/[^/]+$",
+                          "type": "string",
+                          "location": "path"
+                        },
+                        "showDeleted": {
+                          "description": "Optional. If true, then the response will include deleted datasets.",
+                          "type": "boolean",
+                          "location": "query"
+                        },
+                        "pageSize": {
+                          "location": "query",
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "Optional. The maximum number of datasets to return. If unspecified, then at most 100 datasets are returned. The maximum value is 1000; values above 1000 are coerced to 1000."
+                        },
+                        "pageToken": {
+                          "type": "string",
+                          "description": "Optional. A page token, received from a previous `ListDatasets` call. Provide this to retrieve the subsequent page.",
+                          "location": "query"
+                        }
+                      },
+                      "response": {
+                        "$ref": "ListDatasetsResponse"
+                      },
+                      "httpMethod": "GET",
+                      "id": "observability.projects.locations.buckets.datasets.list",
+                      "description": "List datasets of a bucket.",
+                      "path": "v1/{+parent}/datasets",
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform"
+                      ],
+                      "parameterOrder": [
+                        "parent"
+                      ]
+                    },
+                    "get": {
+                      "parameterOrder": [
+                        "name"
+                      ],
+                      "httpMethod": "GET",
+                      "id": "observability.projects.locations.buckets.datasets.get",
+                      "description": "Get a dataset.",
+                      "path": "v1/{+name}",
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform"
+                      ],
+                      "response": {
+                        "$ref": "Dataset"
+                      },
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}/datasets/{datasetsId}",
+                      "parameters": {
+                        "name": {
+                          "location": "path",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/buckets/[^/]+/datasets/[^/]+$",
+                          "type": "string",
+                          "description": "Required. Name of the dataset to retrieve. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]",
+                          "required": true
+                        }
+                      }
+                    }
+                  },
+                  "resources": {
+                    "views": {
+                      "methods": {
+                        "get": {
+                          "parameterOrder": [
+                            "name"
+                          ],
+                          "path": "v1/{+name}",
+                          "scopes": [
+                            "https://www.googleapis.com/auth/cloud-platform"
+                          ],
+                          "id": "observability.projects.locations.buckets.datasets.views.get",
+                          "description": "Get a view.",
+                          "httpMethod": "GET",
+                          "response": {
+                            "$ref": "View"
+                          },
+                          "parameters": {
+                            "name": {
+                              "required": true,
+                              "location": "path",
+                              "description": "Required. Name of the view to retrieve. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]/views/[VIEW_ID]",
+                              "pattern": "^projects/[^/]+/locations/[^/]+/buckets/[^/]+/datasets/[^/]+/views/[^/]+$",
+                              "type": "string"
+                            }
+                          },
+                          "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}/datasets/{datasetsId}/views/{viewsId}"
+                        },
+                        "list": {
+                          "response": {
+                            "$ref": "ListViewsResponse"
+                          },
+                          "parameters": {
+                            "parent": {
+                              "description": "Required. Dataset whose views are to be listed. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]",
+                              "pattern": "^projects/[^/]+/locations/[^/]+/buckets/[^/]+/datasets/[^/]+$",
+                              "type": "string",
+                              "location": "path",
+                              "required": true
+                            },
+                            "pageToken": {
+                              "description": "Optional. A page token, received from a previous `ListViews` call. Provide this to retrieve the subsequent page.",
+                              "type": "string",
+                              "location": "query"
+                            },
+                            "pageSize": {
+                              "type": "integer",
+                              "format": "int32",
+                              "description": "Optional. The maximum number of views to return. If unspecified, then at most 100 views are returned. The maximum value is 1000; values above 1000 are coerced to 1000.",
+                              "location": "query"
+                            }
+                          },
+                          "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}/datasets/{datasetsId}/views",
+                          "parameterOrder": [
+                            "parent"
+                          ],
+                          "path": "v1/{+parent}/views",
+                          "scopes": [
+                            "https://www.googleapis.com/auth/cloud-platform"
+                          ],
+                          "id": "observability.projects.locations.buckets.datasets.views.list",
+                          "description": "List views of a dataset.",
+                          "httpMethod": "GET"
+                        }
+                      }
+                    },
+                    "links": {
+                      "methods": {
+                        "patch": {
+                          "parameterOrder": [
+                            "name"
+                          ],
+                          "id": "observability.projects.locations.buckets.datasets.links.patch",
+                          "description": "Update a link.",
+                          "path": "v1/{+name}",
+                          "scopes": [
+                            "https://www.googleapis.com/auth/cloud-platform"
+                          ],
+                          "httpMethod": "PATCH",
+                          "request": {
+                            "$ref": "Link"
+                          },
+                          "response": {
+                            "$ref": "Operation"
+                          },
+                          "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}/datasets/{datasetsId}/links/{linksId}",
+                          "parameters": {
+                            "name": {
+                              "required": true,
+                              "location": "path",
+                              "description": "Identifier. Name of the link. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]/links/[LINK_ID]",
+                              "pattern": "^projects/[^/]+/locations/[^/]+/buckets/[^/]+/datasets/[^/]+/links/[^/]+$",
+                              "type": "string"
+                            },
+                            "updateMask": {
+                              "type": "string",
+                              "format": "google-fieldmask",
+                              "description": "Optional. The list of fields to update.",
+                              "location": "query"
+                            }
+                          }
+                        },
+                        "get": {
+                          "response": {
+                            "$ref": "Link"
+                          },
+                          "parameters": {
+                            "name": {
+                              "required": true,
+                              "description": "Required. Name of the link to retrieve. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]/links/[LINK_ID]",
+                              "pattern": "^projects/[^/]+/locations/[^/]+/buckets/[^/]+/datasets/[^/]+/links/[^/]+$",
+                              "type": "string",
+                              "location": "path"
+                            }
+                          },
+                          "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}/datasets/{datasetsId}/links/{linksId}",
+                          "parameterOrder": [
+                            "name"
+                          ],
+                          "path": "v1/{+name}",
+                          "scopes": [
+                            "https://www.googleapis.com/auth/cloud-platform"
+                          ],
+                          "id": "observability.projects.locations.buckets.datasets.links.get",
+                          "description": "Get a link.",
+                          "httpMethod": "GET"
+                        },
+                        "delete": {
+                          "parameterOrder": [
+                            "name"
+                          ],
+                          "path": "v1/{+name}",
+                          "scopes": [
+                            "https://www.googleapis.com/auth/cloud-platform"
+                          ],
+                          "id": "observability.projects.locations.buckets.datasets.links.delete",
+                          "description": "Delete a link.",
+                          "httpMethod": "DELETE",
+                          "response": {
+                            "$ref": "Operation"
+                          },
+                          "parameters": {
+                            "name": {
+                              "required": true,
+                              "location": "path",
+                              "description": "Required. Name of the link to delete. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]/links/[LINK_ID]",
+                              "pattern": "^projects/[^/]+/locations/[^/]+/buckets/[^/]+/datasets/[^/]+/links/[^/]+$",
+                              "type": "string"
+                            }
+                          },
+                          "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}/datasets/{datasetsId}/links/{linksId}"
+                        },
+                        "list": {
+                          "parameters": {
+                            "pageToken": {
+                              "location": "query",
+                              "description": "Optional. A page token, received from a previous `ListLinks` call. Provide this to retrieve the subsequent page.",
+                              "type": "string"
+                            },
+                            "pageSize": {
+                              "type": "integer",
+                              "format": "int32",
+                              "description": "Optional. The maximum number of links to return. If unspecified, then at most 100 links are returned. The maximum value is 1000; values above 1000 are coerced to 1000.",
+                              "location": "query"
+                            },
+                            "parent": {
+                              "location": "path",
+                              "pattern": "^projects/[^/]+/locations/[^/]+/buckets/[^/]+/datasets/[^/]+$",
+                              "type": "string",
+                              "description": "Required. The parent dataset that owns this collection of links. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]",
+                              "required": true
+                            }
+                          },
+                          "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}/datasets/{datasetsId}/links",
+                          "response": {
+                            "$ref": "ListLinksResponse"
+                          },
+                          "path": "v1/{+parent}/links",
+                          "scopes": [
+                            "https://www.googleapis.com/auth/cloud-platform"
+                          ],
+                          "id": "observability.projects.locations.buckets.datasets.links.list",
+                          "description": "List links of a dataset.",
+                          "httpMethod": "GET",
+                          "parameterOrder": [
+                            "parent"
+                          ]
+                        },
+                        "create": {
+                          "id": "observability.projects.locations.buckets.datasets.links.create",
+                          "description": "Create a new link.",
+                          "path": "v1/{+parent}/links",
+                          "scopes": [
+                            "https://www.googleapis.com/auth/cloud-platform"
+                          ],
+                          "httpMethod": "POST",
+                          "parameterOrder": [
+                            "parent"
+                          ],
+                          "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/buckets/{bucketsId}/datasets/{datasetsId}/links",
+                          "parameters": {
+                            "parent": {
+                              "pattern": "^projects/[^/]+/locations/[^/]+/buckets/[^/]+/datasets/[^/]+$",
+                              "type": "string",
+                              "description": "Required. Name of the containing dataset for this link. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]",
+                              "location": "path",
+                              "required": true
+                            },
+                            "linkId": {
+                              "location": "query",
+                              "type": "string",
+                              "description": "Required. Id of the link to create."
+                            }
+                          },
+                          "request": {
+                            "$ref": "Link"
+                          },
+                          "response": {
+                            "$ref": "Operation"
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -863,264 +1413,264 @@
       "resources": {
         "locations": {
           "methods": {
-            "get": {
+            "getSettings": {
               "httpMethod": "GET",
-              "description": "Gets information about a location.",
+              "id": "observability.folders.locations.getSettings",
+              "description": "Get Settings",
               "path": "v1/{+name}",
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud-platform"
+              ],
+              "parameterOrder": [
+                "name"
+              ],
+              "flatPath": "v1/folders/{foldersId}/locations/{locationsId}/settings",
               "parameters": {
                 "name": {
+                  "description": "Required. Name of the settings to retrieve. Name format: \"projects/[PROJECT_ID]/locations/[LOCATION]/settings\" \"folders/[FOLDER_ID]/locations/[LOCATION]/settings\" \"organizations/[ORGANIZATION_ID]/locations/[LOCATION]/settings\"",
+                  "pattern": "^folders/[^/]+/locations/[^/]+/settings$",
                   "type": "string",
-                  "pattern": "^folders/[^/]+/locations/[^/]+$",
                   "location": "path",
-                  "description": "Resource name for the location.",
                   "required": true
                 }
               },
+              "response": {
+                "$ref": "Settings"
+              }
+            },
+            "list": {
+              "parameters": {
+                "pageToken": {
+                  "location": "query",
+                  "type": "string",
+                  "description": "A page token received from the `next_page_token` field in the response. Send that page token to receive the subsequent page."
+                },
+                "name": {
+                  "required": true,
+                  "pattern": "^folders/[^/]+$",
+                  "type": "string",
+                  "description": "The resource that owns the locations collection, if applicable.",
+                  "location": "path"
+                },
+                "extraLocationTypes": {
+                  "type": "string",
+                  "description": "Optional. Do not use this field. It is unsupported and is ignored unless explicitly documented otherwise. This is primarily for internal usage.",
+                  "location": "query",
+                  "repeated": true
+                },
+                "pageSize": {
+                  "location": "query",
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "The maximum number of results to return. If not set, the service selects a default."
+                },
+                "filter": {
+                  "location": "query",
+                  "type": "string",
+                  "description": "A filter to narrow down results to a preferred subset. The filtering language accepts strings like `\"displayName=tokyo\"`, and is documented in more detail in [AIP-160](https://google.aip.dev/160)."
+                }
+              },
+              "flatPath": "v1/folders/{foldersId}/locations",
+              "response": {
+                "$ref": "ListLocationsResponse"
+              },
+              "path": "v1/{+name}/locations",
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud-platform"
+              ],
+              "id": "observability.folders.locations.list",
+              "description": "Lists information about the supported locations for this service. This method lists locations based on the resource scope provided in the [ListLocationsRequest.name] field: * **Global locations**: If `name` is empty, the method lists the public locations available to all projects. * **Project-specific locations**: If `name` follows the format `projects/{project}`, the method lists locations visible to that specific project. This includes public, private, or other project-specific locations enabled for the project. For gRPC and client library implementations, the resource name is passed as the `name` field. For direct service calls, the resource name is incorporated into the request path based on the specific service implementation and version.",
+              "httpMethod": "GET",
+              "parameterOrder": [
+                "name"
+              ]
+            },
+            "updateSettings": {
+              "parameterOrder": [
+                "name"
+              ],
+              "httpMethod": "PATCH",
+              "path": "v1/{+name}",
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud-platform"
+              ],
+              "id": "observability.folders.locations.updateSettings",
+              "description": "Update Settings",
+              "response": {
+                "$ref": "Operation"
+              },
+              "request": {
+                "$ref": "Settings"
+              },
+              "parameters": {
+                "name": {
+                  "required": true,
+                  "location": "path",
+                  "description": "Identifier. The resource name of the settings.",
+                  "pattern": "^folders/[^/]+/locations/[^/]+/settings$",
+                  "type": "string"
+                },
+                "updateMask": {
+                  "description": "Optional. The field mask specifying which fields of the settings are to be updated.",
+                  "type": "string",
+                  "format": "google-fieldmask",
+                  "location": "query"
+                }
+              },
+              "flatPath": "v1/folders/{foldersId}/locations/{locationsId}/settings"
+            },
+            "get": {
+              "parameterOrder": [
+                "name"
+              ],
+              "httpMethod": "GET",
               "id": "observability.folders.locations.get",
-              "flatPath": "v1/folders/{foldersId}/locations/{locationsId}",
+              "description": "Gets information about a location.",
+              "path": "v1/{+name}",
               "scopes": [
                 "https://www.googleapis.com/auth/cloud-platform"
               ],
               "response": {
                 "$ref": "Location"
               },
-              "parameterOrder": [
-                "name"
-              ]
-            },
-            "updateSettings": {
-              "path": "v1/{+name}",
-              "httpMethod": "PATCH",
-              "description": "Update Settings",
+              "flatPath": "v1/folders/{foldersId}/locations/{locationsId}",
               "parameters": {
                 "name": {
-                  "pattern": "^folders/[^/]+/locations/[^/]+/settings$",
                   "location": "path",
-                  "required": true,
-                  "description": "Identifier. The resource name of the settings.",
-                  "type": "string"
-                },
-                "updateMask": {
-                  "format": "google-fieldmask",
-                  "location": "query",
+                  "description": "Resource name for the location.",
+                  "pattern": "^folders/[^/]+/locations/[^/]+$",
                   "type": "string",
-                  "description": "Optional. The field mask specifying which fields of the settings are to be updated."
+                  "required": true
                 }
-              },
-              "response": {
-                "$ref": "Operation"
-              },
-              "flatPath": "v1/folders/{foldersId}/locations/{locationsId}/settings",
-              "scopes": [
-                "https://www.googleapis.com/auth/cloud-platform"
-              ],
-              "id": "observability.folders.locations.updateSettings",
-              "request": {
-                "$ref": "Settings"
-              },
-              "parameterOrder": [
-                "name"
-              ]
-            },
-            "getSettings": {
-              "parameters": {
-                "name": {
-                  "type": "string",
-                  "required": true,
-                  "description": "Required. Name of the settings to retrieve. Name format: \"projects/[PROJECT_ID]/locations/[LOCATION]/settings\" \"folders/[FOLDER_ID]/locations/[LOCATION]/settings\" \"organizations/[ORGANIZATION_ID]/locations/[LOCATION]/settings\"",
-                  "pattern": "^folders/[^/]+/locations/[^/]+/settings$",
-                  "location": "path"
-                }
-              },
-              "path": "v1/{+name}",
-              "httpMethod": "GET",
-              "description": "Get Settings",
-              "parameterOrder": [
-                "name"
-              ],
-              "response": {
-                "$ref": "Settings"
-              },
-              "flatPath": "v1/folders/{foldersId}/locations/{locationsId}/settings",
-              "scopes": [
-                "https://www.googleapis.com/auth/cloud-platform"
-              ],
-              "id": "observability.folders.locations.getSettings"
-            },
-            "list": {
-              "path": "v1/{+name}/locations",
-              "httpMethod": "GET",
-              "description": "Lists information about the supported locations for this service. This method lists locations based on the resource scope provided in the [ListLocationsRequest.name] field: * **Global locations**: If `name` is empty, the method lists the public locations available to all projects. * **Project-specific locations**: If `name` follows the format `projects/{project}`, the method lists locations visible to that specific project. This includes public, private, or other project-specific locations enabled for the project. For gRPC and client library implementations, the resource name is passed as the `name` field. For direct service calls, the resource name is incorporated into the request path based on the specific service implementation and version.",
-              "parameters": {
-                "pageSize": {
-                  "format": "int32",
-                  "location": "query",
-                  "type": "integer",
-                  "description": "The maximum number of results to return. If not set, the service selects a default."
-                },
-                "pageToken": {
-                  "description": "A page token received from the `next_page_token` field in the response. Send that page token to receive the subsequent page.",
-                  "location": "query",
-                  "type": "string"
-                },
-                "name": {
-                  "description": "The resource that owns the locations collection, if applicable.",
-                  "required": true,
-                  "pattern": "^folders/[^/]+$",
-                  "location": "path",
-                  "type": "string"
-                },
-                "filter": {
-                  "location": "query",
-                  "type": "string",
-                  "description": "A filter to narrow down results to a preferred subset. The filtering language accepts strings like `\"displayName=tokyo\"`, and is documented in more detail in [AIP-160](https://google.aip.dev/160)."
-                },
-                "extraLocationTypes": {
-                  "description": "Optional. Do not use this field. It is unsupported and is ignored unless explicitly documented otherwise. This is primarily for internal usage.",
-                  "location": "query",
-                  "repeated": true,
-                  "type": "string"
-                }
-              },
-              "response": {
-                "$ref": "ListLocationsResponse"
-              },
-              "flatPath": "v1/folders/{foldersId}/locations",
-              "scopes": [
-                "https://www.googleapis.com/auth/cloud-platform"
-              ],
-              "id": "observability.folders.locations.list",
-              "parameterOrder": [
-                "name"
-              ]
+              }
             }
           },
           "resources": {
             "operations": {
               "methods": {
-                "list": {
+                "get": {
+                  "response": {
+                    "$ref": "Operation"
+                  },
+                  "parameters": {
+                    "name": {
+                      "required": true,
+                      "location": "path",
+                      "description": "The name of the operation resource.",
+                      "pattern": "^folders/[^/]+/locations/[^/]+/operations/[^/]+$",
+                      "type": "string"
+                    }
+                  },
+                  "flatPath": "v1/folders/{foldersId}/locations/{locationsId}/operations/{operationsId}",
                   "parameterOrder": [
                     "name"
                   ],
-                  "response": {
-                    "$ref": "ListOperationsResponse"
-                  },
-                  "flatPath": "v1/folders/{foldersId}/locations/{locationsId}/operations",
+                  "httpMethod": "GET",
+                  "path": "v1/{+name}",
                   "scopes": [
                     "https://www.googleapis.com/auth/cloud-platform"
                   ],
-                  "id": "observability.folders.locations.operations.list",
+                  "id": "observability.folders.locations.operations.get",
+                  "description": "Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service."
+                },
+                "delete": {
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "id": "observability.folders.locations.operations.delete",
+                  "description": "Deletes a long-running operation. This method indicates that the client is no longer interested in the operation result. It does not cancel the operation. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`.",
+                  "path": "v1/{+name}",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "httpMethod": "DELETE",
+                  "response": {
+                    "$ref": "Empty"
+                  },
+                  "flatPath": "v1/folders/{foldersId}/locations/{locationsId}/operations/{operationsId}",
                   "parameters": {
+                    "name": {
+                      "required": true,
+                      "description": "The name of the operation resource to be deleted.",
+                      "pattern": "^folders/[^/]+/locations/[^/]+/operations/[^/]+$",
+                      "type": "string",
+                      "location": "path"
+                    }
+                  }
+                },
+                "list": {
+                  "parameters": {
+                    "pageSize": {
+                      "description": "The standard list page size.",
+                      "type": "integer",
+                      "format": "int32",
+                      "location": "query"
+                    },
                     "returnPartialSuccess": {
                       "location": "query",
                       "type": "boolean",
                       "description": "When set to `true`, operations that are reachable are returned as normal, and those that are unreachable are returned in the ListOperationsResponse.unreachable field. This can only be `true` when reading across collections. For example, when `parent` is set to `\"projects/example/locations/-\"`. This field is not supported by default and will result in an `UNIMPLEMENTED` error if set unless explicitly documented otherwise in service or product specific documentation."
                     },
-                    "pageSize": {
-                      "description": "The standard list page size.",
+                    "filter": {
                       "location": "query",
-                      "type": "integer",
-                      "format": "int32"
+                      "description": "The standard list filter.",
+                      "type": "string"
+                    },
+                    "name": {
+                      "required": true,
+                      "location": "path",
+                      "pattern": "^folders/[^/]+/locations/[^/]+$",
+                      "type": "string",
+                      "description": "The name of the operation's parent resource."
                     },
                     "pageToken": {
-                      "description": "The standard list page token.",
                       "location": "query",
-                      "type": "string"
-                    },
-                    "name": {
-                      "description": "The name of the operation's parent resource.",
-                      "required": true,
-                      "pattern": "^folders/[^/]+/locations/[^/]+$",
-                      "location": "path",
-                      "type": "string"
-                    },
-                    "filter": {
-                      "description": "The standard list filter.",
-                      "location": "query",
-                      "type": "string"
+                      "type": "string",
+                      "description": "The standard list page token."
                     }
+                  },
+                  "flatPath": "v1/folders/{foldersId}/locations/{locationsId}/operations",
+                  "response": {
+                    "$ref": "ListOperationsResponse"
                   },
                   "path": "v1/{+name}/operations",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "id": "observability.folders.locations.operations.list",
+                  "description": "Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`.",
                   "httpMethod": "GET",
-                  "description": "Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`."
-                },
-                "cancel": {
-                  "httpMethod": "POST",
-                  "description": "Starts asynchronous cancellation on a long-running operation. The server makes a best effort to cancel the operation, but success is not guaranteed. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`. Clients can use Operations.GetOperation or other methods to check whether the cancellation succeeded or whether the operation completed despite cancellation. On successful cancellation, the operation is not deleted; instead, it becomes an operation with an Operation.error value with a google.rpc.Status.code of `1`, corresponding to `Code.CANCELLED`.",
-                  "path": "v1/{+name}:cancel",
-                  "parameters": {
-                    "name": {
-                      "type": "string",
-                      "required": true,
-                      "description": "The name of the operation resource to be cancelled.",
-                      "pattern": "^folders/[^/]+/locations/[^/]+/operations/[^/]+$",
-                      "location": "path"
-                    }
-                  },
-                  "id": "observability.folders.locations.operations.cancel",
-                  "flatPath": "v1/folders/{foldersId}/locations/{locationsId}/operations/{operationsId}:cancel",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "response": {
-                    "$ref": "Empty"
-                  },
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "request": {
-                    "$ref": "CancelOperationRequest"
-                  }
-                },
-                "get": {
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "id": "observability.folders.locations.operations.get",
-                  "response": {
-                    "$ref": "Operation"
-                  },
-                  "flatPath": "v1/folders/{foldersId}/locations/{locationsId}/operations/{operationsId}",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "parameters": {
-                    "name": {
-                      "type": "string",
-                      "pattern": "^folders/[^/]+/locations/[^/]+/operations/[^/]+$",
-                      "location": "path",
-                      "description": "The name of the operation resource.",
-                      "required": true
-                    }
-                  },
-                  "httpMethod": "GET",
-                  "description": "Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.",
-                  "path": "v1/{+name}"
-                },
-                "delete": {
-                  "path": "v1/{+name}",
-                  "httpMethod": "DELETE",
-                  "description": "Deletes a long-running operation. This method indicates that the client is no longer interested in the operation result. It does not cancel the operation. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`.",
-                  "parameters": {
-                    "name": {
-                      "pattern": "^folders/[^/]+/locations/[^/]+/operations/[^/]+$",
-                      "location": "path",
-                      "required": true,
-                      "description": "The name of the operation resource to be deleted.",
-                      "type": "string"
-                    }
-                  },
-                  "response": {
-                    "$ref": "Empty"
-                  },
-                  "flatPath": "v1/folders/{foldersId}/locations/{locationsId}/operations/{operationsId}",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "id": "observability.folders.locations.operations.delete",
                   "parameterOrder": [
                     "name"
                   ]
+                },
+                "cancel": {
+                  "httpMethod": "POST",
+                  "id": "observability.folders.locations.operations.cancel",
+                  "description": "Starts asynchronous cancellation on a long-running operation. The server makes a best effort to cancel the operation, but success is not guaranteed. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`. Clients can use Operations.GetOperation or other methods to check whether the cancellation succeeded or whether the operation completed despite cancellation. On successful cancellation, the operation is not deleted; instead, it becomes an operation with an Operation.error value with a google.rpc.Status.code of `1`, corresponding to `Code.CANCELLED`.",
+                  "path": "v1/{+name}:cancel",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "flatPath": "v1/folders/{foldersId}/locations/{locationsId}/operations/{operationsId}:cancel",
+                  "parameters": {
+                    "name": {
+                      "location": "path",
+                      "pattern": "^folders/[^/]+/locations/[^/]+/operations/[^/]+$",
+                      "type": "string",
+                      "description": "The name of the operation resource to be cancelled.",
+                      "required": true
+                    }
+                  },
+                  "response": {
+                    "$ref": "Empty"
+                  },
+                  "request": {
+                    "$ref": "CancelOperationRequest"
+                  }
                 }
               }
             }
@@ -1131,297 +1681,365 @@
     "organizations": {
       "resources": {
         "locations": {
+          "methods": {
+            "updateSettings": {
+              "httpMethod": "PATCH",
+              "id": "observability.organizations.locations.updateSettings",
+              "description": "Update Settings",
+              "path": "v1/{+name}",
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud-platform"
+              ],
+              "parameterOrder": [
+                "name"
+              ],
+              "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/settings",
+              "parameters": {
+                "name": {
+                  "required": true,
+                  "description": "Identifier. The resource name of the settings.",
+                  "pattern": "^organizations/[^/]+/locations/[^/]+/settings$",
+                  "type": "string",
+                  "location": "path"
+                },
+                "updateMask": {
+                  "location": "query",
+                  "type": "string",
+                  "format": "google-fieldmask",
+                  "description": "Optional. The field mask specifying which fields of the settings are to be updated."
+                }
+              },
+              "response": {
+                "$ref": "Operation"
+              },
+              "request": {
+                "$ref": "Settings"
+              }
+            },
+            "getSettings": {
+              "httpMethod": "GET",
+              "path": "v1/{+name}",
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud-platform"
+              ],
+              "id": "observability.organizations.locations.getSettings",
+              "description": "Get Settings",
+              "parameterOrder": [
+                "name"
+              ],
+              "parameters": {
+                "name": {
+                  "required": true,
+                  "description": "Required. Name of the settings to retrieve. Name format: \"projects/[PROJECT_ID]/locations/[LOCATION]/settings\" \"folders/[FOLDER_ID]/locations/[LOCATION]/settings\" \"organizations/[ORGANIZATION_ID]/locations/[LOCATION]/settings\"",
+                  "pattern": "^organizations/[^/]+/locations/[^/]+/settings$",
+                  "type": "string",
+                  "location": "path"
+                }
+              },
+              "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/settings",
+              "response": {
+                "$ref": "Settings"
+              }
+            },
+            "list": {
+              "response": {
+                "$ref": "ListLocationsResponse"
+              },
+              "parameters": {
+                "pageToken": {
+                  "location": "query",
+                  "description": "A page token received from the `next_page_token` field in the response. Send that page token to receive the subsequent page.",
+                  "type": "string"
+                },
+                "name": {
+                  "required": true,
+                  "location": "path",
+                  "pattern": "^organizations/[^/]+$",
+                  "type": "string",
+                  "description": "The resource that owns the locations collection, if applicable."
+                },
+                "extraLocationTypes": {
+                  "location": "query",
+                  "repeated": true,
+                  "description": "Optional. Do not use this field. It is unsupported and is ignored unless explicitly documented otherwise. This is primarily for internal usage.",
+                  "type": "string"
+                },
+                "filter": {
+                  "type": "string",
+                  "description": "A filter to narrow down results to a preferred subset. The filtering language accepts strings like `\"displayName=tokyo\"`, and is documented in more detail in [AIP-160](https://google.aip.dev/160).",
+                  "location": "query"
+                },
+                "pageSize": {
+                  "location": "query",
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "The maximum number of results to return. If not set, the service selects a default."
+                }
+              },
+              "flatPath": "v1/organizations/{organizationsId}/locations",
+              "parameterOrder": [
+                "name"
+              ],
+              "path": "v1/{+name}/locations",
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud-platform"
+              ],
+              "id": "observability.organizations.locations.list",
+              "description": "Lists information about the supported locations for this service. This method lists locations based on the resource scope provided in the [ListLocationsRequest.name] field: * **Global locations**: If `name` is empty, the method lists the public locations available to all projects. * **Project-specific locations**: If `name` follows the format `projects/{project}`, the method lists locations visible to that specific project. This includes public, private, or other project-specific locations enabled for the project. For gRPC and client library implementations, the resource name is passed as the `name` field. For direct service calls, the resource name is incorporated into the request path based on the specific service implementation and version.",
+              "httpMethod": "GET"
+            },
+            "get": {
+              "httpMethod": "GET",
+              "path": "v1/{+name}",
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud-platform"
+              ],
+              "id": "observability.organizations.locations.get",
+              "description": "Gets information about a location.",
+              "parameterOrder": [
+                "name"
+              ],
+              "parameters": {
+                "name": {
+                  "pattern": "^organizations/[^/]+/locations/[^/]+$",
+                  "type": "string",
+                  "description": "Resource name for the location.",
+                  "location": "path",
+                  "required": true
+                }
+              },
+              "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}",
+              "response": {
+                "$ref": "Location"
+              }
+            }
+          },
           "resources": {
             "operations": {
               "methods": {
                 "list": {
-                  "parameters": {
-                    "returnPartialSuccess": {
-                      "location": "query",
-                      "type": "boolean",
-                      "description": "When set to `true`, operations that are reachable are returned as normal, and those that are unreachable are returned in the ListOperationsResponse.unreachable field. This can only be `true` when reading across collections. For example, when `parent` is set to `\"projects/example/locations/-\"`. This field is not supported by default and will result in an `UNIMPLEMENTED` error if set unless explicitly documented otherwise in service or product specific documentation."
-                    },
-                    "pageSize": {
-                      "location": "query",
-                      "type": "integer",
-                      "format": "int32",
-                      "description": "The standard list page size."
-                    },
-                    "pageToken": {
-                      "location": "query",
-                      "type": "string",
-                      "description": "The standard list page token."
-                    },
-                    "name": {
-                      "type": "string",
-                      "pattern": "^organizations/[^/]+/locations/[^/]+$",
-                      "location": "path",
-                      "required": true,
-                      "description": "The name of the operation's parent resource."
-                    },
-                    "filter": {
-                      "description": "The standard list filter.",
-                      "location": "query",
-                      "type": "string"
-                    }
-                  },
-                  "httpMethod": "GET",
-                  "description": "Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`.",
-                  "path": "v1/{+name}/operations",
                   "parameterOrder": [
                     "name"
                   ],
-                  "id": "observability.organizations.locations.operations.list",
-                  "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/operations",
+                  "httpMethod": "GET",
+                  "path": "v1/{+name}/operations",
                   "scopes": [
                     "https://www.googleapis.com/auth/cloud-platform"
                   ],
+                  "id": "observability.organizations.locations.operations.list",
+                  "description": "Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`.",
                   "response": {
                     "$ref": "ListOperationsResponse"
-                  }
-                },
-                "cancel": {
+                  },
                   "parameters": {
+                    "pageSize": {
+                      "location": "query",
+                      "description": "The standard list page size.",
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "returnPartialSuccess": {
+                      "type": "boolean",
+                      "description": "When set to `true`, operations that are reachable are returned as normal, and those that are unreachable are returned in the ListOperationsResponse.unreachable field. This can only be `true` when reading across collections. For example, when `parent` is set to `\"projects/example/locations/-\"`. This field is not supported by default and will result in an `UNIMPLEMENTED` error if set unless explicitly documented otherwise in service or product specific documentation.",
+                      "location": "query"
+                    },
+                    "filter": {
+                      "location": "query",
+                      "description": "The standard list filter.",
+                      "type": "string"
+                    },
                     "name": {
                       "required": true,
-                      "description": "The name of the operation resource to be cancelled.",
-                      "pattern": "^organizations/[^/]+/locations/[^/]+/operations/[^/]+$",
                       "location": "path",
-                      "type": "string"
+                      "pattern": "^organizations/[^/]+/locations/[^/]+$",
+                      "type": "string",
+                      "description": "The name of the operation's parent resource."
+                    },
+                    "pageToken": {
+                      "type": "string",
+                      "description": "The standard list page token.",
+                      "location": "query"
                     }
                   },
-                  "path": "v1/{+name}:cancel",
-                  "httpMethod": "POST",
-                  "description": "Starts asynchronous cancellation on a long-running operation. The server makes a best effort to cancel the operation, but success is not guaranteed. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`. Clients can use Operations.GetOperation or other methods to check whether the cancellation succeeded or whether the operation completed despite cancellation. On successful cancellation, the operation is not deleted; instead, it becomes an operation with an Operation.error value with a google.rpc.Status.code of `1`, corresponding to `Code.CANCELLED`.",
+                  "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/operations"
+                },
+                "cancel": {
                   "request": {
                     "$ref": "CancelOperationRequest"
                   },
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/operations/{operationsId}:cancel",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
                   "response": {
                     "$ref": "Empty"
                   },
-                  "id": "observability.organizations.locations.operations.cancel"
-                },
-                "get": {
-                  "path": "v1/{+name}",
-                  "httpMethod": "GET",
-                  "description": "Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.",
+                  "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/operations/{operationsId}:cancel",
                   "parameters": {
                     "name": {
-                      "type": "string",
-                      "pattern": "^organizations/[^/]+/locations/[^/]+/operations/[^/]+$",
+                      "required": true,
                       "location": "path",
+                      "pattern": "^organizations/[^/]+/locations/[^/]+/operations/[^/]+$",
+                      "type": "string",
+                      "description": "The name of the operation resource to be cancelled."
+                    }
+                  },
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "id": "observability.organizations.locations.operations.cancel",
+                  "description": "Starts asynchronous cancellation on a long-running operation. The server makes a best effort to cancel the operation, but success is not guaranteed. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`. Clients can use Operations.GetOperation or other methods to check whether the cancellation succeeded or whether the operation completed despite cancellation. On successful cancellation, the operation is not deleted; instead, it becomes an operation with an Operation.error value with a google.rpc.Status.code of `1`, corresponding to `Code.CANCELLED`.",
+                  "path": "v1/{+name}:cancel",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "httpMethod": "POST"
+                },
+                "get": {
+                  "id": "observability.organizations.locations.operations.get",
+                  "description": "Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.",
+                  "path": "v1/{+name}",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "httpMethod": "GET",
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/operations/{operationsId}",
+                  "parameters": {
+                    "name": {
                       "description": "The name of the operation resource.",
+                      "pattern": "^organizations/[^/]+/locations/[^/]+/operations/[^/]+$",
+                      "type": "string",
+                      "location": "path",
                       "required": true
                     }
                   },
                   "response": {
                     "$ref": "Operation"
-                  },
-                  "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/operations/{operationsId}",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "id": "observability.organizations.locations.operations.get",
-                  "parameterOrder": [
-                    "name"
-                  ]
+                  }
                 },
                 "delete": {
-                  "id": "observability.organizations.locations.operations.delete",
-                  "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/operations/{operationsId}",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "response": {
-                    "$ref": "Empty"
-                  },
                   "parameterOrder": [
                     "name"
                   ],
                   "httpMethod": "DELETE",
-                  "description": "Deletes a long-running operation. This method indicates that the client is no longer interested in the operation result. It does not cancel the operation. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`.",
                   "path": "v1/{+name}",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "id": "observability.organizations.locations.operations.delete",
+                  "description": "Deletes a long-running operation. This method indicates that the client is no longer interested in the operation result. It does not cancel the operation. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`.",
+                  "response": {
+                    "$ref": "Empty"
+                  },
                   "parameters": {
                     "name": {
-                      "type": "string",
-                      "pattern": "^organizations/[^/]+/locations/[^/]+/operations/[^/]+$",
+                      "required": true,
                       "location": "path",
                       "description": "The name of the operation resource to be deleted.",
-                      "required": true
+                      "pattern": "^organizations/[^/]+/locations/[^/]+/operations/[^/]+$",
+                      "type": "string"
                     }
-                  }
+                  },
+                  "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/operations/{operationsId}"
                 }
               }
-            }
-          },
-          "methods": {
-            "list": {
-              "parameters": {
-                "name": {
-                  "pattern": "^organizations/[^/]+$",
-                  "location": "path",
-                  "description": "The resource that owns the locations collection, if applicable.",
-                  "required": true,
-                  "type": "string"
-                },
-                "filter": {
-                  "location": "query",
-                  "type": "string",
-                  "description": "A filter to narrow down results to a preferred subset. The filtering language accepts strings like `\"displayName=tokyo\"`, and is documented in more detail in [AIP-160](https://google.aip.dev/160)."
-                },
-                "extraLocationTypes": {
-                  "location": "query",
-                  "repeated": true,
-                  "type": "string",
-                  "description": "Optional. Do not use this field. It is unsupported and is ignored unless explicitly documented otherwise. This is primarily for internal usage."
-                },
-                "pageSize": {
-                  "description": "The maximum number of results to return. If not set, the service selects a default.",
-                  "format": "int32",
-                  "location": "query",
-                  "type": "integer"
-                },
-                "pageToken": {
-                  "description": "A page token received from the `next_page_token` field in the response. Send that page token to receive the subsequent page.",
-                  "location": "query",
-                  "type": "string"
-                }
-              },
-              "httpMethod": "GET",
-              "description": "Lists information about the supported locations for this service. This method lists locations based on the resource scope provided in the [ListLocationsRequest.name] field: * **Global locations**: If `name` is empty, the method lists the public locations available to all projects. * **Project-specific locations**: If `name` follows the format `projects/{project}`, the method lists locations visible to that specific project. This includes public, private, or other project-specific locations enabled for the project. For gRPC and client library implementations, the resource name is passed as the `name` field. For direct service calls, the resource name is incorporated into the request path based on the specific service implementation and version.",
-              "path": "v1/{+name}/locations",
-              "parameterOrder": [
-                "name"
-              ],
-              "id": "observability.organizations.locations.list",
-              "flatPath": "v1/organizations/{organizationsId}/locations",
-              "scopes": [
-                "https://www.googleapis.com/auth/cloud-platform"
-              ],
-              "response": {
-                "$ref": "ListLocationsResponse"
-              }
-            },
-            "getSettings": {
-              "path": "v1/{+name}",
-              "httpMethod": "GET",
-              "description": "Get Settings",
-              "parameters": {
-                "name": {
-                  "type": "string",
-                  "required": true,
-                  "description": "Required. Name of the settings to retrieve. Name format: \"projects/[PROJECT_ID]/locations/[LOCATION]/settings\" \"folders/[FOLDER_ID]/locations/[LOCATION]/settings\" \"organizations/[ORGANIZATION_ID]/locations/[LOCATION]/settings\"",
-                  "pattern": "^organizations/[^/]+/locations/[^/]+/settings$",
-                  "location": "path"
-                }
-              },
-              "response": {
-                "$ref": "Settings"
-              },
-              "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/settings",
-              "scopes": [
-                "https://www.googleapis.com/auth/cloud-platform"
-              ],
-              "id": "observability.organizations.locations.getSettings",
-              "parameterOrder": [
-                "name"
-              ]
-            },
-            "updateSettings": {
-              "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/settings",
-              "scopes": [
-                "https://www.googleapis.com/auth/cloud-platform"
-              ],
-              "response": {
-                "$ref": "Operation"
-              },
-              "id": "observability.organizations.locations.updateSettings",
-              "request": {
-                "$ref": "Settings"
-              },
-              "parameterOrder": [
-                "name"
-              ],
-              "path": "v1/{+name}",
-              "httpMethod": "PATCH",
-              "description": "Update Settings",
-              "parameters": {
-                "updateMask": {
-                  "description": "Optional. The field mask specifying which fields of the settings are to be updated.",
-                  "location": "query",
-                  "type": "string",
-                  "format": "google-fieldmask"
-                },
-                "name": {
-                  "type": "string",
-                  "pattern": "^organizations/[^/]+/locations/[^/]+/settings$",
-                  "location": "path",
-                  "required": true,
-                  "description": "Identifier. The resource name of the settings."
-                }
-              }
-            },
-            "get": {
-              "httpMethod": "GET",
-              "description": "Gets information about a location.",
-              "path": "v1/{+name}",
-              "parameters": {
-                "name": {
-                  "pattern": "^organizations/[^/]+/locations/[^/]+$",
-                  "location": "path",
-                  "description": "Resource name for the location.",
-                  "required": true,
-                  "type": "string"
-                }
-              },
-              "id": "observability.organizations.locations.get",
-              "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}",
-              "scopes": [
-                "https://www.googleapis.com/auth/cloud-platform"
-              ],
-              "response": {
-                "$ref": "Location"
-              },
-              "parameterOrder": [
-                "name"
-              ]
             }
           }
         }
       }
     }
   },
-  "revision": "20260409",
-  "auth": {
-    "oauth2": {
-      "scopes": {
-        "https://www.googleapis.com/auth/cloud-platform": {
-          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
-        }
-      }
+  "parameters": {
+    "key": {
+      "type": "string",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+      "location": "query"
+    },
+    "prettyPrint": {
+      "location": "query",
+      "description": "Returns response with indentations and line breaks.",
+      "default": "true",
+      "type": "boolean"
+    },
+    "access_token": {
+      "location": "query",
+      "description": "OAuth access token.",
+      "type": "string"
+    },
+    "fields": {
+      "location": "query",
+      "type": "string",
+      "description": "Selector specifying which fields to include in a partial response."
+    },
+    "quotaUser": {
+      "type": "string",
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
+      "location": "query"
+    },
+    "$.xgafv": {
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ],
+      "description": "V1 error format.",
+      "type": "string",
+      "location": "query",
+      "enum": [
+        "1",
+        "2"
+      ]
+    },
+    "uploadType": {
+      "type": "string",
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
+      "location": "query"
+    },
+    "upload_protocol": {
+      "location": "query",
+      "type": "string",
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\")."
+    },
+    "alt": {
+      "description": "Data format for response.",
+      "type": "string",
+      "location": "query",
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ],
+      "default": "json",
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ]
+    },
+    "oauth_token": {
+      "location": "query",
+      "type": "string",
+      "description": "OAuth 2.0 token for the current user."
+    },
+    "callback": {
+      "type": "string",
+      "description": "JSONP",
+      "location": "query"
     }
   },
+  "revision": "20260409",
   "endpoints": [
     {
-      "endpointUrl": "https://observability.africa-south1.rep.googleapis.com/",
       "description": "Regional Endpoint",
-      "location": "africa-south1"
+      "location": "africa-south1",
+      "endpointUrl": "https://observability.africa-south1.rep.googleapis.com/"
     },
     {
-      "endpointUrl": "https://observability.asia-east1.rep.googleapis.com/",
       "description": "Regional Endpoint",
+      "endpointUrl": "https://observability.asia-east1.rep.googleapis.com/",
       "location": "asia-east1"
     },
     {
-      "endpointUrl": "https://observability.asia-east2.rep.googleapis.com/",
       "description": "Regional Endpoint",
+      "endpointUrl": "https://observability.asia-east2.rep.googleapis.com/",
       "location": "asia-east2"
     },
     {
@@ -1430,109 +2048,109 @@
       "description": "Regional Endpoint"
     },
     {
+      "location": "asia-northeast3",
       "endpointUrl": "https://observability.asia-northeast3.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "asia-northeast3"
+      "description": "Regional Endpoint"
     },
     {
-      "location": "asia-south1",
       "endpointUrl": "https://observability.asia-south1.rep.googleapis.com/",
+      "location": "asia-south1",
       "description": "Regional Endpoint"
     },
     {
+      "description": "Regional Endpoint",
       "location": "asia-south2",
-      "endpointUrl": "https://observability.asia-south2.rep.googleapis.com/",
-      "description": "Regional Endpoint"
+      "endpointUrl": "https://observability.asia-south2.rep.googleapis.com/"
     },
     {
       "endpointUrl": "https://observability.asia-southeast2.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "asia-southeast2"
-    },
-    {
-      "endpointUrl": "https://observability.asia-southeast3.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "asia-southeast3"
-    },
-    {
-      "location": "australia-southeast2",
-      "endpointUrl": "https://observability.australia-southeast2.rep.googleapis.com/",
+      "location": "asia-southeast2",
       "description": "Regional Endpoint"
+    },
+    {
+      "description": "Regional Endpoint",
+      "location": "asia-southeast3",
+      "endpointUrl": "https://observability.asia-southeast3.rep.googleapis.com/"
+    },
+    {
+      "description": "Regional Endpoint",
+      "location": "australia-southeast2",
+      "endpointUrl": "https://observability.australia-southeast2.rep.googleapis.com/"
     },
     {
       "endpointUrl": "https://observability.europe-north2.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "europe-north2"
+      "location": "europe-north2",
+      "description": "Regional Endpoint"
     },
     {
-      "location": "europe-west1",
       "endpointUrl": "https://observability.europe-west1.rep.googleapis.com/",
+      "location": "europe-west1",
       "description": "Regional Endpoint"
     },
     {
-      "location": "europe-west3",
+      "description": "Regional Endpoint",
       "endpointUrl": "https://observability.europe-west3.rep.googleapis.com/",
-      "description": "Regional Endpoint"
+      "location": "europe-west3"
     },
     {
       "endpointUrl": "https://observability.europe-west4.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "europe-west4"
-    },
-    {
-      "location": "europe-west6",
-      "endpointUrl": "https://observability.europe-west6.rep.googleapis.com/",
+      "location": "europe-west4",
       "description": "Regional Endpoint"
     },
     {
-      "endpointUrl": "https://observability.europe-west8.rep.googleapis.com/",
+      "endpointUrl": "https://observability.europe-west6.rep.googleapis.com/",
+      "location": "europe-west6",
+      "description": "Regional Endpoint"
+    },
+    {
       "description": "Regional Endpoint",
+      "endpointUrl": "https://observability.europe-west8.rep.googleapis.com/",
       "location": "europe-west8"
     },
     {
       "endpointUrl": "https://observability.me-central1.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "me-central1"
+      "location": "me-central1",
+      "description": "Regional Endpoint"
     },
     {
-      "endpointUrl": "https://observability.northamerica-northeast2.rep.googleapis.com/",
       "description": "Regional Endpoint",
+      "endpointUrl": "https://observability.northamerica-northeast2.rep.googleapis.com/",
       "location": "northamerica-northeast2"
     },
     {
-      "location": "northamerica-south1",
+      "description": "Regional Endpoint",
       "endpointUrl": "https://observability.northamerica-south1.rep.googleapis.com/",
-      "description": "Regional Endpoint"
+      "location": "northamerica-south1"
     },
     {
+      "location": "southamerica-west1",
       "endpointUrl": "https://observability.southamerica-west1.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "southamerica-west1"
+      "description": "Regional Endpoint"
     },
     {
       "endpointUrl": "https://observability.us-central1.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "us-central1"
-    },
-    {
-      "endpointUrl": "https://observability.us-east1.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "us-east1"
-    },
-    {
-      "endpointUrl": "https://observability.us-east5.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "us-east5"
-    },
-    {
-      "location": "us-south1",
-      "endpointUrl": "https://observability.us-south1.rep.googleapis.com/",
+      "location": "us-central1",
       "description": "Regional Endpoint"
     },
     {
-      "endpointUrl": "https://observability.us-west1.rep.googleapis.com/",
       "description": "Regional Endpoint",
-      "location": "us-west1"
+      "location": "us-east1",
+      "endpointUrl": "https://observability.us-east1.rep.googleapis.com/"
+    },
+    {
+      "description": "Regional Endpoint",
+      "endpointUrl": "https://observability.us-east5.rep.googleapis.com/",
+      "location": "us-east5"
+    },
+    {
+      "endpointUrl": "https://observability.us-south1.rep.googleapis.com/",
+      "location": "us-south1",
+      "description": "Regional Endpoint"
+    },
+    {
+      "description": "Regional Endpoint",
+      "location": "us-west1",
+      "endpointUrl": "https://observability.us-west1.rep.googleapis.com/"
     },
     {
       "location": "us-west2",
@@ -1540,647 +2158,29 @@
       "description": "Regional Endpoint"
     },
     {
-      "location": "us-west3",
       "endpointUrl": "https://observability.us-west3.rep.googleapis.com/",
+      "location": "us-west3",
       "description": "Regional Endpoint"
     },
     {
-      "endpointUrl": "https://observability.us.rep.googleapis.com/",
       "description": "Regional Endpoint",
-      "location": "us"
+      "location": "us",
+      "endpointUrl": "https://observability.us.rep.googleapis.com/"
     },
     {
+      "location": "eu",
       "endpointUrl": "https://observability.eu.rep.googleapis.com/",
-      "description": "Regional Endpoint",
-      "location": "eu"
+      "description": "Regional Endpoint"
     }
   ],
-  "parameters": {
-    "fields": {
-      "type": "string",
-      "location": "query",
-      "description": "Selector specifying which fields to include in a partial response."
-    },
-    "callback": {
-      "description": "JSONP",
-      "type": "string",
-      "location": "query"
-    },
-    "oauth_token": {
-      "type": "string",
-      "location": "query",
-      "description": "OAuth 2.0 token for the current user."
-    },
-    "quotaUser": {
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
-      "type": "string",
-      "location": "query"
-    },
-    "prettyPrint": {
-      "default": "true",
-      "description": "Returns response with indentations and line breaks.",
-      "type": "boolean",
-      "location": "query"
-    },
-    "$.xgafv": {
-      "description": "V1 error format.",
-      "enum": [
-        "1",
-        "2"
-      ],
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ],
-      "location": "query",
-      "type": "string"
-    },
-    "key": {
-      "type": "string",
-      "location": "query",
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token."
-    },
-    "alt": {
-      "default": "json",
-      "description": "Data format for response.",
-      "enum": [
-        "json",
-        "media",
-        "proto"
-      ],
-      "enumDescriptions": [
-        "Responses with Content-Type of application/json",
-        "Media download with context-dependent Content-Type",
-        "Responses with Content-Type of application/x-protobuf"
-      ],
-      "location": "query",
-      "type": "string"
-    },
-    "upload_protocol": {
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
-      "type": "string",
-      "location": "query"
-    },
-    "access_token": {
-      "description": "OAuth access token.",
-      "type": "string",
-      "location": "query"
-    },
-    "uploadType": {
-      "type": "string",
-      "location": "query",
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\")."
-    }
-  },
+  "basePath": "",
   "kind": "discovery#restDescription",
-  "batchPath": "batch",
-  "ownerName": "Google",
-  "discoveryVersion": "v1",
-  "canonicalName": "Cloud Observability",
-  "version_module": true,
-  "version": "v1",
+  "id": "observability:v1",
   "description": "Provides functionality for configuring the observability scope, which controls the log, metric, and trace data that you can view.",
-  "documentationLink": "https://cloud.google.com/stackdriver/docs/",
-  "baseUrl": "https://observability.googleapis.com/",
-  "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
-  },
-  "fullyEncodeReservedExpansion": true,
-  "name": "observability",
+  "canonicalName": "Cloud Observability",
+  "batchPath": "batch",
   "title": "Observability API",
+  "ownerDomain": "google.com",
   "servicePath": "",
-  "protocol": "rest",
-  "schemas": {
-    "Scope": {
-      "properties": {
-        "updateTime": {
-          "format": "google-datetime",
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. Update timestamp. Note: The Update timestamp for the default scope is initially unset."
-        },
-        "traceScope": {
-          "description": "Required. The resource name of the `TraceScope`. For example: projects/myproject/locations/global/traceScopes/my-trace-scope",
-          "type": "string"
-        },
-        "logScope": {
-          "type": "string",
-          "description": "Required. The full resource name of the `LogScope`. For example: //logging.googleapis.com/projects/myproject/locations/global/logScopes/my-log-scope"
-        },
-        "name": {
-          "description": "Identifier. Name of the resource. The format is: projects/{project}/locations/{location}/scopes/{scope} The `{location}` field must be set to `global`. The `{scope}` field must be set to `_Default`.",
-          "type": "string"
-        }
-      },
-      "id": "Scope",
-      "description": "Message describing Scope object",
-      "type": "object"
-    },
-    "ListDatasetsResponse": {
-      "id": "ListDatasetsResponse",
-      "description": "Response for listing datasets.",
-      "properties": {
-        "datasets": {
-          "description": "The list of datasets.",
-          "type": "array",
-          "items": {
-            "$ref": "Dataset"
-          }
-        },
-        "nextPageToken": {
-          "type": "string",
-          "description": "A token that can be sent as `page_token` to retrieve the next page. When this field is omitted, there are no subsequent pages."
-        }
-      },
-      "type": "object"
-    },
-    "ListLinksResponse": {
-      "type": "object",
-      "properties": {
-        "nextPageToken": {
-          "description": "Optional. A token that can be sent as `page_token` to retrieve the next page. When this field is omitted, there are no subsequent pages.",
-          "type": "string"
-        },
-        "links": {
-          "type": "array",
-          "items": {
-            "$ref": "Link"
-          },
-          "description": "The list of links."
-        }
-      },
-      "id": "ListLinksResponse",
-      "description": "Response for listing links."
-    },
-    "ListLocationsResponse": {
-      "properties": {
-        "nextPageToken": {
-          "type": "string",
-          "description": "The standard List next-page token."
-        },
-        "locations": {
-          "type": "array",
-          "items": {
-            "$ref": "Location"
-          },
-          "description": "A list of locations that matches the specified filter in the request."
-        }
-      },
-      "id": "ListLocationsResponse",
-      "description": "The response message for Locations.ListLocations.",
-      "type": "object"
-    },
-    "OperationMetadata": {
-      "properties": {
-        "endTime": {
-          "readOnly": true,
-          "type": "string",
-          "format": "google-datetime",
-          "description": "Output only. The time the operation finished running."
-        },
-        "statusMessage": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. Human-readable status of the operation, if any."
-        },
-        "target": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. Server-defined resource path for the target of the operation."
-        },
-        "createTime": {
-          "description": "Output only. The time the operation was created.",
-          "readOnly": true,
-          "type": "string",
-          "format": "google-datetime"
-        },
-        "verb": {
-          "description": "Output only. Name of the verb executed by the operation.",
-          "readOnly": true,
-          "type": "string"
-        },
-        "requestedCancellation": {
-          "description": "Output only. Identifies whether the user has requested cancellation of the operation. Operations that have been cancelled successfully have Operation.error value with a google.rpc.Status.code of 1, corresponding to `Code.CANCELLED`.",
-          "readOnly": true,
-          "type": "boolean"
-        },
-        "apiVersion": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. API version used to start the operation."
-        }
-      },
-      "id": "OperationMetadata",
-      "description": "Represents the metadata of the long-running operation.",
-      "type": "object"
-    },
-    "ListOperationsResponse": {
-      "properties": {
-        "unreachable": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Unordered list. Unreachable resources. Populated when the request sets `ListOperationsRequest.return_partial_success` and reads across collections. For example, when attempting to list all resources across all supported locations."
-        },
-        "operations": {
-          "description": "A list of operations that matches the specified filter in the request.",
-          "type": "array",
-          "items": {
-            "$ref": "Operation"
-          }
-        },
-        "nextPageToken": {
-          "type": "string",
-          "description": "The standard List next-page token."
-        }
-      },
-      "id": "ListOperationsResponse",
-      "description": "The response message for Operations.ListOperations.",
-      "type": "object"
-    },
-    "Status": {
-      "properties": {
-        "details": {
-          "description": "A list of messages that carry the error details. There is a common set of message types for APIs to use.",
-          "type": "array",
-          "items": {
-            "additionalProperties": {
-              "description": "Properties of the object. Contains field @type with type URL.",
-              "type": "any"
-            },
-            "type": "object"
-          }
-        },
-        "code": {
-          "description": "The status code, which should be an enum value of google.rpc.Code.",
-          "type": "integer",
-          "format": "int32"
-        },
-        "message": {
-          "type": "string",
-          "description": "A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client."
-        }
-      },
-      "id": "Status",
-      "description": "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
-      "type": "object"
-    },
-    "Empty": {
-      "properties": {},
-      "id": "Empty",
-      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
-      "type": "object"
-    },
-    "ListBucketsResponse": {
-      "type": "object",
-      "id": "ListBucketsResponse",
-      "description": "Response for listing buckets.",
-      "properties": {
-        "nextPageToken": {
-          "description": "Optional. A token that can be sent as `page_token` to retrieve the next page. When this field is omitted, there are no subsequent pages.",
-          "type": "string"
-        },
-        "buckets": {
-          "type": "array",
-          "items": {
-            "$ref": "Bucket"
-          },
-          "description": "Optional. The list of buckets."
-        }
-      }
-    },
-    "Dataset": {
-      "properties": {
-        "deleteTime": {
-          "readOnly": true,
-          "type": "string",
-          "format": "google-datetime",
-          "description": "Output only. Delete timestamp."
-        },
-        "description": {
-          "description": "Optional. Description of the dataset.",
-          "type": "string"
-        },
-        "displayName": {
-          "description": "Optional. User friendly display name.",
-          "type": "string"
-        },
-        "name": {
-          "description": "Identifier. Name of the dataset. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]",
-          "type": "string"
-        },
-        "createTime": {
-          "format": "google-datetime",
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. Create timestamp."
-        },
-        "purgeTime": {
-          "description": "Output only. Timestamp when the dataset in soft-deleted state is purged.",
-          "format": "google-datetime",
-          "readOnly": true,
-          "type": "string"
-        }
-      },
-      "id": "Dataset",
-      "description": "A dataset is a collection of data that has a specific configuration. A dataset can be backed by multiple tables. One bucket can have multiple datasets.",
-      "type": "object"
-    },
-    "TraceScope": {
-      "id": "TraceScope",
-      "description": "A trace scope is a collection of resources whose traces are queried together.",
-      "properties": {
-        "description": {
-          "type": "string",
-          "description": "Optional. Describes this trace scope. The maximum length of the description is 8000 characters."
-        },
-        "updateTime": {
-          "description": "Output only. The last update timestamp of the trace scope.",
-          "readOnly": true,
-          "type": "string",
-          "format": "google-datetime"
-        },
-        "resourceNames": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Required. Names of the projects that are included in this trace scope. * `projects/[PROJECT_ID]` A trace scope can include a maximum of 20 projects."
-        },
-        "name": {
-          "type": "string",
-          "description": "Identifier. The resource name of the trace scope. For example: projects/my-project/locations/global/traceScopes/my-trace-scope"
-        },
-        "createTime": {
-          "readOnly": true,
-          "type": "string",
-          "format": "google-datetime",
-          "description": "Output only. The creation timestamp of the trace scope."
-        }
-      },
-      "type": "object"
-    },
-    "Link": {
-      "type": "object",
-      "properties": {
-        "description": {
-          "type": "string",
-          "description": "Optional. Description of the link."
-        },
-        "name": {
-          "type": "string",
-          "description": "Identifier. Name of the link. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]/links/[LINK_ID]"
-        },
-        "createTime": {
-          "description": "Output only. Create timestamp.",
-          "readOnly": true,
-          "type": "string",
-          "format": "google-datetime"
-        },
-        "displayName": {
-          "type": "string",
-          "description": "Optional. A user friendly display name."
-        }
-      },
-      "id": "Link",
-      "description": "A link lets a dataset be accessible to BigQuery via usage of linked datasets."
-    },
-    "Settings": {
-      "type": "object",
-      "id": "Settings",
-      "description": "Describes the settings associated with a project, organization, or folder.",
-      "properties": {
-        "kmsKeyName": {
-          "type": "string",
-          "description": "Optional. The resource name for the configured Cloud KMS key. KMS key name format: \"projects/[PROJECT_ID]/locations/[LOCATION]/keyRings/[KEYRING]/cryptoKeys/[KEY]\" For example: `\"projects/my-project/locations/us-central1/keyRings/my-ring/cryptoKeys/my-key\"`"
-        },
-        "defaultStorageLocation": {
-          "type": "string",
-          "description": "Optional. The location which should be used when any regional resources are provisioned by Google Cloud."
-        },
-        "name": {
-          "type": "string",
-          "description": "Identifier. The resource name of the settings."
-        },
-        "serviceAccountId": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. The service account for the given resource container, such as project or folder. This will be used by Cloud Observability to perform actions in the container's project like access KMS keys or create Links. Always the same service account per resource container regardless of region."
-        }
-      }
-    },
-    "CmekSettings": {
-      "type": "object",
-      "properties": {
-        "serviceAccountId": {
-          "description": "Output only. The service account used to access the key.",
-          "readOnly": true,
-          "type": "string"
-        },
-        "kmsKey": {
-          "description": "Optional. The resource name for the configured Cloud KMS key. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/keyRings/[KEYRING]/cryptoKeys/[KEY] For example: projects/my-project/locations/us-central1/keyRings/my-ring/cryptoKeys/my-key",
-          "type": "string"
-        },
-        "kmsKeyVersion": {
-          "description": "Output only. The CryptoKeyVersion resource name for the configured Cloud KMS key. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/keyRings/[KEYRING]/cryptoKeys/[KEY]/cryptoKeyVersions/[VERSION] For example: projects/my-project/locations/us-central1/keyRings/my-ring/cryptoKeys/my-key/cryptoKeyVersions/1 This read-only field is used to convey the specific configured CryptoKeyVersion of the `kms_key` that has been configured. It is populated when the CMEK settings are bound to a single key version.",
-          "readOnly": true,
-          "type": "string"
-        }
-      },
-      "id": "CmekSettings",
-      "description": "Settings for configuring CMEK for a bucket."
-    },
-    "Location": {
-      "type": "object",
-      "id": "Location",
-      "description": "A resource that represents a Google Cloud location.",
-      "properties": {
-        "displayName": {
-          "description": "The friendly name for this location, typically a nearby city name. For example, \"Tokyo\".",
-          "type": "string"
-        },
-        "labels": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          },
-          "description": "Cross-service attributes for the location. For example {\"cloud.googleapis.com/region\": \"us-east1\"}"
-        },
-        "name": {
-          "description": "Resource name for the location, which may vary between implementations. For example: `\"projects/example-project/locations/us-east1\"`",
-          "type": "string"
-        },
-        "locationId": {
-          "description": "The canonical id for this location. For example: `\"us-east1\"`.",
-          "type": "string"
-        },
-        "metadata": {
-          "additionalProperties": {
-            "description": "Properties of the object. Contains field @type with type URL.",
-            "type": "any"
-          },
-          "type": "object",
-          "description": "Service-specific metadata. For example the available capacity at the given location."
-        }
-      }
-    },
-    "CancelOperationRequest": {
-      "type": "object",
-      "properties": {},
-      "id": "CancelOperationRequest",
-      "description": "The request message for Operations.CancelOperation."
-    },
-    "ListTraceScopesResponse": {
-      "type": "object",
-      "properties": {
-        "traceScopes": {
-          "description": "Optional. A list of trace scopes.",
-          "type": "array",
-          "items": {
-            "$ref": "TraceScope"
-          }
-        },
-        "nextPageToken": {
-          "type": "string",
-          "description": "Optional. If there might be more results than appear in this response, then `next_page_token` is included. To get the next set of results, call the same method again using the value of `next_page_token` as `page_token`."
-        }
-      },
-      "id": "ListTraceScopesResponse",
-      "description": "Response for listing TraceScopes."
-    },
-    "Operation": {
-      "type": "object",
-      "id": "Operation",
-      "description": "This resource represents a long-running operation that is the result of a network API call.",
-      "properties": {
-        "error": {
-          "$ref": "Status",
-          "description": "The error result of the operation in case of failure or cancellation."
-        },
-        "name": {
-          "type": "string",
-          "description": "The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`."
-        },
-        "metadata": {
-          "description": "Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata. Any method that returns a long-running operation should document the metadata type, if any.",
-          "type": "object",
-          "additionalProperties": {
-            "description": "Properties of the object. Contains field @type with type URL.",
-            "type": "any"
-          }
-        },
-        "done": {
-          "description": "If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available.",
-          "type": "boolean"
-        },
-        "response": {
-          "additionalProperties": {
-            "type": "any",
-            "description": "Properties of the object. Contains field @type with type URL."
-          },
-          "type": "object",
-          "description": "The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`."
-        }
-      }
-    },
-    "ListViewsResponse": {
-      "properties": {
-        "views": {
-          "description": "The list of views.",
-          "type": "array",
-          "items": {
-            "$ref": "View"
-          }
-        },
-        "nextPageToken": {
-          "description": "Optional. A token that can be sent as `page_token` to retrieve the next page. When this field is omitted, there are no subsequent pages.",
-          "type": "string"
-        }
-      },
-      "id": "ListViewsResponse",
-      "description": "Response for listing views.",
-      "type": "object"
-    },
-    "Bucket": {
-      "properties": {
-        "deleteTime": {
-          "format": "google-datetime",
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. Delete timestamp."
-        },
-        "description": {
-          "description": "Optional. Description of the bucket.",
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string",
-          "description": "Optional. User friendly display name."
-        },
-        "name": {
-          "type": "string",
-          "description": "Identifier. Name of the bucket. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]"
-        },
-        "createTime": {
-          "format": "google-datetime",
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. Create timestamp."
-        },
-        "purgeTime": {
-          "readOnly": true,
-          "type": "string",
-          "format": "google-datetime",
-          "description": "Output only. Timestamp when the bucket in soft-deleted state is purged."
-        },
-        "cmekSettings": {
-          "description": "Optional. Settings for configuring CMEK on a bucket.",
-          "$ref": "CmekSettings"
-        },
-        "updateTime": {
-          "description": "Output only. Update timestamp.",
-          "readOnly": true,
-          "type": "string",
-          "format": "google-datetime"
-        }
-      },
-      "id": "Bucket",
-      "description": "Bucket configuration for storing observability data.",
-      "type": "object"
-    },
-    "View": {
-      "id": "View",
-      "description": "A view corresponds to a read-only representation of a subset of the data in a dataset.",
-      "properties": {
-        "name": {
-          "description": "Identifier. Name of the view. The format is: projects/[PROJECT_ID]/locations/[LOCATION]/buckets/[BUCKET_ID]/datasets/[DATASET_ID]/views/[VIEW_ID]",
-          "type": "string"
-        },
-        "createTime": {
-          "description": "Output only. Create timestamp.",
-          "readOnly": true,
-          "type": "string",
-          "format": "google-datetime"
-        },
-        "updateTime": {
-          "description": "Output only. Update timestamp.",
-          "readOnly": true,
-          "type": "string",
-          "format": "google-datetime"
-        },
-        "description": {
-          "description": "Optional. Description of the view.",
-          "type": "string"
-        },
-        "displayName": {
-          "description": "Optional. User friendly display name.",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    }
-  },
-  "mtlsRootUrl": "https://observability.mtls.googleapis.com/"
+  "documentationLink": "https://cloud.google.com/stackdriver/docs/"
 }
