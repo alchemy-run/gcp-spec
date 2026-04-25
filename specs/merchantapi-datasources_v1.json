@@ -1,12 +1,36 @@
 {
-  "canonicalName": "Merchant",
-  "ownerDomain": "google.com",
-  "mtlsRootUrl": "https://merchantapi.mtls.googleapis.com/",
-  "discoveryVersion": "v1",
-  "batchPath": "batch",
+  "basePath": "",
+  "rootUrl": "https://merchantapi.googleapis.com/",
   "schemas": {
+    "TimeOfDay": {
+      "id": "TimeOfDay",
+      "properties": {
+        "nanos": {
+          "description": "Fractions of seconds, in nanoseconds. Must be greater than or equal to 0 and less than or equal to 999,999,999.",
+          "type": "integer",
+          "format": "int32"
+        },
+        "minutes": {
+          "description": "Minutes of an hour. Must be greater than or equal to 0 and less than or equal to 59.",
+          "type": "integer",
+          "format": "int32"
+        },
+        "hours": {
+          "description": "Hours of a day in 24 hour format. Must be greater than or equal to 0 and typically must be less than or equal to 23. An API may choose to allow the value \"24:00:00\" for scenarios like business closing time.",
+          "type": "integer",
+          "format": "int32"
+        },
+        "seconds": {
+          "description": "Seconds of a minute. Must be greater than or equal to 0 and typically must be less than or equal to 59. An API may allow the value 60 if it allows leap-seconds.",
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "description": "Represents a time of day. The date and time zone are either not significant or are specified elsewhere. An API may choose to allow leap seconds. Related types are google.type.Date and `google.protobuf.Timestamp`.",
+      "type": "object"
+    },
     "DefaultRule": {
-      "type": "object",
+      "id": "DefaultRule",
       "properties": {
         "takeFromDataSources": {
           "items": {
@@ -16,351 +40,210 @@
           "type": "array"
         }
       },
-      "id": "DefaultRule",
-      "description": "Default rule management of the data source."
+      "description": "Default rule management of the data source.",
+      "type": "object"
     },
-    "Empty": {
-      "type": "object",
-      "properties": {},
-      "id": "Empty",
-      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }"
-    },
-    "DataSource": {
-      "type": "object",
+    "DataSourceReference": {
       "properties": {
-        "fileInput": {
-          "$ref": "FileInput",
-          "description": "Optional. The field is used only when data is managed through a file."
-        },
-        "localInventoryDataSource": {
-          "$ref": "LocalInventoryDataSource",
-          "description": "The [local inventory](https://support.google.com/merchants/answer/7023001) data source."
-        },
-        "merchantReviewDataSource": {
-          "$ref": "MerchantReviewDataSource",
-          "description": "The [merchant review](https://support.google.com/merchants/answer/7045996) data source."
-        },
-        "input": {
-          "readOnly": true,
-          "type": "string",
-          "enumDescriptions": [
-            "Input unspecified.",
-            "Represents data sources for which the data is primarily provided through the API.",
-            "Represents data sources for which the data is primarily provided through file input. Data can still be provided through the API.",
-            "The data source for products added directly in Merchant Center. This type of data source can not be created or updated through this API, only by Merchant Center UI. This type of data source is read only.",
-            "This is also known as [Automated feeds](https://support.google.com/merchants/answer/12158480) used to automatically build your product data. This type of data source can be enabled or disabled through the Accounts sub-API."
-          ],
-          "description": "Output only. Determines the type of input to the data source. Based on the input some settings might not work. Only generic data sources can be created through the API.",
-          "enum": [
-            "INPUT_UNSPECIFIED",
-            "API",
-            "FILE",
-            "UI",
-            "AUTOFEED"
-          ]
-        },
-        "displayName": {
-          "description": "Required. The displayed data source name in the Merchant Center UI.",
+        "supplementalDataSourceName": {
+          "description": "Optional. The name of the supplemental data source. Format: `accounts/{account}/dataSources/{datasource}`",
           "type": "string"
         },
-        "productReviewDataSource": {
-          "description": "The [product review](https://support.google.com/merchants/answer/7045996) data source.",
-          "$ref": "ProductReviewDataSource"
+        "primaryDataSourceName": {
+          "description": "Optional. The name of the primary data source. Format: `accounts/{account}/dataSources/{datasource}`",
+          "type": "string"
         },
-        "primaryProductDataSource": {
-          "$ref": "PrimaryProductDataSource",
-          "description": "The [primary data source](https://support.google.com/merchants/answer/7439058) for local and online products."
+        "self": {
+          "description": "Self should be used to reference the primary data source itself.",
+          "type": "boolean"
+        }
+      },
+      "description": "Data source reference can be used to manage related data sources within the data source service.",
+      "type": "object",
+      "id": "DataSourceReference"
+    },
+    "FetchDataSourceRequest": {
+      "id": "FetchDataSourceRequest",
+      "description": "Request message for the FetchDataSource method.",
+      "type": "object",
+      "properties": {}
+    },
+    "FileUpload": {
+      "properties": {
+        "issues": {
+          "description": "Output only. The list of issues occurring in the data source.",
+          "readOnly": true,
+          "type": "array",
+          "items": {
+            "$ref": "Issue"
+          }
         },
-        "supplementalProductDataSource": {
-          "description": "The [supplemental data source](https://support.google.com/merchants/answer/7439058) for local and online products.",
-          "$ref": "SupplementalProductDataSource"
+        "itemsTotal": {
+          "description": "Output only. The number of items in the data source that were processed.",
+          "readOnly": true,
+          "type": "string",
+          "format": "int64"
+        },
+        "itemsUpdated": {
+          "description": "Output only. The number of items in the data source that were updated.",
+          "readOnly": true,
+          "type": "string",
+          "format": "int64"
         },
         "name": {
-          "description": "Required. Identifier. The name of the data source. Format: `accounts/{account}/dataSources/{datasource}`",
+          "description": "Identifier. The name of the data source file upload. Format: `{datasource.name=accounts/{account}/dataSources/{datasource}/fileUploads/{fileupload}}`",
           "type": "string"
         },
         "dataSourceId": {
-          "format": "int64",
-          "type": "string",
           "description": "Output only. The data source id.",
-          "readOnly": true
+          "readOnly": true,
+          "type": "string",
+          "format": "int64"
         },
-        "regionalInventoryDataSource": {
-          "description": "The [regional inventory](https://support.google.com/merchants/answer/7439058) data source.",
-          "$ref": "RegionalInventoryDataSource"
+        "itemsCreated": {
+          "description": "Output only. The number of items in the data source that were created.",
+          "readOnly": true,
+          "type": "string",
+          "format": "int64"
         },
-        "promotionDataSource": {
-          "$ref": "PromotionDataSource",
-          "description": "The [promotion](https://support.google.com/merchants/answer/2906014) data source."
+        "uploadTime": {
+          "description": "Output only. The date at which the file of the data source was uploaded.",
+          "readOnly": true,
+          "type": "string",
+          "format": "google-datetime"
+        },
+        "processingState": {
+          "enum": [
+            "PROCESSING_STATE_UNSPECIFIED",
+            "FAILED",
+            "IN_PROGRESS",
+            "SUCCEEDED"
+          ],
+          "type": "string",
+          "description": "Output only. The processing state of the data source.",
+          "readOnly": true,
+          "enumDescriptions": [
+            "Processing state unspecified.",
+            "The data source could not be processed or all the items had errors.",
+            "The data source is being processed.",
+            "The data source was processed successfully, though some items might have had errors."
+          ]
         }
       },
-      "id": "DataSource",
-      "description": "The [data source](/merchant/api/guides/data-sources/overview) for the Merchant Center account."
-    },
-    "RegionalInventoryDataSource": {
+      "description": "The file upload of a specific data source, that is, the result of the retrieval of the data source at a certain timestamp computed asynchronously when the data source processing is finished. Only applicable to file data sources.",
       "type": "object",
-      "properties": {
-        "feedLabel": {
-          "description": "Required. Immutable. The feed label of the offers to which the regional inventory is provided. Must be less than or equal to 20 uppercase letters (A-Z), numbers (0-9), and dashes (-).",
-          "type": "string"
-        },
-        "contentLanguage": {
-          "description": "Required. Immutable. The two-letter ISO 639-1 language of the items to which the regional inventory is provided.",
-          "type": "string"
-        }
-      },
-      "id": "RegionalInventoryDataSource"
-    },
-    "PrimaryProductDataSource": {
-      "description": "The primary data source for local and online products.",
-      "id": "PrimaryProductDataSource",
-      "type": "object",
-      "properties": {
-        "defaultRule": {
-          "$ref": "DefaultRule",
-          "description": "Optional. Default rule management of the data source. If set, the linked data sources will be replaced."
-        },
-        "feedLabel": {
-          "description": "Optional. Immutable. The feed label that is specified on the data source level. Must be less than or equal to 20 uppercase letters (A-Z), numbers (0-9), and dashes (-). For more information about feed label, see [Create a primary data source for products](https://developers.google.com/merchant/api/guides/data-sources/api-sources#create-primary-data-source). `feedLabel` and `contentLanguage` must be either both set or unset for data sources with product content type. They must be set for data sources with a file input. If set, the data source will only accept products matching this combination. If unset, the data source will accept products without that restriction.",
-          "type": "string"
-        },
-        "destinations": {
-          "items": {
-            "$ref": "Destination"
-          },
-          "description": "Optional. A list of destinations describing where products of the data source can be shown. When retrieving the data source, the list contains all the destinations that can be used for the data source, including the ones that are disabled for the data source but enabled for the account. Only destinations that are enabled on the account, for example through program participation, can be enabled on the data source. If unset, during creation, the destinations will be inherited based on the account level program participation. If set, during creation or update, the data source will be set only for the specified destinations. Updating this field requires at least one destination.",
-          "type": "array"
-        },
-        "legacyLocal": {
-          "description": "Optional. Immutable. Determines whether the products of this data source are **only** targeting local destinations. Legacy local products are prefixed with `local~` in the product resource ID. For example, `accounts/123/products/local~en~US~sku123`.",
-          "type": "boolean"
-        },
-        "contentLanguage": {
-          "description": "Optional. Immutable. The two-letter ISO 639-1 language of the items in the data source. `feedLabel` and `contentLanguage` must be either both set or unset. The fields can only be unset for data sources without file input. If set, the data source will only accept products matching this combination. If unset, the data source will accept products without that restriction.",
-          "type": "string"
-        },
-        "countries": {
-          "items": {
-            "type": "string"
-          },
-          "description": "Optional. The countries where the items may be displayed. Represented as a [CLDR territory code](https://github.com/unicode-org/cldr/blob/latest/common/main/en.xml).",
-          "type": "array"
-        }
-      }
+      "id": "FileUpload"
     },
     "ProductStatusChangeMessage": {
-      "id": "ProductStatusChangeMessage",
+      "description": "The message that the merchant will receive to notify about product status change event",
       "type": "object",
       "properties": {
-        "expirationTime": {
-          "type": "string",
-          "format": "google-datetime",
-          "description": "Optional. The product expiration time. This field will not be set if the notification is sent for a product deletion event."
+        "managingAccount": {
+          "description": "The account that manages the merchant's account. can be the same as merchant id if it is standalone account. Format : `accounts/{service_provider_id}`",
+          "type": "string"
         },
         "account": {
           "description": "The target account that owns the entity that changed. Format : `accounts/{merchant_id}`",
           "type": "string"
         },
         "resourceType": {
-          "description": "The resource that changed, in this case it will always be `Product`.",
-          "enum": [
-            "RESOURCE_UNSPECIFIED",
-            "PRODUCT"
-          ],
           "enumDescriptions": [
             "Unspecified resource",
             "Resource type : product"
           ],
+          "enum": [
+            "RESOURCE_UNSPECIFIED",
+            "PRODUCT"
+          ],
+          "description": "The resource that changed, in this case it will always be `Product`.",
           "type": "string"
         },
         "resource": {
           "description": "The product name. Format: `accounts/{account}/products/{product}`",
           "type": "string"
         },
-        "managingAccount": {
-          "description": "The account that manages the merchant's account. can be the same as merchant id if it is standalone account. Format : `accounts/{service_provider_id}`",
-          "type": "string"
+        "expirationTime": {
+          "description": "Optional. The product expiration time. This field will not be set if the notification is sent for a product deletion event.",
+          "type": "string",
+          "format": "google-datetime"
+        },
+        "eventTime": {
+          "description": "The time at which the event was generated. If you want to order the notification messages you receive you should rely on this field not on the order of receiving the notifications.",
+          "type": "string",
+          "format": "google-datetime"
         },
         "attribute": {
-          "type": "string",
           "enumDescriptions": [
             "Unspecified attribute",
             "Status of the changed entity"
           ],
-          "description": "The attribute in the resource that changed, in this case it will be always `Status`.",
           "enum": [
             "ATTRIBUTE_UNSPECIFIED",
             "STATUS"
-          ]
-        },
-        "changes": {
-          "description": "A message to describe the change that happened to the product",
-          "items": {
-            "$ref": "ProductChange"
-          },
-          "type": "array"
+          ],
+          "description": "The attribute in the resource that changed, in this case it will be always `Status`.",
+          "type": "string"
         },
         "resourceId": {
           "description": "The product id.",
           "type": "string"
         },
-        "eventTime": {
-          "format": "google-datetime",
-          "type": "string",
-          "description": "The time at which the event was generated. If you want to order the notification messages you receive you should rely on this field not on the order of receiving the notifications."
+        "changes": {
+          "description": "A message to describe the change that happened to the product",
+          "type": "array",
+          "items": {
+            "$ref": "ProductChange"
+          }
         }
       },
-      "description": "The message that the merchant will receive to notify about product status change event"
+      "id": "ProductStatusChangeMessage"
     },
-    "FetchSettings": {
+    "PromotionDataSource": {
+      "id": "PromotionDataSource",
+      "description": "The promotion data source.",
       "type": "object",
       "properties": {
-        "dayOfMonth": {
-          "format": "int32",
-          "type": "integer",
-          "description": "Optional. The day of the month when the data source file should be fetched (1-31). This field can only be set for monthly frequency."
-        },
-        "password": {
-          "description": "Optional. An optional password for fetch_uri. Used for [submitting data sources through SFTP](https://support.google.com/merchants/answer/13813117).",
+        "contentLanguage": {
+          "description": "Required. Immutable. The two-letter ISO 639-1 language of the items in the data source.",
           "type": "string"
         },
-        "enabled": {
-          "description": "Optional. Enables or pauses the fetch schedule.",
-          "type": "boolean"
-        },
-        "fetchUri": {
-          "description": "Optional. The URL where the data source file can be fetched. Google Merchant Center supports automatic scheduled uploads using the HTTP, HTTPS or SFTP protocols, so the value will need to be a valid link using one of those three protocols. Immutable for Google Sheets files.",
-          "type": "string"
-        },
-        "frequency": {
-          "description": "Required. The frequency describing fetch schedule.",
-          "enum": [
-            "FREQUENCY_UNSPECIFIED",
-            "FREQUENCY_DAILY",
-            "FREQUENCY_WEEKLY",
-            "FREQUENCY_MONTHLY"
-          ],
-          "enumDescriptions": [
-            "Frequency unspecified.",
-            "The fetch happens every day.",
-            "The fetch happens every week.",
-            "The fetch happens every month."
-          ],
-          "type": "string"
-        },
-        "username": {
-          "description": "Optional. An optional user name for fetch_uri. Used for [submitting data sources through SFTP](https://support.google.com/merchants/answer/13813117).",
-          "type": "string"
-        },
-        "timeOfDay": {
-          "description": "Optional. The hour of the day when the data source file should be fetched. Minutes and seconds are not supported and will be ignored.",
-          "$ref": "TimeOfDay"
-        },
-        "dayOfWeek": {
-          "description": "Optional. The day of the week when the data source file should be fetched. This field can only be set for weekly frequency.",
-          "enum": [
-            "DAY_OF_WEEK_UNSPECIFIED",
-            "MONDAY",
-            "TUESDAY",
-            "WEDNESDAY",
-            "THURSDAY",
-            "FRIDAY",
-            "SATURDAY",
-            "SUNDAY"
-          ],
-          "enumDescriptions": [
-            "The day of the week is unspecified.",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-            "Sunday"
-          ],
-          "type": "string"
-        },
-        "timeZone": {
-          "description": "Optional. [Time zone](https://cldr.unicode.org) used for schedule. UTC by default. For example, \"America/Los_Angeles\".",
+        "targetCountry": {
+          "description": "Required. Immutable. The target country used as part of the unique identifier. Represented as a [CLDR territory code](https://github.com/unicode-org/cldr/blob/latest/common/main/en.xml). Promotions are only available in selected [countries](https://support.google.com/merchants/answer/4588460).",
           "type": "string"
         }
-      },
-      "id": "FetchSettings",
-      "description": "Fetch details to deliver the data source."
-    },
-    "ProductReviewDataSource": {
-      "description": "The product review data source.",
-      "id": "ProductReviewDataSource",
-      "type": "object",
-      "properties": {}
-    },
-    "Destination": {
-      "type": "object",
-      "properties": {
-        "destination": {
-          "description": "[Marketing methods](https://support.google.com/merchants/answer/15130232) (also known as destination) selections.",
-          "enum": [
-            "DESTINATION_ENUM_UNSPECIFIED",
-            "SHOPPING_ADS",
-            "DISPLAY_ADS",
-            "LOCAL_INVENTORY_ADS",
-            "FREE_LISTINGS",
-            "FREE_LOCAL_LISTINGS",
-            "YOUTUBE_SHOPPING",
-            "YOUTUBE_SHOPPING_CHECKOUT",
-            "YOUTUBE_AFFILIATE",
-            "FREE_VEHICLE_LISTINGS",
-            "VEHICLE_ADS",
-            "CLOUD_RETAIL",
-            "LOCAL_CLOUD_RETAIL"
-          ],
-          "type": "string",
-          "enumDescriptions": [
-            "Not specified.",
-            "[Shopping ads](https://support.google.com/google-ads/answer/2454022).",
-            "[Display ads](https://support.google.com/merchants/answer/6069387).",
-            "[Local inventory ads](https://support.google.com/merchants/answer/3057972).",
-            "[Free listings](https://support.google.com/merchants/answer/9199328).",
-            "[Free local product listings](https://support.google.com/merchants/answer/9825611).",
-            "[YouTube Shopping](https://support.google.com/merchants/answer/12362804).",
-            "Youtube shopping checkout.",
-            "[Youtube Affiliate](https://support.google.com/youtube/answer/13376398).",
-            "[Free vehicle listings](https://support.google.com/merchants/answer/11189169).",
-            "[Vehicle ads](https://support.google.com/merchants/answer/11189169).",
-            "[Cloud retail](https://cloud.google.com/solutions/retail).",
-            "[Local cloud retail](https://cloud.google.com/solutions/retail)."
-          ]
-        },
-        "state": {
-          "enumDescriptions": [
-            "Not specified.",
-            "Indicates that the destination is enabled.",
-            "Indicates that the destination is disabled."
-          ],
-          "type": "string",
-          "description": "The state of the destination.",
-          "enum": [
-            "STATE_UNSPECIFIED",
-            "ENABLED",
-            "DISABLED"
-          ]
-        }
-      },
-      "id": "Destination",
-      "description": "Destinations also known as [Marketing methods](https://support.google.com/merchants/answer/15130232) selections."
-    },
-    "MerchantReviewDataSource": {
-      "id": "MerchantReviewDataSource",
-      "type": "object",
-      "properties": {},
-      "description": "The merchant review data source."
+      }
     },
     "ProductChange": {
-      "description": "The change that happened to the product including old value, new value, country code as the region code and reporting context.",
-      "type": "object",
+      "id": "ProductChange",
       "properties": {
+        "regionCode": {
+          "description": "Countries that have the change (if applicable). Represented in the ISO 3166 format.",
+          "type": "string"
+        },
         "reportingContext": {
           "description": "Reporting contexts that have the change (if applicable). Currently this field supports only (`SHOPPING_ADS`, `LOCAL_INVENTORY_ADS`, `YOUTUBE_SHOPPING`, `YOUTUBE_CHECKOUT`, `YOUTUBE_AFFILIATE`) from the enum value [ReportingContextEnum](/merchant/api/reference/rest/Shared.Types/ReportingContextEnum)",
+          "enumDescriptions": [
+            "Not specified.",
+            "[Shopping ads](https://support.google.com/merchants/answer/6149970).",
+            "Deprecated: Use `DEMAND_GEN_ADS` instead. [Discovery and Demand Gen ads](https://support.google.com/merchants/answer/13389785).",
+            "[Demand Gen ads](https://support.google.com/merchants/answer/13389785).",
+            "[Demand Gen ads on Discover surface](https://support.google.com/merchants/answer/13389785).",
+            "[Video ads](https://support.google.com/google-ads/answer/6340491).",
+            "[Display ads](https://support.google.com/merchants/answer/6069387).",
+            "[Local inventory ads](https://support.google.com/merchants/answer/3271956).",
+            "[Vehicle inventory ads](https://support.google.com/merchants/answer/11544533).",
+            "[Free product listings](https://support.google.com/merchants/answer/9199328).",
+            "[Free product listings on UCP checkout](https://developers.google.com/merchant/ucp).",
+            "[Free local product listings](https://support.google.com/merchants/answer/9825611).",
+            "[Free local vehicle listings](https://support.google.com/merchants/answer/11544533).",
+            "[Youtube Affiliate](https://support.google.com/youtube/answer/13376398).",
+            "[YouTube Shopping](https://support.google.com/merchants/answer/13478370).",
+            "[Cloud retail](https://cloud.google.com/solutions/retail).",
+            "[Local cloud retail](https://cloud.google.com/solutions/retail).",
+            "[Product Reviews](https://support.google.com/merchants/answer/14620732).",
+            "[Merchant Reviews](https://developers.google.com/merchant-review-feeds).",
+            "YouTube Checkout ."
+          ],
           "enum": [
             "REPORTING_CONTEXT_ENUM_UNSPECIFIED",
             "SHOPPING_ADS",
@@ -384,28 +267,6 @@
             "YOUTUBE_CHECKOUT"
           ],
           "type": "string",
-          "enumDescriptions": [
-            "Not specified.",
-            "[Shopping ads](https://support.google.com/merchants/answer/6149970).",
-            "Deprecated: Use `DEMAND_GEN_ADS` instead. [Discovery and Demand Gen ads](https://support.google.com/merchants/answer/13389785).",
-            "[Demand Gen ads](https://support.google.com/merchants/answer/13389785).",
-            "[Demand Gen ads on Discover surface](https://support.google.com/merchants/answer/13389785).",
-            "[Video ads](https://support.google.com/google-ads/answer/6340491).",
-            "[Display ads](https://support.google.com/merchants/answer/6069387).",
-            "[Local inventory ads](https://support.google.com/merchants/answer/3271956).",
-            "[Vehicle inventory ads](https://support.google.com/merchants/answer/11544533).",
-            "[Free product listings](https://support.google.com/merchants/answer/9199328).",
-            "[Free product listings on UCP checkout](https://developers.google.com/merchant/ucp).",
-            "[Free local product listings](https://support.google.com/merchants/answer/9825611).",
-            "[Free local vehicle listings](https://support.google.com/merchants/answer/11544533).",
-            "[Youtube Affiliate](https://support.google.com/youtube/answer/13376398).",
-            "[YouTube Shopping](https://support.google.com/merchants/answer/13478370).",
-            "[Cloud retail](https://cloud.google.com/solutions/retail).",
-            "[Local cloud retail](https://cloud.google.com/solutions/retail).",
-            "[Product Reviews](https://support.google.com/merchants/answer/14620732).",
-            "[Merchant Reviews](https://developers.google.com/merchant-review-feeds).",
-            "YouTube Checkout ."
-          ],
           "enumDeprecated": [
             false,
             false,
@@ -436,140 +297,341 @@
         "newValue": {
           "description": "The new value of the changed resource or attribute. If empty, it means that the product was deleted. Will have one of these values : (`approved`, `pending`, `disapproved`, ``)",
           "type": "string"
-        },
-        "regionCode": {
-          "description": "Countries that have the change (if applicable). Represented in the ISO 3166 format.",
-          "type": "string"
         }
       },
-      "id": "ProductChange"
+      "description": "The change that happened to the product including old value, new value, country code as the region code and reporting context.",
+      "type": "object"
     },
-    "TimeOfDay": {
-      "description": "Represents a time of day. The date and time zone are either not significant or are specified elsewhere. An API may choose to allow leap seconds. Related types are google.type.Date and `google.protobuf.Timestamp`.",
+    "ProductReviewDataSource": {
+      "description": "The product review data source.",
       "type": "object",
-      "properties": {
-        "seconds": {
-          "description": "Seconds of a minute. Must be greater than or equal to 0 and typically must be less than or equal to 59. An API may allow the value 60 if it allows leap-seconds.",
-          "type": "integer",
-          "format": "int32"
-        },
-        "nanos": {
-          "format": "int32",
-          "type": "integer",
-          "description": "Fractions of seconds, in nanoseconds. Must be greater than or equal to 0 and less than or equal to 999,999,999."
-        },
-        "hours": {
-          "description": "Hours of a day in 24 hour format. Must be greater than or equal to 0 and typically must be less than or equal to 23. An API may choose to allow the value \"24:00:00\" for scenarios like business closing time.",
-          "format": "int32",
-          "type": "integer"
-        },
-        "minutes": {
-          "description": "Minutes of an hour. Must be greater than or equal to 0 and less than or equal to 59.",
-          "type": "integer",
-          "format": "int32"
-        }
-      },
-      "id": "TimeOfDay"
+      "properties": {},
+      "id": "ProductReviewDataSource"
+    },
+    "MerchantReviewDataSource": {
+      "properties": {},
+      "description": "The merchant review data source.",
+      "type": "object",
+      "id": "MerchantReviewDataSource"
     },
     "ListDataSourcesResponse": {
-      "description": "Response message for the ListDataSources method.",
-      "type": "object",
       "properties": {
         "dataSources": {
-          "type": "array",
           "items": {
             "$ref": "DataSource"
           },
-          "description": "The data sources from the specified account."
+          "description": "The data sources from the specified account.",
+          "type": "array"
         },
         "nextPageToken": {
           "description": "A token, which can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages.",
           "type": "string"
         }
       },
+      "description": "Response message for the ListDataSources method.",
+      "type": "object",
       "id": "ListDataSourcesResponse"
     },
-    "Issue": {
-      "id": "Issue",
+    "DataSource": {
+      "id": "DataSource",
+      "description": "The [data source](/merchant/api/guides/data-sources/overview) for the Merchant Center account.",
       "type": "object",
       "properties": {
-        "count": {
-          "format": "int64",
-          "type": "string",
-          "description": "Output only. The number of occurrences of the error in the file upload.",
-          "readOnly": true
+        "supplementalProductDataSource": {
+          "description": "The [supplemental data source](https://support.google.com/merchants/answer/7439058) for local and online products.",
+          "$ref": "SupplementalProductDataSource"
         },
-        "code": {
-          "type": "string",
-          "description": "Output only. The code of the error, for example, \"validation/invalid_value\". Returns \"?\" if the code is unknown.",
-          "readOnly": true
+        "promotionDataSource": {
+          "description": "The [promotion](https://support.google.com/merchants/answer/2906014) data source.",
+          "$ref": "PromotionDataSource"
         },
-        "severity": {
-          "description": "Output only. The severity of the issue.",
+        "input": {
+          "type": "string",
           "enum": [
-            "SEVERITY_UNSPECIFIED",
-            "WARNING",
-            "ERROR"
+            "INPUT_UNSPECIFIED",
+            "API",
+            "FILE",
+            "UI",
+            "AUTOFEED"
           ],
           "enumDescriptions": [
-            "Severity unspecified.",
-            "The issue is the warning.",
-            "The issue is an error."
+            "Input unspecified.",
+            "Represents data sources for which the data is primarily provided through the API.",
+            "Represents data sources for which the data is primarily provided through file input. Data can still be provided through the API.",
+            "The data source for products added directly in Merchant Center. This type of data source can not be created or updated through this API, only by Merchant Center UI. This type of data source is read only.",
+            "This is also known as [Automated feeds](https://support.google.com/merchants/answer/12158480) used to automatically build your product data. This type of data source can be enabled or disabled through the Accounts sub-API."
           ],
-          "type": "string",
+          "description": "Output only. Determines the type of input to the data source. Based on the input some settings might not work. Only generic data sources can be created through the API.",
           "readOnly": true
         },
-        "title": {
-          "type": "string",
-          "description": "Output only. The title of the issue, for example, \"Item too big\".",
-          "readOnly": true
+        "name": {
+          "description": "Required. Identifier. The name of the data source. Format: `accounts/{account}/dataSources/{datasource}`",
+          "type": "string"
         },
-        "description": {
-          "description": "Output only. The error description, for example, \"Your data source contains items which have too many attributes, or are too big. These items will be dropped\".",
+        "dataSourceId": {
+          "description": "Output only. The data source id.",
           "readOnly": true,
+          "type": "string",
+          "format": "int64"
+        },
+        "localInventoryDataSource": {
+          "description": "The [local inventory](https://support.google.com/merchants/answer/7023001) data source.",
+          "$ref": "LocalInventoryDataSource"
+        },
+        "displayName": {
+          "description": "Required. The displayed data source name in the Merchant Center UI.",
           "type": "string"
         },
-        "documentationUri": {
-          "type": "string",
-          "description": "Output only. Link to the documentation explaining the issue in more details, if available.",
-          "readOnly": true
+        "productReviewDataSource": {
+          "description": "The [product review](https://support.google.com/merchants/answer/7045996) data source.",
+          "$ref": "ProductReviewDataSource"
+        },
+        "fileInput": {
+          "$ref": "FileInput",
+          "description": "Optional. The field is used only when data is managed through a file."
+        },
+        "primaryProductDataSource": {
+          "description": "The [primary data source](https://support.google.com/merchants/answer/7439058) for local and online products.",
+          "$ref": "PrimaryProductDataSource"
+        },
+        "merchantReviewDataSource": {
+          "description": "The [merchant review](https://support.google.com/merchants/answer/7045996) data source.",
+          "$ref": "MerchantReviewDataSource"
+        },
+        "regionalInventoryDataSource": {
+          "description": "The [regional inventory](https://support.google.com/merchants/answer/7439058) data source.",
+          "$ref": "RegionalInventoryDataSource"
         }
-      },
-      "description": "An error occurring in the data source, like \"invalid price\"."
+      }
     },
-    "PromotionDataSource": {
-      "description": "The promotion data source.",
-      "type": "object",
+    "SupplementalProductDataSource": {
+      "id": "SupplementalProductDataSource",
       "properties": {
-        "targetCountry": {
-          "description": "Required. Immutable. The target country used as part of the unique identifier. Represented as a [CLDR territory code](https://github.com/unicode-org/cldr/blob/latest/common/main/en.xml). Promotions are only available in selected [countries](https://support.google.com/merchants/answer/4588460).",
-          "type": "string"
+        "referencingPrimaryDataSources": {
+          "description": "Output only. The (unordered and deduplicated) list of all primary data sources linked to this data source in either default or custom rules. Supplemental data source cannot be deleted before all links are removed.",
+          "readOnly": true,
+          "type": "array",
+          "items": {
+            "$ref": "DataSourceReference"
+          }
         },
         "contentLanguage": {
-          "description": "Required. Immutable. The two-letter ISO 639-1 language of the items in the data source.",
+          "description": "Optional. Immutable. The two-letter ISO 639-1 language of the items in the data source. `feedLabel` and `contentLanguage` must be either both set or unset. The fields can only be unset for data sources without file input. If set, the data source will only accept products matching this combination. If unset, the data source will accept produts without that restriction.",
+          "type": "string"
+        },
+        "feedLabel": {
+          "description": "Optional. Immutable. The feed label that is specified on the data source level. Must be less than or equal to 20 uppercase letters (A-Z), numbers (0-9), and dashes (-). `feedLabel` and `contentLanguage` must be either both set or unset for data sources with product content type. They must be set for data sources with a file input. The fields must be unset for data sources without file input. If set, the data source will only accept products matching this combination. If unset, the data source will accept produts without that restriction.",
           "type": "string"
         }
       },
-      "id": "PromotionDataSource"
+      "description": "The [supplemental data source](https://developers.google.com/merchant/api/guides/data-sources/api-sources#link-supplemental-data-source) for local and online products. After creation,you should make sure to link the supplemental product data source into one or more primary product data sources.",
+      "type": "object"
     },
-    "DataSourceReference": {
-      "id": "DataSourceReference",
-      "type": "object",
+    "PrimaryProductDataSource": {
+      "id": "PrimaryProductDataSource",
       "properties": {
-        "self": {
-          "description": "Self should be used to reference the primary data source itself.",
+        "contentLanguage": {
+          "description": "Optional. Immutable. The two-letter ISO 639-1 language of the items in the data source. `feedLabel` and `contentLanguage` must be either both set or unset. The fields can only be unset for data sources without file input. If set, the data source will only accept products matching this combination. If unset, the data source will accept products without that restriction.",
+          "type": "string"
+        },
+        "feedLabel": {
+          "description": "Optional. Immutable. The feed label that is specified on the data source level. Must be less than or equal to 20 uppercase letters (A-Z), numbers (0-9), and dashes (-). For more information about feed label, see [Create a primary data source for products](https://developers.google.com/merchant/api/guides/data-sources/api-sources#create-primary-data-source). `feedLabel` and `contentLanguage` must be either both set or unset for data sources with product content type. They must be set for data sources with a file input. If set, the data source will only accept products matching this combination. If unset, the data source will accept products without that restriction.",
+          "type": "string"
+        },
+        "destinations": {
+          "description": "Optional. A list of destinations describing where products of the data source can be shown. When retrieving the data source, the list contains all the destinations that can be used for the data source, including the ones that are disabled for the data source but enabled for the account. Only destinations that are enabled on the account, for example through program participation, can be enabled on the data source. If unset, during creation, the destinations will be inherited based on the account level program participation. If set, during creation or update, the data source will be set only for the specified destinations. Updating this field requires at least one destination.",
+          "type": "array",
+          "items": {
+            "$ref": "Destination"
+          }
+        },
+        "defaultRule": {
+          "description": "Optional. Default rule management of the data source. If set, the linked data sources will be replaced.",
+          "$ref": "DefaultRule"
+        },
+        "legacyLocal": {
+          "description": "Optional. Immutable. Determines whether the products of this data source are **only** targeting local destinations. Legacy local products are prefixed with `local~` in the product resource ID. For example, `accounts/123/products/local~en~US~sku123`.",
           "type": "boolean"
         },
-        "primaryDataSourceName": {
-          "description": "Optional. The name of the primary data source. Format: `accounts/{account}/dataSources/{datasource}`",
+        "countries": {
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional. The countries where the items may be displayed. Represented as a [CLDR territory code](https://github.com/unicode-org/cldr/blob/latest/common/main/en.xml).",
+          "type": "array"
+        }
+      },
+      "description": "The primary data source for local and online products.",
+      "type": "object"
+    },
+    "Empty": {
+      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
+      "type": "object",
+      "properties": {},
+      "id": "Empty"
+    },
+    "Destination": {
+      "properties": {
+        "destination": {
+          "enumDescriptions": [
+            "Not specified.",
+            "[Shopping ads](https://support.google.com/google-ads/answer/2454022).",
+            "[Display ads](https://support.google.com/merchants/answer/6069387).",
+            "[Local inventory ads](https://support.google.com/merchants/answer/3057972).",
+            "[Free listings](https://support.google.com/merchants/answer/9199328).",
+            "[Free local product listings](https://support.google.com/merchants/answer/9825611).",
+            "[YouTube Shopping](https://support.google.com/merchants/answer/12362804).",
+            "Youtube shopping checkout.",
+            "[Youtube Affiliate](https://support.google.com/youtube/answer/13376398).",
+            "[Free vehicle listings](https://support.google.com/merchants/answer/11189169).",
+            "[Vehicle ads](https://support.google.com/merchants/answer/11189169).",
+            "[Cloud retail](https://cloud.google.com/solutions/retail).",
+            "[Local cloud retail](https://cloud.google.com/solutions/retail)."
+          ],
+          "description": "[Marketing methods](https://support.google.com/merchants/answer/15130232) (also known as destination) selections.",
+          "type": "string",
+          "enum": [
+            "DESTINATION_ENUM_UNSPECIFIED",
+            "SHOPPING_ADS",
+            "DISPLAY_ADS",
+            "LOCAL_INVENTORY_ADS",
+            "FREE_LISTINGS",
+            "FREE_LOCAL_LISTINGS",
+            "YOUTUBE_SHOPPING",
+            "YOUTUBE_SHOPPING_CHECKOUT",
+            "YOUTUBE_AFFILIATE",
+            "FREE_VEHICLE_LISTINGS",
+            "VEHICLE_ADS",
+            "CLOUD_RETAIL",
+            "LOCAL_CLOUD_RETAIL"
+          ]
+        },
+        "state": {
+          "enum": [
+            "STATE_UNSPECIFIED",
+            "ENABLED",
+            "DISABLED"
+          ],
+          "description": "The state of the destination.",
+          "type": "string",
+          "enumDescriptions": [
+            "Not specified.",
+            "Indicates that the destination is enabled.",
+            "Indicates that the destination is disabled."
+          ]
+        }
+      },
+      "description": "Destinations also known as [Marketing methods](https://support.google.com/merchants/answer/15130232) selections.",
+      "type": "object",
+      "id": "Destination"
+    },
+    "FetchSettings": {
+      "description": "Fetch details to deliver the data source.",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Optional. Enables or pauses the fetch schedule.",
+          "type": "boolean"
+        },
+        "dayOfMonth": {
+          "description": "Optional. The day of the month when the data source file should be fetched (1-31). This field can only be set for monthly frequency.",
+          "type": "integer",
+          "format": "int32"
+        },
+        "fetchUri": {
+          "description": "Optional. The URL where the data source file can be fetched. Google Merchant Center supports automatic scheduled uploads using the HTTP, HTTPS or SFTP protocols, so the value will need to be a valid link using one of those three protocols. Immutable for Google Sheets files.",
           "type": "string"
         },
-        "supplementalDataSourceName": {
-          "description": "Optional. The name of the supplemental data source. Format: `accounts/{account}/dataSources/{datasource}`",
+        "username": {
+          "description": "Optional. An optional user name for fetch_uri. Used for [submitting data sources through SFTP](https://support.google.com/merchants/answer/13813117).",
+          "type": "string"
+        },
+        "dayOfWeek": {
+          "description": "Optional. The day of the week when the data source file should be fetched. This field can only be set for weekly frequency.",
+          "type": "string",
+          "enum": [
+            "DAY_OF_WEEK_UNSPECIFIED",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ],
+          "enumDescriptions": [
+            "The day of the week is unspecified.",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ]
+        },
+        "timeOfDay": {
+          "description": "Optional. The hour of the day when the data source file should be fetched. Minutes and seconds are not supported and will be ignored.",
+          "$ref": "TimeOfDay"
+        },
+        "password": {
+          "description": "Optional. An optional password for fetch_uri. Used for [submitting data sources through SFTP](https://support.google.com/merchants/answer/13813117).",
+          "type": "string"
+        },
+        "frequency": {
+          "enum": [
+            "FREQUENCY_UNSPECIFIED",
+            "FREQUENCY_DAILY",
+            "FREQUENCY_WEEKLY",
+            "FREQUENCY_MONTHLY"
+          ],
+          "description": "Required. The frequency describing fetch schedule.",
+          "type": "string",
+          "enumDescriptions": [
+            "Frequency unspecified.",
+            "The fetch happens every day.",
+            "The fetch happens every week.",
+            "The fetch happens every month."
+          ]
+        },
+        "timeZone": {
+          "description": "Optional. [Time zone](https://cldr.unicode.org) used for schedule. UTC by default. For example, \"America/Los_Angeles\".",
           "type": "string"
         }
       },
-      "description": "Data source reference can be used to manage related data sources within the data source service."
+      "id": "FetchSettings"
+    },
+    "FileInput": {
+      "properties": {
+        "fetchSettings": {
+          "description": "Optional. Fetch details to deliver the data source. It contains settings for `FETCH` and `GOOGLE_SHEETS` file input types. The required fields vary based on the frequency of fetching.",
+          "$ref": "FetchSettings"
+        },
+        "fileInputType": {
+          "enum": [
+            "FILE_INPUT_TYPE_UNSPECIFIED",
+            "UPLOAD",
+            "FETCH",
+            "GOOGLE_SHEETS"
+          ],
+          "type": "string",
+          "description": "Output only. The type of file input.",
+          "readOnly": true,
+          "enumDescriptions": [
+            "File input type unspecified.",
+            "The file is uploaded through SFTP, Google Cloud Storage or manually in the Merchant Center.",
+            "The file is fetched from the configured fetch_uri.",
+            "The file is fetched from Google Sheets specified in the fetch_uri. However, you can't set up `GOOGLE_SHEETS` as a data source through the API. To add `GOOGLE_SHEETS` as a data source through the Merchant Center, see [Add products to Merchant Center](https://support.google.com/merchants/answer/12158053)."
+          ]
+        },
+        "fileName": {
+          "description": "Optional. The file name of the data source. Required for `UPLOAD` file input type.",
+          "type": "string"
+        }
+      },
+      "description": "The data specific for file data sources. This field is empty for other data source inputs.",
+      "type": "object",
+      "id": "FileInput"
     },
     "LocalInventoryDataSource": {
       "description": "The local inventory data source type is only available for file inputs and can't be used to create API local inventory data sources.",
@@ -586,361 +648,69 @@
       },
       "id": "LocalInventoryDataSource"
     },
-    "FileUpload": {
-      "description": "The file upload of a specific data source, that is, the result of the retrieval of the data source at a certain timestamp computed asynchronously when the data source processing is finished. Only applicable to file data sources.",
-      "id": "FileUpload",
-      "type": "object",
+    "RegionalInventoryDataSource": {
+      "id": "RegionalInventoryDataSource",
       "properties": {
-        "itemsCreated": {
-          "format": "int64",
-          "type": "string",
-          "description": "Output only. The number of items in the data source that were created.",
-          "readOnly": true
-        },
-        "issues": {
-          "type": "array",
-          "description": "Output only. The list of issues occurring in the data source.",
-          "readOnly": true,
-          "items": {
-            "$ref": "Issue"
-          }
-        },
-        "dataSourceId": {
-          "format": "int64",
-          "type": "string",
-          "description": "Output only. The data source id.",
-          "readOnly": true
-        },
-        "itemsTotal": {
-          "description": "Output only. The number of items in the data source that were processed.",
-          "readOnly": true,
-          "format": "int64",
-          "type": "string"
-        },
-        "itemsUpdated": {
-          "type": "string",
-          "format": "int64",
-          "description": "Output only. The number of items in the data source that were updated.",
-          "readOnly": true
-        },
-        "name": {
-          "description": "Identifier. The name of the data source file upload. Format: `{datasource.name=accounts/{account}/dataSources/{datasource}/fileUploads/{fileupload}}`",
-          "type": "string"
-        },
-        "uploadTime": {
-          "description": "Output only. The date at which the file of the data source was uploaded.",
-          "readOnly": true,
-          "format": "google-datetime",
-          "type": "string"
-        },
-        "processingState": {
-          "description": "Output only. The processing state of the data source.",
-          "enum": [
-            "PROCESSING_STATE_UNSPECIFIED",
-            "FAILED",
-            "IN_PROGRESS",
-            "SUCCEEDED"
-          ],
-          "enumDescriptions": [
-            "Processing state unspecified.",
-            "The data source could not be processed or all the items had errors.",
-            "The data source is being processed.",
-            "The data source was processed successfully, though some items might have had errors."
-          ],
-          "type": "string",
-          "readOnly": true
-        }
-      }
-    },
-    "SupplementalProductDataSource": {
-      "description": "The [supplemental data source](https://developers.google.com/merchant/api/guides/data-sources/api-sources#link-supplemental-data-source) for local and online products. After creation,you should make sure to link the supplemental product data source into one or more primary product data sources.",
-      "id": "SupplementalProductDataSource",
-      "type": "object",
-      "properties": {
-        "contentLanguage": {
-          "description": "Optional. Immutable. The two-letter ISO 639-1 language of the items in the data source. `feedLabel` and `contentLanguage` must be either both set or unset. The fields can only be unset for data sources without file input. If set, the data source will only accept products matching this combination. If unset, the data source will accept produts without that restriction.",
-          "type": "string"
-        },
-        "referencingPrimaryDataSources": {
-          "type": "array",
-          "description": "Output only. The (unordered and deduplicated) list of all primary data sources linked to this data source in either default or custom rules. Supplemental data source cannot be deleted before all links are removed.",
-          "readOnly": true,
-          "items": {
-            "$ref": "DataSourceReference"
-          }
-        },
         "feedLabel": {
-          "description": "Optional. Immutable. The feed label that is specified on the data source level. Must be less than or equal to 20 uppercase letters (A-Z), numbers (0-9), and dashes (-). `feedLabel` and `contentLanguage` must be either both set or unset for data sources with product content type. They must be set for data sources with a file input. The fields must be unset for data sources without file input. If set, the data source will only accept products matching this combination. If unset, the data source will accept produts without that restriction.",
+          "description": "Required. Immutable. The feed label of the offers to which the regional inventory is provided. Must be less than or equal to 20 uppercase letters (A-Z), numbers (0-9), and dashes (-).",
           "type": "string"
-        }
-      }
-    },
-    "FileInput": {
-      "id": "FileInput",
-      "type": "object",
-      "properties": {
-        "fileInputType": {
-          "readOnly": true,
-          "description": "Output only. The type of file input.",
-          "enum": [
-            "FILE_INPUT_TYPE_UNSPECIFIED",
-            "UPLOAD",
-            "FETCH",
-            "GOOGLE_SHEETS"
-          ],
-          "type": "string",
-          "enumDescriptions": [
-            "File input type unspecified.",
-            "The file is uploaded through SFTP, Google Cloud Storage or manually in the Merchant Center.",
-            "The file is fetched from the configured fetch_uri.",
-            "The file is fetched from Google Sheets specified in the fetch_uri. However, you can't set up `GOOGLE_SHEETS` as a data source through the API. To add `GOOGLE_SHEETS` as a data source through the Merchant Center, see [Add products to Merchant Center](https://support.google.com/merchants/answer/12158053)."
-          ]
         },
-        "fetchSettings": {
-          "description": "Optional. Fetch details to deliver the data source. It contains settings for `FETCH` and `GOOGLE_SHEETS` file input types. The required fields vary based on the frequency of fetching.",
-          "$ref": "FetchSettings"
-        },
-        "fileName": {
-          "description": "Optional. The file name of the data source. Required for `UPLOAD` file input type.",
+        "contentLanguage": {
+          "description": "Required. Immutable. The two-letter ISO 639-1 language of the items to which the regional inventory is provided.",
           "type": "string"
         }
       },
-      "description": "The data specific for file data sources. This field is empty for other data source inputs."
+      "type": "object"
     },
-    "FetchDataSourceRequest": {
-      "description": "Request message for the FetchDataSource method.",
-      "id": "FetchDataSourceRequest",
-      "type": "object",
-      "properties": {}
-    }
-  },
-  "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
-  },
-  "revision": "20260423",
-  "resources": {
-    "accounts": {
-      "resources": {
-        "dataSources": {
-          "methods": {
-            "patch": {
-              "parameterOrder": [
-                "name"
-              ],
-              "id": "merchantapi.accounts.dataSources.patch",
-              "path": "datasources/v1/{+name}",
-              "flatPath": "datasources/v1/accounts/{accountsId}/dataSources/{dataSourcesId}",
-              "request": {
-                "$ref": "DataSource"
-              },
-              "scopes": [
-                "https://www.googleapis.com/auth/content"
-              ],
-              "httpMethod": "PATCH",
-              "parameters": {
-                "name": {
-                  "required": true,
-                  "description": "Required. Identifier. The name of the data source. Format: `accounts/{account}/dataSources/{datasource}`",
-                  "location": "path",
-                  "pattern": "^accounts/[^/]+/dataSources/[^/]+$",
-                  "type": "string"
-                },
-                "updateMask": {
-                  "location": "query",
-                  "format": "google-fieldmask",
-                  "type": "string",
-                  "description": "Required. The list of data source fields to be updated. Fields specified in the update mask without a value specified in the body will be deleted from the data source. Providing special \"*\" value for full data source replacement is not supported. For example, If you insert `updateMask=displayName` in the request, it will only update the `displayName` leaving all other fields untouched."
-                }
-              },
-              "response": {
-                "$ref": "DataSource"
-              },
-              "description": "Updates the existing data source configuration. The fields that are set in the update mask but not provided in the resource will be deleted."
-            },
-            "get": {
-              "flatPath": "datasources/v1/accounts/{accountsId}/dataSources/{dataSourcesId}",
-              "scopes": [
-                "https://www.googleapis.com/auth/content"
-              ],
-              "httpMethod": "GET",
-              "parameters": {
-                "name": {
-                  "pattern": "^accounts/[^/]+/dataSources/[^/]+$",
-                  "type": "string",
-                  "location": "path",
-                  "description": "Required. The name of the data source to retrieve. Format: `accounts/{account}/dataSources/{datasource}`",
-                  "required": true
-                }
-              },
-              "response": {
-                "$ref": "DataSource"
-              },
-              "description": "Retrieves the data source configuration for the given account.",
-              "parameterOrder": [
-                "name"
-              ],
-              "path": "datasources/v1/{+name}",
-              "id": "merchantapi.accounts.dataSources.get"
-            },
-            "list": {
-              "flatPath": "datasources/v1/accounts/{accountsId}/dataSources",
-              "httpMethod": "GET",
-              "parameters": {
-                "parent": {
-                  "required": true,
-                  "description": "Required. The account to list data sources for. Format: `accounts/{account}`",
-                  "location": "path",
-                  "pattern": "^accounts/[^/]+$",
-                  "type": "string"
-                },
-                "pageSize": {
-                  "description": "Optional. The maximum number of data sources to return. The service may return fewer than this value. The maximum value is 1000; values above 1000 will be coerced to 1000. If unspecified, the maximum number of data sources will be returned.",
-                  "location": "query",
-                  "format": "int32",
-                  "type": "integer"
-                },
-                "pageToken": {
-                  "description": "Optional. A page token, received from a previous `ListDataSources` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListDataSources` must match the call that provided the page token.",
-                  "location": "query",
-                  "type": "string"
-                }
-              },
-              "response": {
-                "$ref": "ListDataSourcesResponse"
-              },
-              "description": "Lists the configurations for data sources for the given account.",
-              "scopes": [
-                "https://www.googleapis.com/auth/content"
-              ],
-              "parameterOrder": [
-                "parent"
-              ],
-              "id": "merchantapi.accounts.dataSources.list",
-              "path": "datasources/v1/{+parent}/dataSources"
-            },
-            "create": {
-              "request": {
-                "$ref": "DataSource"
-              },
-              "flatPath": "datasources/v1/accounts/{accountsId}/dataSources",
-              "scopes": [
-                "https://www.googleapis.com/auth/content"
-              ],
-              "httpMethod": "POST",
-              "parameters": {
-                "parent": {
-                  "description": "Required. The account where this data source will be created. Format: `accounts/{account}`",
-                  "required": true,
-                  "pattern": "^accounts/[^/]+$",
-                  "type": "string",
-                  "location": "path"
-                }
-              },
-              "response": {
-                "$ref": "DataSource"
-              },
-              "description": "Creates the new data source configuration for the given account. This method always creates a new data source.",
-              "parameterOrder": [
-                "parent"
-              ],
-              "path": "datasources/v1/{+parent}/dataSources",
-              "id": "merchantapi.accounts.dataSources.create"
-            },
-            "delete": {
-              "flatPath": "datasources/v1/accounts/{accountsId}/dataSources/{dataSourcesId}",
-              "scopes": [
-                "https://www.googleapis.com/auth/content"
-              ],
-              "httpMethod": "DELETE",
-              "parameters": {
-                "name": {
-                  "required": true,
-                  "description": "Required. The name of the data source to delete. Format: `accounts/{account}/dataSources/{datasource}`",
-                  "location": "path",
-                  "pattern": "^accounts/[^/]+/dataSources/[^/]+$",
-                  "type": "string"
-                }
-              },
-              "response": {
-                "$ref": "Empty"
-              },
-              "description": "Deletes a data source from your Merchant Center account.",
-              "parameterOrder": [
-                "name"
-              ],
-              "id": "merchantapi.accounts.dataSources.delete",
-              "path": "datasources/v1/{+name}"
-            },
-            "fetch": {
-              "id": "merchantapi.accounts.dataSources.fetch",
-              "path": "datasources/v1/{+name}:fetch",
-              "parameterOrder": [
-                "name"
-              ],
-              "httpMethod": "POST",
-              "parameters": {
-                "name": {
-                  "description": "Required. The name of the data source resource to fetch. Format: `accounts/{account}/dataSources/{datasource}`",
-                  "required": true,
-                  "pattern": "^accounts/[^/]+/dataSources/[^/]+$",
-                  "type": "string",
-                  "location": "path"
-                }
-              },
-              "response": {
-                "$ref": "Empty"
-              },
-              "description": "Performs the data fetch immediately (even outside fetch schedule) on a data source from your Merchant Center Account. If you need to call this method more than once per day, you should use the Products service to update your product data instead. This method only works on data sources with a file input set.",
-              "scopes": [
-                "https://www.googleapis.com/auth/content"
-              ],
-              "flatPath": "datasources/v1/accounts/{accountsId}/dataSources/{dataSourcesId}:fetch",
-              "request": {
-                "$ref": "FetchDataSourceRequest"
-              }
-            }
-          },
-          "resources": {
-            "fileUploads": {
-              "methods": {
-                "get": {
-                  "id": "merchantapi.accounts.dataSources.fileUploads.get",
-                  "path": "datasources/v1/{+name}",
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "scopes": [
-                    "https://www.googleapis.com/auth/content"
-                  ],
-                  "httpMethod": "GET",
-                  "parameters": {
-                    "name": {
-                      "location": "path",
-                      "pattern": "^accounts/[^/]+/dataSources/[^/]+/fileUploads/[^/]+$",
-                      "type": "string",
-                      "required": true,
-                      "description": "Required. The name of the data source file upload to retrieve. Format: `accounts/{account}/dataSources/{datasource}/fileUploads/latest`"
-                    }
-                  },
-                  "response": {
-                    "$ref": "FileUpload"
-                  },
-                  "description": "Gets the latest data source file upload. Only the `latest` alias is accepted for a file upload.",
-                  "flatPath": "datasources/v1/accounts/{accountsId}/dataSources/{dataSourcesId}/fileUploads/{fileUploadsId}"
-                }
-              }
-            }
-          }
+    "Issue": {
+      "properties": {
+        "severity": {
+          "enumDescriptions": [
+            "Severity unspecified.",
+            "The issue is the warning.",
+            "The issue is an error."
+          ],
+          "description": "Output only. The severity of the issue.",
+          "readOnly": true,
+          "type": "string",
+          "enum": [
+            "SEVERITY_UNSPECIFIED",
+            "WARNING",
+            "ERROR"
+          ]
+        },
+        "title": {
+          "description": "Output only. The title of the issue, for example, \"Item too big\".",
+          "readOnly": true,
+          "type": "string"
+        },
+        "count": {
+          "description": "Output only. The number of occurrences of the error in the file upload.",
+          "readOnly": true,
+          "type": "string",
+          "format": "int64"
+        },
+        "code": {
+          "description": "Output only. The code of the error, for example, \"validation/invalid_value\". Returns \"?\" if the code is unknown.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "documentationUri": {
+          "description": "Output only. Link to the documentation explaining the issue in more details, if available.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "description": {
+          "description": "Output only. The error description, for example, \"Your data source contains items which have too many attributes, or are too big. These items will be dropped\".",
+          "readOnly": true,
+          "type": "string"
         }
-      }
+      },
+      "description": "An error occurring in the data source, like \"invalid price\".",
+      "type": "object",
+      "id": "Issue"
     }
   },
-  "documentationLink": "https://developers.google.com/merchant/api",
-  "ownerName": "Google",
-  "rootUrl": "https://merchantapi.googleapis.com/",
-  "protocol": "rest",
-  "description": "Programmatically manage your Merchant Center Accounts.",
   "auth": {
     "oauth2": {
       "scopes": {
@@ -950,68 +720,249 @@
       }
     }
   },
+  "revision": "20260423",
   "baseUrl": "https://merchantapi.googleapis.com/",
-  "version_module": true,
+  "canonicalName": "Merchant",
   "kind": "discovery#restDescription",
+  "title": "Merchant API",
+  "servicePath": "",
+  "icons": {
+    "x32": "http://www.google.com/images/icons/product/search-32.gif",
+    "x16": "http://www.google.com/images/icons/product/search-16.gif"
+  },
+  "resources": {
+    "accounts": {
+      "resources": {
+        "dataSources": {
+          "methods": {
+            "delete": {
+              "parameterOrder": [
+                "name"
+              ],
+              "httpMethod": "DELETE",
+              "parameters": {
+                "name": {
+                  "description": "Required. The name of the data source to delete. Format: `accounts/{account}/dataSources/{datasource}`",
+                  "location": "path",
+                  "pattern": "^accounts/[^/]+/dataSources/[^/]+$",
+                  "required": true,
+                  "type": "string"
+                }
+              },
+              "response": {
+                "$ref": "Empty"
+              },
+              "path": "datasources/v1/{+name}",
+              "scopes": [
+                "https://www.googleapis.com/auth/content"
+              ],
+              "description": "Deletes a data source from your Merchant Center account.",
+              "flatPath": "datasources/v1/accounts/{accountsId}/dataSources/{dataSourcesId}",
+              "id": "merchantapi.accounts.dataSources.delete"
+            },
+            "fetch": {
+              "parameterOrder": [
+                "name"
+              ],
+              "httpMethod": "POST",
+              "parameters": {
+                "name": {
+                  "description": "Required. The name of the data source resource to fetch. Format: `accounts/{account}/dataSources/{datasource}`",
+                  "location": "path",
+                  "pattern": "^accounts/[^/]+/dataSources/[^/]+$",
+                  "required": true,
+                  "type": "string"
+                }
+              },
+              "response": {
+                "$ref": "Empty"
+              },
+              "path": "datasources/v1/{+name}:fetch",
+              "scopes": [
+                "https://www.googleapis.com/auth/content"
+              ],
+              "description": "Performs the data fetch immediately (even outside fetch schedule) on a data source from your Merchant Center Account. If you need to call this method more than once per day, you should use the Products service to update your product data instead. This method only works on data sources with a file input set.",
+              "id": "merchantapi.accounts.dataSources.fetch",
+              "flatPath": "datasources/v1/accounts/{accountsId}/dataSources/{dataSourcesId}:fetch",
+              "request": {
+                "$ref": "FetchDataSourceRequest"
+              }
+            },
+            "get": {
+              "flatPath": "datasources/v1/accounts/{accountsId}/dataSources/{dataSourcesId}",
+              "id": "merchantapi.accounts.dataSources.get",
+              "path": "datasources/v1/{+name}",
+              "scopes": [
+                "https://www.googleapis.com/auth/content"
+              ],
+              "description": "Retrieves the data source configuration for the given account.",
+              "httpMethod": "GET",
+              "parameters": {
+                "name": {
+                  "pattern": "^accounts/[^/]+/dataSources/[^/]+$",
+                  "required": true,
+                  "type": "string",
+                  "location": "path",
+                  "description": "Required. The name of the data source to retrieve. Format: `accounts/{account}/dataSources/{datasource}`"
+                }
+              },
+              "response": {
+                "$ref": "DataSource"
+              },
+              "parameterOrder": [
+                "name"
+              ]
+            },
+            "list": {
+              "response": {
+                "$ref": "ListDataSourcesResponse"
+              },
+              "httpMethod": "GET",
+              "parameters": {
+                "parent": {
+                  "location": "path",
+                  "description": "Required. The account to list data sources for. Format: `accounts/{account}`",
+                  "type": "string",
+                  "pattern": "^accounts/[^/]+$",
+                  "required": true
+                },
+                "pageSize": {
+                  "description": "Optional. The maximum number of data sources to return. The service may return fewer than this value. The maximum value is 1000; values above 1000 will be coerced to 1000. If unspecified, the maximum number of data sources will be returned.",
+                  "type": "integer",
+                  "format": "int32",
+                  "location": "query"
+                },
+                "pageToken": {
+                  "description": "Optional. A page token, received from a previous `ListDataSources` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListDataSources` must match the call that provided the page token.",
+                  "type": "string",
+                  "location": "query"
+                }
+              },
+              "parameterOrder": [
+                "parent"
+              ],
+              "id": "merchantapi.accounts.dataSources.list",
+              "flatPath": "datasources/v1/accounts/{accountsId}/dataSources",
+              "path": "datasources/v1/{+parent}/dataSources",
+              "scopes": [
+                "https://www.googleapis.com/auth/content"
+              ],
+              "description": "Lists the configurations for data sources for the given account."
+            },
+            "create": {
+              "flatPath": "datasources/v1/accounts/{accountsId}/dataSources",
+              "request": {
+                "$ref": "DataSource"
+              },
+              "id": "merchantapi.accounts.dataSources.create",
+              "path": "datasources/v1/{+parent}/dataSources",
+              "scopes": [
+                "https://www.googleapis.com/auth/content"
+              ],
+              "description": "Creates the new data source configuration for the given account. This method always creates a new data source.",
+              "httpMethod": "POST",
+              "parameters": {
+                "parent": {
+                  "description": "Required. The account where this data source will be created. Format: `accounts/{account}`",
+                  "location": "path",
+                  "type": "string",
+                  "pattern": "^accounts/[^/]+$",
+                  "required": true
+                }
+              },
+              "response": {
+                "$ref": "DataSource"
+              },
+              "parameterOrder": [
+                "parent"
+              ]
+            },
+            "patch": {
+              "request": {
+                "$ref": "DataSource"
+              },
+              "flatPath": "datasources/v1/accounts/{accountsId}/dataSources/{dataSourcesId}",
+              "id": "merchantapi.accounts.dataSources.patch",
+              "path": "datasources/v1/{+name}",
+              "scopes": [
+                "https://www.googleapis.com/auth/content"
+              ],
+              "description": "Updates the existing data source configuration. The fields that are set in the update mask but not provided in the resource will be deleted.",
+              "response": {
+                "$ref": "DataSource"
+              },
+              "httpMethod": "PATCH",
+              "parameters": {
+                "updateMask": {
+                  "location": "query",
+                  "description": "Required. The list of data source fields to be updated. Fields specified in the update mask without a value specified in the body will be deleted from the data source. Providing special \"*\" value for full data source replacement is not supported. For example, If you insert `updateMask=displayName` in the request, it will only update the `displayName` leaving all other fields untouched.",
+                  "type": "string",
+                  "format": "google-fieldmask"
+                },
+                "name": {
+                  "description": "Required. Identifier. The name of the data source. Format: `accounts/{account}/dataSources/{datasource}`",
+                  "location": "path",
+                  "type": "string",
+                  "pattern": "^accounts/[^/]+/dataSources/[^/]+$",
+                  "required": true
+                }
+              },
+              "parameterOrder": [
+                "name"
+              ]
+            }
+          },
+          "resources": {
+            "fileUploads": {
+              "methods": {
+                "get": {
+                  "path": "datasources/v1/{+name}",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/content"
+                  ],
+                  "description": "Gets the latest data source file upload. Only the `latest` alias is accepted for a file upload.",
+                  "flatPath": "datasources/v1/accounts/{accountsId}/dataSources/{dataSourcesId}/fileUploads/{fileUploadsId}",
+                  "id": "merchantapi.accounts.dataSources.fileUploads.get",
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "httpMethod": "GET",
+                  "parameters": {
+                    "name": {
+                      "description": "Required. The name of the data source file upload to retrieve. Format: `accounts/{account}/dataSources/{datasource}/fileUploads/latest`",
+                      "location": "path",
+                      "pattern": "^accounts/[^/]+/dataSources/[^/]+/fileUploads/[^/]+$",
+                      "required": true,
+                      "type": "string"
+                    }
+                  },
+                  "response": {
+                    "$ref": "FileUpload"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "ownerName": "Google",
+  "batchPath": "batch",
+  "mtlsRootUrl": "https://merchantapi.mtls.googleapis.com/",
   "version": "datasources_v1",
+  "ownerDomain": "google.com",
+  "discoveryVersion": "v1",
+  "version_module": true,
+  "id": "merchantapi:datasources_v1",
+  "description": "Programmatically manage your Merchant Center Accounts.",
+  "documentationLink": "https://developers.google.com/merchant/api",
+  "fullyEncodeReservedExpansion": true,
   "parameters": {
-    "upload_protocol": {
-      "location": "query",
-      "type": "string",
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\")."
-    },
-    "key": {
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
-      "location": "query",
-      "type": "string"
-    },
-    "quotaUser": {
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
-      "type": "string",
-      "location": "query"
-    },
-    "access_token": {
-      "type": "string",
-      "location": "query",
-      "description": "OAuth access token."
-    },
-    "alt": {
-      "description": "Data format for response.",
-      "enum": [
-        "json",
-        "media",
-        "proto"
-      ],
-      "enumDescriptions": [
-        "Responses with Content-Type of application/json",
-        "Media download with context-dependent Content-Type",
-        "Responses with Content-Type of application/x-protobuf"
-      ],
-      "location": "query",
-      "type": "string",
-      "default": "json"
-    },
-    "oauth_token": {
-      "description": "OAuth 2.0 token for the current user.",
-      "location": "query",
-      "type": "string"
-    },
-    "$.xgafv": {
-      "description": "V1 error format.",
-      "enum": [
-        "1",
-        "2"
-      ],
-      "type": "string",
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ],
-      "location": "query"
-    },
-    "fields": {
-      "description": "Selector specifying which fields to include in a partial response.",
-      "type": "string",
+    "prettyPrint": {
+      "type": "boolean",
+      "description": "Returns response with indentations and line breaks.",
+      "default": "true",
       "location": "query"
     },
     "callback": {
@@ -1019,22 +970,71 @@
       "type": "string",
       "description": "JSONP"
     },
+    "$.xgafv": {
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ],
+      "location": "query",
+      "description": "V1 error format.",
+      "type": "string",
+      "enum": [
+        "1",
+        "2"
+      ]
+    },
+    "key": {
+      "location": "query",
+      "type": "string",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token."
+    },
+    "quotaUser": {
+      "location": "query",
+      "type": "string",
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters."
+    },
+    "fields": {
+      "type": "string",
+      "description": "Selector specifying which fields to include in a partial response.",
+      "location": "query"
+    },
     "uploadType": {
       "type": "string",
-      "location": "query",
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\")."
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
+      "location": "query"
     },
-    "prettyPrint": {
-      "description": "Returns response with indentations and line breaks.",
-      "default": "true",
+    "alt": {
+      "description": "Data format for response.",
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ],
       "location": "query",
-      "type": "boolean"
+      "type": "string",
+      "default": "json",
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ]
+    },
+    "access_token": {
+      "type": "string",
+      "description": "OAuth access token.",
+      "location": "query"
+    },
+    "upload_protocol": {
+      "type": "string",
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
+      "location": "query"
+    },
+    "oauth_token": {
+      "type": "string",
+      "description": "OAuth 2.0 token for the current user.",
+      "location": "query"
     }
   },
-  "basePath": "",
-  "servicePath": "",
   "name": "merchantapi",
-  "id": "merchantapi:datasources_v1",
-  "title": "Merchant API",
-  "fullyEncodeReservedExpansion": true
+  "protocol": "rest"
 }
