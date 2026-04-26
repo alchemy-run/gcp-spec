@@ -1,66 +1,48 @@
 {
-  "basePath": "",
+  "discoveryVersion": "v1",
+  "mtlsRootUrl": "https://mybusinessqanda.mtls.googleapis.com/",
+  "rootUrl": "https://mybusinessqanda.googleapis.com/",
   "schemas": {
-    "Author": {
-      "id": "Author",
+    "ListQuestionsResponse": {
+      "description": "Response message for QuestionsAndAnswers.ListQuestions",
+      "id": "ListQuestionsResponse",
       "type": "object",
       "properties": {
-        "type": {
-          "enum": [
-            "AUTHOR_TYPE_UNSPECIFIED",
-            "REGULAR_USER",
-            "LOCAL_GUIDE",
-            "MERCHANT"
-          ],
-          "type": "string",
-          "enumDescriptions": [
-            "This should not be used.",
-            "A regular user.",
-            "A Local Guide",
-            "The owner/manager of the location"
-          ],
-          "description": "The type of user the author is."
+        "questions": {
+          "description": "The requested questions,",
+          "type": "array",
+          "items": {
+            "$ref": "Question"
+          }
         },
-        "displayName": {
-          "description": "The display name of the user",
+        "nextPageToken": {
+          "description": "If the number of questions exceeds the requested max page size, this field is populated with a token to fetch the next page of questions on a subsequent call. If there are no more questions, this field is not present in the response.",
           "type": "string"
         },
-        "profilePhotoUri": {
-          "description": "The profile photo URI of the user.",
-          "type": "string"
+        "totalSize": {
+          "description": "The total number of questions posted for this location across all pages.",
+          "format": "int32",
+          "type": "integer"
         }
-      },
-      "description": "Represents the author of a question or answer"
+      }
     },
     "Answer": {
       "id": "Answer",
-      "description": "Represents an answer to a question",
       "type": "object",
       "properties": {
-        "text": {
-          "type": "string",
-          "description": "Required. The text of the answer. It should contain at least one non-whitespace character. The maximum length is 4096 characters."
-        },
         "createTime": {
           "description": "Output only. The timestamp for when the answer was written. Only retrieved during ListResponse fetching.",
           "format": "google-datetime",
-          "type": "string",
-          "readOnly": true
+          "readOnly": true,
+          "type": "string"
         },
-        "upvoteCount": {
-          "type": "integer",
-          "description": "Output only. The number of upvotes for the answer.",
-          "format": "int32",
-          "readOnly": true
-        },
-        "name": {
-          "description": "Output only. The unique name for the answer locations/*/questions/*/answers/*",
-          "type": "string",
-          "readOnly": true
+        "text": {
+          "description": "Required. The text of the answer. It should contain at least one non-whitespace character. The maximum length is 4096 characters.",
+          "type": "string"
         },
         "author": {
-          "readOnly": true,
           "description": "Output only. The author of the answer. Will only be set during list operations.",
+          "readOnly": true,
           "$ref": "Author"
         },
         "updateTime": {
@@ -68,6 +50,41 @@
           "type": "string",
           "description": "Output only. The timestamp for when the answer was last modified.",
           "format": "google-datetime"
+        },
+        "upvoteCount": {
+          "description": "Output only. The number of upvotes for the answer.",
+          "format": "int32",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "name": {
+          "description": "Output only. The unique name for the answer locations/*/questions/*/answers/*",
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "description": "Represents an answer to a question"
+    },
+    "ListAnswersResponse": {
+      "description": "Response message for QuestionsAndAnswers.ListAnswers",
+      "id": "ListAnswersResponse",
+      "type": "object",
+      "properties": {
+        "nextPageToken": {
+          "description": "If the number of answers exceeds the requested max page size, this field is populated with a token to fetch the next page of answers on a subsequent call. If there are no more answers, this field is not present in the response.",
+          "type": "string"
+        },
+        "totalSize": {
+          "type": "integer",
+          "description": "The total number of answers posted for this question across all pages.",
+          "format": "int32"
+        },
+        "answers": {
+          "description": "The requested answers.",
+          "type": "array",
+          "items": {
+            "$ref": "Answer"
+          }
         }
       }
     },
@@ -77,310 +94,197 @@
       "properties": {},
       "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }"
     },
-    "Question": {
-      "id": "Question",
+    "Author": {
+      "id": "Author",
       "type": "object",
       "properties": {
-        "name": {
-          "description": "Immutable. The unique name for the question. locations/*/questions/* This field will be ignored if set during question creation.",
+        "type": {
+          "description": "The type of user the author is.",
+          "enumDescriptions": [
+            "This should not be used.",
+            "A regular user.",
+            "A Local Guide",
+            "The owner/manager of the location"
+          ],
+          "type": "string",
+          "enum": [
+            "AUTHOR_TYPE_UNSPECIFIED",
+            "REGULAR_USER",
+            "LOCAL_GUIDE",
+            "MERCHANT"
+          ]
+        },
+        "profilePhotoUri": {
+          "description": "The profile photo URI of the user.",
           "type": "string"
         },
+        "displayName": {
+          "description": "The display name of the user",
+          "type": "string"
+        }
+      },
+      "description": "Represents the author of a question or answer"
+    },
+    "Question": {
+      "description": "Represents a single question and some of its answers.",
+      "properties": {
         "author": {
+          "description": "Output only. The author of the question.",
           "readOnly": true,
-          "$ref": "Author",
-          "description": "Output only. The author of the question."
+          "$ref": "Author"
         },
         "updateTime": {
+          "type": "string",
           "readOnly": true,
           "description": "Output only. The timestamp for when the question was last modified.",
-          "format": "google-datetime",
-          "type": "string"
+          "format": "google-datetime"
+        },
+        "topAnswers": {
+          "description": "Output only. A list of answers to the question, sorted by upvotes. This may not be a complete list of answers depending on the request parameters (answers_per_question)",
+          "readOnly": true,
+          "type": "array",
+          "items": {
+            "$ref": "Answer"
+          }
         },
         "createTime": {
           "description": "Output only. The timestamp for when the question was written.",
           "format": "google-datetime",
-          "type": "string",
-          "readOnly": true
-        },
-        "topAnswers": {
           "readOnly": true,
-          "type": "array",
-          "description": "Output only. A list of answers to the question, sorted by upvotes. This may not be a complete list of answers depending on the request parameters (answers_per_question)",
-          "items": {
-            "$ref": "Answer"
-          }
-        },
-        "totalAnswerCount": {
-          "readOnly": true,
-          "description": "Output only. The total number of answers posted for this question.",
-          "format": "int32",
-          "type": "integer"
-        },
-        "upvoteCount": {
-          "readOnly": true,
-          "description": "Output only. The number of upvotes for the question.",
-          "format": "int32",
-          "type": "integer"
+          "type": "string"
         },
         "text": {
           "description": "Required. The text of the question. It should contain at least three words and the total length should be greater than or equal to 10 characters. The maximum length is 4096 characters.",
           "type": "string"
-        }
-      },
-      "description": "Represents a single question and some of its answers."
-    },
-    "ListQuestionsResponse": {
-      "id": "ListQuestionsResponse",
-      "type": "object",
-      "properties": {
-        "nextPageToken": {
-          "description": "If the number of questions exceeds the requested max page size, this field is populated with a token to fetch the next page of questions on a subsequent call. If there are no more questions, this field is not present in the response.",
+        },
+        "name": {
+          "description": "Immutable. The unique name for the question. locations/*/questions/* This field will be ignored if set during question creation.",
           "type": "string"
         },
-        "totalSize": {
+        "upvoteCount": {
+          "readOnly": true,
           "type": "integer",
-          "description": "The total number of questions posted for this location across all pages.",
+          "description": "Output only. The number of upvotes for the question.",
           "format": "int32"
         },
-        "questions": {
-          "type": "array",
-          "description": "The requested questions,",
-          "items": {
-            "$ref": "Question"
-          }
+        "totalAnswerCount": {
+          "readOnly": true,
+          "type": "integer",
+          "description": "Output only. The total number of answers posted for this question.",
+          "format": "int32"
         }
       },
-      "description": "Response message for QuestionsAndAnswers.ListQuestions"
-    },
-    "ListAnswersResponse": {
-      "id": "ListAnswersResponse",
-      "description": "Response message for QuestionsAndAnswers.ListAnswers",
-      "type": "object",
-      "properties": {
-        "nextPageToken": {
-          "type": "string",
-          "description": "If the number of answers exceeds the requested max page size, this field is populated with a token to fetch the next page of answers on a subsequent call. If there are no more answers, this field is not present in the response."
-        },
-        "answers": {
-          "description": "The requested answers.",
-          "items": {
-            "$ref": "Answer"
-          },
-          "type": "array"
-        },
-        "totalSize": {
-          "type": "integer",
-          "description": "The total number of answers posted for this question across all pages.",
-          "format": "int32"
-        }
-      }
+      "id": "Question",
+      "type": "object"
     },
     "UpsertAnswerRequest": {
-      "type": "object",
       "properties": {
         "answer": {
-          "$ref": "Answer",
-          "description": "Required. The new answer."
+          "description": "Required. The new answer.",
+          "$ref": "Answer"
         }
       },
-      "description": "Request message for QuestionsAndAnswers.UpsertAnswer",
-      "id": "UpsertAnswerRequest"
+      "id": "UpsertAnswerRequest",
+      "type": "object",
+      "description": "Request message for QuestionsAndAnswers.UpsertAnswer"
     }
   },
   "fullyEncodeReservedExpansion": true,
   "revision": "20260421",
-  "discoveryVersion": "v1",
+  "servicePath": "",
+  "version_module": true,
+  "basePath": "",
+  "id": "mybusinessqanda:v1",
+  "ownerDomain": "google.com",
+  "name": "mybusinessqanda",
+  "baseUrl": "https://mybusinessqanda.googleapis.com/",
+  "batchPath": "batch",
+  "version": "v1",
+  "description": "The My Business Q&A API allows questions and answers to be posted for specific listings. Note - If you have a quota of 0 after enabling the API, please request for GBP API access.",
   "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+    "x32": "http://www.google.com/images/icons/product/search-32.gif",
+    "x16": "http://www.google.com/images/icons/product/search-16.gif"
   },
+  "documentationLink": "https://developers.google.com/my-business/",
+  "title": "My Business Q&A API",
+  "canonicalName": "My Business Q&A",
   "resources": {
     "locations": {
       "resources": {
         "questions": {
-          "resources": {
-            "answers": {
-              "methods": {
-                "upsert": {
-                  "flatPath": "v1/locations/{locationsId}/questions/{questionsId}/answers:upsert",
-                  "parameterOrder": [
-                    "parent"
-                  ],
-                  "httpMethod": "POST",
-                  "id": "mybusinessqanda.locations.questions.answers.upsert",
-                  "description": "Creates an answer or updates the existing answer written by the user for the specified question. A user can only create one answer per question.",
-                  "path": "v1/{+parent}/answers:upsert",
-                  "request": {
-                    "$ref": "UpsertAnswerRequest"
-                  },
-                  "response": {
-                    "$ref": "Answer"
-                  },
-                  "parameters": {
-                    "parent": {
-                      "type": "string",
-                      "description": "Required. The name of the question to write an answer for.",
-                      "pattern": "^locations/[^/]+/questions/[^/]+$",
-                      "location": "path",
-                      "required": true
-                    }
-                  }
-                },
-                "delete": {
-                  "path": "v1/{+name}/answers:delete",
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "flatPath": "v1/locations/{locationsId}/questions/{questionsId}/answers:delete",
-                  "description": "Deletes the answer written by the current user to a question.",
-                  "id": "mybusinessqanda.locations.questions.answers.delete",
-                  "parameters": {
-                    "name": {
-                      "type": "string",
-                      "description": "Required. The name of the question to delete an answer for.",
-                      "required": true,
-                      "pattern": "^locations/[^/]+/questions/[^/]+$",
-                      "location": "path"
-                    }
-                  },
-                  "httpMethod": "DELETE",
-                  "response": {
-                    "$ref": "Empty"
-                  }
-                },
-                "list": {
-                  "httpMethod": "GET",
-                  "response": {
-                    "$ref": "ListAnswersResponse"
-                  },
-                  "id": "mybusinessqanda.locations.questions.answers.list",
-                  "parameters": {
-                    "orderBy": {
-                      "description": "Optional. The order to return the answers. Valid options include 'update_time desc' and 'upvote_count desc', which will return the answers sorted descendingly by the requested field. The default sort order is 'update_time desc'.",
-                      "location": "query",
-                      "type": "string"
-                    },
-                    "parent": {
-                      "required": true,
-                      "pattern": "^locations/[^/]+/questions/[^/]+$",
-                      "location": "path",
-                      "type": "string",
-                      "description": "Required. The name of the question to fetch answers for."
-                    },
-                    "pageToken": {
-                      "description": "Optional. If specified, the next page of answers is retrieved.",
-                      "location": "query",
-                      "type": "string"
-                    },
-                    "pageSize": {
-                      "description": "Optional. How many answers to fetch per page. The default and maximum `page_size` values are 10.",
-                      "format": "int32",
-                      "location": "query",
-                      "type": "integer"
-                    }
-                  },
-                  "parameterOrder": [
-                    "parent"
-                  ],
-                  "flatPath": "v1/locations/{locationsId}/questions/{questionsId}/answers",
-                  "description": "Returns the paginated list of answers for a specified question.",
-                  "path": "v1/{+parent}/answers"
-                }
-              }
-            }
-          },
           "methods": {
             "create": {
+              "description": "Adds a question for the specified location.",
+              "path": "v1/{+parent}",
+              "id": "mybusinessqanda.locations.questions.create",
+              "httpMethod": "POST",
               "parameters": {
                 "parent": {
-                  "description": "Required. The name of the location to write a question for.",
                   "type": "string",
-                  "pattern": "^locations/[^/]+/questions$",
                   "location": "path",
+                  "description": "Required. The name of the location to write a question for.",
+                  "pattern": "^locations/[^/]+/questions$",
                   "required": true
                 }
               },
               "response": {
                 "$ref": "Question"
               },
-              "path": "v1/{+parent}",
-              "request": {
-                "$ref": "Question"
-              },
-              "description": "Adds a question for the specified location.",
-              "id": "mybusinessqanda.locations.questions.create",
-              "httpMethod": "POST",
               "flatPath": "v1/locations/{locationsId}/questions",
               "parameterOrder": [
                 "parent"
-              ]
-            },
-            "patch": {
-              "flatPath": "v1/locations/{locationsId}/questions/{questionsId}",
-              "parameterOrder": [
-                "name"
               ],
-              "id": "mybusinessqanda.locations.questions.patch",
-              "httpMethod": "PATCH",
-              "path": "v1/{+name}",
               "request": {
                 "$ref": "Question"
-              },
-              "description": "Updates a specific question written by the current user.",
+              }
+            },
+            "delete": {
+              "httpMethod": "DELETE",
               "parameters": {
-                "updateMask": {
-                  "location": "query",
-                  "type": "string",
-                  "description": "Required. The specific fields to update. Only question text can be updated.",
-                  "format": "google-fieldmask"
-                },
                 "name": {
-                  "description": "Immutable. The unique name for the question. locations/*/questions/* This field will be ignored if set during question creation.",
-                  "type": "string",
                   "required": true,
                   "pattern": "^locations/[^/]+/questions/[^/]+$",
+                  "description": "Required. The name of the question to delete.",
+                  "type": "string",
                   "location": "path"
                 }
               },
               "response": {
-                "$ref": "Question"
-              }
+                "$ref": "Empty"
+              },
+              "description": "Deletes a specific question written by the current user.",
+              "path": "v1/{+name}",
+              "id": "mybusinessqanda.locations.questions.delete",
+              "flatPath": "v1/locations/{locationsId}/questions/{questionsId}",
+              "parameterOrder": [
+                "name"
+              ]
             },
             "list": {
-              "path": "v1/{+parent}",
-              "flatPath": "v1/locations/{locationsId}/questions",
               "description": "Returns the paginated list of questions and some of its answers for a specified location. This operation is only valid if the specified location is verified.",
+              "path": "v1/{+parent}",
+              "id": "mybusinessqanda.locations.questions.list",
+              "flatPath": "v1/locations/{locationsId}/questions",
               "parameterOrder": [
                 "parent"
               ],
-              "id": "mybusinessqanda.locations.questions.list",
+              "httpMethod": "GET",
               "parameters": {
-                "filter": {
-                  "description": "Optional. A filter constraining the questions to return. The only filter currently supported is \"ignore_answered=true\"",
-                  "location": "query",
-                  "type": "string"
-                },
                 "orderBy": {
-                  "description": "Optional. The order to return the questions. Valid options include 'update_time desc' and 'upvote_count desc', which will return the questions sorted descendingly by the requested field. The default sort order is 'update_time desc'.",
-                  "location": "query",
-                  "type": "string"
-                },
-                "pageToken": {
                   "location": "query",
                   "type": "string",
-                  "description": "Optional. If specified, the next page of questions is retrieved."
+                  "description": "Optional. The order to return the questions. Valid options include 'update_time desc' and 'upvote_count desc', which will return the questions sorted descendingly by the requested field. The default sort order is 'update_time desc'."
                 },
-                "pageSize": {
-                  "description": "Optional. How many questions to fetch per page. The default and maximum `page_size` values are 10.",
-                  "format": "int32",
+                "filter": {
+                  "type": "string",
                   "location": "query",
-                  "type": "integer"
+                  "description": "Optional. A filter constraining the questions to return. The only filter currently supported is \"ignore_answered=true\""
                 },
                 "parent": {
-                  "pattern": "^locations/[^/]+/questions$",
-                  "location": "path",
                   "required": true,
+                  "pattern": "^locations/[^/]+/questions$",
                   "description": "Required. The name of the location to fetch questions for.",
+                  "location": "path",
                   "type": "string"
                 },
                 "answersPerQuestion": {
@@ -388,111 +292,220 @@
                   "format": "int32",
                   "location": "query",
                   "type": "integer"
+                },
+                "pageToken": {
+                  "description": "Optional. If specified, the next page of questions is retrieved.",
+                  "type": "string",
+                  "location": "query"
+                },
+                "pageSize": {
+                  "description": "Optional. How many questions to fetch per page. The default and maximum `page_size` values are 10.",
+                  "format": "int32",
+                  "type": "integer",
+                  "location": "query"
                 }
               },
-              "httpMethod": "GET",
               "response": {
                 "$ref": "ListQuestionsResponse"
               }
             },
-            "delete": {
-              "id": "mybusinessqanda.locations.questions.delete",
+            "patch": {
+              "description": "Updates a specific question written by the current user.",
+              "path": "v1/{+name}",
+              "id": "mybusinessqanda.locations.questions.patch",
+              "httpMethod": "PATCH",
               "parameters": {
                 "name": {
-                  "required": true,
-                  "pattern": "^locations/[^/]+/questions/[^/]+$",
                   "location": "path",
-                  "description": "Required. The name of the question to delete.",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Immutable. The unique name for the question. locations/*/questions/* This field will be ignored if set during question creation.",
+                  "pattern": "^locations/[^/]+/questions/[^/]+$",
+                  "required": true
+                },
+                "updateMask": {
+                  "location": "query",
+                  "type": "string",
+                  "description": "Required. The specific fields to update. Only question text can be updated.",
+                  "format": "google-fieldmask"
                 }
               },
-              "httpMethod": "DELETE",
               "response": {
-                "$ref": "Empty"
+                "$ref": "Question"
               },
-              "path": "v1/{+name}",
               "flatPath": "v1/locations/{locationsId}/questions/{questionsId}",
-              "description": "Deletes a specific question written by the current user.",
               "parameterOrder": [
                 "name"
-              ]
+              ],
+              "request": {
+                "$ref": "Question"
+              }
+            }
+          },
+          "resources": {
+            "answers": {
+              "methods": {
+                "delete": {
+                  "id": "mybusinessqanda.locations.questions.answers.delete",
+                  "flatPath": "v1/locations/{locationsId}/questions/{questionsId}/answers:delete",
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "description": "Deletes the answer written by the current user to a question.",
+                  "path": "v1/{+name}/answers:delete",
+                  "parameters": {
+                    "name": {
+                      "required": true,
+                      "pattern": "^locations/[^/]+/questions/[^/]+$",
+                      "description": "Required. The name of the question to delete an answer for.",
+                      "type": "string",
+                      "location": "path"
+                    }
+                  },
+                  "response": {
+                    "$ref": "Empty"
+                  },
+                  "httpMethod": "DELETE"
+                },
+                "list": {
+                  "path": "v1/{+parent}/answers",
+                  "description": "Returns the paginated list of answers for a specified question.",
+                  "id": "mybusinessqanda.locations.questions.answers.list",
+                  "flatPath": "v1/locations/{locationsId}/questions/{questionsId}/answers",
+                  "parameterOrder": [
+                    "parent"
+                  ],
+                  "httpMethod": "GET",
+                  "parameters": {
+                    "orderBy": {
+                      "description": "Optional. The order to return the answers. Valid options include 'update_time desc' and 'upvote_count desc', which will return the answers sorted descendingly by the requested field. The default sort order is 'update_time desc'.",
+                      "type": "string",
+                      "location": "query"
+                    },
+                    "pageToken": {
+                      "location": "query",
+                      "type": "string",
+                      "description": "Optional. If specified, the next page of answers is retrieved."
+                    },
+                    "parent": {
+                      "location": "path",
+                      "type": "string",
+                      "description": "Required. The name of the question to fetch answers for.",
+                      "pattern": "^locations/[^/]+/questions/[^/]+$",
+                      "required": true
+                    },
+                    "pageSize": {
+                      "description": "Optional. How many answers to fetch per page. The default and maximum `page_size` values are 10.",
+                      "format": "int32",
+                      "type": "integer",
+                      "location": "query"
+                    }
+                  },
+                  "response": {
+                    "$ref": "ListAnswersResponse"
+                  }
+                },
+                "upsert": {
+                  "flatPath": "v1/locations/{locationsId}/questions/{questionsId}/answers:upsert",
+                  "parameterOrder": [
+                    "parent"
+                  ],
+                  "request": {
+                    "$ref": "UpsertAnswerRequest"
+                  },
+                  "id": "mybusinessqanda.locations.questions.answers.upsert",
+                  "description": "Creates an answer or updates the existing answer written by the user for the specified question. A user can only create one answer per question.",
+                  "path": "v1/{+parent}/answers:upsert",
+                  "parameters": {
+                    "parent": {
+                      "type": "string",
+                      "location": "path",
+                      "description": "Required. The name of the question to write an answer for.",
+                      "pattern": "^locations/[^/]+/questions/[^/]+$",
+                      "required": true
+                    }
+                  },
+                  "response": {
+                    "$ref": "Answer"
+                  },
+                  "httpMethod": "POST"
+                }
+              }
             }
           }
         }
       }
     }
   },
-  "baseUrl": "https://mybusinessqanda.googleapis.com/",
   "parameters": {
-    "$.xgafv": {
-      "description": "V1 error format.",
-      "type": "string",
-      "enum": [
-        "1",
-        "2"
-      ],
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ],
-      "location": "query"
-    },
-    "key": {
-      "type": "string",
-      "location": "query",
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token."
-    },
-    "prettyPrint": {
-      "type": "boolean",
-      "location": "query",
-      "description": "Returns response with indentations and line breaks.",
-      "default": "true"
-    },
-    "upload_protocol": {
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
-      "type": "string",
-      "location": "query"
-    },
-    "alt": {
-      "enumDescriptions": [
-        "Responses with Content-Type of application/json",
-        "Media download with context-dependent Content-Type",
-        "Responses with Content-Type of application/x-protobuf"
-      ],
-      "location": "query",
-      "enum": [
-        "json",
-        "media",
-        "proto"
-      ],
-      "default": "json",
-      "description": "Data format for response.",
-      "type": "string"
-    },
     "oauth_token": {
+      "description": "OAuth 2.0 token for the current user.",
       "type": "string",
-      "location": "query",
-      "description": "OAuth 2.0 token for the current user."
+      "location": "query"
     },
-    "fields": {
-      "type": "string",
+    "quotaUser": {
       "location": "query",
-      "description": "Selector specifying which fields to include in a partial response."
+      "type": "string",
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters."
     },
     "access_token": {
       "description": "OAuth access token.",
       "type": "string",
       "location": "query"
     },
-    "callback": {
-      "description": "JSONP",
-      "type": "string",
-      "location": "query"
+    "fields": {
+      "description": "Selector specifying which fields to include in a partial response.",
+      "location": "query",
+      "type": "string"
     },
-    "quotaUser": {
+    "prettyPrint": {
+      "description": "Returns response with indentations and line breaks.",
+      "location": "query",
+      "type": "boolean",
+      "default": "true"
+    },
+    "alt": {
+      "description": "Data format for response.",
+      "location": "query",
+      "type": "string",
+      "default": "json",
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ],
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ]
+    },
+    "callback": {
       "type": "string",
       "location": "query",
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters."
+      "description": "JSONP"
+    },
+    "$.xgafv": {
+      "type": "string",
+      "enum": [
+        "1",
+        "2"
+      ],
+      "location": "query",
+      "description": "V1 error format.",
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ]
+    },
+    "key": {
+      "location": "query",
+      "type": "string",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token."
+    },
+    "upload_protocol": {
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
+      "location": "query",
+      "type": "string"
     },
     "uploadType": {
       "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
@@ -500,20 +513,7 @@
       "location": "query"
     }
   },
-  "kind": "discovery#restDescription",
-  "mtlsRootUrl": "https://mybusinessqanda.mtls.googleapis.com/",
-  "id": "mybusinessqanda:v1",
-  "title": "My Business Q&A API",
-  "canonicalName": "My Business Q&A",
-  "name": "mybusinessqanda",
-  "protocol": "rest",
-  "batchPath": "batch",
-  "version": "v1",
   "ownerName": "Google",
-  "rootUrl": "https://mybusinessqanda.googleapis.com/",
-  "version_module": true,
-  "servicePath": "",
-  "description": "The My Business Q&A API allows questions and answers to be posted for specific listings. Note - If you have a quota of 0 after enabling the API, please request for GBP API access.",
-  "ownerDomain": "google.com",
-  "documentationLink": "https://developers.google.com/my-business/"
+  "protocol": "rest",
+  "kind": "discovery#restDescription"
 }
