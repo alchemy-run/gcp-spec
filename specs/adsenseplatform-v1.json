@@ -1,78 +1,11 @@
 {
-  "revision": "20260423",
-  "auth": {
-    "oauth2": {
-      "scopes": {
-        "https://www.googleapis.com/auth/adsense.readonly": {
-          "description": "View your AdSense data"
-        },
-        "https://www.googleapis.com/auth/adsense": {
-          "description": "View and manage your AdSense data"
-        }
-      }
-    }
-  },
-  "ownerName": "Google",
-  "id": "adsenseplatform:v1",
-  "mtlsRootUrl": "https://adsenseplatform.mtls.googleapis.com/",
-  "version": "v1",
-  "title": "AdSense Platform API",
-  "description": "",
-  "rootUrl": "https://adsenseplatform.googleapis.com/",
   "schemas": {
-    "ListAccountsResponse": {
-      "id": "ListAccountsResponse",
-      "description": "Response definition for the list accounts rpc.",
-      "type": "object",
-      "properties": {
-        "accounts": {
-          "type": "array",
-          "items": {
-            "$ref": "Account"
-          },
-          "description": "The Accounts returned in the list response. Represented by a partial view of the Account resource, populating `name` and `creation_request_id`."
-        },
-        "nextPageToken": {
-          "description": "Continuation token used to page through accounts. To retrieve the next page of the results, set the next request's \"page_token\" value to this.",
-          "type": "string"
-        }
-      }
-    },
-    "CloseAccountResponse": {
-      "type": "object",
-      "properties": {},
-      "id": "CloseAccountResponse",
-      "description": "Response definition for the account close rpc."
-    },
-    "EventInfo": {
-      "description": "Private information for partner recorded events (PII).",
-      "id": "EventInfo",
-      "type": "object",
-      "properties": {
-        "email": {
-          "type": "string",
-          "description": "Required. The email address that is associated with the publisher when performing the event."
-        },
-        "billingAddress": {
-          "$ref": "Address",
-          "description": "The billing address of the publisher associated with this event, if available."
-        }
-      }
-    },
     "Site": {
-      "description": "Representation of a Site.",
       "id": "Site",
       "type": "object",
+      "description": "Representation of a Site.",
       "properties": {
-        "name": {
-          "readOnly": true,
-          "description": "Output only. Resource name of a site. Format: platforms/{platform}/accounts/{account}/sites/{site}",
-          "type": "string"
-        },
         "state": {
-          "readOnly": true,
-          "description": "Output only. State of a site.",
-          "type": "string",
           "enumDescriptions": [
             "State unspecified.",
             "Either: - The site hasn't been checked yet. - The site is inactive and needs another review before it can show ads again. Learn how to [request a review for an inactive site](https://support.google.com/adsense/answer/9393996).",
@@ -80,13 +13,21 @@
             "The site is ready to show ads. Learn how to [set up ads on the site](https://support.google.com/adsense/answer/7037624).",
             "Publisher needs to fix some issues before the site is ready to show ads. Learn what to do [if a new site isn't ready](https://support.google.com/adsense/answer/9061852)."
           ],
+          "description": "Output only. State of a site.",
           "enum": [
             "STATE_UNSPECIFIED",
             "REQUIRES_REVIEW",
             "GETTING_READY",
             "READY",
             "NEEDS_ATTENTION"
-          ]
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "description": "Output only. Resource name of a site. Format: platforms/{platform}/accounts/{account}/sites/{site}",
+          "readOnly": true
         },
         "domain": {
           "type": "string",
@@ -94,112 +35,47 @@
         }
       }
     },
-    "Account": {
-      "description": "Representation of an Account.",
-      "id": "Account",
-      "type": "object",
-      "properties": {
-        "displayName": {
-          "type": "string",
-          "description": "Display name of this account."
-        },
-        "createTime": {
-          "description": "Output only. Creation time of the account.",
-          "format": "google-datetime",
-          "readOnly": true,
-          "type": "string"
-        },
-        "creationRequestId": {
-          "type": "string",
-          "description": "Required. An opaque token that uniquely identifies the account among all the platform's accounts. This string may contain at most 64 non-whitespace ASCII characters, but otherwise has no predefined structure. However, it is expected to be a platform-specific identifier for the user creating the account, so that only a single account can be created for any given user. This field must not contain any information that is recognizable as personally identifiable information. e.g. it should not be an email address or login name. Once an account has been created, a second attempt to create an account using the same creation_request_id will result in an ALREADY_EXISTS error."
-        },
-        "name": {
-          "type": "string",
-          "readOnly": true,
-          "description": "Output only. Resource name of the account. Format: platforms/pub-[0-9]+/accounts/pub-[0-9]+"
-        },
-        "state": {
-          "enum": [
-            "STATE_UNSPECIFIED",
-            "UNCHECKED",
-            "APPROVED",
-            "DISAPPROVED"
-          ],
-          "type": "string",
-          "enumDescriptions": [
-            "Unspecified.",
-            "Unchecked.",
-            "The account is ready to serve ads.",
-            "The account has been blocked from serving ads."
-          ],
-          "readOnly": true,
-          "description": "Output only. Approval state of the account."
-        },
-        "timeZone": {
-          "$ref": "TimeZone",
-          "description": "Required. The IANA TZ timezone code of this account. For more information, see https://en.wikipedia.org/wiki/List_of_tz_database_time_zones. This field is used for reporting. It is recommended to set it to the same value for all child accounts."
-        },
-        "regionCode": {
-          "type": "string",
-          "description": "Required. Input only. CLDR region code of the country/region of the address. Set this to country code of the child account if known, otherwise to your own country code."
-        }
-      }
-    },
-    "TimeZone": {
-      "description": "Represents a time zone from the [IANA Time Zone Database](https://www.iana.org/time-zones).",
-      "id": "TimeZone",
-      "type": "object",
-      "properties": {
-        "id": {
-          "description": "IANA Time Zone Database time zone. For example \"America/New_York\".",
-          "type": "string"
-        },
-        "version": {
-          "type": "string",
-          "description": "Optional. IANA Time Zone Database version number. For example \"2019a\"."
-        }
-      }
-    },
     "ListSitesResponse": {
       "type": "object",
+      "description": "Response definition for the site list rpc.",
       "properties": {
         "sites": {
-          "type": "array",
+          "description": "The sites returned in this list response.",
           "items": {
             "$ref": "Site"
           },
-          "description": "The sites returned in this list response."
+          "type": "array"
         },
         "nextPageToken": {
           "description": "Continuation token used to page through sites. To retrieve the next page of the results, set the next request's \"page_token\" value to this.",
           "type": "string"
         }
       },
-      "id": "ListSitesResponse",
-      "description": "Response definition for the site list rpc."
+      "id": "ListSitesResponse"
     },
-    "Empty": {
-      "id": "Empty",
-      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
+    "CloseAccountResponse": {
       "type": "object",
-      "properties": {}
+      "description": "Response definition for the account close rpc.",
+      "properties": {},
+      "id": "CloseAccountResponse"
+    },
+    "LookupAccountResponse": {
+      "description": "Response definition for the lookup account rpc.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the Account Format: platforms/{platform}/accounts/{account_id}"
+        }
+      },
+      "type": "object",
+      "id": "LookupAccountResponse"
     },
     "Address": {
       "description": "Address data.",
-      "id": "Address",
-      "type": "object",
       "properties": {
-        "contact": {
-          "description": "Contact name of the company. Max length 128 bytes or 34 characters.",
-          "type": "string"
-        },
-        "address2": {
+        "regionCode": {
           "type": "string",
-          "description": "Second line of address. Max length 64 bytes or 30 characters."
-        },
-        "fax": {
-          "type": "string",
-          "description": "Fax number with international code (i.e. +441234567890)."
+          "description": "Country/Region code. The region is specified as a CLDR region code (e.g. \"US\", \"FR\")."
         },
         "company": {
           "description": "Name of the company. Max length 255 bytes or 34 characters.",
@@ -213,45 +89,78 @@
           "description": "City. Max length 60 bytes or 30 characters.",
           "type": "string"
         },
+        "phone": {
+          "description": "Phone number with international code (i.e. +441234567890).",
+          "type": "string"
+        },
+        "address1": {
+          "type": "string",
+          "description": "First line of address. Max length 64 bytes or 30 characters."
+        },
         "state": {
           "type": "string",
           "description": "State. Max length 60 bytes or 30 characters."
         },
-        "address1": {
-          "description": "First line of address. Max length 64 bytes or 30 characters.",
-          "type": "string"
-        },
-        "phone": {
+        "contact": {
           "type": "string",
-          "description": "Phone number with international code (i.e. +441234567890)."
+          "description": "Contact name of the company. Max length 128 bytes or 34 characters."
         },
-        "regionCode": {
-          "description": "Country/Region code. The region is specified as a CLDR region code (e.g. \"US\", \"FR\").",
+        "address2": {
+          "description": "Second line of address. Max length 64 bytes or 30 characters.",
           "type": "string"
+        },
+        "fax": {
+          "type": "string",
+          "description": "Fax number with international code (i.e. +441234567890)."
+        }
+      },
+      "type": "object",
+      "id": "Address"
+    },
+    "TimeZone": {
+      "id": "TimeZone",
+      "type": "object",
+      "description": "Represents a time zone from the [IANA Time Zone Database](https://www.iana.org/time-zones).",
+      "properties": {
+        "version": {
+          "type": "string",
+          "description": "Optional. IANA Time Zone Database version number. For example \"2019a\"."
+        },
+        "id": {
+          "type": "string",
+          "description": "IANA Time Zone Database time zone. For example \"America/New_York\"."
         }
       }
     },
-    "LookupAccountResponse": {
-      "description": "Response definition for the lookup account rpc.",
-      "id": "LookupAccountResponse",
+    "Empty": {
       "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "The name of the Account Format: platforms/{platform}/accounts/{account_id}"
-        }
-      }
+      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
+      "properties": {},
+      "id": "Empty"
     },
     "CloseAccountRequest": {
-      "description": "Request definition for the account close rpc.",
       "id": "CloseAccountRequest",
       "type": "object",
+      "description": "Request definition for the account close rpc.",
       "properties": {}
+    },
+    "EventInfo": {
+      "type": "object",
+      "description": "Private information for partner recorded events (PII).",
+      "properties": {
+        "email": {
+          "description": "Required. The email address that is associated with the publisher when performing the event.",
+          "type": "string"
+        },
+        "billingAddress": {
+          "description": "The billing address of the publisher associated with this event, if available.",
+          "$ref": "Address"
+        }
+      },
+      "id": "EventInfo"
     },
     "Event": {
       "description": "A platform sub-account event to record spam signals.",
-      "id": "Event",
-      "type": "object",
       "properties": {
         "eventType": {
           "enum": [
@@ -259,366 +168,452 @@
             "LOG_IN_VIA_PLATFORM",
             "SIGN_UP_VIA_PLATFORM"
           ],
-          "description": "Required. Event type.",
-          "type": "string",
           "enumDescriptions": [
             "Do not use. You must set an event type explicitly.",
             "Log in via platform.",
             "Sign up via platform."
-          ]
+          ],
+          "description": "Required. Event type.",
+          "type": "string"
         },
         "eventInfo": {
-          "$ref": "EventInfo",
-          "description": "Required. Information associated with the event."
+          "description": "Required. Information associated with the event.",
+          "$ref": "EventInfo"
         },
         "eventTime": {
           "type": "string",
           "description": "Required. Event timestamp.",
           "format": "google-datetime"
         }
-      }
+      },
+      "type": "object",
+      "id": "Event"
+    },
+    "ListAccountsResponse": {
+      "description": "Response definition for the list accounts rpc.",
+      "properties": {
+        "accounts": {
+          "description": "The Accounts returned in the list response. Represented by a partial view of the Account resource, populating `name` and `creation_request_id`.",
+          "items": {
+            "$ref": "Account"
+          },
+          "type": "array"
+        },
+        "nextPageToken": {
+          "type": "string",
+          "description": "Continuation token used to page through accounts. To retrieve the next page of the results, set the next request's \"page_token\" value to this."
+        }
+      },
+      "type": "object",
+      "id": "ListAccountsResponse"
+    },
+    "Account": {
+      "id": "Account",
+      "description": "Representation of an Account.",
+      "properties": {
+        "createTime": {
+          "readOnly": true,
+          "format": "google-datetime",
+          "type": "string",
+          "description": "Output only. Creation time of the account."
+        },
+        "creationRequestId": {
+          "description": "Required. An opaque token that uniquely identifies the account among all the platform's accounts. This string may contain at most 64 non-whitespace ASCII characters, but otherwise has no predefined structure. However, it is expected to be a platform-specific identifier for the user creating the account, so that only a single account can be created for any given user. This field must not contain any information that is recognizable as personally identifiable information. e.g. it should not be an email address or login name. Once an account has been created, a second attempt to create an account using the same creation_request_id will result in an ALREADY_EXISTS error.",
+          "type": "string"
+        },
+        "timeZone": {
+          "description": "Required. The IANA TZ timezone code of this account. For more information, see https://en.wikipedia.org/wiki/List_of_tz_database_time_zones. This field is used for reporting. It is recommended to set it to the same value for all child accounts.",
+          "$ref": "TimeZone"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Display name of this account."
+        },
+        "state": {
+          "enumDescriptions": [
+            "Unspecified.",
+            "Unchecked.",
+            "The account is ready to serve ads.",
+            "The account has been blocked from serving ads."
+          ],
+          "description": "Output only. Approval state of the account.",
+          "enum": [
+            "STATE_UNSPECIFIED",
+            "UNCHECKED",
+            "APPROVED",
+            "DISAPPROVED"
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "regionCode": {
+          "description": "Required. Input only. CLDR region code of the country/region of the address. Set this to country code of the child account if known, otherwise to your own country code.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Output only. Resource name of the account. Format: platforms/pub-[0-9]+/accounts/pub-[0-9]+",
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "type": "object"
     },
     "RequestSiteReviewResponse": {
       "id": "RequestSiteReviewResponse",
       "description": "Response definition for the site request review rpc.",
-      "type": "object",
-      "properties": {}
+      "properties": {},
+      "type": "object"
     }
   },
-  "name": "adsenseplatform",
-  "version_module": true,
-  "ownerDomain": "google.com",
+  "basePath": "",
+  "canonicalName": "AdSense Platform",
+  "auth": {
+    "oauth2": {
+      "scopes": {
+        "https://www.googleapis.com/auth/adsense.readonly": {
+          "description": "View your AdSense data"
+        },
+        "https://www.googleapis.com/auth/adsense": {
+          "description": "View and manage your AdSense data"
+        }
+      }
+    }
+  },
+  "revision": "20260426",
+  "batchPath": "batch",
+  "kind": "discovery#restDescription",
+  "rootUrl": "https://adsenseplatform.googleapis.com/",
   "resources": {
     "platforms": {
       "resources": {
         "accounts": {
           "methods": {
-            "get": {
+            "lookup": {
+              "id": "adsenseplatform.platforms.accounts.lookup",
+              "response": {
+                "$ref": "LookupAccountResponse"
+              },
+              "path": "v1/{+parent}/accounts:lookup",
+              "flatPath": "v1/platforms/{platformsId}/accounts:lookup",
+              "description": "Looks up information about a sub-account for a specified creation_request_id. If no account exists for the given creation_request_id, returns 404.",
               "parameters": {
-                "name": {
+                "creationRequestId": {
+                  "description": "Optional. The creation_request_id provided when calling createAccount.",
+                  "location": "query",
+                  "type": "string"
+                },
+                "parent": {
                   "type": "string",
-                  "description": "Required. Account to get information about. Format: platforms/{platform}/accounts/{account_id}",
-                  "pattern": "^platforms/[^/]+/accounts/[^/]+$",
-                  "location": "path",
-                  "required": true
+                  "required": true,
+                  "pattern": "^platforms/[^/]+$",
+                  "description": "Required. Platform who parents the account. Format: platforms/{platform}",
+                  "location": "path"
                 }
               },
-              "parameterOrder": [
-                "name"
-              ],
-              "description": "Gets information about the selected sub-account.",
-              "httpMethod": "GET",
               "scopes": [
                 "https://www.googleapis.com/auth/adsense",
                 "https://www.googleapis.com/auth/adsense.readonly"
               ],
-              "path": "v1/{+name}",
-              "id": "adsenseplatform.platforms.accounts.get",
-              "flatPath": "v1/platforms/{platformsId}/accounts/{accountsId}",
-              "response": {
-                "$ref": "Account"
-              }
+              "httpMethod": "GET",
+              "parameterOrder": [
+                "parent"
+              ]
             },
-            "close": {
-              "httpMethod": "POST",
+            "get": {
+              "id": "adsenseplatform.platforms.accounts.get",
               "parameters": {
                 "name": {
-                  "description": "Required. Account to close. Format: platforms/{platform}/accounts/{account_id}",
-                  "type": "string",
-                  "required": true,
                   "pattern": "^platforms/[^/]+/accounts/[^/]+$",
-                  "location": "path"
+                  "required": true,
+                  "description": "Required. Account to get information about. Format: platforms/{platform}/accounts/{account_id}",
+                  "location": "path",
+                  "type": "string"
                 }
               },
+              "response": {
+                "$ref": "Account"
+              },
+              "path": "v1/{+name}",
+              "flatPath": "v1/platforms/{platformsId}/accounts/{accountsId}",
+              "description": "Gets information about the selected sub-account.",
+              "httpMethod": "GET",
               "parameterOrder": [
                 "name"
               ],
-              "description": "Closes a sub-account.",
-              "id": "adsenseplatform.platforms.accounts.close",
-              "flatPath": "v1/platforms/{platformsId}/accounts/{accountsId}:close",
-              "response": {
-                "$ref": "CloseAccountResponse"
+              "scopes": [
+                "https://www.googleapis.com/auth/adsense",
+                "https://www.googleapis.com/auth/adsense.readonly"
+              ]
+            },
+            "create": {
+              "id": "adsenseplatform.platforms.accounts.create",
+              "parameters": {
+                "parent": {
+                  "type": "string",
+                  "description": "Required. Platform to create an account for. Format: platforms/{platform}",
+                  "location": "path",
+                  "pattern": "^platforms/[^/]+$",
+                  "required": true
+                }
               },
-              "path": "v1/{+name}:close",
+              "path": "v1/{+parent}/accounts",
+              "flatPath": "v1/platforms/{platformsId}/accounts",
               "request": {
-                "$ref": "CloseAccountRequest"
+                "$ref": "Account"
               },
+              "description": "Creates a sub-account.",
+              "response": {
+                "$ref": "Account"
+              },
+              "httpMethod": "POST",
+              "parameterOrder": [
+                "parent"
+              ],
               "scopes": [
                 "https://www.googleapis.com/auth/adsense"
               ]
             },
-            "list": {
-              "parameters": {
-                "pageSize": {
-                  "type": "integer",
-                  "location": "query",
-                  "description": "Optional. The maximum number of accounts to include in the response, used for paging. If unspecified, at most 10000 accounts will be returned. The maximum value is 10000; values above 10000 will be coerced to 10000.",
-                  "format": "int32"
-                },
-                "parent": {
-                  "required": true,
-                  "pattern": "^platforms/[^/]+$",
-                  "location": "path",
-                  "description": "Required. Platform who parents the accounts. Format: platforms/{platform}",
-                  "type": "string"
-                },
-                "pageToken": {
-                  "description": "Optional. A page token, received from a previous `ListAccounts` call. Provide this to retrieve the subsequent page.",
-                  "type": "string",
-                  "location": "query"
-                }
-              },
+            "close": {
+              "httpMethod": "POST",
               "parameterOrder": [
-                "parent"
+                "name"
               ],
-              "description": "Lists a partial view of sub-accounts for a specific parent account.",
-              "httpMethod": "GET",
-              "scopes": [
-                "https://www.googleapis.com/auth/adsense",
-                "https://www.googleapis.com/auth/adsense.readonly"
-              ],
-              "id": "adsenseplatform.platforms.accounts.list",
-              "flatPath": "v1/platforms/{platformsId}/accounts",
-              "response": {
-                "$ref": "ListAccountsResponse"
-              },
-              "path": "v1/{+parent}/accounts"
-            },
-            "lookup": {
-              "parameters": {
-                "parent": {
-                  "required": true,
-                  "pattern": "^platforms/[^/]+$",
-                  "location": "path",
-                  "type": "string",
-                  "description": "Required. Platform who parents the account. Format: platforms/{platform}"
-                },
-                "creationRequestId": {
-                  "description": "Optional. The creation_request_id provided when calling createAccount.",
-                  "type": "string",
-                  "location": "query"
-                }
-              },
-              "parameterOrder": [
-                "parent"
-              ],
-              "description": "Looks up information about a sub-account for a specified creation_request_id. If no account exists for the given creation_request_id, returns 404.",
-              "httpMethod": "GET",
-              "scopes": [
-                "https://www.googleapis.com/auth/adsense",
-                "https://www.googleapis.com/auth/adsense.readonly"
-              ],
-              "path": "v1/{+parent}/accounts:lookup",
-              "id": "adsenseplatform.platforms.accounts.lookup",
-              "flatPath": "v1/platforms/{platformsId}/accounts:lookup",
-              "response": {
-                "$ref": "LookupAccountResponse"
-              }
-            },
-            "create": {
-              "path": "v1/{+parent}/accounts",
-              "id": "adsenseplatform.platforms.accounts.create",
-              "flatPath": "v1/platforms/{platformsId}/accounts",
-              "response": {
-                "$ref": "Account"
-              },
               "scopes": [
                 "https://www.googleapis.com/auth/adsense"
               ],
-              "request": {
-                "$ref": "Account"
+              "id": "adsenseplatform.platforms.accounts.close",
+              "parameters": {
+                "name": {
+                  "type": "string",
+                  "required": true,
+                  "pattern": "^platforms/[^/]+/accounts/[^/]+$",
+                  "description": "Required. Account to close. Format: platforms/{platform}/accounts/{account_id}",
+                  "location": "path"
+                }
               },
-              "httpMethod": "POST",
+              "response": {
+                "$ref": "CloseAccountResponse"
+              },
+              "path": "v1/{+name}:close",
+              "flatPath": "v1/platforms/{platformsId}/accounts/{accountsId}:close",
+              "request": {
+                "$ref": "CloseAccountRequest"
+              },
+              "description": "Closes a sub-account."
+            },
+            "list": {
+              "path": "v1/{+parent}/accounts",
+              "flatPath": "v1/platforms/{platformsId}/accounts",
+              "description": "Lists a partial view of sub-accounts for a specific parent account.",
+              "response": {
+                "$ref": "ListAccountsResponse"
+              },
               "parameters": {
                 "parent": {
                   "pattern": "^platforms/[^/]+$",
-                  "location": "path",
                   "required": true,
-                  "type": "string",
-                  "description": "Required. Platform to create an account for. Format: platforms/{platform}"
+                  "description": "Required. Platform who parents the accounts. Format: platforms/{platform}",
+                  "location": "path",
+                  "type": "string"
+                },
+                "pageSize": {
+                  "format": "int32",
+                  "type": "integer",
+                  "description": "Optional. The maximum number of accounts to include in the response, used for paging. If unspecified, at most 10000 accounts will be returned. The maximum value is 10000; values above 10000 will be coerced to 10000.",
+                  "location": "query"
+                },
+                "pageToken": {
+                  "description": "Optional. A page token, received from a previous `ListAccounts` call. Provide this to retrieve the subsequent page.",
+                  "location": "query",
+                  "type": "string"
                 }
               },
+              "id": "adsenseplatform.platforms.accounts.list",
+              "scopes": [
+                "https://www.googleapis.com/auth/adsense",
+                "https://www.googleapis.com/auth/adsense.readonly"
+              ],
+              "httpMethod": "GET",
               "parameterOrder": [
                 "parent"
-              ],
-              "description": "Creates a sub-account."
+              ]
             }
           },
           "resources": {
             "events": {
               "methods": {
                 "create": {
-                  "id": "adsenseplatform.platforms.accounts.events.create",
-                  "flatPath": "v1/platforms/{platformsId}/accounts/{accountsId}/events",
+                  "parameters": {
+                    "parent": {
+                      "type": "string",
+                      "description": "Required. Account to log events about. Format: platforms/{platform}/accounts/{account}",
+                      "location": "path",
+                      "required": true,
+                      "pattern": "^platforms/[^/]+/accounts/[^/]+$"
+                    }
+                  },
                   "response": {
                     "$ref": "Event"
                   },
                   "path": "v1/{+parent}/events",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/adsense"
-                  ],
+                  "flatPath": "v1/platforms/{platformsId}/accounts/{accountsId}/events",
                   "request": {
                     "$ref": "Event"
                   },
+                  "description": "Creates an account event.",
+                  "id": "adsenseplatform.platforms.accounts.events.create",
                   "httpMethod": "POST",
-                  "parameters": {
-                    "parent": {
-                      "pattern": "^platforms/[^/]+/accounts/[^/]+$",
-                      "location": "path",
-                      "required": true,
-                      "type": "string",
-                      "description": "Required. Account to log events about. Format: platforms/{platform}/accounts/{account}"
-                    }
-                  },
                   "parameterOrder": [
                     "parent"
                   ],
-                  "description": "Creates an account event."
+                  "scopes": [
+                    "https://www.googleapis.com/auth/adsense"
+                  ]
                 }
               }
             },
             "sites": {
               "methods": {
-                "list": {
-                  "id": "adsenseplatform.platforms.accounts.sites.list",
+                "get": {
+                  "path": "v1/{+name}",
+                  "flatPath": "v1/platforms/{platformsId}/accounts/{accountsId}/sites/{sitesId}",
+                  "description": "Gets a site from a specified sub-account.",
+                  "response": {
+                    "$ref": "Site"
+                  },
+                  "parameters": {
+                    "name": {
+                      "required": true,
+                      "pattern": "^platforms/[^/]+/accounts/[^/]+/sites/[^/]+$",
+                      "description": "Required. The name of the site to retrieve. Format: platforms/{platform}/accounts/{account}/sites/{site}",
+                      "location": "path",
+                      "type": "string"
+                    }
+                  },
+                  "id": "adsenseplatform.platforms.accounts.sites.get",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/adsense",
+                    "https://www.googleapis.com/auth/adsense.readonly"
+                  ],
+                  "httpMethod": "GET",
+                  "parameterOrder": [
+                    "name"
+                  ]
+                },
+                "create": {
+                  "id": "adsenseplatform.platforms.accounts.sites.create",
+                  "path": "v1/{+parent}/sites",
                   "flatPath": "v1/platforms/{platformsId}/accounts/{accountsId}/sites",
+                  "request": {
+                    "$ref": "Site"
+                  },
+                  "description": "Creates a site for a specified account.",
+                  "response": {
+                    "$ref": "Site"
+                  },
+                  "parameters": {
+                    "parent": {
+                      "description": "Required. Account to create site. Format: platforms/{platform}/accounts/{account_id}",
+                      "location": "path",
+                      "pattern": "^platforms/[^/]+/accounts/[^/]+$",
+                      "required": true,
+                      "type": "string"
+                    }
+                  },
+                  "scopes": [
+                    "https://www.googleapis.com/auth/adsense"
+                  ],
+                  "httpMethod": "POST",
+                  "parameterOrder": [
+                    "parent"
+                  ]
+                },
+                "delete": {
+                  "httpMethod": "DELETE",
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "scopes": [
+                    "https://www.googleapis.com/auth/adsense"
+                  ],
+                  "id": "adsenseplatform.platforms.accounts.sites.delete",
+                  "parameters": {
+                    "name": {
+                      "required": true,
+                      "pattern": "^platforms/[^/]+/accounts/[^/]+/sites/[^/]+$",
+                      "description": "Required. The name of the site to delete. Format: platforms/{platform}/accounts/{account}/sites/{site}",
+                      "location": "path",
+                      "type": "string"
+                    }
+                  },
+                  "path": "v1/{+name}",
+                  "flatPath": "v1/platforms/{platformsId}/accounts/{accountsId}/sites/{sitesId}",
+                  "description": "Deletes a site from a specified account.",
+                  "response": {
+                    "$ref": "Empty"
+                  }
+                },
+                "list": {
+                  "httpMethod": "GET",
+                  "parameterOrder": [
+                    "parent"
+                  ],
+                  "scopes": [
+                    "https://www.googleapis.com/auth/adsense",
+                    "https://www.googleapis.com/auth/adsense.readonly"
+                  ],
+                  "parameters": {
+                    "parent": {
+                      "type": "string",
+                      "pattern": "^platforms/[^/]+/accounts/[^/]+$",
+                      "required": true,
+                      "description": "Required. The account which owns the sites. Format: platforms/{platform}/accounts/{account}",
+                      "location": "path"
+                    },
+                    "pageSize": {
+                      "type": "integer",
+                      "description": "The maximum number of sites to include in the response, used for paging. If unspecified, at most 10000 sites will be returned. The maximum value is 10000; values above 10000 will be coerced to 10000.",
+                      "location": "query",
+                      "format": "int32"
+                    },
+                    "pageToken": {
+                      "type": "string",
+                      "description": "A page token, received from a previous `ListSites` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListSites` must match the call that provided the page token.",
+                      "location": "query"
+                    }
+                  },
                   "response": {
                     "$ref": "ListSitesResponse"
                   },
                   "path": "v1/{+parent}/sites",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/adsense",
-                    "https://www.googleapis.com/auth/adsense.readonly"
-                  ],
-                  "httpMethod": "GET",
-                  "parameters": {
-                    "pageSize": {
-                      "description": "The maximum number of sites to include in the response, used for paging. If unspecified, at most 10000 sites will be returned. The maximum value is 10000; values above 10000 will be coerced to 10000.",
-                      "format": "int32",
-                      "location": "query",
-                      "type": "integer"
-                    },
-                    "parent": {
-                      "pattern": "^platforms/[^/]+/accounts/[^/]+$",
-                      "location": "path",
-                      "required": true,
-                      "description": "Required. The account which owns the sites. Format: platforms/{platform}/accounts/{account}",
-                      "type": "string"
-                    },
-                    "pageToken": {
-                      "type": "string",
-                      "location": "query",
-                      "description": "A page token, received from a previous `ListSites` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListSites` must match the call that provided the page token."
-                    }
-                  },
-                  "parameterOrder": [
-                    "parent"
-                  ],
-                  "description": "Lists sites for a specific account."
-                },
-                "get": {
-                  "httpMethod": "GET",
-                  "parameters": {
-                    "name": {
-                      "pattern": "^platforms/[^/]+/accounts/[^/]+/sites/[^/]+$",
-                      "location": "path",
-                      "required": true,
-                      "type": "string",
-                      "description": "Required. The name of the site to retrieve. Format: platforms/{platform}/accounts/{account}/sites/{site}"
-                    }
-                  },
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "description": "Gets a site from a specified sub-account.",
-                  "path": "v1/{+name}",
-                  "id": "adsenseplatform.platforms.accounts.sites.get",
-                  "flatPath": "v1/platforms/{platformsId}/accounts/{accountsId}/sites/{sitesId}",
-                  "response": {
-                    "$ref": "Site"
-                  },
-                  "scopes": [
-                    "https://www.googleapis.com/auth/adsense",
-                    "https://www.googleapis.com/auth/adsense.readonly"
-                  ]
+                  "flatPath": "v1/platforms/{platformsId}/accounts/{accountsId}/sites",
+                  "description": "Lists sites for a specific account.",
+                  "id": "adsenseplatform.platforms.accounts.sites.list"
                 },
                 "requestReview": {
-                  "httpMethod": "POST",
+                  "id": "adsenseplatform.platforms.accounts.sites.requestReview",
                   "parameters": {
                     "name": {
                       "pattern": "^platforms/[^/]+/accounts/[^/]+/sites/[^/]+$",
-                      "location": "path",
                       "required": true,
                       "description": "Required. The name of the site to submit for review. Format: platforms/{platform}/accounts/{account}/sites/{site}",
+                      "location": "path",
                       "type": "string"
                     }
                   },
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "description": "Requests the review of a site. The site should be in REQUIRES_REVIEW or NEEDS_ATTENTION state. Note: Make sure you place an [ad tag](https://developers.google.com/adsense/platforms/direct/ad-tags) on your site before requesting a review.",
-                  "path": "v1/{+name}:requestReview",
-                  "id": "adsenseplatform.platforms.accounts.sites.requestReview",
-                  "flatPath": "v1/platforms/{platformsId}/accounts/{accountsId}/sites/{sitesId}:requestReview",
                   "response": {
                     "$ref": "RequestSiteReviewResponse"
                   },
-                  "scopes": [
-                    "https://www.googleapis.com/auth/adsense"
-                  ]
-                },
-                "create": {
-                  "scopes": [
-                    "https://www.googleapis.com/auth/adsense"
-                  ],
-                  "request": {
-                    "$ref": "Site"
-                  },
-                  "path": "v1/{+parent}/sites",
-                  "id": "adsenseplatform.platforms.accounts.sites.create",
-                  "flatPath": "v1/platforms/{platformsId}/accounts/{accountsId}/sites",
-                  "response": {
-                    "$ref": "Site"
-                  },
-                  "parameters": {
-                    "parent": {
-                      "type": "string",
-                      "description": "Required. Account to create site. Format: platforms/{platform}/accounts/{account_id}",
-                      "required": true,
-                      "pattern": "^platforms/[^/]+/accounts/[^/]+$",
-                      "location": "path"
-                    }
-                  },
-                  "parameterOrder": [
-                    "parent"
-                  ],
-                  "description": "Creates a site for a specified account.",
-                  "httpMethod": "POST"
-                },
-                "delete": {
-                  "id": "adsenseplatform.platforms.accounts.sites.delete",
-                  "flatPath": "v1/platforms/{platformsId}/accounts/{accountsId}/sites/{sitesId}",
-                  "response": {
-                    "$ref": "Empty"
-                  },
-                  "path": "v1/{+name}",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/adsense"
-                  ],
-                  "httpMethod": "DELETE",
-                  "parameters": {
-                    "name": {
-                      "description": "Required. The name of the site to delete. Format: platforms/{platform}/accounts/{account}/sites/{site}",
-                      "type": "string",
-                      "required": true,
-                      "pattern": "^platforms/[^/]+/accounts/[^/]+/sites/[^/]+$",
-                      "location": "path"
-                    }
-                  },
+                  "path": "v1/{+name}:requestReview",
+                  "flatPath": "v1/platforms/{platformsId}/accounts/{accountsId}/sites/{sitesId}:requestReview",
+                  "description": "Requests the review of a site. The site should be in REQUIRES_REVIEW or NEEDS_ATTENTION state. Note: Make sure you place an [ad tag](https://developers.google.com/adsense/platforms/direct/ad-tags) on your site before requesting a review.",
+                  "httpMethod": "POST",
                   "parameterOrder": [
                     "name"
                   ],
-                  "description": "Deletes a site from a specified account."
+                  "scopes": [
+                    "https://www.googleapis.com/auth/adsense"
+                  ]
                 }
               }
             }
@@ -627,41 +622,56 @@
       }
     }
   },
-  "canonicalName": "AdSense Platform",
   "documentationLink": "https://developers.google.com/adsense/platforms/",
-  "basePath": "",
-  "fullyEncodeReservedExpansion": true,
-  "kind": "discovery#restDescription",
-  "discoveryVersion": "v1",
-  "icons": {
-    "x32": "http://www.google.com/images/icons/product/search-32.gif",
-    "x16": "http://www.google.com/images/icons/product/search-16.gif"
-  },
-  "protocol": "rest",
+  "title": "AdSense Platform API",
+  "name": "adsenseplatform",
+  "description": "",
+  "version": "v1",
   "parameters": {
-    "callback": {
-      "description": "JSONP",
+    "alt": {
+      "default": "json",
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ],
+      "description": "Data format for response.",
       "location": "query",
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ],
       "type": "string"
     },
     "prettyPrint": {
-      "description": "Returns response with indentations and line breaks.",
       "default": "true",
+      "description": "Returns response with indentations and line breaks.",
       "location": "query",
       "type": "boolean"
     },
     "access_token": {
       "description": "OAuth access token.",
+      "location": "query",
+      "type": "string"
+    },
+    "oauth_token": {
       "type": "string",
+      "description": "OAuth 2.0 token for the current user.",
       "location": "query"
     },
     "fields": {
       "description": "Selector specifying which fields to include in a partial response.",
-      "type": "string",
-      "location": "query"
+      "location": "query",
+      "type": "string"
     },
-    "upload_protocol": {
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
+    "callback": {
+      "description": "JSONP",
+      "location": "query",
+      "type": "string"
+    },
+    "uploadType": {
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
       "location": "query",
       "type": "string"
     },
@@ -670,52 +680,42 @@
       "location": "query",
       "type": "string"
     },
-    "uploadType": {
+    "quotaUser": {
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
       "location": "query",
-      "type": "string",
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\")."
+      "type": "string"
     },
     "$.xgafv": {
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ],
+      "description": "V1 error format.",
       "location": "query",
       "enum": [
         "1",
         "2"
       ],
-      "type": "string",
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ],
-      "description": "V1 error format."
+      "type": "string"
     },
-    "oauth_token": {
-      "location": "query",
+    "upload_protocol": {
       "type": "string",
-      "description": "OAuth 2.0 token for the current user."
-    },
-    "alt": {
-      "enum": [
-        "json",
-        "media",
-        "proto"
-      ],
-      "default": "json",
-      "location": "query",
-      "description": "Data format for response.",
-      "type": "string",
-      "enumDescriptions": [
-        "Responses with Content-Type of application/json",
-        "Media download with context-dependent Content-Type",
-        "Responses with Content-Type of application/x-protobuf"
-      ]
-    },
-    "quotaUser": {
-      "type": "string",
-      "location": "query",
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters."
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
+      "location": "query"
     }
   },
+  "mtlsRootUrl": "https://adsenseplatform.mtls.googleapis.com/",
   "baseUrl": "https://adsenseplatform.googleapis.com/",
-  "batchPath": "batch",
-  "servicePath": ""
+  "protocol": "rest",
+  "icons": {
+    "x16": "http://www.google.com/images/icons/product/search-16.gif",
+    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  },
+  "servicePath": "",
+  "ownerName": "Google",
+  "id": "adsenseplatform:v1",
+  "ownerDomain": "google.com",
+  "fullyEncodeReservedExpansion": true,
+  "version_module": true,
+  "discoveryVersion": "v1"
 }
