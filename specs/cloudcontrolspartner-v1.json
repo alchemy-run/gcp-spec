@@ -1,190 +1,245 @@
 {
+  "documentationLink": "https://cloud.google.com/sovereign-controls-by-partners/docs/sovereign-partners/reference/rest",
+  "ownerName": "Google",
+  "auth": {
+    "oauth2": {
+      "scopes": {
+        "https://www.googleapis.com/auth/cloud-platform": {
+          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
+        }
+      }
+    }
+  },
+  "kind": "discovery#restDescription",
+  "description": "Provides insights about your customers and their Assured Workloads based on your Sovereign Controls by Partners offering.",
+  "canonicalName": "Cloud Controls Partner Service",
+  "name": "cloudcontrolspartner",
+  "icons": {
+    "x32": "http://www.google.com/images/icons/product/search-32.gif",
+    "x16": "http://www.google.com/images/icons/product/search-16.gif"
+  },
   "schemas": {
-    "Console": {
+    "Violation": {
+      "id": "Violation",
+      "description": "Details of resource Violation",
+      "type": "object",
       "properties": {
-        "additionalLinks": {
-          "description": "Additional urls for more information about steps",
+        "description": {
+          "readOnly": true,
+          "description": "Output only. Description for the Violation. e.g. OrgPolicy gcp.resourceLocations has non compliant value.",
+          "type": "string"
+        },
+        "remediation": {
+          "$ref": "Remediation",
+          "readOnly": true,
+          "description": "Output only. Compliance violation remediation"
+        },
+        "beginTime": {
+          "format": "google-datetime",
+          "readOnly": true,
+          "description": "Output only. Time of the event which triggered the Violation.",
+          "type": "string"
+        },
+        "folderId": {
+          "format": "int64",
+          "description": "The folder_id of the violation",
+          "type": "string"
+        },
+        "name": {
+          "description": "Identifier. Format: `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}/violations/{violation}`",
+          "type": "string"
+        },
+        "updateTime": {
+          "format": "google-datetime",
+          "description": "Output only. The last time when the Violation record was updated.",
+          "type": "string",
+          "readOnly": true
+        },
+        "category": {
+          "readOnly": true,
+          "description": "Output only. Category under which this violation is mapped. e.g. Location, Service Usage, Access, Encryption, etc.",
+          "type": "string"
+        },
+        "nonCompliantOrgPolicy": {
+          "readOnly": true,
+          "description": "Output only. Immutable. Name of the OrgPolicy which was modified with non-compliant change and resulted this violation. Format: `projects/{project_number}/policies/{constraint_name}` `folders/{folder_id}/policies/{constraint_name}` `organizations/{organization_id}/policies/{constraint_name}`",
+          "type": "string"
+        },
+        "resolveTime": {
+          "format": "google-datetime",
+          "readOnly": true,
+          "description": "Output only. Time of the event which fixed the Violation. If the violation is ACTIVE this will be empty.",
+          "type": "string"
+        },
+        "state": {
+          "enumDescriptions": [
+            "Unspecified state.",
+            "Violation is resolved.",
+            "Violation is Unresolved",
+            "Violation is Exception"
+          ],
+          "description": "Output only. State of the violation",
+          "type": "string",
+          "readOnly": true,
+          "enum": [
+            "STATE_UNSPECIFIED",
+            "RESOLVED",
+            "UNRESOLVED",
+            "EXCEPTION"
+          ]
+        }
+      }
+    },
+    "ConnectionError": {
+      "description": "Information around the error that occurred if the connection state is anything other than available or unspecified",
+      "type": "object",
+      "properties": {
+        "errorDomain": {
+          "description": "The error domain for the error",
+          "type": "string"
+        },
+        "errorMessage": {
+          "description": "The error message for the error",
+          "type": "string"
+        }
+      },
+      "id": "ConnectionError"
+    },
+    "Empty": {
+      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
+      "type": "object",
+      "properties": {},
+      "id": "Empty"
+    },
+    "ListWorkloadsResponse": {
+      "id": "ListWorkloadsResponse",
+      "description": "Response message for list customer workloads requests.",
+      "type": "object",
+      "properties": {
+        "workloads": {
+          "items": {
+            "$ref": "Workload"
+          },
+          "description": "List of customer workloads",
+          "type": "array"
+        },
+        "nextPageToken": {
+          "description": "A token that can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages.",
+          "type": "string"
+        },
+        "unreachable": {
           "items": {
             "type": "string"
           },
+          "description": "Locations that could not be reached.",
+          "type": "array"
+        }
+      }
+    },
+    "OperationMetadata": {
+      "id": "OperationMetadata",
+      "description": "Represents the metadata of the long-running operation.",
+      "type": "object",
+      "properties": {
+        "statusMessage": {
+          "description": "Output only. Human-readable status of the operation, if any.",
+          "type": "string",
+          "readOnly": true
+        },
+        "endTime": {
+          "readOnly": true,
+          "description": "Output only. The time the operation finished running.",
+          "type": "string",
+          "format": "google-datetime"
+        },
+        "requestedCancellation": {
+          "readOnly": true,
+          "description": "Output only. Identifies whether the user has requested cancellation of the operation. Operations that have been cancelled successfully have Operation.error value with a google.rpc.Status.code of 1, corresponding to `Code.CANCELLED`.",
+          "type": "boolean"
+        },
+        "verb": {
+          "readOnly": true,
+          "description": "Output only. Name of the verb executed by the operation.",
+          "type": "string"
+        },
+        "apiVersion": {
+          "readOnly": true,
+          "description": "Output only. API version used to start the operation.",
+          "type": "string"
+        },
+        "createTime": {
+          "format": "google-datetime",
+          "description": "Output only. The time the operation was created.",
+          "type": "string",
+          "readOnly": true
+        },
+        "target": {
+          "description": "Output only. Server-defined resource path for the target of the operation.",
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "Console": {
+      "id": "Console",
+      "description": "Remediation instructions to resolve violation via cloud console",
+      "type": "object",
+      "properties": {
+        "steps": {
+          "items": {
+            "type": "string"
+          },
+          "description": "Steps to resolve violation via cloud console",
+          "type": "array"
+        },
+        "additionalLinks": {
+          "items": {
+            "type": "string"
+          },
+          "description": "Additional urls for more information about steps",
           "type": "array"
         },
         "consoleUris": {
           "description": "Link to console page where violations can be resolved",
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
-        "steps": {
           "type": "array",
-          "description": "Steps to resolve violation via cloud console",
           "items": {
             "type": "string"
           }
-        }
-      },
-      "description": "Remediation instructions to resolve violation via cloud console",
-      "id": "Console",
-      "type": "object"
-    },
-    "EkmMetadata": {
-      "id": "EkmMetadata",
-      "type": "object",
-      "description": "Holds information needed by Mudbray to use partner EKMs for workloads.",
-      "properties": {
-        "ekmSolution": {
-          "description": "The Cloud EKM partner.",
-          "enumDescriptions": [
-            "Unspecified EKM solution",
-            "EKM Partner Fortanix",
-            "EKM Partner FutureX",
-            "EKM Partner Thales",
-            "This enum value is never used."
-          ],
-          "type": "string",
-          "enumDeprecated": [
-            false,
-            false,
-            false,
-            false,
-            true
-          ],
-          "enum": [
-            "EKM_SOLUTION_UNSPECIFIED",
-            "FORTANIX",
-            "FUTUREX",
-            "THALES",
-            "VIRTRU"
-          ]
-        },
-        "ekmEndpointUri": {
-          "type": "string",
-          "description": "Endpoint for sending requests to the EKM for key provisioning during Assured Workload creation."
         }
       }
     },
-    "Workload": {
+    "Sku": {
+      "id": "Sku",
+      "description": "Represents the SKU a partner owns inside Google Cloud to sell to customers.",
+      "type": "object",
       "properties": {
-        "isOnboarded": {
-          "description": "Indicates whether a workload is fully onboarded.",
-          "type": "boolean"
-        },
-        "keyManagementProjectId": {
-          "description": "The project id of the key management project for the workload",
+        "id": {
+          "description": "Argentum product SKU, that is associated with the partner offerings to customers used by Syntro for billing purposes. SKUs can represent resold Google products or support services.",
           "type": "string"
         },
-        "folderId": {
-          "readOnly": true,
-          "description": "Output only. Folder id this workload is associated with",
-          "format": "int64",
-          "type": "string"
-        },
-        "name": {
-          "type": "string",
-          "description": "Identifier. Format: `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}`"
-        },
-        "folder": {
-          "type": "string",
-          "description": "Output only. The name of container folder of the assured workload",
-          "readOnly": true
-        },
-        "createTime": {
-          "description": "Output only. Time the resource was created.",
-          "format": "google-datetime",
-          "type": "string",
-          "readOnly": true
-        },
-        "workloadOnboardingState": {
-          "$ref": "WorkloadOnboardingState",
-          "description": "Container for workload onboarding steps."
-        },
-        "partner": {
-          "enumDescriptions": [
-            "Unknown Partner.",
-            "Enum representing S3NS (Thales) partner.",
-            "Enum representing T_SYSTEM (TSI) partner.",
-            "Enum representing SIA_MINSAIT (Indra) partner.",
-            "Enum representing PSN (TIM) partner.",
-            "Enum representing CNTXT (Kingdom of Saudi Arabia) partner.",
-            "Enum representing CNXT (Kingdom of Saudi Arabia) partner offering without EKM provisioning.",
-            "Enum representing Telefonica (Spain) partner."
-          ],
-          "description": "Partner associated with this workload.",
-          "type": "string",
-          "enum": [
-            "PARTNER_UNSPECIFIED",
-            "PARTNER_LOCAL_CONTROLS_BY_S3NS",
-            "PARTNER_SOVEREIGN_CONTROLS_BY_T_SYSTEMS",
-            "PARTNER_SOVEREIGN_CONTROLS_BY_SIA_MINSAIT",
-            "PARTNER_SOVEREIGN_CONTROLS_BY_PSN",
-            "PARTNER_SOVEREIGN_CONTROLS_BY_CNTXT",
-            "PARTNER_SOVEREIGN_CONTROLS_BY_CNTXT_NO_EKM",
-            "PARTNER_SPAIN_DATA_BOUNDARY_BY_TELEFONICA"
-          ]
-        },
-        "location": {
-          "description": "The Google Cloud location of the workload",
+        "displayName": {
+          "description": "Display name of the product identified by the SKU. A partner may want to show partner branded names for their offerings such as local sovereign cloud solutions.",
           "type": "string"
         }
-      },
-      "id": "Workload",
-      "type": "object",
-      "description": "Contains metadata around the [Workload resource](https://cloud.google.com/assured-workloads/docs/reference/rest/Shared.Types/Workload) in the Assured Workloads API."
-    },
-    "ListWorkloadsResponse": {
-      "properties": {
-        "nextPageToken": {
-          "type": "string",
-          "description": "A token that can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages."
-        },
-        "unreachable": {
-          "type": "array",
-          "description": "Locations that could not be reached.",
-          "items": {
-            "type": "string"
-          }
-        },
-        "workloads": {
-          "type": "array",
-          "description": "List of customer workloads",
-          "items": {
-            "$ref": "Workload"
-          }
-        }
-      },
-      "id": "ListWorkloadsResponse",
-      "type": "object",
-      "description": "Response message for list customer workloads requests."
+      }
     },
     "CustomerOnboardingStep": {
-      "id": "CustomerOnboardingStep",
-      "type": "object",
       "description": "Container for customer onboarding information",
+      "type": "object",
       "properties": {
-        "step": {
-          "enumDescriptions": [
-            "Unspecified step",
-            "KAJ Enrollment",
-            "Customer Environment"
-          ],
+        "startTime": {
+          "description": "The starting time of the onboarding step",
           "type": "string",
-          "enum": [
-            "STEP_UNSPECIFIED",
-            "KAJ_ENROLLMENT",
-            "CUSTOMER_ENVIRONMENT"
-          ],
-          "description": "The onboarding step"
+          "format": "google-datetime"
+        },
+        "completionTime": {
+          "format": "google-datetime",
+          "description": "The completion time of the onboarding step",
+          "type": "string"
         },
         "completionState": {
+          "description": "Output only. Current state of the step",
           "type": "string",
-          "enum": [
-            "COMPLETION_STATE_UNSPECIFIED",
-            "PENDING",
-            "SUCCEEDED",
-            "FAILED",
-            "NOT_APPLICABLE"
-          ],
           "enumDescriptions": [
             "Unspecified completion state.",
             "Task started (has start date) but not yet completed.",
@@ -192,31 +247,221 @@
             "Failed state.",
             "Not applicable state."
           ],
-          "description": "Output only. Current state of the step",
-          "readOnly": true
+          "readOnly": true,
+          "enum": [
+            "COMPLETION_STATE_UNSPECIFIED",
+            "PENDING",
+            "SUCCEEDED",
+            "FAILED",
+            "NOT_APPLICABLE"
+          ]
         },
-        "startTime": {
+        "step": {
+          "enum": [
+            "STEP_UNSPECIFIED",
+            "KAJ_ENROLLMENT",
+            "CUSTOMER_ENVIRONMENT"
+          ],
+          "description": "The onboarding step",
           "type": "string",
-          "description": "The starting time of the onboarding step",
-          "format": "google-datetime"
+          "enumDescriptions": [
+            "Unspecified step",
+            "KAJ Enrollment",
+            "Customer Environment"
+          ]
+        }
+      },
+      "id": "CustomerOnboardingStep"
+    },
+    "EkmConnection": {
+      "id": "EkmConnection",
+      "description": "Details about the EKM connection",
+      "type": "object",
+      "properties": {
+        "connectionName": {
+          "description": "Resource name of the EKM connection in the format: projects/{project}/locations/{location}/ekmConnections/{ekm_connection}",
+          "type": "string"
         },
-        "completionTime": {
+        "connectionState": {
+          "enumDescriptions": [
+            "Unspecified EKM connection state",
+            "Available EKM connection state",
+            "Not available EKM connection state",
+            "Error EKM connection state",
+            "Permission denied EKM connection state"
+          ],
+          "description": "Output only. The connection state",
           "type": "string",
-          "description": "The completion time of the onboarding step",
-          "format": "google-datetime"
+          "readOnly": true,
+          "enum": [
+            "CONNECTION_STATE_UNSPECIFIED",
+            "AVAILABLE",
+            "NOT_AVAILABLE",
+            "ERROR",
+            "PERMISSION_DENIED"
+          ]
+        },
+        "connectionError": {
+          "description": "The connection error that occurred if any",
+          "$ref": "ConnectionError"
         }
       }
     },
-    "Empty": {
-      "properties": {},
-      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
-      "id": "Empty",
-      "type": "object"
+    "ListViolationsResponse": {
+      "id": "ListViolationsResponse",
+      "description": "Response message for list customer violation requests",
+      "type": "object",
+      "properties": {
+        "violations": {
+          "items": {
+            "$ref": "Violation"
+          },
+          "description": "List of violation",
+          "type": "array"
+        },
+        "nextPageToken": {
+          "description": "A token that can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages.",
+          "type": "string"
+        },
+        "unreachable": {
+          "description": "Workloads that could not be reached due to permission errors or any other error. Ref: https://google.aip.dev/217",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "EkmConnections": {
+      "description": "The EKM connections associated with a workload",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Identifier. Format: `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}/ekmConnections`",
+          "type": "string"
+        },
+        "ekmConnections": {
+          "items": {
+            "$ref": "EkmConnection"
+          },
+          "description": "The EKM connections associated with the workload",
+          "type": "array"
+        }
+      },
+      "id": "EkmConnections"
+    },
+    "WorkloadOnboardingState": {
+      "id": "WorkloadOnboardingState",
+      "description": "Container for workload onboarding steps.",
+      "type": "object",
+      "properties": {
+        "onboardingSteps": {
+          "description": "List of workload onboarding steps.",
+          "type": "array",
+          "items": {
+            "$ref": "WorkloadOnboardingStep"
+          }
+        }
+      }
+    },
+    "WorkloadOnboardingStep": {
+      "id": "WorkloadOnboardingStep",
+      "description": "Container for workload onboarding information.",
+      "type": "object",
+      "properties": {
+        "step": {
+          "enum": [
+            "STEP_UNSPECIFIED",
+            "EKM_PROVISIONED",
+            "SIGNED_ACCESS_APPROVAL_CONFIGURED"
+          ],
+          "description": "The onboarding step.",
+          "type": "string",
+          "enumDescriptions": [
+            "Unspecified step.",
+            "EKM Provisioned step.",
+            "Signed Access Approval step."
+          ]
+        },
+        "startTime": {
+          "format": "google-datetime",
+          "description": "The starting time of the onboarding step.",
+          "type": "string"
+        },
+        "completionTime": {
+          "description": "The completion time of the onboarding step.",
+          "type": "string",
+          "format": "google-datetime"
+        },
+        "completionState": {
+          "description": "Output only. The completion state of the onboarding step.",
+          "type": "string",
+          "enumDescriptions": [
+            "Unspecified completion state.",
+            "Task started (has start date) but not yet completed.",
+            "Succeeded state.",
+            "Failed state.",
+            "Not applicable state."
+          ],
+          "readOnly": true,
+          "enum": [
+            "COMPLETION_STATE_UNSPECIFIED",
+            "PENDING",
+            "SUCCEEDED",
+            "FAILED",
+            "NOT_APPLICABLE"
+          ]
+        }
+      }
+    },
+    "Customer": {
+      "description": "Contains metadata around a Cloud Controls Partner Customer",
+      "type": "object",
+      "properties": {
+        "customerOnboardingState": {
+          "$ref": "CustomerOnboardingState",
+          "description": "Output only. Container for customer onboarding steps",
+          "readOnly": true
+        },
+        "organizationDomain": {
+          "description": "Output only. The customer organization domain, extracted from CRM Organization’s display_name field. e.g. \"google.com\"",
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "description": "Identifier. Format: `organizations/{organization}/locations/{location}/customers/{customer}`",
+          "type": "string"
+        },
+        "displayName": {
+          "description": "Required. Display name for the customer",
+          "type": "string"
+        },
+        "isOnboarded": {
+          "readOnly": true,
+          "description": "Output only. Indicates whether a customer is fully onboarded",
+          "type": "boolean"
+        }
+      },
+      "id": "Customer"
+    },
+    "CustomerOnboardingState": {
+      "id": "CustomerOnboardingState",
+      "description": "Container for customer onboarding steps",
+      "type": "object",
+      "properties": {
+        "onboardingSteps": {
+          "items": {
+            "$ref": "CustomerOnboardingStep"
+          },
+          "description": "List of customer onboarding steps",
+          "type": "array"
+        }
+      }
     },
     "Instructions": {
       "id": "Instructions",
-      "type": "object",
       "description": "Instructions to remediate violation",
+      "type": "object",
       "properties": {
         "gcloudInstructions": {
           "description": "Remediation instructions to resolve violation via gcloud cli",
@@ -228,225 +473,46 @@
         }
       }
     },
-    "Violation": {
-      "description": "Details of resource Violation",
-      "id": "Violation",
-      "type": "object",
-      "properties": {
-        "resolveTime": {
-          "readOnly": true,
-          "description": "Output only. Time of the event which fixed the Violation. If the violation is ACTIVE this will be empty.",
-          "format": "google-datetime",
-          "type": "string"
-        },
-        "category": {
-          "description": "Output only. Category under which this violation is mapped. e.g. Location, Service Usage, Access, Encryption, etc.",
-          "type": "string",
-          "readOnly": true
-        },
-        "nonCompliantOrgPolicy": {
-          "type": "string",
-          "description": "Output only. Immutable. Name of the OrgPolicy which was modified with non-compliant change and resulted this violation. Format: `projects/{project_number}/policies/{constraint_name}` `folders/{folder_id}/policies/{constraint_name}` `organizations/{organization_id}/policies/{constraint_name}`",
-          "readOnly": true
-        },
-        "description": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. Description for the Violation. e.g. OrgPolicy gcp.resourceLocations has non compliant value."
-        },
-        "updateTime": {
-          "readOnly": true,
-          "description": "Output only. The last time when the Violation record was updated.",
-          "format": "google-datetime",
-          "type": "string"
-        },
-        "remediation": {
-          "description": "Output only. Compliance violation remediation",
-          "readOnly": true,
-          "$ref": "Remediation"
-        },
-        "folderId": {
-          "type": "string",
-          "description": "The folder_id of the violation",
-          "format": "int64"
-        },
-        "beginTime": {
-          "readOnly": true,
-          "description": "Output only. Time of the event which triggered the Violation.",
-          "format": "google-datetime",
-          "type": "string"
-        },
-        "name": {
-          "type": "string",
-          "description": "Identifier. Format: `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}/violations/{violation}`"
-        },
-        "state": {
-          "type": "string",
-          "enum": [
-            "STATE_UNSPECIFIED",
-            "RESOLVED",
-            "UNRESOLVED",
-            "EXCEPTION"
-          ],
-          "enumDescriptions": [
-            "Unspecified state.",
-            "Violation is resolved.",
-            "Violation is Unresolved",
-            "Violation is Exception"
-          ],
-          "description": "Output only. State of the violation",
-          "readOnly": true
-        }
-      }
-    },
     "Gcloud": {
       "description": "Remediation instructions to resolve violation via gcloud cli",
-      "id": "Gcloud",
       "type": "object",
       "properties": {
-        "additionalLinks": {
-          "description": "Additional urls for more information about steps",
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
         "gcloudCommands": {
-          "description": "Gcloud command to resolve violation",
           "items": {
             "type": "string"
           },
+          "description": "Gcloud command to resolve violation",
           "type": "array"
         },
         "steps": {
           "description": "Steps to resolve violation via gcloud cli",
+          "type": "array",
           "items": {
             "type": "string"
-          },
-          "type": "array"
-        }
-      }
-    },
-    "ListAccessApprovalRequestsResponse": {
-      "description": "Response message for list access requests.",
-      "id": "ListAccessApprovalRequestsResponse",
-      "type": "object",
-      "properties": {
-        "unreachable": {
-          "description": "Locations that could not be reached.",
+          }
+        },
+        "additionalLinks": {
+          "description": "Additional urls for more information about steps",
+          "type": "array",
           "items": {
             "type": "string"
-          },
-          "type": "array"
-        },
-        "accessApprovalRequests": {
-          "type": "array",
-          "description": "List of access approval requests",
-          "items": {
-            "$ref": "AccessApprovalRequest"
-          }
-        },
-        "nextPageToken": {
-          "description": "A token that can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages.",
-          "type": "string"
-        }
-      }
-    },
-    "EkmConnections": {
-      "id": "EkmConnections",
-      "type": "object",
-      "description": "The EKM connections associated with a workload",
-      "properties": {
-        "name": {
-          "description": "Identifier. Format: `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}/ekmConnections`",
-          "type": "string"
-        },
-        "ekmConnections": {
-          "type": "array",
-          "description": "The EKM connections associated with the workload",
-          "items": {
-            "$ref": "EkmConnection"
           }
         }
-      }
-    },
-    "AccessApprovalRequest": {
-      "properties": {
-        "requestTime": {
-          "description": "The time at which approval was requested.",
-          "format": "google-datetime",
-          "type": "string"
-        },
-        "requestedReason": {
-          "$ref": "AccessReason",
-          "description": "The justification for which approval is being requested."
-        },
-        "requestedExpirationTime": {
-          "type": "string",
-          "description": "The requested expiration for the approval. If the request is approved, access will be granted from the time of approval until the expiration time.",
-          "format": "google-datetime"
-        },
-        "name": {
-          "description": "Identifier. Format: `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}/accessApprovalRequests/{access_approval_request}`",
-          "type": "string"
-        }
       },
-      "id": "AccessApprovalRequest",
-      "type": "object",
-      "description": "Details about the Access request."
-    },
-    "OperationMetadata": {
-      "properties": {
-        "createTime": {
-          "type": "string",
-          "description": "Output only. The time the operation was created.",
-          "format": "google-datetime",
-          "readOnly": true
-        },
-        "endTime": {
-          "readOnly": true,
-          "description": "Output only. The time the operation finished running.",
-          "format": "google-datetime",
-          "type": "string"
-        },
-        "verb": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. Name of the verb executed by the operation."
-        },
-        "apiVersion": {
-          "description": "Output only. API version used to start the operation.",
-          "type": "string",
-          "readOnly": true
-        },
-        "target": {
-          "type": "string",
-          "description": "Output only. Server-defined resource path for the target of the operation.",
-          "readOnly": true
-        },
-        "statusMessage": {
-          "type": "string",
-          "description": "Output only. Human-readable status of the operation, if any.",
-          "readOnly": true
-        },
-        "requestedCancellation": {
-          "readOnly": true,
-          "type": "boolean",
-          "description": "Output only. Identifies whether the user has requested cancellation of the operation. Operations that have been cancelled successfully have Operation.error value with a google.rpc.Status.code of 1, corresponding to `Code.CANCELLED`."
-        }
-      },
-      "id": "OperationMetadata",
-      "type": "object",
-      "description": "Represents the metadata of the long-running operation."
+      "id": "Gcloud"
     },
     "PartnerPermissions": {
+      "id": "PartnerPermissions",
+      "description": "The permissions granted to the partner for a workload",
+      "type": "object",
       "properties": {
         "name": {
-          "type": "string",
-          "description": "Identifier. Format: `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}/partnerPermissions`"
+          "description": "Identifier. Format: `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}/partnerPermissions`",
+          "type": "string"
         },
         "partnerPermissions": {
           "description": "The partner permissions granted for the workload",
+          "type": "array",
           "items": {
             "enumDescriptions": [
               "Unspecified partner permission",
@@ -456,7 +522,6 @@
               "Permission for External Key Manager connection status",
               "Permission for support case details for Access Transparency log entries"
             ],
-            "type": "string",
             "enum": [
               "PERMISSION_UNSPECIFIED",
               "ACCESS_TRANSPARENCY_AND_EMERGENCY_ACCESS_LOGS",
@@ -464,35 +529,68 @@
               "ACCESS_APPROVAL_REQUESTS",
               "ASSURED_WORKLOADS_EKM_CONNECTION_STATUS",
               "ACCESS_TRANSPARENCY_LOGS_SUPPORT_CASE_VIEWER"
-            ]
-          },
-          "type": "array"
+            ],
+            "type": "string"
+          }
         }
-      },
-      "description": "The permissions granted to the partner for a workload",
-      "id": "PartnerPermissions",
-      "type": "object"
+      }
     },
-    "Remediation": {
-      "description": "Represents remediation guidance to resolve compliance violation for AssuredWorkload",
-      "id": "Remediation",
+    "AccessApprovalRequest": {
+      "description": "Details about the Access request.",
       "type": "object",
       "properties": {
-        "instructions": {
-          "description": "Required. Remediation instructions to resolve violations",
-          "$ref": "Instructions"
+        "requestedReason": {
+          "$ref": "AccessReason",
+          "description": "The justification for which approval is being requested."
         },
-        "compliantValues": {
+        "requestTime": {
+          "description": "The time at which approval was requested.",
+          "type": "string",
+          "format": "google-datetime"
+        },
+        "requestedExpirationTime": {
+          "description": "The requested expiration for the approval. If the request is approved, access will be granted from the time of approval until the expiration time.",
+          "type": "string",
+          "format": "google-datetime"
+        },
+        "name": {
+          "description": "Identifier. Format: `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}/accessApprovalRequests/{access_approval_request}`",
+          "type": "string"
+        }
+      },
+      "id": "AccessApprovalRequest"
+    },
+    "ListCustomersResponse": {
+      "id": "ListCustomersResponse",
+      "description": "Response message for list customer Customers requests",
+      "type": "object",
+      "properties": {
+        "customers": {
+          "items": {
+            "$ref": "Customer"
+          },
+          "description": "List of customers",
+          "type": "array"
+        },
+        "nextPageToken": {
+          "description": "A token that can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages.",
+          "type": "string"
+        },
+        "unreachable": {
+          "description": "Locations that could not be reached.",
           "type": "array",
-          "description": "Values that can resolve the violation For example: for list org policy violations, this will either be the list of allowed or denied values",
           "items": {
             "type": "string"
           }
-        },
+        }
+      }
+    },
+    "Remediation": {
+      "description": "Represents remediation guidance to resolve compliance violation for AssuredWorkload",
+      "type": "object",
+      "properties": {
         "remediationType": {
-          "description": "Output only. Remediation type based on the type of org policy values violated",
           "readOnly": true,
-          "type": "string",
           "enum": [
             "REMEDIATION_TYPE_UNSPECIFIED",
             "REMEDIATION_BOOLEAN_ORG_POLICY_VIOLATION",
@@ -508,142 +606,169 @@
             "Remediation type for list org policy which have denied values in the monitoring rule",
             "Remediation type for gcp.restrictCmekCryptoKeyProjects",
             "Remediation type for resource violation."
-          ]
-        }
-      }
-    },
-    "ConnectionError": {
-      "id": "ConnectionError",
-      "type": "object",
-      "description": "Information around the error that occurred if the connection state is anything other than available or unspecified",
-      "properties": {
-        "errorMessage": {
-          "description": "The error message for the error",
+          ],
+          "description": "Output only. Remediation type based on the type of org policy values violated",
           "type": "string"
         },
-        "errorDomain": {
-          "type": "string",
-          "description": "The error domain for the error"
+        "instructions": {
+          "$ref": "Instructions",
+          "description": "Required. Remediation instructions to resolve violations"
+        },
+        "compliantValues": {
+          "description": "Values that can resolve the violation For example: for list org policy violations, this will either be the list of allowed or denied values",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
-      }
+      },
+      "id": "Remediation"
     },
     "Partner": {
       "id": "Partner",
-      "type": "object",
       "description": "Message describing Partner resource",
+      "type": "object",
       "properties": {
-        "name": {
-          "description": "Identifier. The resource name of the partner. Format: `organizations/{organization}/locations/{location}/partner` Example: \"organizations/123456/locations/us-central1/partner\"",
-          "type": "string"
-        },
-        "updateTime": {
-          "description": "Output only. The last time the resource was updated",
-          "format": "google-datetime",
-          "type": "string",
-          "readOnly": true
-        },
         "skus": {
-          "type": "array",
           "description": "List of SKUs the partner is offering",
+          "type": "array",
           "items": {
             "$ref": "Sku"
           }
         },
-        "operatedCloudRegions": {
-          "description": "List of Google Cloud regions that the partner sells services to customers. Valid Google Cloud regions found here: https://cloud.google.com/compute/docs/regions-zones",
+        "ekmSolutions": {
+          "description": "List of Google Cloud supported EKM partners supported by the partner",
+          "type": "array",
           "items": {
-            "type": "string"
-          },
-          "type": "array"
+            "$ref": "EkmMetadata"
+          }
         },
         "createTime": {
-          "type": "string",
-          "description": "Output only. Time the resource was created",
           "format": "google-datetime",
-          "readOnly": true
+          "readOnly": true,
+          "description": "Output only. Time the resource was created",
+          "type": "string"
+        },
+        "operatedCloudRegions": {
+          "description": "List of Google Cloud regions that the partner sells services to customers. Valid Google Cloud regions found here: https://cloud.google.com/compute/docs/regions-zones",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "partnerProjectId": {
           "description": "Google Cloud project ID in the partner's Google Cloud organization for receiving enhanced Logs for Partners.",
           "type": "string"
         },
-        "ekmSolutions": {
-          "description": "List of Google Cloud supported EKM partners supported by the partner",
-          "items": {
-            "$ref": "EkmMetadata"
-          },
-          "type": "array"
-        }
-      }
-    },
-    "Sku": {
-      "id": "Sku",
-      "type": "object",
-      "description": "Represents the SKU a partner owns inside Google Cloud to sell to customers.",
-      "properties": {
-        "id": {
-          "description": "Argentum product SKU, that is associated with the partner offerings to customers used by Syntro for billing purposes. SKUs can represent resold Google products or support services.",
-          "type": "string"
-        },
-        "displayName": {
-          "description": "Display name of the product identified by the SKU. A partner may want to show partner branded names for their offerings such as local sovereign cloud solutions.",
-          "type": "string"
-        }
-      }
-    },
-    "WorkloadOnboardingStep": {
-      "description": "Container for workload onboarding information.",
-      "id": "WorkloadOnboardingStep",
-      "type": "object",
-      "properties": {
-        "startTime": {
+        "updateTime": {
+          "readOnly": true,
+          "description": "Output only. The last time the resource was updated",
           "type": "string",
-          "description": "The starting time of the onboarding step.",
           "format": "google-datetime"
         },
-        "completionTime": {
-          "description": "The completion time of the onboarding step.",
-          "format": "google-datetime",
+        "name": {
+          "description": "Identifier. The resource name of the partner. Format: `organizations/{organization}/locations/{location}/partner` Example: \"organizations/123456/locations/us-central1/partner\"",
           "type": "string"
-        },
-        "step": {
-          "type": "string",
-          "enum": [
-            "STEP_UNSPECIFIED",
-            "EKM_PROVISIONED",
-            "SIGNED_ACCESS_APPROVAL_CONFIGURED"
-          ],
-          "description": "The onboarding step.",
-          "enumDescriptions": [
-            "Unspecified step.",
-            "EKM Provisioned step.",
-            "Signed Access Approval step."
-          ]
-        },
-        "completionState": {
-          "enumDescriptions": [
-            "Unspecified completion state.",
-            "Task started (has start date) but not yet completed.",
-            "Succeeded state.",
-            "Failed state.",
-            "Not applicable state."
-          ],
-          "type": "string",
-          "enum": [
-            "COMPLETION_STATE_UNSPECIFIED",
-            "PENDING",
-            "SUCCEEDED",
-            "FAILED",
-            "NOT_APPLICABLE"
-          ],
-          "readOnly": true,
-          "description": "Output only. The completion state of the onboarding step."
         }
       }
+    },
+    "Workload": {
+      "id": "Workload",
+      "description": "Contains metadata around the [Workload resource](https://cloud.google.com/assured-workloads/docs/reference/rest/Shared.Types/Workload) in the Assured Workloads API.",
+      "type": "object",
+      "properties": {
+        "isOnboarded": {
+          "description": "Indicates whether a workload is fully onboarded.",
+          "type": "boolean"
+        },
+        "location": {
+          "description": "The Google Cloud location of the workload",
+          "type": "string"
+        },
+        "folder": {
+          "readOnly": true,
+          "description": "Output only. The name of container folder of the assured workload",
+          "type": "string"
+        },
+        "partner": {
+          "enum": [
+            "PARTNER_UNSPECIFIED",
+            "PARTNER_LOCAL_CONTROLS_BY_S3NS",
+            "PARTNER_SOVEREIGN_CONTROLS_BY_T_SYSTEMS",
+            "PARTNER_SOVEREIGN_CONTROLS_BY_SIA_MINSAIT",
+            "PARTNER_SOVEREIGN_CONTROLS_BY_PSN",
+            "PARTNER_SOVEREIGN_CONTROLS_BY_CNTXT",
+            "PARTNER_SOVEREIGN_CONTROLS_BY_CNTXT_NO_EKM",
+            "PARTNER_SPAIN_DATA_BOUNDARY_BY_TELEFONICA"
+          ],
+          "description": "Partner associated with this workload.",
+          "type": "string",
+          "enumDescriptions": [
+            "Unknown Partner.",
+            "Enum representing S3NS (Thales) partner.",
+            "Enum representing T_SYSTEM (TSI) partner.",
+            "Enum representing SIA_MINSAIT (Indra) partner.",
+            "Enum representing PSN (TIM) partner.",
+            "Enum representing CNTXT (Kingdom of Saudi Arabia) partner.",
+            "Enum representing CNXT (Kingdom of Saudi Arabia) partner offering without EKM provisioning.",
+            "Enum representing Telefonica (Spain) partner."
+          ]
+        },
+        "workloadOnboardingState": {
+          "description": "Container for workload onboarding steps.",
+          "$ref": "WorkloadOnboardingState"
+        },
+        "folderId": {
+          "format": "int64",
+          "readOnly": true,
+          "description": "Output only. Folder id this workload is associated with",
+          "type": "string"
+        },
+        "createTime": {
+          "description": "Output only. Time the resource was created.",
+          "type": "string",
+          "readOnly": true,
+          "format": "google-datetime"
+        },
+        "name": {
+          "description": "Identifier. Format: `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}`",
+          "type": "string"
+        },
+        "keyManagementProjectId": {
+          "description": "The project id of the key management project for the workload",
+          "type": "string"
+        }
+      }
+    },
+    "ListAccessApprovalRequestsResponse": {
+      "description": "Response message for list access requests.",
+      "type": "object",
+      "properties": {
+        "accessApprovalRequests": {
+          "description": "List of access approval requests",
+          "type": "array",
+          "items": {
+            "$ref": "AccessApprovalRequest"
+          }
+        },
+        "nextPageToken": {
+          "description": "A token that can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages.",
+          "type": "string"
+        },
+        "unreachable": {
+          "items": {
+            "type": "string"
+          },
+          "description": "Locations that could not be reached.",
+          "type": "array"
+        }
+      },
+      "id": "ListAccessApprovalRequestsResponse"
     },
     "AccessReason": {
       "id": "AccessReason",
-      "type": "object",
       "description": "Reason for the access.",
+      "type": "object",
       "properties": {
         "type": {
           "enumDescriptions": [
@@ -673,434 +798,301 @@
         }
       }
     },
-    "ListViolationsResponse": {
-      "properties": {
-        "violations": {
-          "description": "List of violation",
-          "items": {
-            "$ref": "Violation"
-          },
-          "type": "array"
-        },
-        "nextPageToken": {
-          "type": "string",
-          "description": "A token that can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages."
-        },
-        "unreachable": {
-          "type": "array",
-          "description": "Workloads that could not be reached due to permission errors or any other error. Ref: https://google.aip.dev/217",
-          "items": {
-            "type": "string"
-          }
-        }
-      },
-      "id": "ListViolationsResponse",
+    "EkmMetadata": {
+      "id": "EkmMetadata",
+      "description": "Holds information needed by Mudbray to use partner EKMs for workloads.",
       "type": "object",
-      "description": "Response message for list customer violation requests"
-    },
-    "WorkloadOnboardingState": {
       "properties": {
-        "onboardingSteps": {
-          "description": "List of workload onboarding steps.",
-          "items": {
-            "$ref": "WorkloadOnboardingStep"
-          },
-          "type": "array"
-        }
-      },
-      "id": "WorkloadOnboardingState",
-      "type": "object",
-      "description": "Container for workload onboarding steps."
-    },
-    "EkmConnection": {
-      "properties": {
-        "connectionState": {
-          "readOnly": true,
-          "description": "Output only. The connection state",
-          "enumDescriptions": [
-            "Unspecified EKM connection state",
-            "Available EKM connection state",
-            "Not available EKM connection state",
-            "Error EKM connection state",
-            "Permission denied EKM connection state"
-          ],
-          "type": "string",
-          "enum": [
-            "CONNECTION_STATE_UNSPECIFIED",
-            "AVAILABLE",
-            "NOT_AVAILABLE",
-            "ERROR",
-            "PERMISSION_DENIED"
-          ]
-        },
-        "connectionName": {
-          "type": "string",
-          "description": "Resource name of the EKM connection in the format: projects/{project}/locations/{location}/ekmConnections/{ekm_connection}"
-        },
-        "connectionError": {
-          "description": "The connection error that occurred if any",
-          "$ref": "ConnectionError"
-        }
-      },
-      "description": "Details about the EKM connection",
-      "id": "EkmConnection",
-      "type": "object"
-    },
-    "Customer": {
-      "id": "Customer",
-      "type": "object",
-      "description": "Contains metadata around a Cloud Controls Partner Customer",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Identifier. Format: `organizations/{organization}/locations/{location}/customers/{customer}`"
-        },
-        "displayName": {
-          "description": "Required. Display name for the customer",
+        "ekmEndpointUri": {
+          "description": "Endpoint for sending requests to the EKM for key provisioning during Assured Workload creation.",
           "type": "string"
         },
-        "customerOnboardingState": {
-          "readOnly": true,
-          "$ref": "CustomerOnboardingState",
-          "description": "Output only. Container for customer onboarding steps"
-        },
-        "organizationDomain": {
-          "description": "Output only. The customer organization domain, extracted from CRM Organization’s display_name field. e.g. \"google.com\"",
+        "ekmSolution": {
+          "enum": [
+            "EKM_SOLUTION_UNSPECIFIED",
+            "FORTANIX",
+            "FUTUREX",
+            "THALES",
+            "VIRTRU"
+          ],
+          "enumDeprecated": [
+            false,
+            false,
+            false,
+            false,
+            true
+          ],
+          "description": "The Cloud EKM partner.",
           "type": "string",
-          "readOnly": true
-        },
-        "isOnboarded": {
-          "type": "boolean",
-          "description": "Output only. Indicates whether a customer is fully onboarded",
-          "readOnly": true
-        }
-      }
-    },
-    "CustomerOnboardingState": {
-      "properties": {
-        "onboardingSteps": {
-          "type": "array",
-          "description": "List of customer onboarding steps",
-          "items": {
-            "$ref": "CustomerOnboardingStep"
-          }
-        }
-      },
-      "id": "CustomerOnboardingState",
-      "type": "object",
-      "description": "Container for customer onboarding steps"
-    },
-    "ListCustomersResponse": {
-      "id": "ListCustomersResponse",
-      "type": "object",
-      "description": "Response message for list customer Customers requests",
-      "properties": {
-        "customers": {
-          "type": "array",
-          "description": "List of customers",
-          "items": {
-            "$ref": "Customer"
-          }
-        },
-        "unreachable": {
-          "description": "Locations that could not be reached.",
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
-        "nextPageToken": {
-          "type": "string",
-          "description": "A token that can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages."
+          "enumDescriptions": [
+            "Unspecified EKM solution",
+            "EKM Partner Fortanix",
+            "EKM Partner FutureX",
+            "EKM Partner Thales",
+            "This enum value is never used."
+          ]
         }
       }
     }
   },
-  "canonicalName": "Cloud Controls Partner Service",
   "title": "Cloud Controls Partner API",
-  "rootUrl": "https://cloudcontrolspartner.googleapis.com/",
-  "ownerDomain": "google.com",
-  "batchPath": "batch",
-  "fullyEncodeReservedExpansion": true,
   "parameters": {
-    "uploadType": {
-      "type": "string",
-      "location": "query",
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\")."
-    },
-    "$.xgafv": {
-      "type": "string",
-      "enum": [
-        "1",
-        "2"
-      ],
-      "location": "query",
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ],
-      "description": "V1 error format."
-    },
-    "callback": {
-      "description": "JSONP",
-      "type": "string",
-      "location": "query"
-    },
-    "key": {
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
-      "type": "string",
-      "location": "query"
-    },
-    "quotaUser": {
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
-      "type": "string",
-      "location": "query"
-    },
-    "oauth_token": {
-      "type": "string",
-      "location": "query",
-      "description": "OAuth 2.0 token for the current user."
-    },
-    "prettyPrint": {
-      "description": "Returns response with indentations and line breaks.",
-      "type": "boolean",
-      "default": "true",
-      "location": "query"
-    },
     "access_token": {
       "type": "string",
-      "location": "query",
-      "description": "OAuth access token."
-    },
-    "upload_protocol": {
-      "type": "string",
-      "location": "query",
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\")."
+      "description": "OAuth access token.",
+      "location": "query"
     },
     "alt": {
-      "description": "Data format for response.",
-      "default": "json",
       "enumDescriptions": [
         "Responses with Content-Type of application/json",
         "Media download with context-dependent Content-Type",
         "Responses with Content-Type of application/x-protobuf"
       ],
       "type": "string",
+      "description": "Data format for response.",
+      "location": "query",
+      "default": "json",
       "enum": [
         "json",
         "media",
         "proto"
-      ],
+      ]
+    },
+    "uploadType": {
+      "type": "string",
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
+      "location": "query"
+    },
+    "quotaUser": {
+      "type": "string",
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
       "location": "query"
     },
     "fields": {
-      "description": "Selector specifying which fields to include in a partial response.",
       "type": "string",
+      "description": "Selector specifying which fields to include in a partial response.",
+      "location": "query"
+    },
+    "callback": {
+      "type": "string",
+      "description": "JSONP",
+      "location": "query"
+    },
+    "upload_protocol": {
+      "type": "string",
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
+      "location": "query"
+    },
+    "key": {
+      "type": "string",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+      "location": "query"
+    },
+    "prettyPrint": {
+      "default": "true",
+      "type": "boolean",
+      "description": "Returns response with indentations and line breaks.",
+      "location": "query"
+    },
+    "$.xgafv": {
+      "enum": [
+        "1",
+        "2"
+      ],
+      "type": "string",
+      "description": "V1 error format.",
+      "location": "query",
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ]
+    },
+    "oauth_token": {
+      "type": "string",
+      "description": "OAuth 2.0 token for the current user.",
       "location": "query"
     }
   },
-  "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
-  },
-  "revision": "20260408",
-  "documentationLink": "https://cloud.google.com/sovereign-controls-by-partners/docs/sovereign-partners/reference/rest",
-  "kind": "discovery#restDescription",
-  "basePath": "",
-  "ownerName": "Google",
-  "description": "Provides insights about your customers and their Assured Workloads based on your Sovereign Controls by Partners offering.",
-  "discoveryVersion": "v1",
-  "baseUrl": "https://cloudcontrolspartner.googleapis.com/",
-  "version": "v1",
+  "servicePath": "",
+  "mtlsRootUrl": "https://cloudcontrolspartner.mtls.googleapis.com/",
   "protocol": "rest",
-  "name": "cloudcontrolspartner",
+  "fullyEncodeReservedExpansion": true,
+  "batchPath": "batch",
+  "basePath": "",
   "resources": {
     "organizations": {
       "resources": {
         "locations": {
           "methods": {
             "getPartner": {
+              "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/partner",
+              "httpMethod": "GET",
+              "parameterOrder": [
+                "name"
+              ],
+              "path": "v1/{+name}",
+              "id": "cloudcontrolspartner.organizations.locations.getPartner",
               "parameters": {
                 "name": {
-                  "pattern": "^organizations/[^/]+/locations/[^/]+/partner$",
                   "required": true,
+                  "pattern": "^organizations/[^/]+/locations/[^/]+/partner$",
+                  "description": "Required. Format: `organizations/{organization}/locations/{location}/partner`",
                   "location": "path",
-                  "type": "string",
-                  "description": "Required. Format: `organizations/{organization}/locations/{location}/partner`"
+                  "type": "string"
                 }
               },
               "scopes": [
                 "https://www.googleapis.com/auth/cloud-platform"
               ],
               "description": "Get details of a Partner.",
-              "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/partner",
-              "httpMethod": "GET",
               "response": {
                 "$ref": "Partner"
-              },
-              "path": "v1/{+name}",
-              "parameterOrder": [
-                "name"
-              ],
-              "id": "cloudcontrolspartner.organizations.locations.getPartner"
+              }
             }
           },
           "resources": {
             "customers": {
               "methods": {
-                "get": {
-                  "path": "v1/{+name}",
-                  "id": "cloudcontrolspartner.organizations.locations.customers.get",
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "description": "Gets details of a single customer",
-                  "parameters": {
-                    "name": {
-                      "description": "Required. Format: `organizations/{organization}/locations/{location}/customers/{customer}`",
-                      "location": "path",
-                      "type": "string",
-                      "required": true,
-                      "pattern": "^organizations/[^/]+/locations/[^/]+/customers/[^/]+$"
-                    }
-                  },
-                  "response": {
-                    "$ref": "Customer"
-                  },
-                  "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/customers/{customersId}",
-                  "httpMethod": "GET"
-                },
-                "patch": {
-                  "id": "cloudcontrolspartner.organizations.locations.customers.patch",
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "request": {
-                    "$ref": "Customer"
-                  },
-                  "path": "v1/{+name}",
-                  "response": {
-                    "$ref": "Customer"
-                  },
-                  "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/customers/{customersId}",
-                  "httpMethod": "PATCH",
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "description": "Update details of a single customer",
-                  "parameters": {
-                    "updateMask": {
-                      "location": "query",
-                      "type": "string",
-                      "description": "Optional. The list of fields to update",
-                      "format": "google-fieldmask"
-                    },
-                    "name": {
-                      "description": "Identifier. Format: `organizations/{organization}/locations/{location}/customers/{customer}`",
-                      "required": true,
-                      "location": "path",
-                      "type": "string",
-                      "pattern": "^organizations/[^/]+/locations/[^/]+/customers/[^/]+$"
-                    }
-                  }
-                },
-                "create": {
+                "list": {
+                  "path": "v1/{+parent}/customers",
                   "parameterOrder": [
                     "parent"
                   ],
-                  "request": {
-                    "$ref": "Customer"
-                  },
-                  "id": "cloudcontrolspartner.organizations.locations.customers.create",
-                  "path": "v1/{+parent}/customers",
                   "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/customers",
-                  "httpMethod": "POST",
+                  "httpMethod": "GET",
                   "response": {
-                    "$ref": "Customer"
+                    "$ref": "ListCustomersResponse"
                   },
+                  "description": "Lists customers of a partner identified by its Google Cloud organization ID",
+                  "id": "cloudcontrolspartner.organizations.locations.customers.list",
                   "parameters": {
-                    "parent": {
-                      "description": "Required. Parent resource Format: `organizations/{organization}/locations/{location}`",
-                      "pattern": "^organizations/[^/]+/locations/[^/]+$",
-                      "required": true,
-                      "location": "path",
+                    "orderBy": {
+                      "description": "Optional. Hint for how to order the results",
+                      "location": "query",
                       "type": "string"
                     },
-                    "customerId": {
-                      "location": "query",
-                      "type": "string",
-                      "description": "Required. The customer id to use for the customer, which will become the final component of the customer's resource name. The specified value must be a valid Google cloud organization id."
-                    }
-                  },
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "description": "Creates a new customer."
-                },
-                "list": {
-                  "parameters": {
                     "pageToken": {
+                      "description": "A page token, received from a previous `ListCustomers` call. Provide this to retrieve the subsequent page.",
                       "location": "query",
-                      "type": "string",
-                      "description": "A page token, received from a previous `ListCustomers` call. Provide this to retrieve the subsequent page."
+                      "type": "string"
                     },
                     "filter": {
                       "description": "Optional. Filtering results",
                       "location": "query",
                       "type": "string"
                     },
+                    "pageSize": {
+                      "format": "int32",
+                      "description": "The maximum number of Customers to return. The service may return fewer than this value. If unspecified, at most 500 Customers will be returned.",
+                      "location": "query",
+                      "type": "integer"
+                    },
                     "parent": {
-                      "required": true,
+                      "description": "Required. Parent resource Format: `organizations/{organization}/locations/{location}`",
                       "location": "path",
                       "type": "string",
-                      "pattern": "^organizations/[^/]+/locations/[^/]+$",
-                      "description": "Required. Parent resource Format: `organizations/{organization}/locations/{location}`"
-                    },
-                    "orderBy": {
-                      "description": "Optional. Hint for how to order the results",
-                      "location": "query",
-                      "type": "string"
-                    },
-                    "pageSize": {
-                      "location": "query",
-                      "type": "integer",
-                      "description": "The maximum number of Customers to return. The service may return fewer than this value. If unspecified, at most 500 Customers will be returned.",
-                      "format": "int32"
+                      "required": true,
+                      "pattern": "^organizations/[^/]+/locations/[^/]+$"
+                    }
+                  },
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ]
+                },
+                "get": {
+                  "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/customers/{customersId}",
+                  "httpMethod": "GET",
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "path": "v1/{+name}",
+                  "id": "cloudcontrolspartner.organizations.locations.customers.get",
+                  "parameters": {
+                    "name": {
+                      "description": "Required. Format: `organizations/{organization}/locations/{location}/customers/{customer}`",
+                      "location": "path",
+                      "type": "string",
+                      "pattern": "^organizations/[^/]+/locations/[^/]+/customers/[^/]+$",
+                      "required": true
                     }
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/cloud-platform"
                   ],
-                  "description": "Lists customers of a partner identified by its Google Cloud organization ID",
-                  "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/customers",
-                  "httpMethod": "GET",
+                  "description": "Gets details of a single customer",
                   "response": {
-                    "$ref": "ListCustomersResponse"
-                  },
-                  "path": "v1/{+parent}/customers",
+                    "$ref": "Customer"
+                  }
+                },
+                "create": {
                   "parameterOrder": [
                     "parent"
                   ],
-                  "id": "cloudcontrolspartner.organizations.locations.customers.list"
-                },
-                "delete": {
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "id": "cloudcontrolspartner.organizations.locations.customers.delete",
-                  "path": "v1/{+name}",
-                  "response": {
-                    "$ref": "Empty"
+                  "path": "v1/{+parent}/customers",
+                  "httpMethod": "POST",
+                  "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/customers",
+                  "request": {
+                    "$ref": "Customer"
                   },
-                  "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/customers/{customersId}",
-                  "httpMethod": "DELETE",
+                  "description": "Creates a new customer.",
+                  "response": {
+                    "$ref": "Customer"
+                  },
                   "scopes": [
                     "https://www.googleapis.com/auth/cloud-platform"
                   ],
-                  "description": "Delete details of a single customer",
+                  "id": "cloudcontrolspartner.organizations.locations.customers.create",
+                  "parameters": {
+                    "parent": {
+                      "description": "Required. Parent resource Format: `organizations/{organization}/locations/{location}`",
+                      "location": "path",
+                      "type": "string",
+                      "required": true,
+                      "pattern": "^organizations/[^/]+/locations/[^/]+$"
+                    },
+                    "customerId": {
+                      "description": "Required. The customer id to use for the customer, which will become the final component of the customer's resource name. The specified value must be a valid Google cloud organization id.",
+                      "location": "query",
+                      "type": "string"
+                    }
+                  }
+                },
+                "patch": {
+                  "request": {
+                    "$ref": "Customer"
+                  },
+                  "description": "Update details of a single customer",
+                  "response": {
+                    "$ref": "Customer"
+                  },
+                  "id": "cloudcontrolspartner.organizations.locations.customers.patch",
+                  "parameters": {
+                    "name": {
+                      "description": "Identifier. Format: `organizations/{organization}/locations/{location}/customers/{customer}`",
+                      "location": "path",
+                      "type": "string",
+                      "pattern": "^organizations/[^/]+/locations/[^/]+/customers/[^/]+$",
+                      "required": true
+                    },
+                    "updateMask": {
+                      "description": "Optional. The list of fields to update",
+                      "location": "query",
+                      "type": "string",
+                      "format": "google-fieldmask"
+                    }
+                  },
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "path": "v1/{+name}",
+                  "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/customers/{customersId}",
+                  "httpMethod": "PATCH"
+                },
+                "delete": {
+                  "id": "cloudcontrolspartner.organizations.locations.customers.delete",
                   "parameters": {
                     "name": {
                       "description": "Required. name of the resource to be deleted format: name=organizations/*/locations/*/customers/*",
@@ -1109,44 +1101,91 @@
                       "required": true,
                       "pattern": "^organizations/[^/]+/locations/[^/]+/customers/[^/]+$"
                     }
-                  }
+                  },
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "response": {
+                    "$ref": "Empty"
+                  },
+                  "description": "Delete details of a single customer",
+                  "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/customers/{customersId}",
+                  "httpMethod": "DELETE",
+                  "path": "v1/{+name}",
+                  "parameterOrder": [
+                    "name"
+                  ]
                 }
               },
               "resources": {
                 "workloads": {
                   "methods": {
                     "get": {
+                      "id": "cloudcontrolspartner.organizations.locations.customers.workloads.get",
                       "parameters": {
                         "name": {
-                          "pattern": "^organizations/[^/]+/locations/[^/]+/customers/[^/]+/workloads/[^/]+$",
+                          "description": "Required. Format: `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}`",
                           "location": "path",
                           "type": "string",
                           "required": true,
-                          "description": "Required. Format: `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}`"
+                          "pattern": "^organizations/[^/]+/locations/[^/]+/customers/[^/]+/workloads/[^/]+$"
                         }
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/cloud-platform"
                       ],
-                      "description": "Gets details of a single workload",
-                      "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/customers/{customersId}/workloads/{workloadsId}",
-                      "httpMethod": "GET",
                       "response": {
                         "$ref": "Workload"
                       },
+                      "description": "Gets details of a single workload",
+                      "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/customers/{customersId}/workloads/{workloadsId}",
+                      "httpMethod": "GET",
+                      "path": "v1/{+name}",
+                      "parameterOrder": [
+                        "name"
+                      ]
+                    },
+                    "getEkmConnections": {
+                      "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/customers/{customersId}/workloads/{workloadsId}/ekmConnections",
+                      "httpMethod": "GET",
                       "path": "v1/{+name}",
                       "parameterOrder": [
                         "name"
                       ],
-                      "id": "cloudcontrolspartner.organizations.locations.customers.workloads.get"
+                      "id": "cloudcontrolspartner.organizations.locations.customers.workloads.getEkmConnections",
+                      "parameters": {
+                        "name": {
+                          "required": true,
+                          "pattern": "^organizations/[^/]+/locations/[^/]+/customers/[^/]+/workloads/[^/]+/ekmConnections$",
+                          "description": "Required. Format: `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}/ekmConnections`",
+                          "location": "path",
+                          "type": "string"
+                        }
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform"
+                      ],
+                      "response": {
+                        "$ref": "EkmConnections"
+                      },
+                      "description": "Gets the EKM connections associated with a workload"
                     },
                     "list": {
-                      "path": "v1/{+parent}/workloads",
                       "id": "cloudcontrolspartner.organizations.locations.customers.workloads.list",
-                      "parameterOrder": [
-                        "parent"
-                      ],
                       "parameters": {
+                        "pageSize": {
+                          "description": "The maximum number of workloads to return. The service may return fewer than this value. If unspecified, at most 500 workloads will be returned.",
+                          "location": "query",
+                          "type": "integer",
+                          "format": "int32"
+                        },
+                        "parent": {
+                          "pattern": "^organizations/[^/]+/locations/[^/]+/customers/[^/]+$",
+                          "required": true,
+                          "description": "Required. Parent resource Format: `organizations/{organization}/locations/{location}/customers/{customer}`",
+                          "location": "path",
+                          "type": "string"
+                        },
                         "pageToken": {
                           "description": "A page token, received from a previous `ListWorkloads` call. Provide this to retrieve the subsequent page.",
                           "location": "query",
@@ -1157,223 +1196,189 @@
                           "location": "query",
                           "type": "string"
                         },
-                        "pageSize": {
-                          "description": "The maximum number of workloads to return. The service may return fewer than this value. If unspecified, at most 500 workloads will be returned.",
-                          "format": "int32",
-                          "location": "query",
-                          "type": "integer"
-                        },
-                        "parent": {
-                          "pattern": "^organizations/[^/]+/locations/[^/]+/customers/[^/]+$",
-                          "required": true,
-                          "location": "path",
-                          "type": "string",
-                          "description": "Required. Parent resource Format: `organizations/{organization}/locations/{location}/customers/{customer}`"
-                        },
                         "orderBy": {
+                          "description": "Optional. Hint for how to order the results.",
                           "location": "query",
-                          "type": "string",
-                          "description": "Optional. Hint for how to order the results."
+                          "type": "string"
                         }
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/cloud-platform"
                       ],
+                      "response": {
+                        "$ref": "ListWorkloadsResponse"
+                      },
                       "description": "Lists customer workloads for a given customer org id",
                       "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/customers/{customersId}/workloads",
                       "httpMethod": "GET",
-                      "response": {
-                        "$ref": "ListWorkloadsResponse"
-                      }
+                      "path": "v1/{+parent}/workloads",
+                      "parameterOrder": [
+                        "parent"
+                      ]
                     },
                     "getPartnerPermissions": {
+                      "path": "v1/{+name}",
+                      "parameterOrder": [
+                        "name"
+                      ],
+                      "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/customers/{customersId}/workloads/{workloadsId}/partnerPermissions",
+                      "httpMethod": "GET",
                       "response": {
                         "$ref": "PartnerPermissions"
                       },
-                      "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/customers/{customersId}/workloads/{workloadsId}/partnerPermissions",
-                      "httpMethod": "GET",
-                      "scopes": [
-                        "https://www.googleapis.com/auth/cloud-platform"
-                      ],
                       "description": "Gets the partner permissions granted for a workload",
+                      "id": "cloudcontrolspartner.organizations.locations.customers.workloads.getPartnerPermissions",
                       "parameters": {
                         "name": {
                           "description": "Required. Name of the resource to get in the format: `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}/partnerPermissions`",
-                          "pattern": "^organizations/[^/]+/locations/[^/]+/customers/[^/]+/workloads/[^/]+/partnerPermissions$",
                           "location": "path",
                           "type": "string",
-                          "required": true
-                        }
-                      },
-                      "id": "cloudcontrolspartner.organizations.locations.customers.workloads.getPartnerPermissions",
-                      "parameterOrder": [
-                        "name"
-                      ],
-                      "path": "v1/{+name}"
-                    },
-                    "getEkmConnections": {
-                      "parameters": {
-                        "name": {
                           "required": true,
-                          "location": "path",
-                          "type": "string",
-                          "pattern": "^organizations/[^/]+/locations/[^/]+/customers/[^/]+/workloads/[^/]+/ekmConnections$",
-                          "description": "Required. Format: `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}/ekmConnections`"
+                          "pattern": "^organizations/[^/]+/locations/[^/]+/customers/[^/]+/workloads/[^/]+/partnerPermissions$"
                         }
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/cloud-platform"
-                      ],
-                      "description": "Gets the EKM connections associated with a workload",
-                      "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/customers/{customersId}/workloads/{workloadsId}/ekmConnections",
-                      "httpMethod": "GET",
-                      "response": {
-                        "$ref": "EkmConnections"
-                      },
-                      "path": "v1/{+name}",
-                      "id": "cloudcontrolspartner.organizations.locations.customers.workloads.getEkmConnections",
-                      "parameterOrder": [
-                        "name"
                       ]
                     }
                   },
                   "resources": {
                     "accessApprovalRequests": {
+                      "deprecated": true,
                       "methods": {
                         "list": {
+                          "parameterOrder": [
+                            "parent"
+                          ],
+                          "path": "v1/{+parent}/accessApprovalRequests",
+                          "deprecated": true,
+                          "httpMethod": "GET",
+                          "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/customers/{customersId}/workloads/{workloadsId}/accessApprovalRequests",
+                          "description": "Deprecated: Only returns access approval requests directly associated with an assured workload folder.",
+                          "response": {
+                            "$ref": "ListAccessApprovalRequestsResponse"
+                          },
+                          "scopes": [
+                            "https://www.googleapis.com/auth/cloud-platform"
+                          ],
+                          "id": "cloudcontrolspartner.organizations.locations.customers.workloads.accessApprovalRequests.list",
                           "parameters": {
-                            "pageToken": {
+                            "orderBy": {
+                              "description": "Optional. Hint for how to order the results.",
                               "location": "query",
-                              "type": "string",
-                              "description": "Optional. A page token, received from a previous `ListAccessApprovalRequests` call. Provide this to retrieve the subsequent page."
+                              "type": "string"
                             },
                             "pageSize": {
-                              "description": "Optional. The maximum number of access requests to return. The service may return fewer than this value. If unspecified, at most 500 access requests will be returned.",
                               "format": "int32",
+                              "description": "Optional. The maximum number of access requests to return. The service may return fewer than this value. If unspecified, at most 500 access requests will be returned.",
                               "location": "query",
                               "type": "integer"
                             },
                             "parent": {
                               "pattern": "^organizations/[^/]+/locations/[^/]+/customers/[^/]+/workloads/[^/]+$",
-                              "location": "path",
-                              "type": "string",
                               "required": true,
-                              "description": "Required. Parent resource Format: `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}`"
+                              "description": "Required. Parent resource Format: `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}`",
+                              "location": "path",
+                              "type": "string"
                             },
-                            "orderBy": {
+                            "pageToken": {
+                              "description": "Optional. A page token, received from a previous `ListAccessApprovalRequests` call. Provide this to retrieve the subsequent page.",
                               "location": "query",
-                              "type": "string",
-                              "description": "Optional. Hint for how to order the results."
+                              "type": "string"
                             },
                             "filter": {
                               "description": "Optional. Filtering results.",
                               "location": "query",
                               "type": "string"
                             }
-                          },
-                          "scopes": [
-                            "https://www.googleapis.com/auth/cloud-platform"
-                          ],
-                          "description": "Deprecated: Only returns access approval requests directly associated with an assured workload folder.",
-                          "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/customers/{customersId}/workloads/{workloadsId}/accessApprovalRequests",
-                          "httpMethod": "GET",
-                          "response": {
-                            "$ref": "ListAccessApprovalRequestsResponse"
-                          },
-                          "path": "v1/{+parent}/accessApprovalRequests",
-                          "deprecated": true,
-                          "parameterOrder": [
-                            "parent"
-                          ],
-                          "id": "cloudcontrolspartner.organizations.locations.customers.workloads.accessApprovalRequests.list"
+                          }
                         }
-                      },
-                      "deprecated": true
+                      }
                     },
                     "violations": {
                       "methods": {
-                        "get": {
-                          "scopes": [
-                            "https://www.googleapis.com/auth/cloud-platform"
-                          ],
-                          "description": "Gets details of a single Violation.",
-                          "parameters": {
-                            "name": {
-                              "description": "Required. Format: `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}/violations/{violation}`",
-                              "pattern": "^organizations/[^/]+/locations/[^/]+/customers/[^/]+/workloads/[^/]+/violations/[^/]+$",
-                              "location": "path",
-                              "type": "string",
-                              "required": true
-                            }
-                          },
-                          "response": {
-                            "$ref": "Violation"
-                          },
-                          "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/customers/{customersId}/workloads/{workloadsId}/violations/{violationsId}",
-                          "httpMethod": "GET",
-                          "path": "v1/{+name}",
-                          "id": "cloudcontrolspartner.organizations.locations.customers.workloads.violations.get",
-                          "parameterOrder": [
-                            "name"
-                          ]
-                        },
                         "list": {
-                          "scopes": [
-                            "https://www.googleapis.com/auth/cloud-platform"
-                          ],
-                          "description": "Lists Violations for a workload Callers may also choose to read across multiple Customers or for a single customer as per [AIP-159](https://google.aip.dev/159) by using '-' (the hyphen or dash character) as a wildcard character instead of {customer} & {workload}. Format: `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}`",
+                          "id": "cloudcontrolspartner.organizations.locations.customers.workloads.violations.list",
                           "parameters": {
-                            "parent": {
-                              "description": "Required. Parent resource Format `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}`",
-                              "pattern": "^organizations/[^/]+/locations/[^/]+/customers/[^/]+/workloads/[^/]+$",
-                              "required": true,
-                              "location": "path",
+                            "orderBy": {
+                              "description": "Optional. Hint for how to order the results",
+                              "location": "query",
                               "type": "string"
                             },
-                            "orderBy": {
+                            "interval.endTime": {
+                              "description": "Optional. Exclusive end of the interval. If specified, a Timestamp matching this interval will have to be before the end.",
                               "location": "query",
                               "type": "string",
-                              "description": "Optional. Hint for how to order the results"
+                              "format": "google-datetime"
+                            },
+                            "parent": {
+                              "description": "Required. Parent resource Format `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}`",
+                              "location": "path",
+                              "type": "string",
+                              "required": true,
+                              "pattern": "^organizations/[^/]+/locations/[^/]+/customers/[^/]+/workloads/[^/]+$"
                             },
                             "pageSize": {
-                              "location": "query",
-                              "type": "integer",
+                              "format": "int32",
                               "description": "Optional. The maximum number of customers row to return. The service may return fewer than this value. If unspecified, at most 10 customers will be returned.",
-                              "format": "int32"
-                            },
-                            "interval.startTime": {
                               "location": "query",
-                              "type": "string",
-                              "description": "Optional. Inclusive start of the interval. If specified, a Timestamp matching this interval will have to be the same or after the start.",
-                              "format": "google-datetime"
-                            },
-                            "interval.endTime": {
-                              "location": "query",
-                              "type": "string",
-                              "description": "Optional. Exclusive end of the interval. If specified, a Timestamp matching this interval will have to be before the end.",
-                              "format": "google-datetime"
+                              "type": "integer"
                             },
                             "filter": {
                               "description": "Optional. Filtering results",
                               "location": "query",
                               "type": "string"
                             },
-                            "pageToken": {
+                            "interval.startTime": {
+                              "description": "Optional. Inclusive start of the interval. If specified, a Timestamp matching this interval will have to be the same or after the start.",
                               "location": "query",
                               "type": "string",
-                              "description": "Optional. A page token, received from a previous `ListViolations` call. Provide this to retrieve the subsequent page."
+                              "format": "google-datetime"
+                            },
+                            "pageToken": {
+                              "description": "Optional. A page token, received from a previous `ListViolations` call. Provide this to retrieve the subsequent page.",
+                              "location": "query",
+                              "type": "string"
                             }
                           },
+                          "scopes": [
+                            "https://www.googleapis.com/auth/cloud-platform"
+                          ],
+                          "description": "Lists Violations for a workload Callers may also choose to read across multiple Customers or for a single customer as per [AIP-159](https://google.aip.dev/159) by using '-' (the hyphen or dash character) as a wildcard character instead of {customer} & {workload}. Format: `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}`",
                           "response": {
                             "$ref": "ListViolationsResponse"
                           },
                           "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/customers/{customersId}/workloads/{workloadsId}/violations",
                           "httpMethod": "GET",
-                          "path": "v1/{+parent}/violations",
                           "parameterOrder": [
                             "parent"
                           ],
-                          "id": "cloudcontrolspartner.organizations.locations.customers.workloads.violations.list"
+                          "path": "v1/{+parent}/violations"
+                        },
+                        "get": {
+                          "scopes": [
+                            "https://www.googleapis.com/auth/cloud-platform"
+                          ],
+                          "id": "cloudcontrolspartner.organizations.locations.customers.workloads.violations.get",
+                          "parameters": {
+                            "name": {
+                              "description": "Required. Format: `organizations/{organization}/locations/{location}/customers/{customer}/workloads/{workload}/violations/{violation}`",
+                              "location": "path",
+                              "type": "string",
+                              "pattern": "^organizations/[^/]+/locations/[^/]+/customers/[^/]+/workloads/[^/]+/violations/[^/]+$",
+                              "required": true
+                            }
+                          },
+                          "response": {
+                            "$ref": "Violation"
+                          },
+                          "description": "Gets details of a single Violation.",
+                          "httpMethod": "GET",
+                          "flatPath": "v1/organizations/{organizationsId}/locations/{locationsId}/customers/{customersId}/workloads/{workloadsId}/violations/{violationsId}",
+                          "path": "v1/{+name}",
+                          "parameterOrder": [
+                            "name"
+                          ]
                         }
                       }
                     }
@@ -1386,17 +1391,12 @@
       }
     }
   },
-  "id": "cloudcontrolspartner:v1",
+  "discoveryVersion": "v1",
+  "version": "v1",
   "version_module": true,
-  "servicePath": "",
-  "mtlsRootUrl": "https://cloudcontrolspartner.mtls.googleapis.com/",
-  "auth": {
-    "oauth2": {
-      "scopes": {
-        "https://www.googleapis.com/auth/cloud-platform": {
-          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
-        }
-      }
-    }
-  }
+  "revision": "20260422",
+  "rootUrl": "https://cloudcontrolspartner.googleapis.com/",
+  "id": "cloudcontrolspartner:v1",
+  "baseUrl": "https://cloudcontrolspartner.googleapis.com/",
+  "ownerDomain": "google.com"
 }
