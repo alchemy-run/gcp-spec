@@ -1,18 +1,32 @@
 {
-  "batchPath": "batch",
   "schemas": {
     "NotificationSetting": {
       "description": "A Google Pub/Sub topic where notifications can be published when a location is updated or has a new review. There will be only one notification setting resource per-account.",
       "id": "NotificationSetting",
+      "type": "object",
       "properties": {
-        "name": {
-          "description": "Required. The resource name this setting is for. This is of the form `accounts/{account_id}/notificationSetting`.",
-          "type": "string"
+        "pubsubTopic": {
+          "type": "string",
+          "description": "Optional. The Google Pub/Sub topic that will receive notifications when locations managed by this account are updated. If unset, no notifications will be posted. The account mybusiness-api-pubsub@system.gserviceaccount.com must have at least Publish permissions on the Pub/Sub topic."
         },
         "notificationTypes": {
           "description": "The types of notifications that will be sent to the Pub/Sub topic. To stop receiving notifications entirely, use NotificationSettings.UpdateNotificationSetting with an empty notification_types or set the pubsub_topic to an empty string.",
           "type": "array",
           "items": {
+            "enum": [
+              "NOTIFICATION_TYPE_UNSPECIFIED",
+              "GOOGLE_UPDATE",
+              "NEW_REVIEW",
+              "UPDATED_REVIEW",
+              "NEW_CUSTOMER_MEDIA",
+              "NEW_QUESTION",
+              "UPDATED_QUESTION",
+              "NEW_ANSWER",
+              "UPDATED_ANSWER",
+              "DUPLICATE_LOCATION",
+              "LOSS_OF_VOICE_OF_MERCHANT",
+              "VOICE_OF_MERCHANT_UPDATED"
+            ],
             "type": "string",
             "enumDescriptions": [
               "No notification type. Will not match any notifications.",
@@ -41,189 +55,175 @@
               false,
               true,
               false
-            ],
-            "enum": [
-              "NOTIFICATION_TYPE_UNSPECIFIED",
-              "GOOGLE_UPDATE",
-              "NEW_REVIEW",
-              "UPDATED_REVIEW",
-              "NEW_CUSTOMER_MEDIA",
-              "NEW_QUESTION",
-              "UPDATED_QUESTION",
-              "NEW_ANSWER",
-              "UPDATED_ANSWER",
-              "DUPLICATE_LOCATION",
-              "LOSS_OF_VOICE_OF_MERCHANT",
-              "VOICE_OF_MERCHANT_UPDATED"
             ]
           }
         },
-        "pubsubTopic": {
-          "description": "Optional. The Google Pub/Sub topic that will receive notifications when locations managed by this account are updated. If unset, no notifications will be posted. The account mybusiness-api-pubsub@system.gserviceaccount.com must have at least Publish permissions on the Pub/Sub topic.",
-          "type": "string"
+        "name": {
+          "type": "string",
+          "description": "Required. The resource name this setting is for. This is of the form `accounts/{account_id}/notificationSetting`."
         }
-      },
-      "type": "object"
+      }
     }
   },
-  "baseUrl": "https://mybusinessnotifications.googleapis.com/",
+  "version_module": true,
+  "revision": "20260428",
+  "id": "mybusinessnotifications:v1",
+  "ownerName": "Google",
+  "version": "v1",
   "basePath": "",
-  "mtlsRootUrl": "https://mybusinessnotifications.mtls.googleapis.com/",
-  "ownerDomain": "google.com",
+  "fullyEncodeReservedExpansion": true,
+  "baseUrl": "https://mybusinessnotifications.googleapis.com/",
+  "resources": {
+    "accounts": {
+      "methods": {
+        "getNotificationSetting": {
+          "response": {
+            "$ref": "NotificationSetting"
+          },
+          "parameters": {
+            "name": {
+              "location": "path",
+              "type": "string",
+              "description": "Required. The resource name of the notification setting we are trying to fetch.",
+              "pattern": "^accounts/[^/]+/notificationSetting$",
+              "required": true
+            }
+          },
+          "path": "v1/{+name}",
+          "flatPath": "v1/accounts/{accountsId}/notificationSetting",
+          "parameterOrder": [
+            "name"
+          ],
+          "description": "Returns the pubsub notification settings for the account.",
+          "id": "mybusinessnotifications.accounts.getNotificationSetting",
+          "httpMethod": "GET"
+        },
+        "updateNotificationSetting": {
+          "parameterOrder": [
+            "name"
+          ],
+          "description": "Sets the pubsub notification setting for the account informing Google which topic to send pubsub notifications for. Use the notification_types field within notification_setting to manipulate the events an account wants to subscribe to. An account will only have one notification setting resource, and only one pubsub topic can be set. To delete the setting, update with an empty notification_types",
+          "httpMethod": "PATCH",
+          "path": "v1/{+name}",
+          "request": {
+            "$ref": "NotificationSetting"
+          },
+          "id": "mybusinessnotifications.accounts.updateNotificationSetting",
+          "response": {
+            "$ref": "NotificationSetting"
+          },
+          "parameters": {
+            "name": {
+              "required": true,
+              "description": "Required. The resource name this setting is for. This is of the form `accounts/{account_id}/notificationSetting`.",
+              "location": "path",
+              "type": "string",
+              "pattern": "^accounts/[^/]+/notificationSetting$"
+            },
+            "updateMask": {
+              "format": "google-fieldmask",
+              "location": "query",
+              "type": "string",
+              "description": "Required. The specific fields that should be updated. The only editable field is notification_setting."
+            }
+          },
+          "flatPath": "v1/accounts/{accountsId}/notificationSetting"
+        }
+      }
+    }
+  },
+  "icons": {
+    "x16": "http://www.google.com/images/icons/product/search-16.gif",
+    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  },
+  "description": "The My Business Notification Settings API enables managing notification settings for business accounts. Note - If you have a quota of 0 after enabling the API, please request for GBP API access.",
+  "kind": "discovery#restDescription",
   "parameters": {
-    "prettyPrint": {
-      "default": "true",
-      "description": "Returns response with indentations and line breaks.",
+    "access_token": {
+      "type": "string",
       "location": "query",
-      "type": "boolean"
+      "description": "OAuth access token."
     },
-    "key": {
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
-      "location": "query",
-      "type": "string"
+    "uploadType": {
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
+      "type": "string",
+      "location": "query"
     },
     "fields": {
-      "description": "Selector specifying which fields to include in a partial response.",
-      "location": "query",
-      "type": "string"
-    },
-    "quotaUser": {
       "type": "string",
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
+      "location": "query",
+      "description": "Selector specifying which fields to include in a partial response."
+    },
+    "oauth_token": {
+      "type": "string",
+      "location": "query",
+      "description": "OAuth 2.0 token for the current user."
+    },
+    "upload_protocol": {
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
+      "type": "string",
       "location": "query"
     },
     "$.xgafv": {
-      "type": "string",
-      "location": "query",
       "enum": [
         "1",
         "2"
       ],
+      "description": "V1 error format.",
+      "type": "string",
       "enumDescriptions": [
         "v1 error format",
         "v2 error format"
       ],
-      "description": "V1 error format."
-    },
-    "callback": {
-      "description": "JSONP",
-      "location": "query",
-      "type": "string"
-    },
-    "oauth_token": {
-      "description": "OAuth 2.0 token for the current user.",
-      "location": "query",
-      "type": "string"
-    },
-    "access_token": {
-      "description": "OAuth access token.",
-      "location": "query",
-      "type": "string"
-    },
-    "upload_protocol": {
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
-      "location": "query",
-      "type": "string"
-    },
-    "uploadType": {
-      "type": "string",
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
       "location": "query"
     },
     "alt": {
+      "description": "Data format for response.",
+      "type": "string",
       "enumDescriptions": [
         "Responses with Content-Type of application/json",
         "Media download with context-dependent Content-Type",
         "Responses with Content-Type of application/x-protobuf"
       ],
-      "default": "json",
-      "description": "Data format for response.",
-      "type": "string",
+      "location": "query",
       "enum": [
         "json",
         "media",
         "proto"
       ],
+      "default": "json"
+    },
+    "callback": {
+      "type": "string",
+      "location": "query",
+      "description": "JSONP"
+    },
+    "key": {
+      "type": "string",
+      "location": "query",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token."
+    },
+    "quotaUser": {
+      "type": "string",
+      "location": "query",
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters."
+    },
+    "prettyPrint": {
+      "description": "Returns response with indentations and line breaks.",
+      "type": "boolean",
+      "default": "true",
       "location": "query"
     }
   },
-  "kind": "discovery#restDescription",
-  "resources": {
-    "accounts": {
-      "methods": {
-        "updateNotificationSetting": {
-          "flatPath": "v1/accounts/{accountsId}/notificationSetting",
-          "httpMethod": "PATCH",
-          "request": {
-            "$ref": "NotificationSetting"
-          },
-          "parameterOrder": [
-            "name"
-          ],
-          "response": {
-            "$ref": "NotificationSetting"
-          },
-          "id": "mybusinessnotifications.accounts.updateNotificationSetting",
-          "description": "Sets the pubsub notification setting for the account informing Google which topic to send pubsub notifications for. Use the notification_types field within notification_setting to manipulate the events an account wants to subscribe to. An account will only have one notification setting resource, and only one pubsub topic can be set. To delete the setting, update with an empty notification_types",
-          "parameters": {
-            "name": {
-              "description": "Required. The resource name this setting is for. This is of the form `accounts/{account_id}/notificationSetting`.",
-              "pattern": "^accounts/[^/]+/notificationSetting$",
-              "required": true,
-              "location": "path",
-              "type": "string"
-            },
-            "updateMask": {
-              "type": "string",
-              "description": "Required. The specific fields that should be updated. The only editable field is notification_setting.",
-              "location": "query",
-              "format": "google-fieldmask"
-            }
-          },
-          "path": "v1/{+name}"
-        },
-        "getNotificationSetting": {
-          "path": "v1/{+name}",
-          "parameters": {
-            "name": {
-              "type": "string",
-              "required": true,
-              "location": "path",
-              "pattern": "^accounts/[^/]+/notificationSetting$",
-              "description": "Required. The resource name of the notification setting we are trying to fetch."
-            }
-          },
-          "parameterOrder": [
-            "name"
-          ],
-          "response": {
-            "$ref": "NotificationSetting"
-          },
-          "id": "mybusinessnotifications.accounts.getNotificationSetting",
-          "description": "Returns the pubsub notification settings for the account.",
-          "flatPath": "v1/accounts/{accountsId}/notificationSetting",
-          "httpMethod": "GET"
-        }
-      }
-    }
-  },
-  "ownerName": "Google",
   "documentationLink": "https://developers.google.com/my-business/",
-  "description": "The My Business Notification Settings API enables managing notification settings for business accounts. Note - If you have a quota of 0 after enabling the API, please request for GBP API access.",
   "rootUrl": "https://mybusinessnotifications.googleapis.com/",
-  "fullyEncodeReservedExpansion": true,
-  "version": "v1",
-  "id": "mybusinessnotifications:v1",
-  "title": "My Business Notifications API",
-  "revision": "20260427",
-  "name": "mybusinessnotifications",
   "discoveryVersion": "v1",
-  "version_module": true,
-  "icons": {
-    "x32": "http://www.google.com/images/icons/product/search-32.gif",
-    "x16": "http://www.google.com/images/icons/product/search-16.gif"
-  },
+  "mtlsRootUrl": "https://mybusinessnotifications.mtls.googleapis.com/",
   "canonicalName": "My Business Notification Settings",
+  "batchPath": "batch",
+  "ownerDomain": "google.com",
+  "title": "My Business Notifications API",
+  "name": "mybusinessnotifications",
   "servicePath": "",
   "protocol": "rest"
 }
