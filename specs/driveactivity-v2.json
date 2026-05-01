@@ -1,9 +1,811 @@
 {
+  "fullyEncodeReservedExpansion": true,
   "basePath": "",
-  "servicePath": "",
+  "name": "driveactivity",
+  "id": "driveactivity:v2",
+  "discoveryVersion": "v1",
+  "icons": {
+    "x16": "http://www.google.com/images/icons/product/search-16.gif",
+    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  },
+  "ownerName": "Google",
+  "title": "Drive Activity API",
   "schemas": {
-    "AppliedLabelChangeDetail": {
+    "NoConsolidation": {
       "type": "object",
+      "id": "NoConsolidation",
+      "description": "A strategy that does no consolidation of individual activities.",
+      "properties": {}
+    },
+    "Domain": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the domain, e.g. `google.com`."
+        },
+        "legacyId": {
+          "description": "An opaque string used to identify this domain.",
+          "type": "string"
+        }
+      },
+      "id": "Domain",
+      "description": "Information about a domain.",
+      "type": "object"
+    },
+    "ActionDetail": {
+      "id": "ActionDetail",
+      "description": "Data describing the type and additional information of an action.",
+      "properties": {
+        "dlpChange": {
+          "description": "A change happened in data leak prevention status.",
+          "$ref": "DataLeakPreventionChange"
+        },
+        "comment": {
+          "description": "A change about comments was made.",
+          "$ref": "Comment"
+        },
+        "permissionChange": {
+          "description": "The permission on an object was changed.",
+          "$ref": "PermissionChange"
+        },
+        "appliedLabelChange": {
+          "description": "Label was changed.",
+          "$ref": "AppliedLabelChange"
+        },
+        "create": {
+          "description": "An object was created.",
+          "$ref": "Create"
+        },
+        "move": {
+          "description": "An object was moved.",
+          "$ref": "Move"
+        },
+        "reference": {
+          "description": "An object was referenced in an application outside of Drive/Docs.",
+          "$ref": "ApplicationReference"
+        },
+        "delete": {
+          "description": "An object was deleted.",
+          "$ref": "Delete"
+        },
+        "rename": {
+          "description": "An object was renamed.",
+          "$ref": "Rename"
+        },
+        "settingsChange": {
+          "description": "Settings were changed.",
+          "$ref": "SettingsChange"
+        },
+        "edit": {
+          "description": "An object was edited.",
+          "$ref": "Edit"
+        },
+        "restore": {
+          "description": "A deleted object was restored.",
+          "$ref": "Restore"
+        }
+      },
+      "type": "object"
+    },
+    "Selection": {
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "description": "Selection value as human-readable display string.",
+          "type": "string"
+        },
+        "value": {
+          "description": "Selection value as Field Choice ID.",
+          "type": "string"
+        }
+      },
+      "id": "Selection",
+      "description": "Wrapper for Selection Field value as combined value/display_name pair for selected choice."
+    },
+    "Anyone": {
+      "id": "Anyone",
+      "description": "Represents any user (including a logged out user).",
+      "properties": {},
+      "type": "object"
+    },
+    "Copy": {
+      "type": "object",
+      "properties": {
+        "originalObject": {
+          "description": "The original object.",
+          "$ref": "TargetReference"
+        }
+      },
+      "id": "Copy",
+      "description": "An object was created by copying an existing object."
+    },
+    "FieldValueChange": {
+      "properties": {
+        "newValue": {
+          "description": "The value that is now set on the field. If not present, the field was cleared. At least one of {old_value|new_value} is always set.",
+          "$ref": "FieldValue"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The human-readable display name for this field."
+        },
+        "fieldId": {
+          "type": "string",
+          "description": "The ID of this field. Field IDs are unique within a Label."
+        },
+        "oldValue": {
+          "description": "The value that was previously set on the field. If not present, the field was newly set. At least one of {old_value|new_value} is always set.",
+          "$ref": "FieldValue"
+        }
+      },
+      "id": "FieldValueChange",
+      "description": "Change to a Field value.",
+      "type": "object"
+    },
+    "Actor": {
+      "id": "Actor",
+      "description": "The actor of a Drive activity.",
+      "properties": {
+        "anonymous": {
+          "description": "An anonymous user.",
+          "$ref": "AnonymousUser"
+        },
+        "system": {
+          "description": "A non-user actor (i.e. system triggered).",
+          "$ref": "SystemEvent"
+        },
+        "impersonation": {
+          "description": "An account acting on behalf of another.",
+          "$ref": "Impersonation"
+        },
+        "administrator": {
+          "description": "An administrator.",
+          "$ref": "Administrator"
+        },
+        "user": {
+          "description": "An end user.",
+          "$ref": "User"
+        }
+      },
+      "type": "object"
+    },
+    "QueryDriveActivityResponse": {
+      "properties": {
+        "nextPageToken": {
+          "type": "string",
+          "description": "Token to retrieve the next page of results, or empty if there are no more results in the list."
+        },
+        "activities": {
+          "type": "array",
+          "items": {
+            "$ref": "DriveActivity"
+          },
+          "description": "List of activity requested."
+        }
+      },
+      "id": "QueryDriveActivityResponse",
+      "description": "Response message for querying Drive activity.",
+      "type": "object"
+    },
+    "Administrator": {
+      "id": "Administrator",
+      "description": "Empty message representing an administrator.",
+      "properties": {},
+      "type": "object"
+    },
+    "Folder": {
+      "properties": {
+        "type": {
+          "description": "This field is deprecated; please see `DriveFolder.type` instead.",
+          "enum": [
+            "TYPE_UNSPECIFIED",
+            "MY_DRIVE_ROOT",
+            "TEAM_DRIVE_ROOT",
+            "STANDARD_FOLDER"
+          ],
+          "type": "string",
+          "enumDescriptions": [
+            "This item is deprecated; please see `DriveFolder.Type` instead.",
+            "This item is deprecated; please see `DriveFolder.Type` instead.",
+            "This item is deprecated; please see `DriveFolder.Type` instead.",
+            "This item is deprecated; please see `DriveFolder.Type` instead."
+          ]
+        }
+      },
+      "type": "object",
+      "id": "Folder",
+      "description": "This item is deprecated; please see `DriveFolder` instead.",
+      "deprecated": true
+    },
+    "Edit": {
+      "id": "Edit",
+      "description": "An empty message indicating an object was edited.",
+      "properties": {},
+      "type": "object"
+    },
+    "UnknownUser": {
+      "properties": {},
+      "id": "UnknownUser",
+      "description": "A user about whom nothing is currently known.",
+      "type": "object"
+    },
+    "RestrictionChange": {
+      "properties": {
+        "feature": {
+          "enumDescriptions": [
+            "The feature which changed restriction settings was not available.",
+            "When restricted, this prevents items from being shared outside the domain.",
+            "When restricted, this prevents direct sharing of individual items.",
+            "Deprecated: Use READERS_CAN_DOWNLOAD instead.",
+            "When restricted, this prevents use of Drive File Stream.",
+            "When restricted, this limits sharing of folders to managers only.",
+            "When restricted, this prevents actions like copy, download, and print for readers. Replaces ITEM_DUPLICATION.",
+            "When restricted, this prevents actions like copy, download, and print for writers."
+          ],
+          "type": "string",
+          "enumDeprecated": [
+            false,
+            false,
+            false,
+            true,
+            false,
+            false,
+            false,
+            false
+          ],
+          "description": "The feature which had a change in restriction policy.",
+          "enum": [
+            "FEATURE_UNSPECIFIED",
+            "SHARING_OUTSIDE_DOMAIN",
+            "DIRECT_SHARING",
+            "ITEM_DUPLICATION",
+            "DRIVE_FILE_STREAM",
+            "FILE_ORGANIZER_CAN_SHARE_FOLDERS",
+            "READERS_CAN_DOWNLOAD",
+            "WRITERS_CAN_DOWNLOAD"
+          ]
+        },
+        "newRestriction": {
+          "description": "The restriction in place after the change.",
+          "enum": [
+            "RESTRICTION_UNSPECIFIED",
+            "UNRESTRICTED",
+            "FULLY_RESTRICTED"
+          ],
+          "type": "string",
+          "enumDescriptions": [
+            "The type of restriction is not available.",
+            "The feature is available without restriction.",
+            "The use of this feature is fully restricted."
+          ]
+        }
+      },
+      "id": "RestrictionChange",
+      "description": "Information about restriction policy changes to a feature.",
+      "type": "object"
+    },
+    "PermissionChange": {
+      "type": "object",
+      "id": "PermissionChange",
+      "description": "A change of the permission setting on an item.",
+      "properties": {
+        "addedPermissions": {
+          "type": "array",
+          "items": {
+            "$ref": "Permission"
+          },
+          "description": "The set of permissions added by this change."
+        },
+        "removedPermissions": {
+          "type": "array",
+          "items": {
+            "$ref": "Permission"
+          },
+          "description": "The set of permissions removed by this change."
+        }
+      }
+    },
+    "New": {
+      "properties": {},
+      "id": "New",
+      "description": "An object was created from scratch.",
+      "type": "object"
+    },
+    "Impersonation": {
+      "id": "Impersonation",
+      "description": "Information about an impersonation, where an admin acts on behalf of an end user. Information about the acting admin is not currently available.",
+      "properties": {
+        "impersonatedUser": {
+          "description": "The impersonated user.",
+          "$ref": "User"
+        }
+      },
+      "type": "object"
+    },
+    "ApplicationReference": {
+      "id": "ApplicationReference",
+      "description": "Activity in applications other than Drive.",
+      "properties": {
+        "type": {
+          "enumDescriptions": [
+            "The type is not available.",
+            "The links of one or more Drive items were posted.",
+            "Comments were made regarding a Drive item."
+          ],
+          "type": "string",
+          "description": "The reference type corresponding to this event.",
+          "enum": [
+            "UNSPECIFIED_REFERENCE_TYPE",
+            "LINK",
+            "DISCUSS"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "SingleUser": {
+      "properties": {
+        "value": {
+          "description": "User value as email.",
+          "type": "string"
+        }
+      },
+      "id": "SingleUser",
+      "description": "Wrapper for User Field value.",
+      "type": "object"
+    },
+    "AppliedLabelChange": {
+      "type": "object",
+      "id": "AppliedLabelChange",
+      "description": "Label changes that were made on the Target.",
+      "properties": {
+        "changes": {
+          "description": "Changes that were made to the Label on the Target.",
+          "type": "array",
+          "items": {
+            "$ref": "AppliedLabelChangeDetail"
+          }
+        }
+      }
+    },
+    "SelectionList": {
+      "properties": {
+        "values": {
+          "type": "array",
+          "items": {
+            "$ref": "Selection"
+          },
+          "description": "Selection values."
+        }
+      },
+      "id": "SelectionList",
+      "description": "Wrapper for SelectionList Field value.",
+      "type": "object"
+    },
+    "Owner": {
+      "id": "Owner",
+      "description": "Information about the owner of a Drive item.",
+      "properties": {
+        "user": {
+          "description": "The user that owns the Drive item.",
+          "$ref": "User"
+        },
+        "drive": {
+          "description": "The drive that owns the item.",
+          "$ref": "DriveReference"
+        },
+        "teamDrive": {
+          "deprecated": true,
+          "$ref": "TeamDriveReference",
+          "description": "This field is deprecated; please use the `drive` field instead."
+        },
+        "domain": {
+          "description": "The domain of the Drive item owner.",
+          "$ref": "Domain"
+        }
+      },
+      "type": "object"
+    },
+    "DataLeakPreventionChange": {
+      "id": "DataLeakPreventionChange",
+      "description": "A change in the object's data leak prevention status.",
+      "properties": {
+        "type": {
+          "description": "The type of Data Leak Prevention (DLP) change.",
+          "enum": [
+            "TYPE_UNSPECIFIED",
+            "FLAGGED",
+            "CLEARED"
+          ],
+          "type": "string",
+          "enumDescriptions": [
+            "An update to the DLP state that is neither FLAGGED or CLEARED.",
+            "Document has been flagged as containing sensitive content.",
+            "Document is no longer flagged as containing sensitive content."
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "AnonymousUser": {
+      "properties": {},
+      "id": "AnonymousUser",
+      "description": "Empty message representing an anonymous user or indicating the authenticated user should be anonymized.",
+      "type": "object"
+    },
+    "Integer": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "Integer value.",
+          "type": "string",
+          "format": "int64"
+        }
+      },
+      "id": "Integer",
+      "description": "Wrapper for Integer Field value."
+    },
+    "Drive": {
+      "type": "object",
+      "id": "Drive",
+      "description": "Information about a shared drive.",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "The title of the shared drive."
+        },
+        "root": {
+          "description": "The root of this shared drive.",
+          "$ref": "DriveItem"
+        },
+        "name": {
+          "type": "string",
+          "description": "The resource name of the shared drive. The format is `COLLECTION_ID/DRIVE_ID`. Clients should not assume a specific collection ID for this resource name."
+        }
+      }
+    },
+    "ConsolidationStrategy": {
+      "id": "ConsolidationStrategy",
+      "description": "How the individual activities are consolidated. If a set of activities is related they can be consolidated into one combined activity, such as one actor performing the same action on multiple targets, or multiple actors performing the same action on a single target. The strategy defines the rules for which activities are related.",
+      "properties": {
+        "legacy": {
+          "description": "The individual activities are consolidated using the legacy strategy.",
+          "$ref": "Legacy"
+        },
+        "none": {
+          "description": "The individual activities are not consolidated.",
+          "$ref": "NoConsolidation"
+        }
+      },
+      "type": "object"
+    },
+    "Target": {
+      "type": "object",
+      "properties": {
+        "fileComment": {
+          "description": "The target is a comment on a Drive file.",
+          "$ref": "FileComment"
+        },
+        "drive": {
+          "description": "The target is a shared drive.",
+          "$ref": "Drive"
+        },
+        "teamDrive": {
+          "deprecated": true,
+          "$ref": "TeamDrive",
+          "description": "This field is deprecated; please use the `drive` field instead."
+        },
+        "driveItem": {
+          "description": "The target is a Drive item.",
+          "$ref": "DriveItem"
+        }
+      },
+      "id": "Target",
+      "description": "Information about the target of activity. For more information on how activity history is shared with users, see [Activity history visibility](https://developers.google.com/workspace/drive/activity/v2#activityhistory)."
+    },
+    "DriveReference": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The resource name of the shared drive. The format is `COLLECTION_ID/DRIVE_ID`. Clients should not assume a specific collection ID for this resource name."
+        },
+        "title": {
+          "description": "The title of the shared drive.",
+          "type": "string"
+        }
+      },
+      "id": "DriveReference",
+      "description": "A lightweight reference to a shared drive.",
+      "type": "object"
+    },
+    "Date": {
+      "properties": {
+        "value": {
+          "description": "Date value.",
+          "type": "string",
+          "format": "google-datetime"
+        }
+      },
+      "id": "Date",
+      "description": "Wrapper for Date Field value.",
+      "type": "object"
+    },
+    "Move": {
+      "type": "object",
+      "id": "Move",
+      "description": "An object was moved.",
+      "properties": {
+        "addedParents": {
+          "description": "The added parent object(s).",
+          "type": "array",
+          "items": {
+            "$ref": "TargetReference"
+          }
+        },
+        "removedParents": {
+          "description": "The removed parent object(s).",
+          "type": "array",
+          "items": {
+            "$ref": "TargetReference"
+          }
+        }
+      }
+    },
+    "Post": {
+      "id": "Post",
+      "description": "A regular posted comment.",
+      "properties": {
+        "subtype": {
+          "description": "The sub-type of this event.",
+          "enum": [
+            "SUBTYPE_UNSPECIFIED",
+            "ADDED",
+            "DELETED",
+            "REPLY_ADDED",
+            "REPLY_DELETED",
+            "RESOLVED",
+            "REOPENED"
+          ],
+          "type": "string",
+          "enumDescriptions": [
+            "Subtype not available.",
+            "A post was added.",
+            "A post was deleted.",
+            "A reply was added.",
+            "A reply was deleted.",
+            "A posted comment was resolved.",
+            "A posted comment was reopened."
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "Rename": {
+      "type": "object",
+      "id": "Rename",
+      "description": "An object was renamed.",
+      "properties": {
+        "oldTitle": {
+          "description": "The previous title of the drive object.",
+          "type": "string"
+        },
+        "newTitle": {
+          "description": "The new title of the drive object.",
+          "type": "string"
+        }
+      }
+    },
+    "Restore": {
+      "properties": {
+        "type": {
+          "type": "string",
+          "enumDescriptions": [
+            "The type is not available.",
+            "An object was restored from the trash."
+          ],
+          "description": "The type of restore action taken.",
+          "enum": [
+            "TYPE_UNSPECIFIED",
+            "UNTRASH"
+          ]
+        }
+      },
+      "id": "Restore",
+      "description": "A deleted object was restored.",
+      "type": "object"
+    },
+    "SettingsChange": {
+      "type": "object",
+      "properties": {
+        "restrictionChanges": {
+          "description": "The set of changes made to restrictions.",
+          "type": "array",
+          "items": {
+            "$ref": "RestrictionChange"
+          }
+        }
+      },
+      "id": "SettingsChange",
+      "description": "Information about settings changes."
+    },
+    "File": {
+      "deprecated": true,
+      "id": "File",
+      "description": "This item is deprecated; please see `DriveFile` instead.",
+      "type": "object",
+      "properties": {}
+    },
+    "QueryDriveActivityRequest": {
+      "type": "object",
+      "properties": {
+        "filter": {
+          "type": "string",
+          "description": "The filtering for items returned from this query request. The format of the filter string is a sequence of expressions, joined by an optional \"AND\", where each expression is of the form \"field operator value\". Supported fields: - `time`: Uses numerical operators on date values either in terms of milliseconds since Jan 1, 1970 or in RFC 3339 format. Examples: - `time > 1452409200000 AND time <= 1492812924310` - `time >= \"2016-01-10T01:02:03-05:00\"` - `detail.action_detail_case`: Uses the \"has\" operator (:) and either a singular value or a list of allowed action types enclosed in parentheses, separated by a space. To exclude a result from the response, prepend a hyphen (`-`) to the beginning of the filter string. Examples: - `detail.action_detail_case:RENAME` - `detail.action_detail_case:(CREATE RESTORE)` - `-detail.action_detail_case:MOVE` "
+        },
+        "consolidationStrategy": {
+          "description": "Details on how to consolidate related actions that make up the activity. If not set, then related actions aren't consolidated.",
+          "$ref": "ConsolidationStrategy"
+        },
+        "pageToken": {
+          "type": "string",
+          "description": "The token identifies which page of results to return. Set this to the next_page_token value returned from a previous query to obtain the following page of results. If not set, the first page of results is returned."
+        },
+        "pageSize": {
+          "description": "The minimum number of activities desired in the response; the server attempts to return at least this quantity. The server may also return fewer activities if it has a partial response ready before the request times out. If not set, a default value is used.",
+          "type": "integer",
+          "format": "int32"
+        },
+        "itemName": {
+          "type": "string",
+          "description": "Return activities for this Drive item. The format is `items/ITEM_ID`."
+        },
+        "ancestorName": {
+          "description": "Return activities for this Drive folder, plus all children and descendants. The format is `items/ITEM_ID`.",
+          "type": "string"
+        }
+      },
+      "id": "QueryDriveActivityRequest",
+      "description": "The request message for querying Drive activity."
+    },
+    "Action": {
+      "properties": {
+        "target": {
+          "description": "The target this action affects (or empty if affecting all targets). This represents the state of the target immediately after this action occurred.",
+          "$ref": "Target"
+        },
+        "actor": {
+          "description": "The actor responsible for this action (or empty if all actors are responsible).",
+          "$ref": "Actor"
+        },
+        "timeRange": {
+          "description": "The action occurred over this time range.",
+          "$ref": "TimeRange"
+        },
+        "detail": {
+          "description": "The type and detailed information about the action.",
+          "$ref": "ActionDetail"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "google-datetime",
+          "description": "The action occurred at this specific time."
+        }
+      },
+      "id": "Action",
+      "description": "Information about the action.",
+      "type": "object"
+    },
+    "FileComment": {
+      "id": "FileComment",
+      "description": "A comment on a file.",
+      "properties": {
+        "parent": {
+          "description": "The Drive item containing this comment.",
+          "$ref": "DriveItem"
+        },
+        "legacyDiscussionId": {
+          "type": "string",
+          "description": "The discussion thread to which the comment was added. This identifier is an opaque string compatible with the Drive API and references the first comment in a discussion; see https://developers.google.com/workspace/drive/v3/reference/comments/get"
+        },
+        "linkToDiscussion": {
+          "type": "string",
+          "description": "The link to the discussion thread containing this comment, for example, `https://docs.google.com/DOCUMENT_ID/edit?disco=THREAD_ID`."
+        },
+        "legacyCommentId": {
+          "description": "The comment in the discussion thread. This identifier is an opaque string compatible with the Drive API; see https://developers.google.com/workspace/drive/v3/reference/comments/get",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "DriveFolder": {
+      "type": "object",
+      "id": "DriveFolder",
+      "description": "A Drive item which is a folder.",
+      "properties": {
+        "type": {
+          "description": "The type of Drive folder.",
+          "enum": [
+            "TYPE_UNSPECIFIED",
+            "MY_DRIVE_ROOT",
+            "SHARED_DRIVE_ROOT",
+            "STANDARD_FOLDER"
+          ],
+          "type": "string",
+          "enumDescriptions": [
+            "The folder type is unknown.",
+            "The folder is the root of a user's MyDrive.",
+            "The folder is the root of a shared drive.",
+            "The folder is a standard, non-root, folder."
+          ]
+        }
+      }
+    },
+    "TextList": {
+      "type": "object",
+      "id": "TextList",
+      "description": "Wrapper for Text List Field value.",
+      "properties": {
+        "values": {
+          "description": "Text values.",
+          "type": "array",
+          "items": {
+            "$ref": "Text"
+          }
+        }
+      }
+    },
+    "Legacy": {
+      "properties": {},
+      "id": "Legacy",
+      "description": "A strategy that consolidates activities using the grouping rules from the legacy V1 Activity API. Similar actions occurring within a window of time can be grouped across multiple targets (such as moving a set of files at once) or multiple actors (such as several users editing the same item). Grouping rules for this strategy are specific to each type of action.",
+      "type": "object"
+    },
+    "Suggestion": {
+      "type": "object",
+      "properties": {
+        "subtype": {
+          "type": "string",
+          "enumDescriptions": [
+            "Subtype not available.",
+            "A suggestion was added.",
+            "A suggestion was deleted.",
+            "A suggestion reply was added.",
+            "A suggestion reply was deleted.",
+            "A suggestion was accepted.",
+            "A suggestion was rejected.",
+            "An accepted suggestion was deleted.",
+            "A rejected suggestion was deleted."
+          ],
+          "description": "The sub-type of this event.",
+          "enum": [
+            "SUBTYPE_UNSPECIFIED",
+            "ADDED",
+            "DELETED",
+            "REPLY_ADDED",
+            "REPLY_DELETED",
+            "ACCEPTED",
+            "REJECTED",
+            "ACCEPT_DELETED",
+            "REJECT_DELETED"
+          ]
+        }
+      },
+      "id": "Suggestion",
+      "description": "A suggestion."
+    },
+    "Text": {
+      "id": "Text",
+      "description": "Wrapper for Text Field value.",
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "Value of Text Field."
+        }
+      },
+      "type": "object"
+    },
+    "AppliedLabelChangeDetail": {
       "id": "AppliedLabelChangeDetail",
       "description": "A change made to a Label on the Target.",
       "properties": {
@@ -13,15 +815,19 @@
         },
         "fieldChanges": {
           "description": "Field Changes. Only present if `types` contains `LABEL_FIELD_VALUE_CHANGED`.",
+          "type": "array",
           "items": {
             "$ref": "FieldValueChange"
-          },
-          "type": "array"
+          }
+        },
+        "title": {
+          "type": "string",
+          "description": "The human-readable title of the label that changed."
         },
         "types": {
           "type": "array",
-          "description": "The types of changes made to the Label on the Target.",
           "items": {
+            "type": "string",
             "enumDescriptions": [
               "The type of change to this Label is not available.",
               "The identified Label was added to the Target.",
@@ -35,56 +841,12 @@
               "LABEL_REMOVED",
               "LABEL_FIELD_VALUE_CHANGED",
               "LABEL_APPLIED_BY_ITEM_CREATE"
-            ],
-            "type": "string"
-          }
-        },
-        "title": {
-          "description": "The human-readable title of the label that changed.",
-          "type": "string"
-        }
-      }
-    },
-    "DriveFolder": {
-      "id": "DriveFolder",
-      "description": "A Drive item which is a folder.",
-      "properties": {
-        "type": {
-          "type": "string",
-          "description": "The type of Drive folder.",
-          "enumDescriptions": [
-            "The folder type is unknown.",
-            "The folder is the root of a user's MyDrive.",
-            "The folder is the root of a shared drive.",
-            "The folder is a standard, non-root, folder."
-          ],
-          "enum": [
-            "TYPE_UNSPECIFIED",
-            "MY_DRIVE_ROOT",
-            "SHARED_DRIVE_ROOT",
-            "STANDARD_FOLDER"
-          ]
+            ]
+          },
+          "description": "The types of changes made to the Label on the Target."
         }
       },
       "type": "object"
-    },
-    "DriveFile": {
-      "type": "object",
-      "id": "DriveFile",
-      "description": "A Drive item which is a file.",
-      "properties": {}
-    },
-    "Legacy": {
-      "type": "object",
-      "id": "Legacy",
-      "description": "A strategy that consolidates activities using the grouping rules from the legacy V1 Activity API. Similar actions occurring within a window of time can be grouped across multiple targets (such as moving a set of files at once) or multiple actors (such as several users editing the same item). Grouping rules for this strategy are specific to each type of action.",
-      "properties": {}
-    },
-    "AnonymousUser": {
-      "type": "object",
-      "id": "AnonymousUser",
-      "description": "Empty message representing an anonymous user or indicating the authenticated user should be anonymized.",
-      "properties": {}
     },
     "Comment": {
       "type": "object",
@@ -112,567 +874,43 @@
         }
       }
     },
-    "Copy": {
-      "id": "Copy",
-      "description": "An object was created by copying an existing object.",
+    "FieldValue": {
       "properties": {
-        "originalObject": {
-          "description": "The original object.",
-          "$ref": "TargetReference"
-        }
-      },
-      "type": "object"
-    },
-    "Selection": {
-      "type": "object",
-      "id": "Selection",
-      "description": "Wrapper for Selection Field value as combined value/display_name pair for selected choice.",
-      "properties": {
-        "value": {
-          "description": "Selection value as Field Choice ID.",
-          "type": "string"
+        "integer": {
+          "description": "Integer Field value.",
+          "$ref": "Integer"
         },
-        "displayName": {
-          "description": "Selection value as human-readable display string.",
-          "type": "string"
-        }
-      }
-    },
-    "TeamDriveReference": {
-      "type": "object",
-      "deprecated": true,
-      "properties": {
-        "name": {
-          "description": "This field is deprecated; please see `DriveReference.name` instead.",
-          "type": "string"
+        "text": {
+          "description": "Text Field value.",
+          "$ref": "Text"
         },
-        "title": {
-          "description": "This field is deprecated; please see `DriveReference.title` instead.",
-          "type": "string"
-        }
-      },
-      "id": "TeamDriveReference",
-      "description": "This item is deprecated; please see `DriveReference` instead."
-    },
-    "Suggestion": {
-      "id": "Suggestion",
-      "description": "A suggestion.",
-      "properties": {
-        "subtype": {
-          "description": "The sub-type of this event.",
-          "enumDescriptions": [
-            "Subtype not available.",
-            "A suggestion was added.",
-            "A suggestion was deleted.",
-            "A suggestion reply was added.",
-            "A suggestion reply was deleted.",
-            "A suggestion was accepted.",
-            "A suggestion was rejected.",
-            "An accepted suggestion was deleted.",
-            "A rejected suggestion was deleted."
-          ],
-          "enum": [
-            "SUBTYPE_UNSPECIFIED",
-            "ADDED",
-            "DELETED",
-            "REPLY_ADDED",
-            "REPLY_DELETED",
-            "ACCEPTED",
-            "REJECTED",
-            "ACCEPT_DELETED",
-            "REJECT_DELETED"
-          ],
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "TextList": {
-      "type": "object",
-      "id": "TextList",
-      "description": "Wrapper for Text List Field value.",
-      "properties": {
-        "values": {
-          "description": "Text values.",
-          "items": {
-            "$ref": "Text"
-          },
-          "type": "array"
-        }
-      }
-    },
-    "Actor": {
-      "id": "Actor",
-      "description": "The actor of a Drive activity.",
-      "properties": {
-        "anonymous": {
-          "description": "An anonymous user.",
-          "$ref": "AnonymousUser"
+        "selection": {
+          "description": "Selection Field value.",
+          "$ref": "Selection"
         },
-        "administrator": {
-          "description": "An administrator.",
-          "$ref": "Administrator"
+        "userList": {
+          "description": "User List Field value.",
+          "$ref": "UserList"
+        },
+        "date": {
+          "description": "Date Field value.",
+          "$ref": "Date"
+        },
+        "textList": {
+          "description": "Text List Field value.",
+          "$ref": "TextList"
+        },
+        "selectionList": {
+          "description": "Selection List Field value.",
+          "$ref": "SelectionList"
         },
         "user": {
-          "description": "An end user.",
-          "$ref": "User"
-        },
-        "impersonation": {
-          "description": "An account acting on behalf of another.",
-          "$ref": "Impersonation"
-        },
-        "system": {
-          "description": "A non-user actor (i.e. system triggered).",
-          "$ref": "SystemEvent"
+          "description": "User Field value.",
+          "$ref": "SingleUser"
         }
       },
-      "type": "object"
-    },
-    "Impersonation": {
-      "id": "Impersonation",
-      "description": "Information about an impersonation, where an admin acts on behalf of an end user. Information about the acting admin is not currently available.",
-      "properties": {
-        "impersonatedUser": {
-          "description": "The impersonated user.",
-          "$ref": "User"
-        }
-      },
-      "type": "object"
-    },
-    "NoConsolidation": {
-      "id": "NoConsolidation",
-      "description": "A strategy that does no consolidation of individual activities.",
-      "properties": {},
-      "type": "object"
-    },
-    "File": {
-      "properties": {},
-      "deprecated": true,
-      "type": "object",
-      "id": "File",
-      "description": "This item is deprecated; please see `DriveFile` instead."
-    },
-    "ActionDetail": {
-      "type": "object",
-      "id": "ActionDetail",
-      "description": "Data describing the type and additional information of an action.",
-      "properties": {
-        "rename": {
-          "description": "An object was renamed.",
-          "$ref": "Rename"
-        },
-        "edit": {
-          "description": "An object was edited.",
-          "$ref": "Edit"
-        },
-        "move": {
-          "description": "An object was moved.",
-          "$ref": "Move"
-        },
-        "comment": {
-          "description": "A change about comments was made.",
-          "$ref": "Comment"
-        },
-        "dlpChange": {
-          "description": "A change happened in data leak prevention status.",
-          "$ref": "DataLeakPreventionChange"
-        },
-        "restore": {
-          "description": "A deleted object was restored.",
-          "$ref": "Restore"
-        },
-        "settingsChange": {
-          "description": "Settings were changed.",
-          "$ref": "SettingsChange"
-        },
-        "permissionChange": {
-          "description": "The permission on an object was changed.",
-          "$ref": "PermissionChange"
-        },
-        "delete": {
-          "description": "An object was deleted.",
-          "$ref": "Delete"
-        },
-        "reference": {
-          "description": "An object was referenced in an application outside of Drive/Docs.",
-          "$ref": "ApplicationReference"
-        },
-        "appliedLabelChange": {
-          "description": "Label was changed.",
-          "$ref": "AppliedLabelChange"
-        },
-        "create": {
-          "description": "An object was created.",
-          "$ref": "Create"
-        }
-      }
-    },
-    "TargetReference": {
-      "type": "object",
-      "id": "TargetReference",
-      "description": "A lightweight reference to the target of activity.",
-      "properties": {
-        "driveItem": {
-          "description": "The target is a Drive item.",
-          "$ref": "DriveItemReference"
-        },
-        "drive": {
-          "description": "The target is a shared drive.",
-          "$ref": "DriveReference"
-        },
-        "teamDrive": {
-          "description": "This field is deprecated; please use the `drive` field instead.",
-          "$ref": "TeamDriveReference",
-          "deprecated": true
-        }
-      }
-    },
-    "RestrictionChange": {
-      "id": "RestrictionChange",
-      "description": "Information about restriction policy changes to a feature.",
-      "properties": {
-        "feature": {
-          "description": "The feature which had a change in restriction policy.",
-          "enum": [
-            "FEATURE_UNSPECIFIED",
-            "SHARING_OUTSIDE_DOMAIN",
-            "DIRECT_SHARING",
-            "ITEM_DUPLICATION",
-            "DRIVE_FILE_STREAM",
-            "FILE_ORGANIZER_CAN_SHARE_FOLDERS",
-            "READERS_CAN_DOWNLOAD",
-            "WRITERS_CAN_DOWNLOAD"
-          ],
-          "enumDeprecated": [
-            false,
-            false,
-            false,
-            true,
-            false,
-            false,
-            false,
-            false
-          ],
-          "type": "string",
-          "enumDescriptions": [
-            "The feature which changed restriction settings was not available.",
-            "When restricted, this prevents items from being shared outside the domain.",
-            "When restricted, this prevents direct sharing of individual items.",
-            "Deprecated: Use READERS_CAN_DOWNLOAD instead.",
-            "When restricted, this prevents use of Drive File Stream.",
-            "When restricted, this limits sharing of folders to managers only.",
-            "When restricted, this prevents actions like copy, download, and print for readers. Replaces ITEM_DUPLICATION.",
-            "When restricted, this prevents actions like copy, download, and print for writers."
-          ]
-        },
-        "newRestriction": {
-          "description": "The restriction in place after the change.",
-          "enumDescriptions": [
-            "The type of restriction is not available.",
-            "The feature is available without restriction.",
-            "The use of this feature is fully restricted."
-          ],
-          "enum": [
-            "RESTRICTION_UNSPECIFIED",
-            "UNRESTRICTED",
-            "FULLY_RESTRICTED"
-          ],
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "FieldValueChange": {
-      "id": "FieldValueChange",
-      "description": "Change to a Field value.",
-      "properties": {
-        "oldValue": {
-          "description": "The value that was previously set on the field. If not present, the field was newly set. At least one of {old_value|new_value} is always set.",
-          "$ref": "FieldValue"
-        },
-        "fieldId": {
-          "description": "The ID of this field. Field IDs are unique within a Label.",
-          "type": "string"
-        },
-        "newValue": {
-          "description": "The value that is now set on the field. If not present, the field was cleared. At least one of {old_value|new_value} is always set.",
-          "$ref": "FieldValue"
-        },
-        "displayName": {
-          "description": "The human-readable display name for this field.",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "Move": {
-      "id": "Move",
-      "description": "An object was moved.",
-      "properties": {
-        "addedParents": {
-          "type": "array",
-          "description": "The added parent object(s).",
-          "items": {
-            "$ref": "TargetReference"
-          }
-        },
-        "removedParents": {
-          "description": "The removed parent object(s).",
-          "items": {
-            "$ref": "TargetReference"
-          },
-          "type": "array"
-        }
-      },
-      "type": "object"
-    },
-    "Date": {
-      "type": "object",
-      "id": "Date",
-      "description": "Wrapper for Date Field value.",
-      "properties": {
-        "value": {
-          "type": "string",
-          "description": "Date value.",
-          "format": "google-datetime"
-        }
-      }
-    },
-    "SelectionList": {
-      "type": "object",
-      "id": "SelectionList",
-      "description": "Wrapper for SelectionList Field value.",
-      "properties": {
-        "values": {
-          "description": "Selection values.",
-          "items": {
-            "$ref": "Selection"
-          },
-          "type": "array"
-        }
-      }
-    },
-    "DriveActivity": {
-      "id": "DriveActivity",
-      "description": "A single Drive activity comprising one or more Actions by one or more Actors on one or more Targets. Some Action groupings occur spontaneously, such as moving an item into a shared folder triggering a permission change. Other groupings of related Actions, such as multiple Actors editing one item or moving multiple files into a new folder, are controlled by the selection of a ConsolidationStrategy in the QueryDriveActivityRequest.",
-      "properties": {
-        "timestamp": {
-          "type": "string",
-          "description": "The activity occurred at this specific time.",
-          "format": "google-datetime"
-        },
-        "actors": {
-          "description": "All actor(s) responsible for the activity.",
-          "items": {
-            "$ref": "Actor"
-          },
-          "type": "array"
-        },
-        "targets": {
-          "type": "array",
-          "items": {
-            "$ref": "Target"
-          },
-          "description": "All Google Drive objects this activity is about (e.g. file, folder, drive). This represents the state of the target immediately after the actions occurred."
-        },
-        "actions": {
-          "type": "array",
-          "description": "Details on all actions in this activity.",
-          "items": {
-            "$ref": "Action"
-          }
-        },
-        "primaryActionDetail": {
-          "description": "Key information about the primary action for this activity. This is either representative, or the most important, of all actions in the activity, according to the ConsolidationStrategy in the request.",
-          "$ref": "ActionDetail"
-        },
-        "timeRange": {
-          "description": "The activity occurred over this time range.",
-          "$ref": "TimeRange"
-        }
-      },
-      "type": "object"
-    },
-    "Post": {
-      "type": "object",
-      "id": "Post",
-      "description": "A regular posted comment.",
-      "properties": {
-        "subtype": {
-          "type": "string",
-          "description": "The sub-type of this event.",
-          "enumDescriptions": [
-            "Subtype not available.",
-            "A post was added.",
-            "A post was deleted.",
-            "A reply was added.",
-            "A reply was deleted.",
-            "A posted comment was resolved.",
-            "A posted comment was reopened."
-          ],
-          "enum": [
-            "SUBTYPE_UNSPECIFIED",
-            "ADDED",
-            "DELETED",
-            "REPLY_ADDED",
-            "REPLY_DELETED",
-            "RESOLVED",
-            "REOPENED"
-          ]
-        }
-      }
-    },
-    "New": {
-      "type": "object",
-      "id": "New",
-      "description": "An object was created from scratch.",
-      "properties": {}
-    },
-    "User": {
-      "type": "object",
-      "id": "User",
-      "description": "Information about an end user.",
-      "properties": {
-        "knownUser": {
-          "description": "A known user.",
-          "$ref": "KnownUser"
-        },
-        "unknownUser": {
-          "description": "A user about whom nothing is currently known.",
-          "$ref": "UnknownUser"
-        },
-        "deletedUser": {
-          "description": "A user whose account has since been deleted.",
-          "$ref": "DeletedUser"
-        }
-      }
-    },
-    "DriveItemReference": {
-      "type": "object",
-      "id": "DriveItemReference",
-      "description": "A lightweight reference to a Drive item, such as a file or folder.",
-      "properties": {
-        "folder": {
-          "description": "This field is deprecated; please use the `driveFolder` field instead.",
-          "$ref": "Folder",
-          "deprecated": true
-        },
-        "driveFolder": {
-          "description": "The Drive item is a folder. Includes information about the type of folder.",
-          "$ref": "DriveFolder"
-        },
-        "driveFile": {
-          "description": "The Drive item is a file.",
-          "$ref": "DriveFile"
-        },
-        "title": {
-          "description": "The title of the Drive item.",
-          "type": "string"
-        },
-        "name": {
-          "description": "The target Drive item. The format is `items/ITEM_ID`.",
-          "type": "string"
-        },
-        "file": {
-          "$ref": "File",
-          "deprecated": true,
-          "description": "This field is deprecated; please use the `driveFile` field instead."
-        }
-      }
-    },
-    "SystemEvent": {
-      "id": "SystemEvent",
-      "description": "Event triggered by system operations instead of end users.",
-      "properties": {
-        "type": {
-          "type": "string",
-          "description": "The type of the system event that may triggered activity.",
-          "enumDescriptions": [
-            "The event type is unspecified.",
-            "The event is a consequence of a user account being deleted.",
-            "The event is due to the system automatically purging trash."
-          ],
-          "enum": [
-            "TYPE_UNSPECIFIED",
-            "USER_DELETION",
-            "TRASH_AUTO_PURGE"
-          ]
-        }
-      },
-      "type": "object"
-    },
-    "Target": {
-      "type": "object",
-      "id": "Target",
-      "description": "Information about the target of activity. For more information on how activity history is shared with users, see [Activity history visibility](https://developers.google.com/workspace/drive/activity/v2#activityhistory).",
-      "properties": {
-        "fileComment": {
-          "description": "The target is a comment on a Drive file.",
-          "$ref": "FileComment"
-        },
-        "drive": {
-          "description": "The target is a shared drive.",
-          "$ref": "Drive"
-        },
-        "teamDrive": {
-          "description": "This field is deprecated; please use the `drive` field instead.",
-          "deprecated": true,
-          "$ref": "TeamDrive"
-        },
-        "driveItem": {
-          "description": "The target is a Drive item.",
-          "$ref": "DriveItem"
-        }
-      }
-    },
-    "ConsolidationStrategy": {
-      "type": "object",
-      "id": "ConsolidationStrategy",
-      "description": "How the individual activities are consolidated. If a set of activities is related they can be consolidated into one combined activity, such as one actor performing the same action on multiple targets, or multiple actors performing the same action on a single target. The strategy defines the rules for which activities are related.",
-      "properties": {
-        "legacy": {
-          "description": "The individual activities are consolidated using the legacy strategy.",
-          "$ref": "Legacy"
-        },
-        "none": {
-          "description": "The individual activities are not consolidated.",
-          "$ref": "NoConsolidation"
-        }
-      }
-    },
-    "Folder": {
-      "properties": {
-        "type": {
-          "description": "This field is deprecated; please see `DriveFolder.type` instead.",
-          "enumDescriptions": [
-            "This item is deprecated; please see `DriveFolder.Type` instead.",
-            "This item is deprecated; please see `DriveFolder.Type` instead.",
-            "This item is deprecated; please see `DriveFolder.Type` instead.",
-            "This item is deprecated; please see `DriveFolder.Type` instead."
-          ],
-          "enum": [
-            "TYPE_UNSPECIFIED",
-            "MY_DRIVE_ROOT",
-            "TEAM_DRIVE_ROOT",
-            "STANDARD_FOLDER"
-          ],
-          "type": "string"
-        }
-      },
-      "type": "object",
-      "deprecated": true,
-      "id": "Folder",
-      "description": "This item is deprecated; please see `DriveFolder` instead."
-    },
-    "SingleUser": {
-      "id": "SingleUser",
-      "description": "Wrapper for User Field value.",
-      "properties": {
-        "value": {
-          "description": "User value as email.",
-          "type": "string"
-        }
-      },
+      "id": "FieldValue",
+      "description": "Contains a value of a Field.",
       "type": "object"
     },
     "Group": {
@@ -685,189 +923,15 @@
           "type": "string"
         },
         "title": {
-          "description": "The title of the group.",
-          "type": "string"
+          "type": "string",
+          "description": "The title of the group."
         }
       }
     },
-    "Owner": {
-      "id": "Owner",
-      "description": "Information about the owner of a Drive item.",
-      "properties": {
-        "user": {
-          "description": "The user that owns the Drive item.",
-          "$ref": "User"
-        },
-        "domain": {
-          "description": "The domain of the Drive item owner.",
-          "$ref": "Domain"
-        },
-        "drive": {
-          "description": "The drive that owns the item.",
-          "$ref": "DriveReference"
-        },
-        "teamDrive": {
-          "deprecated": true,
-          "$ref": "TeamDriveReference",
-          "description": "This field is deprecated; please use the `drive` field instead."
-        }
-      },
-      "type": "object"
-    },
-    "Action": {
-      "id": "Action",
-      "description": "Information about the action.",
-      "properties": {
-        "timestamp": {
-          "description": "The action occurred at this specific time.",
-          "format": "google-datetime",
-          "type": "string"
-        },
-        "actor": {
-          "description": "The actor responsible for this action (or empty if all actors are responsible).",
-          "$ref": "Actor"
-        },
-        "target": {
-          "description": "The target this action affects (or empty if affecting all targets). This represents the state of the target immediately after this action occurred.",
-          "$ref": "Target"
-        },
-        "timeRange": {
-          "description": "The action occurred over this time range.",
-          "$ref": "TimeRange"
-        },
-        "detail": {
-          "description": "The type and detailed information about the action.",
-          "$ref": "ActionDetail"
-        }
-      },
-      "type": "object"
-    },
-    "Edit": {
-      "type": "object",
-      "id": "Edit",
-      "description": "An empty message indicating an object was edited.",
-      "properties": {}
-    },
-    "Administrator": {
-      "type": "object",
-      "id": "Administrator",
-      "description": "Empty message representing an administrator.",
-      "properties": {}
-    },
-    "DriveItem": {
-      "id": "DriveItem",
-      "description": "A Drive item, such as a file or folder.",
-      "properties": {
-        "folder": {
-          "description": "This field is deprecated; please use the `driveFolder` field instead.",
-          "$ref": "Folder",
-          "deprecated": true
-        },
-        "driveFolder": {
-          "description": "The Drive item is a folder. Includes information about the type of folder.",
-          "$ref": "DriveFolder"
-        },
-        "driveFile": {
-          "description": "The Drive item is a file.",
-          "$ref": "DriveFile"
-        },
-        "mimeType": {
-          "description": "The MIME type of the Drive item. See https://developers.google.com/workspace/drive/v3/web/mime-types.",
-          "type": "string"
-        },
-        "owner": {
-          "description": "Information about the owner of this Drive item.",
-          "$ref": "Owner"
-        },
-        "title": {
-          "description": "The title of the Drive item.",
-          "type": "string"
-        },
-        "name": {
-          "description": "The target Drive item. The format is `items/ITEM_ID`.",
-          "type": "string"
-        },
-        "file": {
-          "description": "This field is deprecated; please use the `driveFile` field instead.",
-          "deprecated": true,
-          "$ref": "File"
-        }
-      },
-      "type": "object"
-    },
-    "DriveReference": {
-      "id": "DriveReference",
-      "description": "A lightweight reference to a shared drive.",
-      "properties": {
-        "title": {
-          "description": "The title of the shared drive.",
-          "type": "string"
-        },
-        "name": {
-          "description": "The resource name of the shared drive. The format is `COLLECTION_ID/DRIVE_ID`. Clients should not assume a specific collection ID for this resource name.",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "DeletedUser": {
-      "type": "object",
-      "id": "DeletedUser",
-      "description": "A user whose account has since been deleted.",
-      "properties": {}
-    },
-    "TeamDrive": {
-      "id": "TeamDrive",
-      "description": "This item is deprecated; please see `Drive` instead.",
-      "properties": {
-        "name": {
-          "description": "This field is deprecated; please see `Drive.name` instead.",
-          "type": "string"
-        },
-        "root": {
-          "description": "This field is deprecated; please see `Drive.root` instead.",
-          "$ref": "DriveItem"
-        },
-        "title": {
-          "description": "This field is deprecated; please see `Drive.title` instead.",
-          "type": "string"
-        }
-      },
-      "deprecated": true,
-      "type": "object"
-    },
-    "UserList": {
-      "id": "UserList",
-      "description": "Wrapper for UserList Field value.",
-      "properties": {
-        "values": {
-          "items": {
-            "$ref": "SingleUser"
-          },
-          "description": "User values.",
-          "type": "array"
-        }
-      },
-      "type": "object"
-    },
     "Assignment": {
-      "type": "object",
-      "id": "Assignment",
-      "description": "A comment with an assignment.",
       "properties": {
         "subtype": {
-          "type": "string",
           "description": "The sub-type of this event.",
-          "enumDescriptions": [
-            "Subtype not available.",
-            "An assignment was added.",
-            "An assignment was deleted.",
-            "An assignment reply was added.",
-            "An assignment reply was deleted.",
-            "An assignment was resolved.",
-            "A resolved assignment was reopened.",
-            "An assignment was reassigned."
-          ],
           "enum": [
             "SUBTYPE_UNSPECIFIED",
             "ADDED",
@@ -877,45 +941,53 @@
             "RESOLVED",
             "REOPENED",
             "REASSIGNED"
+          ],
+          "type": "string",
+          "enumDescriptions": [
+            "Subtype not available.",
+            "An assignment was added.",
+            "An assignment was deleted.",
+            "An assignment reply was added.",
+            "An assignment reply was deleted.",
+            "An assignment was resolved.",
+            "A resolved assignment was reopened.",
+            "An assignment was reassigned."
           ]
         },
         "assignedUser": {
           "description": "The user to whom the comment was assigned.",
           "$ref": "User"
         }
-      }
+      },
+      "id": "Assignment",
+      "description": "A comment with an assignment.",
+      "type": "object"
+    },
+    "DriveFile": {
+      "type": "object",
+      "id": "DriveFile",
+      "description": "A Drive item which is a file.",
+      "properties": {}
     },
     "TimeRange": {
       "id": "TimeRange",
       "description": "Information about time ranges.",
       "properties": {
-        "startTime": {
+        "endTime": {
           "type": "string",
           "format": "google-datetime",
-          "description": "The start of the time range."
+          "description": "The end of the time range."
         },
-        "endTime": {
-          "description": "The end of the time range.",
-          "format": "google-datetime",
-          "type": "string"
+        "startTime": {
+          "description": "The start of the time range.",
+          "type": "string",
+          "format": "google-datetime"
         }
       },
       "type": "object"
     },
-    "Upload": {
-      "id": "Upload",
-      "description": "An object was uploaded into Drive.",
-      "properties": {},
-      "type": "object"
-    },
     "Create": {
-      "id": "Create",
-      "description": "An object was created.",
       "properties": {
-        "copy": {
-          "description": "If present, indicates the object was created by copying an existing Drive object.",
-          "$ref": "Copy"
-        },
         "upload": {
           "description": "If present, indicates the object originated externally and was uploaded to Drive.",
           "$ref": "Upload"
@@ -923,150 +995,101 @@
         "new": {
           "description": "If present, indicates the object was newly created (e.g. as a blank document), not derived from a Drive object or external object.",
           "$ref": "New"
+        },
+        "copy": {
+          "description": "If present, indicates the object was created by copying an existing Drive object.",
+          "$ref": "Copy"
         }
       },
+      "id": "Create",
+      "description": "An object was created.",
       "type": "object"
     },
-    "QueryDriveActivityRequest": {
-      "type": "object",
-      "id": "QueryDriveActivityRequest",
-      "description": "The request message for querying Drive activity.",
-      "properties": {
-        "consolidationStrategy": {
-          "description": "Details on how to consolidate related actions that make up the activity. If not set, then related actions aren't consolidated.",
-          "$ref": "ConsolidationStrategy"
-        },
-        "ancestorName": {
-          "description": "Return activities for this Drive folder, plus all children and descendants. The format is `items/ITEM_ID`.",
-          "type": "string"
-        },
-        "pageSize": {
-          "type": "integer",
-          "format": "int32",
-          "description": "The minimum number of activities desired in the response; the server attempts to return at least this quantity. The server may also return fewer activities if it has a partial response ready before the request times out. If not set, a default value is used."
-        },
-        "itemName": {
-          "description": "Return activities for this Drive item. The format is `items/ITEM_ID`.",
-          "type": "string"
-        },
-        "pageToken": {
-          "description": "The token identifies which page of results to return. Set this to the next_page_token value returned from a previous query to obtain the following page of results. If not set, the first page of results is returned.",
-          "type": "string"
-        },
-        "filter": {
-          "description": "The filtering for items returned from this query request. The format of the filter string is a sequence of expressions, joined by an optional \"AND\", where each expression is of the form \"field operator value\". Supported fields: - `time`: Uses numerical operators on date values either in terms of milliseconds since Jan 1, 1970 or in RFC 3339 format. Examples: - `time > 1452409200000 AND time <= 1492812924310` - `time >= \"2016-01-10T01:02:03-05:00\"` - `detail.action_detail_case`: Uses the \"has\" operator (:) and either a singular value or a list of allowed action types enclosed in parentheses, separated by a space. To exclude a result from the response, prepend a hyphen (`-`) to the beginning of the filter string. Examples: - `detail.action_detail_case:RENAME` - `detail.action_detail_case:(CREATE RESTORE)` - `-detail.action_detail_case:MOVE` ",
-          "type": "string"
-        }
-      }
-    },
-    "Restore": {
-      "id": "Restore",
-      "description": "A deleted object was restored.",
-      "properties": {
-        "type": {
-          "description": "The type of restore action taken.",
-          "enumDescriptions": [
-            "The type is not available.",
-            "An object was restored from the trash."
-          ],
-          "enum": [
-            "TYPE_UNSPECIFIED",
-            "UNTRASH"
-          ],
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "AppliedLabelChange": {
-      "type": "object",
-      "id": "AppliedLabelChange",
-      "description": "Label changes that were made on the Target.",
-      "properties": {
-        "changes": {
-          "type": "array",
-          "items": {
-            "$ref": "AppliedLabelChangeDetail"
-          },
-          "description": "Changes that were made to the Label on the Target."
-        }
-      }
-    },
-    "Anyone": {
-      "type": "object",
-      "id": "Anyone",
-      "description": "Represents any user (including a logged out user).",
-      "properties": {}
-    },
-    "Drive": {
-      "id": "Drive",
-      "description": "Information about a shared drive.",
+    "TeamDriveReference": {
+      "id": "TeamDriveReference",
+      "description": "This item is deprecated; please see `DriveReference` instead.",
+      "deprecated": true,
       "properties": {
         "name": {
-          "description": "The resource name of the shared drive. The format is `COLLECTION_ID/DRIVE_ID`. Clients should not assume a specific collection ID for this resource name.",
-          "type": "string"
-        },
-        "root": {
-          "description": "The root of this shared drive.",
-          "$ref": "DriveItem"
+          "type": "string",
+          "description": "This field is deprecated; please see `DriveReference.name` instead."
         },
         "title": {
-          "description": "The title of the shared drive.",
-          "type": "string"
+          "type": "string",
+          "description": "This field is deprecated; please see `DriveReference.title` instead."
         }
       },
       "type": "object"
     },
-    "UnknownUser": {
+    "User": {
       "type": "object",
-      "id": "UnknownUser",
-      "description": "A user about whom nothing is currently known.",
-      "properties": {}
-    },
-    "DataLeakPreventionChange": {
-      "id": "DataLeakPreventionChange",
-      "description": "A change in the object's data leak prevention status.",
+      "id": "User",
+      "description": "Information about an end user.",
       "properties": {
-        "type": {
-          "description": "The type of Data Leak Prevention (DLP) change.",
-          "enumDescriptions": [
-            "An update to the DLP state that is neither FLAGGED or CLEARED.",
-            "Document has been flagged as containing sensitive content.",
-            "Document is no longer flagged as containing sensitive content."
-          ],
-          "enum": [
-            "TYPE_UNSPECIFIED",
-            "FLAGGED",
-            "CLEARED"
-          ],
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "Integer": {
-      "type": "object",
-      "id": "Integer",
-      "description": "Wrapper for Integer Field value.",
-      "properties": {
-        "value": {
-          "description": "Integer value.",
-          "format": "int64",
-          "type": "string"
+        "knownUser": {
+          "description": "A known user.",
+          "$ref": "KnownUser"
+        },
+        "deletedUser": {
+          "description": "A user whose account has since been deleted.",
+          "$ref": "DeletedUser"
+        },
+        "unknownUser": {
+          "description": "A user about whom nothing is currently known.",
+          "$ref": "UnknownUser"
         }
       }
     },
-    "Rename": {
-      "id": "Rename",
-      "description": "An object was renamed.",
+    "DriveItemReference": {
       "properties": {
-        "newTitle": {
-          "description": "The new title of the drive object.",
+        "title": {
+          "description": "The title of the Drive item.",
           "type": "string"
         },
-        "oldTitle": {
-          "description": "The previous title of the drive object.",
+        "name": {
+          "description": "The target Drive item. The format is `items/ITEM_ID`.",
           "type": "string"
+        },
+        "driveFolder": {
+          "description": "The Drive item is a folder. Includes information about the type of folder.",
+          "$ref": "DriveFolder"
+        },
+        "file": {
+          "deprecated": true,
+          "$ref": "File",
+          "description": "This field is deprecated; please use the `driveFile` field instead."
+        },
+        "folder": {
+          "deprecated": true,
+          "$ref": "Folder",
+          "description": "This field is deprecated; please use the `driveFolder` field instead."
+        },
+        "driveFile": {
+          "description": "The Drive item is a file.",
+          "$ref": "DriveFile"
+        }
+      },
+      "id": "DriveItemReference",
+      "description": "A lightweight reference to a Drive item, such as a file or folder.",
+      "type": "object"
+    },
+    "SystemEvent": {
+      "id": "SystemEvent",
+      "description": "Event triggered by system operations instead of end users.",
+      "properties": {
+        "type": {
+          "description": "The type of the system event that may triggered activity.",
+          "enum": [
+            "TYPE_UNSPECIFIED",
+            "USER_DELETION",
+            "TRASH_AUTO_PURGE"
+          ],
+          "type": "string",
+          "enumDescriptions": [
+            "The event type is unspecified.",
+            "The event is a consequence of a user account being deleted.",
+            "The event is due to the system automatically purging trash."
+          ]
         }
       },
       "type": "object"
@@ -1077,82 +1100,87 @@
       "description": "An object was deleted.",
       "properties": {
         "type": {
-          "type": "string",
           "description": "The type of delete action taken.",
-          "enumDescriptions": [
-            "Deletion type is not available.",
-            "An object was put into the trash.",
-            "An object was deleted permanently."
-          ],
           "enum": [
             "TYPE_UNSPECIFIED",
             "TRASH",
             "PERMANENT_DELETE"
+          ],
+          "type": "string",
+          "enumDescriptions": [
+            "Deletion type is not available.",
+            "An object was put into the trash.",
+            "An object was deleted permanently."
           ]
         }
       }
     },
-    "Domain": {
-      "id": "Domain",
-      "description": "Information about a domain.",
-      "properties": {
-        "legacyId": {
-          "description": "An opaque string used to identify this domain.",
-          "type": "string"
-        },
-        "name": {
-          "description": "The name of the domain, e.g. `google.com`.",
-          "type": "string"
-        }
-      },
+    "Upload": {
+      "id": "Upload",
+      "description": "An object was uploaded into Drive.",
+      "properties": {},
       "type": "object"
     },
-    "PermissionChange": {
-      "id": "PermissionChange",
-      "description": "A change of the permission setting on an item.",
+    "UserList": {
       "properties": {
-        "addedPermissions": {
+        "values": {
+          "description": "User values.",
           "type": "array",
           "items": {
-            "$ref": "Permission"
-          },
-          "description": "The set of permissions added by this change."
-        },
-        "removedPermissions": {
-          "items": {
-            "$ref": "Permission"
-          },
-          "description": "The set of permissions removed by this change.",
-          "type": "array"
+            "$ref": "SingleUser"
+          }
         }
       },
+      "id": "UserList",
+      "description": "Wrapper for UserList Field value.",
       "type": "object"
     },
-    "QueryDriveActivityResponse": {
-      "id": "QueryDriveActivityResponse",
-      "description": "Response message for querying Drive activity.",
+    "DriveActivity": {
+      "type": "object",
       "properties": {
-        "activities": {
-          "items": {
-            "$ref": "DriveActivity"
-          },
-          "description": "List of activity requested.",
-          "type": "array"
+        "primaryActionDetail": {
+          "description": "Key information about the primary action for this activity. This is either representative, or the most important, of all actions in the activity, according to the ConsolidationStrategy in the request.",
+          "$ref": "ActionDetail"
         },
-        "nextPageToken": {
-          "description": "Token to retrieve the next page of results, or empty if there are no more results in the list.",
-          "type": "string"
+        "actors": {
+          "description": "All actor(s) responsible for the activity.",
+          "type": "array",
+          "items": {
+            "$ref": "Actor"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "Action"
+          },
+          "description": "Details on all actions in this activity."
+        },
+        "targets": {
+          "description": "All Google Drive objects this activity is about (e.g. file, folder, drive). This represents the state of the target immediately after the actions occurred.",
+          "type": "array",
+          "items": {
+            "$ref": "Target"
+          }
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "google-datetime",
+          "description": "The activity occurred at this specific time."
+        },
+        "timeRange": {
+          "description": "The activity occurred over this time range.",
+          "$ref": "TimeRange"
         }
       },
-      "type": "object"
+      "id": "DriveActivity",
+      "description": "A single Drive activity comprising one or more Actions by one or more Actors on one or more Targets. Some Action groupings occur spontaneously, such as moving an item into a shared folder triggering a permission change. Other groupings of related Actions, such as multiple Actors editing one item or moving multiple files into a new folder, are controlled by the selection of a ConsolidationStrategy in the QueryDriveActivityRequest."
     },
     "Permission": {
-      "id": "Permission",
-      "description": "The permission setting of an object.",
+      "type": "object",
       "properties": {
         "role": {
           "type": "string",
-          "description": "Indicates the [Google Drive permissions role](https://developers.google.com/workspace/drive/web/manage-sharing#roles). The role determines a user's ability to read, write, and comment on items.",
           "enumDescriptions": [
             "The role is not available.",
             "A role granting full access.",
@@ -1163,6 +1191,7 @@
             "A role granting the ability to view content. This role is sometimes also known as \"reader\".",
             "A role granting the ability to view content only after it has been published to the web. This role is sometimes also known as \"published reader\". See https://support.google.com/sites/answer/6372880 for more information."
           ],
+          "description": "Indicates the [Google Drive permissions role](https://developers.google.com/workspace/drive/web/manage-sharing#roles). The role determines a user's ability to read, write, and comment on items.",
           "enum": [
             "ROLE_UNSPECIFIED",
             "OWNER",
@@ -1174,13 +1203,9 @@
             "PUBLISHED_VIEWER"
           ]
         },
-        "anyone": {
-          "description": "If set, this permission applies to anyone, even logged out users.",
-          "$ref": "Anyone"
-        },
         "allowDiscovery": {
-          "description": "If true, the item can be discovered (e.g. in the user's \"Shared with me\" collection) without needing a link to the item.",
-          "type": "boolean"
+          "type": "boolean",
+          "description": "If true, the item can be discovered (e.g. in the user's \"Shared with me\" collection) without needing a link to the item."
         },
         "domain": {
           "description": "The domain to whom this permission applies.",
@@ -1190,110 +1215,60 @@
           "description": "The group to whom this permission applies.",
           "$ref": "Group"
         },
+        "anyone": {
+          "description": "If set, this permission applies to anyone, even logged out users.",
+          "$ref": "Anyone"
+        },
         "user": {
           "description": "The user to whom this permission applies.",
           "$ref": "User"
         }
       },
-      "type": "object"
+      "id": "Permission",
+      "description": "The permission setting of an object."
     },
-    "Text": {
+    "DriveItem": {
       "type": "object",
-      "id": "Text",
-      "description": "Wrapper for Text Field value.",
       "properties": {
-        "value": {
-          "description": "Value of Text Field.",
-          "type": "string"
-        }
-      }
-    },
-    "FileComment": {
-      "id": "FileComment",
-      "description": "A comment on a file.",
-      "properties": {
-        "legacyDiscussionId": {
-          "description": "The discussion thread to which the comment was added. This identifier is an opaque string compatible with the Drive API and references the first comment in a discussion; see https://developers.google.com/workspace/drive/v3/reference/comments/get",
-          "type": "string"
+        "title": {
+          "type": "string",
+          "description": "The title of the Drive item."
         },
-        "linkToDiscussion": {
-          "description": "The link to the discussion thread containing this comment, for example, `https://docs.google.com/DOCUMENT_ID/edit?disco=THREAD_ID`.",
-          "type": "string"
+        "owner": {
+          "description": "Information about the owner of this Drive item.",
+          "$ref": "Owner"
         },
-        "legacyCommentId": {
-          "description": "The comment in the discussion thread. This identifier is an opaque string compatible with the Drive API; see https://developers.google.com/workspace/drive/v3/reference/comments/get",
-          "type": "string"
+        "folder": {
+          "description": "This field is deprecated; please use the `driveFolder` field instead.",
+          "deprecated": true,
+          "$ref": "Folder"
         },
-        "parent": {
-          "description": "The Drive item containing this comment.",
-          "$ref": "DriveItem"
-        }
-      },
-      "type": "object"
-    },
-    "FieldValue": {
-      "type": "object",
-      "id": "FieldValue",
-      "description": "Contains a value of a Field.",
-      "properties": {
-        "userList": {
-          "description": "User List Field value.",
-          "$ref": "UserList"
+        "driveFile": {
+          "description": "The Drive item is a file.",
+          "$ref": "DriveFile"
         },
-        "date": {
-          "description": "Date Field value.",
-          "$ref": "Date"
+        "name": {
+          "type": "string",
+          "description": "The target Drive item. The format is `items/ITEM_ID`."
         },
-        "selectionList": {
-          "description": "Selection List Field value.",
-          "$ref": "SelectionList"
+        "driveFolder": {
+          "description": "The Drive item is a folder. Includes information about the type of folder.",
+          "$ref": "DriveFolder"
         },
-        "text": {
-          "description": "Text Field value.",
-          "$ref": "Text"
+        "file": {
+          "description": "This field is deprecated; please use the `driveFile` field instead.",
+          "deprecated": true,
+          "$ref": "File"
         },
-        "selection": {
-          "description": "Selection Field value.",
-          "$ref": "Selection"
-        },
-        "integer": {
-          "description": "Integer Field value.",
-          "$ref": "Integer"
-        },
-        "user": {
-          "description": "User Field value.",
-          "$ref": "SingleUser"
-        },
-        "textList": {
-          "description": "Text List Field value.",
-          "$ref": "TextList"
-        }
-      }
-    },
-    "ApplicationReference": {
-      "id": "ApplicationReference",
-      "description": "Activity in applications other than Drive.",
-      "properties": {
-        "type": {
-          "description": "The reference type corresponding to this event.",
-          "enumDescriptions": [
-            "The type is not available.",
-            "The links of one or more Drive items were posted.",
-            "Comments were made regarding a Drive item."
-          ],
-          "enum": [
-            "UNSPECIFIED_REFERENCE_TYPE",
-            "LINK",
-            "DISCUSS"
-          ],
+        "mimeType": {
+          "description": "The MIME type of the Drive item. See https://developers.google.com/workspace/drive/v3/web/mime-types.",
           "type": "string"
         }
       },
-      "type": "object"
+      "id": "DriveItem",
+      "description": "A Drive item, such as a file or folder."
     },
     "KnownUser": {
-      "id": "KnownUser",
-      "description": "A known user.",
       "properties": {
         "isCurrentUser": {
           "description": "True if this is the user making the request.",
@@ -1304,145 +1279,83 @@
           "type": "string"
         }
       },
+      "id": "KnownUser",
+      "description": "A known user.",
       "type": "object"
     },
-    "SettingsChange": {
+    "TeamDrive": {
+      "deprecated": true,
+      "id": "TeamDrive",
+      "description": "This item is deprecated; please see `Drive` instead.",
       "type": "object",
-      "id": "SettingsChange",
-      "description": "Information about settings changes.",
       "properties": {
-        "restrictionChanges": {
-          "items": {
-            "$ref": "RestrictionChange"
-          },
-          "description": "The set of changes made to restrictions.",
-          "type": "array"
+        "title": {
+          "description": "This field is deprecated; please see `Drive.title` instead.",
+          "type": "string"
+        },
+        "root": {
+          "description": "This field is deprecated; please see `Drive.root` instead.",
+          "$ref": "DriveItem"
+        },
+        "name": {
+          "type": "string",
+          "description": "This field is deprecated; please see `Drive.name` instead."
         }
       }
+    },
+    "TargetReference": {
+      "type": "object",
+      "id": "TargetReference",
+      "description": "A lightweight reference to the target of activity.",
+      "properties": {
+        "drive": {
+          "description": "The target is a shared drive.",
+          "$ref": "DriveReference"
+        },
+        "teamDrive": {
+          "description": "This field is deprecated; please use the `drive` field instead.",
+          "deprecated": true,
+          "$ref": "TeamDriveReference"
+        },
+        "driveItem": {
+          "description": "The target is a Drive item.",
+          "$ref": "DriveItemReference"
+        }
+      }
+    },
+    "DeletedUser": {
+      "id": "DeletedUser",
+      "description": "A user whose account has since been deleted.",
+      "properties": {},
+      "type": "object"
     }
   },
-  "mtlsRootUrl": "https://driveactivity.mtls.googleapis.com/",
-  "canonicalName": "Drive Activity",
+  "kind": "discovery#restDescription",
+  "revision": "20260428",
   "version": "v2",
-  "title": "Drive Activity API",
-  "documentationLink": "https://developers.google.com/workspace/drive/activity/",
-  "revision": "20260426",
-  "name": "driveactivity",
-  "id": "driveactivity:v2",
-  "version_module": true,
-  "batchPath": "batch",
-  "ownerName": "Google",
-  "baseUrl": "https://driveactivity.googleapis.com/",
-  "ownerDomain": "google.com",
   "resources": {
     "activity": {
       "methods": {
         "query": {
+          "description": "Query past activity in Google Drive.",
           "response": {
             "$ref": "QueryDriveActivityResponse"
           },
-          "id": "driveactivity.activity.query",
-          "description": "Query past activity in Google Drive.",
           "request": {
             "$ref": "QueryDriveActivityRequest"
           },
-          "parameters": {},
-          "httpMethod": "POST",
-          "parameterOrder": [],
           "flatPath": "v2/activity:query",
+          "id": "driveactivity.activity.query",
+          "parameters": {},
+          "parameterOrder": [],
           "path": "v2/activity:query",
+          "httpMethod": "POST",
           "scopes": [
             "https://www.googleapis.com/auth/drive.activity",
             "https://www.googleapis.com/auth/drive.activity.readonly"
           ]
         }
       }
-    }
-  },
-  "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
-  },
-  "protocol": "rest",
-  "kind": "discovery#restDescription",
-  "discoveryVersion": "v1",
-  "description": "Provides a historical view of activity in Google Drive.",
-  "rootUrl": "https://driveactivity.googleapis.com/",
-  "parameters": {
-    "$.xgafv": {
-      "description": "V1 error format.",
-      "enum": [
-        "1",
-        "2"
-      ],
-      "type": "string",
-      "location": "query",
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ]
-    },
-    "oauth_token": {
-      "type": "string",
-      "location": "query",
-      "description": "OAuth 2.0 token for the current user."
-    },
-    "access_token": {
-      "description": "OAuth access token.",
-      "type": "string",
-      "location": "query"
-    },
-    "fields": {
-      "type": "string",
-      "location": "query",
-      "description": "Selector specifying which fields to include in a partial response."
-    },
-    "quotaUser": {
-      "type": "string",
-      "location": "query",
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters."
-    },
-    "uploadType": {
-      "type": "string",
-      "location": "query",
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\")."
-    },
-    "callback": {
-      "type": "string",
-      "location": "query",
-      "description": "JSONP"
-    },
-    "key": {
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
-      "type": "string",
-      "location": "query"
-    },
-    "alt": {
-      "enumDescriptions": [
-        "Responses with Content-Type of application/json",
-        "Media download with context-dependent Content-Type",
-        "Responses with Content-Type of application/x-protobuf"
-      ],
-      "type": "string",
-      "location": "query",
-      "description": "Data format for response.",
-      "enum": [
-        "json",
-        "media",
-        "proto"
-      ],
-      "default": "json"
-    },
-    "upload_protocol": {
-      "type": "string",
-      "location": "query",
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\")."
-    },
-    "prettyPrint": {
-      "type": "boolean",
-      "default": "true",
-      "location": "query",
-      "description": "Returns response with indentations and line breaks."
     }
   },
   "auth": {
@@ -1457,5 +1370,92 @@
       }
     }
   },
-  "fullyEncodeReservedExpansion": true
+  "parameters": {
+    "key": {
+      "type": "string",
+      "location": "query",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token."
+    },
+    "quotaUser": {
+      "type": "string",
+      "location": "query",
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters."
+    },
+    "callback": {
+      "type": "string",
+      "location": "query",
+      "description": "JSONP"
+    },
+    "oauth_token": {
+      "type": "string",
+      "location": "query",
+      "description": "OAuth 2.0 token for the current user."
+    },
+    "upload_protocol": {
+      "type": "string",
+      "location": "query",
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\")."
+    },
+    "alt": {
+      "description": "Data format for response.",
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ],
+      "default": "json",
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ],
+      "type": "string",
+      "location": "query"
+    },
+    "$.xgafv": {
+      "description": "V1 error format.",
+      "enum": [
+        "1",
+        "2"
+      ],
+      "type": "string",
+      "location": "query",
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ]
+    },
+    "prettyPrint": {
+      "default": "true",
+      "description": "Returns response with indentations and line breaks.",
+      "type": "boolean",
+      "location": "query"
+    },
+    "uploadType": {
+      "type": "string",
+      "location": "query",
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\")."
+    },
+    "access_token": {
+      "description": "OAuth access token.",
+      "type": "string",
+      "location": "query"
+    },
+    "fields": {
+      "type": "string",
+      "location": "query",
+      "description": "Selector specifying which fields to include in a partial response."
+    }
+  },
+  "baseUrl": "https://driveactivity.googleapis.com/",
+  "mtlsRootUrl": "https://driveactivity.mtls.googleapis.com/",
+  "batchPath": "batch",
+  "canonicalName": "Drive Activity",
+  "version_module": true,
+  "rootUrl": "https://driveactivity.googleapis.com/",
+  "documentationLink": "https://developers.google.com/workspace/drive/activity/",
+  "protocol": "rest",
+  "ownerDomain": "google.com",
+  "description": "Provides a historical view of activity in Google Drive.",
+  "servicePath": ""
 }
