@@ -1,418 +1,652 @@
 {
-  "name": "storagebatchoperations",
-  "schemas": {
-    "BucketList": {
-      "id": "BucketList",
-      "description": "Describes list of buckets and their objects to be transformed.",
-      "type": "object",
-      "properties": {
-        "buckets": {
-          "description": "Required. List of buckets and their objects to be transformed. Currently, only one bucket configuration is supported. If multiple buckets are specified, an error will be returned.",
-          "type": "array",
-          "items": {
-            "$ref": "Bucket"
-          }
+  "baseUrl": "https://storagebatchoperations.googleapis.com/",
+  "version_module": true,
+  "mtlsRootUrl": "https://storagebatchoperations.mtls.googleapis.com/",
+  "fullyEncodeReservedExpansion": true,
+  "version": "v1",
+  "documentationLink": "https://cloud.google.com/storage/docs/batch-operations/overview",
+  "auth": {
+    "oauth2": {
+      "scopes": {
+        "https://www.googleapis.com/auth/cloud-platform": {
+          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
         }
       }
-    },
-    "DeleteObject": {
-      "id": "DeleteObject",
-      "description": "Describes options to delete an object.",
-      "type": "object",
-      "properties": {
-        "permanentObjectDeletionEnabled": {
-          "description": "Required. Controls deletion behavior when versioning is enabled for the object's bucket. If true both live and noncurrent objects will be permanently deleted. Otherwise live objects in versioned buckets will become noncurrent and objects that were already noncurrent will be skipped. This setting doesn't have any impact on the Soft Delete feature. All objects deleted by this service can be be restored for the duration of the Soft Delete retention duration if enabled. If enabled and the manifest doesn't specify an object's generation, a GetObjectMetadata call (a Class B operation) will be made to determine the live object generation.",
-          "type": "boolean"
-        }
-      }
-    },
-    "Location": {
-      "properties": {
-        "locationId": {
-          "description": "The canonical id for this location. For example: `\"us-east1\"`.",
-          "type": "string"
-        },
-        "labels": {
-          "description": "Cross-service attributes for the location. For example {\"cloud.googleapis.com/region\": \"us-east1\"}",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "metadata": {
-          "description": "Service-specific metadata. For example the available capacity at the given location.",
-          "type": "object",
-          "additionalProperties": {
-            "type": "any",
-            "description": "Properties of the object. Contains field @type with type URL."
-          }
-        },
-        "name": {
-          "description": "Resource name for the location, which may vary between implementations. For example: `\"projects/example-project/locations/us-east1\"`",
-          "type": "string"
-        },
-        "displayName": {
-          "description": "The friendly name for this location, typically a nearby city name. For example, \"Tokyo\".",
-          "type": "string"
-        }
-      },
-      "id": "Location",
-      "description": "A resource that represents a Google Cloud location.",
-      "type": "object"
-    },
-    "ListLocationsResponse": {
-      "properties": {
-        "nextPageToken": {
-          "description": "The standard List next-page token.",
-          "type": "string"
-        },
+    }
+  },
+  "id": "storagebatchoperations:v1",
+  "batchPath": "batch",
+  "resources": {
+    "projects": {
+      "resources": {
         "locations": {
-          "description": "A list of locations that matches the specified filter in the request.",
-          "type": "array",
-          "items": {
-            "$ref": "Location"
-          }
-        }
-      },
-      "id": "ListLocationsResponse",
-      "description": "The response message for Locations.ListLocations.",
-      "type": "object"
-    },
-    "ObjectCustomContextPayload": {
-      "properties": {
-        "value": {
-          "description": "The value of the object custom context. If set, `value` must NOT be an empty string since it is a required field in custom context. If unset, `value` will be ignored and no changes will be made to the `value` field of the custom context payload.",
-          "type": "string"
-        }
-      },
-      "id": "ObjectCustomContextPayload",
-      "description": "Describes the payload of a user defined object custom context.",
-      "type": "object"
-    },
-    "ErrorLogEntry": {
-      "properties": {
-        "objectUri": {
-          "readOnly": true,
-          "description": "Required. Output only. Object URL. e.g. gs://my_bucket/object.txt",
-          "type": "string"
-        },
-        "errorDetails": {
-          "description": "Optional. Output only. At most 5 error log entries are recorded for a given error code for a job.",
-          "type": "array",
-          "items": {
-            "type": "string"
+          "methods": {
+            "list": {
+              "id": "storagebatchoperations.projects.locations.list",
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud-platform"
+              ],
+              "parameters": {
+                "pageToken": {
+                  "type": "string",
+                  "location": "query",
+                  "description": "A page token received from the `next_page_token` field in the response. Send that page token to receive the subsequent page."
+                },
+                "filter": {
+                  "description": "A filter to narrow down results to a preferred subset. The filtering language accepts strings like `\"displayName=tokyo\"`, and is documented in more detail in [AIP-160](https://google.aip.dev/160).",
+                  "type": "string",
+                  "location": "query"
+                },
+                "name": {
+                  "description": "The resource that owns the locations collection, if applicable.",
+                  "pattern": "^projects/[^/]+$",
+                  "type": "string",
+                  "location": "path",
+                  "required": true
+                },
+                "pageSize": {
+                  "description": "The maximum number of results to return. If not set, the service selects a default.",
+                  "format": "int32",
+                  "location": "query",
+                  "type": "integer"
+                },
+                "extraLocationTypes": {
+                  "repeated": true,
+                  "description": "Optional. Do not use this field unless explicitly documented otherwise. This is primarily for internal usage.",
+                  "type": "string",
+                  "location": "query"
+                }
+              },
+              "response": {
+                "$ref": "ListLocationsResponse"
+              },
+              "flatPath": "v1/projects/{projectsId}/locations",
+              "httpMethod": "GET",
+              "description": "Lists information about the supported locations for this service. This method lists locations based on the resource scope provided in the ListLocationsRequest.name field: * **Global locations**: If `name` is empty, the method lists the public locations available to all projects. * **Project-specific locations**: If `name` follows the format `projects/{project}`, the method lists locations visible to that specific project. This includes public, private, or other project-specific locations enabled for the project. For gRPC and client library implementations, the resource name is passed as the `name` field. For direct service calls, the resource name is incorporated into the request path based on the specific service implementation and version.",
+              "path": "v1/{+name}/locations",
+              "parameterOrder": [
+                "name"
+              ]
+            },
+            "get": {
+              "description": "Gets information about a location.",
+              "parameterOrder": [
+                "name"
+              ],
+              "path": "v1/{+name}",
+              "httpMethod": "GET",
+              "response": {
+                "$ref": "Location"
+              },
+              "parameters": {
+                "name": {
+                  "location": "path",
+                  "required": true,
+                  "type": "string",
+                  "pattern": "^projects/[^/]+/locations/[^/]+$",
+                  "description": "Resource name for the location."
+                }
+              },
+              "flatPath": "v1/projects/{projectsId}/locations/{locationsId}",
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud-platform"
+              ],
+              "id": "storagebatchoperations.projects.locations.get"
+            }
           },
-          "readOnly": true
-        }
-      },
-      "id": "ErrorLogEntry",
-      "description": "An entry describing an error that has occurred.",
-      "type": "object"
-    },
-    "ListBucketOperationsResponse": {
-      "properties": {
-        "nextPageToken": {
-          "description": "A token identifying a page of results.",
-          "type": "string"
-        },
-        "bucketOperations": {
-          "description": "A list of storage batch bucket operations.",
-          "type": "array",
-          "items": {
-            "$ref": "BucketOperation"
-          }
-        },
-        "unreachable": {
-          "description": "Locations that could not be reached.",
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      },
-      "id": "ListBucketOperationsResponse",
-      "description": "Message for response to listing BucketOperations",
-      "type": "object"
-    },
-    "RewriteObject": {
-      "properties": {
-        "kmsKey": {
-          "description": "Required. Resource name of the Cloud KMS key that will be used to encrypt the object. The Cloud KMS key must be located in same location as the object. Refer to https://cloud.google.com/storage/docs/encryption/using-customer-managed-keys#add-object-key for additional documentation. Format: projects/{project}/locations/{location}/keyRings/{keyring}/cryptoKeys/{key} For example: \"projects/123456/locations/us-central1/keyRings/my-keyring/cryptoKeys/my-key\". The object will be rewritten and set with the specified KMS key.",
-          "type": "string"
-        }
-      },
-      "id": "RewriteObject",
-      "description": "Describes options for object rewrite.",
-      "type": "object"
-    },
-    "Status": {
-      "id": "Status",
-      "description": "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
-      "type": "object",
-      "properties": {
-        "code": {
-          "description": "The status code, which should be an enum value of google.rpc.Code.",
-          "type": "integer",
-          "format": "int32"
-        },
-        "message": {
-          "description": "A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.",
-          "type": "string"
-        },
-        "details": {
-          "description": "A list of messages that carry the error details. There is a common set of message types for APIs to use.",
-          "type": "array",
-          "items": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "any",
-              "description": "Properties of the object. Contains field @type with type URL."
+          "resources": {
+            "operations": {
+              "methods": {
+                "list": {
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "id": "storagebatchoperations.projects.locations.operations.list",
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/operations",
+                  "response": {
+                    "$ref": "ListOperationsResponse"
+                  },
+                  "parameters": {
+                    "name": {
+                      "description": "The name of the operation's parent resource.",
+                      "type": "string",
+                      "location": "path",
+                      "required": true,
+                      "pattern": "^projects/[^/]+/locations/[^/]+$"
+                    },
+                    "returnPartialSuccess": {
+                      "type": "boolean",
+                      "location": "query",
+                      "description": "When set to `true`, operations that are reachable are returned as normal, and those that are unreachable are returned in the ListOperationsResponse.unreachable field. This can only be `true` when reading across collections. For example, when `parent` is set to `\"projects/example/locations/-\"`. This field is not supported by default and will result in an `UNIMPLEMENTED` error if set unless explicitly documented otherwise in service or product specific documentation."
+                    },
+                    "pageSize": {
+                      "type": "integer",
+                      "location": "query",
+                      "description": "The standard list page size.",
+                      "format": "int32"
+                    },
+                    "pageToken": {
+                      "location": "query",
+                      "type": "string",
+                      "description": "The standard list page token."
+                    },
+                    "filter": {
+                      "description": "The standard list filter.",
+                      "location": "query",
+                      "type": "string"
+                    }
+                  },
+                  "httpMethod": "GET",
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "path": "v1/{+name}/operations",
+                  "description": "Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`."
+                },
+                "get": {
+                  "id": "storagebatchoperations.projects.locations.operations.get",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "parameters": {
+                    "name": {
+                      "pattern": "^projects/[^/]+/locations/[^/]+/operations/[^/]+$",
+                      "type": "string",
+                      "location": "path",
+                      "required": true,
+                      "description": "The name of the operation resource."
+                    }
+                  },
+                  "response": {
+                    "$ref": "Operation"
+                  },
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/operations/{operationsId}",
+                  "httpMethod": "GET",
+                  "description": "Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service.",
+                  "path": "v1/{+name}",
+                  "parameterOrder": [
+                    "name"
+                  ]
+                },
+                "cancel": {
+                  "httpMethod": "POST",
+                  "description": "Starts asynchronous cancellation on a long-running operation. The server makes a best effort to cancel the operation, but success is not guaranteed. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`. Clients can use Operations.GetOperation or other methods to check whether the cancellation succeeded or whether the operation completed despite cancellation. On successful cancellation, the operation is not deleted; instead, it becomes an operation with an Operation.error value with a google.rpc.Status.code of `1`, corresponding to `Code.CANCELLED`.",
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "path": "v1/{+name}:cancel",
+                  "request": {
+                    "$ref": "CancelOperationRequest"
+                  },
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "id": "storagebatchoperations.projects.locations.operations.cancel",
+                  "response": {
+                    "$ref": "Empty"
+                  },
+                  "parameters": {
+                    "name": {
+                      "type": "string",
+                      "location": "path",
+                      "required": true,
+                      "pattern": "^projects/[^/]+/locations/[^/]+/operations/[^/]+$",
+                      "description": "The name of the operation resource to be cancelled."
+                    }
+                  },
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/operations/{operationsId}:cancel"
+                },
+                "delete": {
+                  "description": "Deletes a long-running operation. This method indicates that the client is no longer interested in the operation result. It does not cancel the operation. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`.",
+                  "path": "v1/{+name}",
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "httpMethod": "DELETE",
+                  "parameters": {
+                    "name": {
+                      "pattern": "^projects/[^/]+/locations/[^/]+/operations/[^/]+$",
+                      "location": "path",
+                      "required": true,
+                      "type": "string",
+                      "description": "The name of the operation resource to be deleted."
+                    }
+                  },
+                  "response": {
+                    "$ref": "Empty"
+                  },
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/operations/{operationsId}",
+                  "id": "storagebatchoperations.projects.locations.operations.delete",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ]
+                }
+              }
+            },
+            "jobs": {
+              "methods": {
+                "delete": {
+                  "id": "storagebatchoperations.projects.locations.jobs.delete",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "parameters": {
+                    "name": {
+                      "description": "Required. The `name` of the job to delete. Format: projects/{project_id}/locations/global/jobs/{job_id} .",
+                      "pattern": "^projects/[^/]+/locations/[^/]+/jobs/[^/]+$",
+                      "type": "string",
+                      "location": "path",
+                      "required": true
+                    },
+                    "requestId": {
+                      "description": "Optional. An optional request ID to identify requests. Specify a unique request ID in case you need to retry your request. Requests with same `request_id` will be ignored for at least 60 minutes since the first request. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
+                      "location": "query",
+                      "type": "string"
+                    },
+                    "force": {
+                      "description": "Optional. If set to true, any child bucket operations of the job will also be deleted. Highly recommended to be set to true by all clients. Users cannot mutate bucket operations directly, so only the jobs.delete permission is required to delete a job (and its child bucket operations).",
+                      "type": "boolean",
+                      "location": "query"
+                    }
+                  },
+                  "response": {
+                    "$ref": "Empty"
+                  },
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/jobs/{jobsId}",
+                  "httpMethod": "DELETE",
+                  "description": "Deletes a batch job.",
+                  "path": "v1/{+name}",
+                  "parameterOrder": [
+                    "name"
+                  ]
+                },
+                "list": {
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/jobs",
+                  "parameters": {
+                    "pageSize": {
+                      "location": "query",
+                      "type": "integer",
+                      "description": "Optional. The list page size. default page size is 100.",
+                      "format": "int32"
+                    },
+                    "orderBy": {
+                      "description": "Optional. Field to sort by. Supported fields are name, create_time.",
+                      "type": "string",
+                      "location": "query"
+                    },
+                    "parent": {
+                      "pattern": "^projects/[^/]+/locations/[^/]+$",
+                      "type": "string",
+                      "location": "path",
+                      "required": true,
+                      "description": "Required. Format: projects/{project_id}/locations/global."
+                    },
+                    "filter": {
+                      "type": "string",
+                      "location": "query",
+                      "description": "Optional. Filters results as defined by https://google.aip.dev/160."
+                    },
+                    "pageToken": {
+                      "location": "query",
+                      "type": "string",
+                      "description": "Optional. The list page token."
+                    }
+                  },
+                  "response": {
+                    "$ref": "ListJobsResponse"
+                  },
+                  "id": "storagebatchoperations.projects.locations.jobs.list",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "path": "v1/{+parent}/jobs",
+                  "parameterOrder": [
+                    "parent"
+                  ],
+                  "description": "Lists Jobs in a given project.",
+                  "httpMethod": "GET"
+                },
+                "create": {
+                  "httpMethod": "POST",
+                  "parameterOrder": [
+                    "parent"
+                  ],
+                  "path": "v1/{+parent}/jobs",
+                  "description": "Creates a batch job.",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "id": "storagebatchoperations.projects.locations.jobs.create",
+                  "request": {
+                    "$ref": "Job"
+                  },
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/jobs",
+                  "response": {
+                    "$ref": "Operation"
+                  },
+                  "parameters": {
+                    "parent": {
+                      "description": "Required. Value for parent.",
+                      "pattern": "^projects/[^/]+/locations/[^/]+$",
+                      "location": "path",
+                      "required": true,
+                      "type": "string"
+                    },
+                    "jobId": {
+                      "description": "Required. The optional `job_id` for this Job . If not specified, an id is generated. `job_id` should be no more than 128 characters and must include only characters available in DNS names, as defined by RFC-1123.",
+                      "location": "query",
+                      "type": "string"
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "location": "query",
+                      "description": "Optional. An optional request ID to identify requests. Specify a unique request ID in case you need to retry your request. Requests with same `request_id` will be ignored for at least 60 minutes since the first request. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000)."
+                    }
+                  }
+                },
+                "get": {
+                  "httpMethod": "GET",
+                  "description": "Gets a batch job.",
+                  "path": "v1/{+name}",
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "id": "storagebatchoperations.projects.locations.jobs.get",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ],
+                  "parameters": {
+                    "name": {
+                      "description": "Required. `name` of the job to retrieve. Format: projects/{project_id}/locations/global/jobs/{job_id} .",
+                      "pattern": "^projects/[^/]+/locations/[^/]+/jobs/[^/]+$",
+                      "location": "path",
+                      "required": true,
+                      "type": "string"
+                    }
+                  },
+                  "response": {
+                    "$ref": "Job"
+                  },
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/jobs/{jobsId}"
+                },
+                "cancel": {
+                  "description": "Cancels a batch job.",
+                  "path": "v1/{+name}:cancel",
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "httpMethod": "POST",
+                  "parameters": {
+                    "name": {
+                      "pattern": "^projects/[^/]+/locations/[^/]+/jobs/[^/]+$",
+                      "location": "path",
+                      "required": true,
+                      "type": "string",
+                      "description": "Required. The `name` of the job to cancel. Format: projects/{project_id}/locations/global/jobs/{job_id}."
+                    }
+                  },
+                  "response": {
+                    "$ref": "CancelJobResponse"
+                  },
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/jobs/{jobsId}:cancel",
+                  "request": {
+                    "$ref": "CancelJobRequest"
+                  },
+                  "id": "storagebatchoperations.projects.locations.jobs.cancel",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ]
+                }
+              },
+              "resources": {
+                "bucketOperations": {
+                  "methods": {
+                    "list": {
+                      "httpMethod": "GET",
+                      "parameterOrder": [
+                        "parent"
+                      ],
+                      "path": "v1/{+parent}/bucketOperations",
+                      "description": "Lists BucketOperations in a given project and job.",
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform"
+                      ],
+                      "id": "storagebatchoperations.projects.locations.jobs.bucketOperations.list",
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/jobs/{jobsId}/bucketOperations",
+                      "response": {
+                        "$ref": "ListBucketOperationsResponse"
+                      },
+                      "parameters": {
+                        "pageToken": {
+                          "location": "query",
+                          "type": "string",
+                          "description": "Optional. The list page token."
+                        },
+                        "filter": {
+                          "location": "query",
+                          "type": "string",
+                          "description": "Optional. Filters results as defined by https://google.aip.dev/160."
+                        },
+                        "parent": {
+                          "description": "Required. Format: projects/{project_id}/locations/global/jobs/{job_id}.",
+                          "type": "string",
+                          "location": "path",
+                          "required": true,
+                          "pattern": "^projects/[^/]+/locations/[^/]+/jobs/[^/]+$"
+                        },
+                        "pageSize": {
+                          "description": "Optional. The list page size. Default page size is 100.",
+                          "format": "int32",
+                          "type": "integer",
+                          "location": "query"
+                        },
+                        "orderBy": {
+                          "description": "Optional. Field to sort by. Supported fields are name, create_time.",
+                          "type": "string",
+                          "location": "query"
+                        }
+                      }
+                    },
+                    "get": {
+                      "description": "Gets a BucketOperation.",
+                      "path": "v1/{+name}",
+                      "parameterOrder": [
+                        "name"
+                      ],
+                      "httpMethod": "GET",
+                      "parameters": {
+                        "name": {
+                          "pattern": "^projects/[^/]+/locations/[^/]+/jobs/[^/]+/bucketOperations/[^/]+$",
+                          "location": "path",
+                          "required": true,
+                          "type": "string",
+                          "description": "Required. `name` of the bucket operation to retrieve. Format: projects/{project_id}/locations/global/jobs/{job_id}/bucketOperations/{bucket_operation_id}."
+                        }
+                      },
+                      "response": {
+                        "$ref": "BucketOperation"
+                      },
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/jobs/{jobsId}/bucketOperations/{bucketOperationsId}",
+                      "id": "storagebatchoperations.projects.locations.jobs.bucketOperations.get",
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform"
+                      ]
+                    }
+                  }
+                }
+              }
             }
           }
         }
       }
+    }
+  },
+  "canonicalName": "Storage Batch Operations",
+  "servicePath": "",
+  "parameters": {
+    "quotaUser": {
+      "location": "query",
+      "type": "string",
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters."
     },
-    "PutObjectHold": {
-      "properties": {
-        "temporaryHold": {
-          "description": "Required. Updates object temporary holds state. When object temporary hold is set, object cannot be deleted or replaced.",
-          "type": "string",
-          "enumDescriptions": [
-            "Default value, Object hold status will not be changed.",
-            "Places the hold.",
-            "Releases the hold."
-          ],
-          "enum": [
-            "HOLD_STATUS_UNSPECIFIED",
-            "SET",
-            "UNSET"
-          ]
-        },
-        "eventBasedHold": {
-          "enum": [
-            "HOLD_STATUS_UNSPECIFIED",
-            "SET",
-            "UNSET"
-          ],
-          "description": "Required. Updates object event based holds state. When object event based hold is set, object cannot be deleted or replaced. Resets object's time in the bucket for the purposes of the retention period.",
-          "type": "string",
-          "enumDescriptions": [
-            "Default value, Object hold status will not be changed.",
-            "Places the hold.",
-            "Releases the hold."
-          ]
-        }
-      },
-      "id": "PutObjectHold",
-      "description": "Describes options to update object hold.",
-      "type": "object"
+    "uploadType": {
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
+      "type": "string",
+      "location": "query"
     },
-    "ListOperationsResponse": {
-      "id": "ListOperationsResponse",
-      "description": "The response message for Operations.ListOperations.",
-      "type": "object",
-      "properties": {
-        "nextPageToken": {
-          "description": "The standard List next-page token.",
-          "type": "string"
-        },
-        "operations": {
-          "description": "A list of operations that matches the specified filter in the request.",
-          "type": "array",
-          "items": {
-            "$ref": "Operation"
-          }
-        },
-        "unreachable": {
-          "description": "Unordered list. Unreachable resources. Populated when the request sets `ListOperationsRequest.return_partial_success` and reads across collections. For example, when attempting to list all resources across all supported locations.",
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
+    "callback": {
+      "location": "query",
+      "type": "string",
+      "description": "JSONP"
     },
-    "ListJobsResponse": {
-      "id": "ListJobsResponse",
-      "description": "Message for response to listing Jobs",
-      "type": "object",
-      "properties": {
-        "nextPageToken": {
-          "description": "A token identifying a page of results.",
-          "type": "string"
-        },
-        "jobs": {
-          "description": "A list of storage batch jobs.",
-          "type": "array",
-          "items": {
-            "$ref": "Job"
-          }
-        },
-        "unreachable": {
-          "description": "Locations that could not be reached.",
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
+    "fields": {
+      "description": "Selector specifying which fields to include in a partial response.",
+      "location": "query",
+      "type": "string"
     },
-    "CancelOperationRequest": {
-      "id": "CancelOperationRequest",
-      "description": "The request message for Operations.CancelOperation.",
-      "type": "object",
-      "properties": {}
+    "key": {
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+      "location": "query",
+      "type": "string"
     },
-    "PutMetadata": {
-      "id": "PutMetadata",
-      "description": "Describes options for object metadata update.",
-      "type": "object",
-      "properties": {
-        "objectRetention": {
-          "description": "Optional. Updates objects retention lock configuration. Unset values will be ignored. Set empty values to clear the retention for the object with existing `Unlocked` retention mode. Object with existing `Locked` retention mode cannot be cleared or reduce retain_until_time. Refer to documentation in https://cloud.google.com/storage/docs/object-lock",
-          "$ref": "ObjectRetention"
-        },
-        "contentEncoding": {
-          "description": "Optional. Updates objects Content-Encoding fixed metadata. Unset values will be ignored. Set empty values to clear the metadata. Refer to documentation in https://cloud.google.com/storage/docs/metadata#content-encoding.",
-          "type": "string"
-        },
-        "contentDisposition": {
-          "description": "Optional. Updates objects Content-Disposition fixed metadata. Unset values will be ignored. Set empty values to clear the metadata. Refer https://cloud.google.com/storage/docs/metadata#content-disposition for additional documentation.",
-          "type": "string"
-        },
-        "cacheControl": {
-          "description": "Optional. Updates objects Cache-Control fixed metadata. Unset values will be ignored. Set empty values to clear the metadata. Additionally, the value for Custom-Time cannot decrease. Refer to documentation in https://cloud.google.com/storage/docs/metadata#caching_data.",
-          "type": "string"
-        },
-        "customMetadata": {
-          "additionalProperties": {
-            "type": "string"
-          },
-          "description": "Optional. Updates objects custom metadata. Adds or sets individual custom metadata key value pairs on objects. Keys that are set with empty custom metadata values will have its value cleared. Existing custom metadata not specified with this flag is not changed. Refer to documentation in https://cloud.google.com/storage/docs/metadata#custom-metadata",
-          "type": "object"
-        },
-        "contentType": {
-          "description": "Optional. Updates objects Content-Type fixed metadata. Unset values will be ignored. Set empty values to clear the metadata. Refer to documentation in https://cloud.google.com/storage/docs/metadata#content-type",
-          "type": "string"
-        },
-        "customTime": {
-          "description": "Optional. Updates objects Custom-Time fixed metadata. Unset values will be ignored. Set empty values to clear the metadata. Refer to documentation in https://cloud.google.com/storage/docs/metadata#custom-time.",
-          "type": "string"
-        },
-        "contentLanguage": {
-          "description": "Optional. Updates objects Content-Language fixed metadata. Refer to ISO 639-1 language codes for typical values of this metadata. Max length 100 characters. Unset values will be ignored. Set empty values to clear the metadata. Refer to documentation in https://cloud.google.com/storage/docs/metadata#content-language.",
-          "type": "string"
-        }
-      }
+    "access_token": {
+      "description": "OAuth access token.",
+      "location": "query",
+      "type": "string"
     },
-    "BucketOperation": {
-      "properties": {
-        "prefixList": {
-          "$ref": "PrefixList",
-          "description": "Specifies objects matching a prefix set."
-        },
-        "putMetadata": {
-          "description": "Updates object metadata. Allows updating fixed-key and custom metadata and fixed-key metadata i.e. Cache-Control, Content-Disposition, Content-Encoding, Content-Language, Content-Type, Custom-Time.",
-          "$ref": "PutMetadata"
-        },
-        "counters": {
-          "readOnly": true,
-          "$ref": "Counters",
-          "description": "Output only. Information about the progress of the bucket operation."
-        },
-        "manifest": {
-          "$ref": "Manifest",
-          "description": "Specifies objects in a manifest file."
-        },
-        "updateObjectCustomContext": {
-          "$ref": "UpdateObjectCustomContext",
-          "description": "Update object custom context."
-        },
-        "completeTime": {
-          "description": "Output only. The time that the BucketOperation was completed.",
-          "type": "string",
-          "readOnly": true,
-          "format": "google-datetime"
-        },
-        "bucketName": {
-          "description": "The bucket name of the objects to be transformed in the BucketOperation.",
-          "type": "string"
-        },
-        "createTime": {
-          "readOnly": true,
-          "format": "google-datetime",
-          "description": "Output only. The time that the BucketOperation was created.",
-          "type": "string"
-        },
-        "deleteObject": {
-          "description": "Delete objects.",
-          "$ref": "DeleteObject"
-        },
-        "rewriteObject": {
-          "description": "Rewrite the object and updates metadata like KMS key.",
-          "$ref": "RewriteObject"
-        },
-        "putObjectHold": {
-          "description": "Changes object hold status.",
-          "$ref": "PutObjectHold"
-        },
-        "name": {
-          "description": "Identifier. The resource name of the BucketOperation. This is defined by the service. Format: projects/{project}/locations/global/jobs/{job_id}/bucketOperations/{bucket_operation}.",
-          "type": "string"
-        },
-        "errorSummaries": {
-          "readOnly": true,
-          "description": "Output only. Summarizes errors encountered with sample error log entries.",
-          "type": "array",
-          "items": {
-            "$ref": "ErrorSummary"
-          }
-        },
-        "startTime": {
-          "readOnly": true,
-          "format": "google-datetime",
-          "description": "Output only. The time that the BucketOperation was started.",
-          "type": "string"
-        },
-        "state": {
-          "type": "string",
-          "readOnly": true,
-          "enum": [
-            "STATE_UNSPECIFIED",
-            "QUEUED",
-            "RUNNING",
-            "SUCCEEDED",
-            "CANCELED",
-            "FAILED"
-          ],
-          "description": "Output only. State of the BucketOperation.",
-          "enumDescriptions": [
-            "Default value. This value is unused.",
-            "Created but not yet started.",
-            "In progress.",
-            "Completed successfully.",
-            "Cancelled by the user.",
-            "Terminated due to an unrecoverable failure."
-          ]
-        }
-      },
-      "id": "BucketOperation",
-      "description": "BucketOperation represents a bucket-level breakdown of a Job.",
-      "type": "object"
+    "alt": {
+      "location": "query",
+      "type": "string",
+      "default": "json",
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ],
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ],
+      "description": "Data format for response."
     },
+    "oauth_token": {
+      "type": "string",
+      "location": "query",
+      "description": "OAuth 2.0 token for the current user."
+    },
+    "prettyPrint": {
+      "location": "query",
+      "type": "boolean",
+      "default": "true",
+      "description": "Returns response with indentations and line breaks."
+    },
+    "upload_protocol": {
+      "type": "string",
+      "location": "query",
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\")."
+    },
+    "$.xgafv": {
+      "location": "query",
+      "type": "string",
+      "enum": [
+        "1",
+        "2"
+      ],
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ],
+      "description": "V1 error format."
+    }
+  },
+  "rootUrl": "https://storagebatchoperations.googleapis.com/",
+  "ownerDomain": "google.com",
+  "discoveryVersion": "v1",
+  "basePath": "",
+  "ownerName": "Google",
+  "protocol": "rest",
+  "description": "",
+  "revision": "20260422",
+  "kind": "discovery#restDescription",
+  "schemas": {
     "Manifest": {
       "id": "Manifest",
-      "description": "Describes list of objects to be transformed.",
       "type": "object",
       "properties": {
         "manifestLocation": {
           "description": "Required. `manifest_location` must contain the manifest source file that is a CSV file in a Google Cloud Storage bucket. Each row in the file must include the object details i.e. BucketId and Name. Generation may optionally be specified. When it is not specified the live object is acted upon. `manifest_location` should either be 1) An absolute path to the object in the format of `gs://bucket_name/path/file_name.csv`. 2) An absolute path with a single wildcard character in the file name, for example `gs://bucket_name/path/file_name*.csv`. If manifest location is specified with a wildcard, objects in all manifest files matching the pattern will be acted upon.",
           "type": "string"
         }
-      }
+      },
+      "description": "Describes list of objects to be transformed."
+    },
+    "CancelOperationRequest": {
+      "description": "The request message for Operations.CancelOperation.",
+      "properties": {},
+      "id": "CancelOperationRequest",
+      "type": "object"
+    },
+    "BucketList": {
+      "id": "BucketList",
+      "type": "object",
+      "properties": {
+        "buckets": {
+          "description": "Required. List of buckets and their objects to be transformed. Currently, only one bucket configuration is supported. If multiple buckets are specified, an error will be returned.",
+          "items": {
+            "$ref": "Bucket"
+          },
+          "type": "array"
+        }
+      },
+      "description": "Describes list of buckets and their objects to be transformed."
+    },
+    "LoggingConfig": {
+      "description": "Specifies the Cloud Logging behavior.",
+      "properties": {
+        "logActionStates": {
+          "description": "Required. States in which Action are logged.If empty, no logs are generated.",
+          "items": {
+            "type": "string",
+            "enumDescriptions": [
+              "Illegal value, to avoid allowing a default.",
+              "`LoggableAction` completed successfully. `SUCCEEDED` actions are logged as INFO.",
+              "`LoggableAction` terminated in an error state. `FAILED` actions are logged as ERROR."
+            ],
+            "enum": [
+              "LOGGABLE_ACTION_STATE_UNSPECIFIED",
+              "SUCCEEDED",
+              "FAILED"
+            ]
+          },
+          "type": "array"
+        },
+        "logActions": {
+          "description": "Required. Specifies the actions to be logged.",
+          "items": {
+            "enum": [
+              "LOGGABLE_ACTION_UNSPECIFIED",
+              "TRANSFORM"
+            ],
+            "type": "string",
+            "enumDescriptions": [
+              "Illegal value, to avoid allowing a default.",
+              "The corresponding transform action in this job."
+            ]
+          },
+          "type": "array"
+        }
+      },
+      "id": "LoggingConfig",
+      "type": "object"
     },
     "Operation": {
+      "description": "This resource represents a long-running operation that is the result of a network API call.",
       "properties": {
+        "error": {
+          "description": "The error result of the operation in case of failure or cancellation.",
+          "$ref": "Status"
+        },
         "metadata": {
           "description": "Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata. Any method that returns a long-running operation should document the metadata type, if any.",
           "type": "object",
@@ -421,68 +655,698 @@
             "description": "Properties of the object. Contains field @type with type URL."
           }
         },
-        "error": {
-          "$ref": "Status",
-          "description": "The error result of the operation in case of failure or cancellation."
-        },
-        "name": {
-          "description": "The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`.",
-          "type": "string"
-        },
         "done": {
           "description": "If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available.",
           "type": "boolean"
         },
         "response": {
+          "description": "The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "any",
+            "description": "Properties of the object. Contains field @type with type URL."
+          }
+        },
+        "name": {
+          "type": "string",
+          "description": "The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`."
+        }
+      },
+      "id": "Operation",
+      "type": "object"
+    },
+    "Counters": {
+      "properties": {
+        "succeededObjectCount": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Output only. Number of objects completed.",
+          "format": "int64"
+        },
+        "totalObjectCount": {
+          "description": "Output only. Number of objects listed.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "string"
+        },
+        "objectCustomContextsCreated": {
+          "description": "Output only. Number of object custom contexts created. This field is only populated for jobs with the UpdateObjectCustomContext transformation.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "string"
+        },
+        "totalBytesFound": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Output only. Number of bytes found from source. This field is only populated for jobs with a prefix list object configuration.",
+          "format": "int64"
+        },
+        "objectCustomContextsDeleted": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Output only. Number of object custom contexts deleted. This field is only populated for jobs with the UpdateObjectCustomContext transformation.",
+          "format": "int64"
+        },
+        "objectCustomContextsUpdated": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Output only. Number of object custom contexts updated. This counter tracks custom contexts where the key already existed, but the payload was modified. This field is only populated for jobs with the UpdateObjectCustomContext transformation.",
+          "format": "int64"
+        },
+        "failedObjectCount": {
+          "description": "Output only. The number of objects that failed due to user errors or service errors.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "description": "Describes details about the progress of the job.",
+      "id": "Counters",
+      "type": "object"
+    },
+    "ListBucketOperationsResponse": {
+      "id": "ListBucketOperationsResponse",
+      "type": "object",
+      "description": "Message for response to listing BucketOperations",
+      "properties": {
+        "bucketOperations": {
+          "description": "A list of storage batch bucket operations.",
+          "type": "array",
+          "items": {
+            "$ref": "BucketOperation"
+          }
+        },
+        "nextPageToken": {
+          "description": "A token identifying a page of results.",
+          "type": "string"
+        },
+        "unreachable": {
+          "description": "Locations that could not be reached.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      }
+    },
+    "Location": {
+      "description": "A resource that represents a Google Cloud location.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Resource name for the location, which may vary between implementations. For example: `\"projects/example-project/locations/us-east1\"`"
+        },
+        "locationId": {
+          "description": "The canonical id for this location. For example: `\"us-east1\"`.",
+          "type": "string"
+        },
+        "displayName": {
+          "description": "The friendly name for this location, typically a nearby city name. For example, \"Tokyo\".",
+          "type": "string"
+        },
+        "labels": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object",
+          "description": "Cross-service attributes for the location. For example {\"cloud.googleapis.com/region\": \"us-east1\"}"
+        },
+        "metadata": {
           "additionalProperties": {
             "type": "any",
             "description": "Properties of the object. Contains field @type with type URL."
           },
-          "description": "The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.",
-          "type": "object"
+          "type": "object",
+          "description": "Service-specific metadata. For example the available capacity at the given location."
         }
       },
-      "id": "Operation",
-      "description": "This resource represents a long-running operation that is the result of a network API call.",
+      "id": "Location",
       "type": "object"
+    },
+    "CancelJobRequest": {
+      "id": "CancelJobRequest",
+      "type": "object",
+      "properties": {
+        "requestId": {
+          "type": "string",
+          "description": "Optional. An optional request ID to identify requests. Specify a unique request ID in case you need to retry your request. Requests with same `request_id` will be ignored for at least 60 minutes since the first request. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000)."
+        }
+      },
+      "description": "Message for Job to Cancel"
+    },
+    "ErrorLogEntry": {
+      "description": "An entry describing an error that has occurred.",
+      "properties": {
+        "errorDetails": {
+          "description": "Optional. Output only. At most 5 error log entries are recorded for a given error code for a job.",
+          "items": {
+            "type": "string"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "objectUri": {
+          "description": "Required. Output only. Object URL. e.g. gs://my_bucket/object.txt",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "id": "ErrorLogEntry",
+      "type": "object"
+    },
+    "Bucket": {
+      "properties": {
+        "manifest": {
+          "description": "Specifies objects in a manifest file.",
+          "$ref": "Manifest"
+        },
+        "prefixList": {
+          "description": "Specifies objects matching a prefix set.",
+          "$ref": "PrefixList"
+        },
+        "bucket": {
+          "type": "string",
+          "description": "Required. Bucket name for the objects to be transformed."
+        }
+      },
+      "description": "Describes configuration of a single bucket and its objects to be transformed.",
+      "id": "Bucket",
+      "type": "object"
+    },
+    "PrefixList": {
+      "description": "Describes prefixes of objects to be transformed.",
+      "properties": {
+        "includedObjectPrefixes": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "Optional. Include prefixes of the objects to be transformed. * Supports full object name * Supports prefix of the object name * Wildcards are not supported * Supports empty string for all objects in a bucket."
+        }
+      },
+      "id": "PrefixList",
+      "type": "object"
+    },
+    "BucketOperation": {
+      "id": "BucketOperation",
+      "type": "object",
+      "properties": {
+        "manifest": {
+          "description": "Specifies objects in a manifest file.",
+          "$ref": "Manifest"
+        },
+        "errorSummaries": {
+          "items": {
+            "$ref": "ErrorSummary"
+          },
+          "readOnly": true,
+          "type": "array",
+          "description": "Output only. Summarizes errors encountered with sample error log entries."
+        },
+        "startTime": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Output only. The time that the BucketOperation was started.",
+          "format": "google-datetime"
+        },
+        "updateObjectCustomContext": {
+          "description": "Update object custom context.",
+          "$ref": "UpdateObjectCustomContext"
+        },
+        "putObjectHold": {
+          "description": "Changes object hold status.",
+          "$ref": "PutObjectHold"
+        },
+        "name": {
+          "type": "string",
+          "description": "Identifier. The resource name of the BucketOperation. This is defined by the service. Format: projects/{project}/locations/global/jobs/{job_id}/bucketOperations/{bucket_operation}."
+        },
+        "completeTime": {
+          "description": "Output only. The time that the BucketOperation was completed.",
+          "format": "google-datetime",
+          "readOnly": true,
+          "type": "string"
+        },
+        "counters": {
+          "readOnly": true,
+          "description": "Output only. Information about the progress of the bucket operation.",
+          "$ref": "Counters"
+        },
+        "bucketName": {
+          "description": "The bucket name of the objects to be transformed in the BucketOperation.",
+          "type": "string"
+        },
+        "state": {
+          "readOnly": true,
+          "enumDescriptions": [
+            "Default value. This value is unused.",
+            "Created but not yet started.",
+            "In progress.",
+            "Completed successfully.",
+            "Cancelled by the user.",
+            "Terminated due to an unrecoverable failure."
+          ],
+          "description": "Output only. State of the BucketOperation.",
+          "type": "string",
+          "enum": [
+            "STATE_UNSPECIFIED",
+            "QUEUED",
+            "RUNNING",
+            "SUCCEEDED",
+            "CANCELED",
+            "FAILED"
+          ]
+        },
+        "createTime": {
+          "description": "Output only. The time that the BucketOperation was created.",
+          "format": "google-datetime",
+          "readOnly": true,
+          "type": "string"
+        },
+        "rewriteObject": {
+          "description": "Rewrite the object and updates metadata like KMS key.",
+          "$ref": "RewriteObject"
+        },
+        "prefixList": {
+          "description": "Specifies objects matching a prefix set.",
+          "$ref": "PrefixList"
+        },
+        "deleteObject": {
+          "description": "Delete objects.",
+          "$ref": "DeleteObject"
+        },
+        "putMetadata": {
+          "description": "Updates object metadata. Allows updating fixed-key and custom metadata and fixed-key metadata i.e. Cache-Control, Content-Disposition, Content-Encoding, Content-Language, Content-Type, Custom-Time.",
+          "$ref": "PutMetadata"
+        }
+      },
+      "description": "BucketOperation represents a bucket-level breakdown of a Job."
+    },
+    "ListJobsResponse": {
+      "id": "ListJobsResponse",
+      "type": "object",
+      "properties": {
+        "nextPageToken": {
+          "description": "A token identifying a page of results.",
+          "type": "string"
+        },
+        "unreachable": {
+          "description": "Locations that could not be reached.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "jobs": {
+          "type": "array",
+          "items": {
+            "$ref": "Job"
+          },
+          "description": "A list of storage batch jobs."
+        }
+      },
+      "description": "Message for response to listing Jobs"
+    },
+    "PutMetadata": {
+      "id": "PutMetadata",
+      "type": "object",
+      "description": "Describes options for object metadata update.",
+      "properties": {
+        "objectRetention": {
+          "description": "Optional. Updates objects retention lock configuration. Unset values will be ignored. Set empty values to clear the retention for the object with existing `Unlocked` retention mode. Object with existing `Locked` retention mode cannot be cleared or reduce retain_until_time. Refer to documentation in https://cloud.google.com/storage/docs/object-lock",
+          "$ref": "ObjectRetention"
+        },
+        "cacheControl": {
+          "type": "string",
+          "description": "Optional. Updates objects Cache-Control fixed metadata. Unset values will be ignored. Set empty values to clear the metadata. Additionally, the value for Custom-Time cannot decrease. Refer to documentation in https://cloud.google.com/storage/docs/metadata#caching_data."
+        },
+        "contentEncoding": {
+          "type": "string",
+          "description": "Optional. Updates objects Content-Encoding fixed metadata. Unset values will be ignored. Set empty values to clear the metadata. Refer to documentation in https://cloud.google.com/storage/docs/metadata#content-encoding."
+        },
+        "contentLanguage": {
+          "type": "string",
+          "description": "Optional. Updates objects Content-Language fixed metadata. Refer to ISO 639-1 language codes for typical values of this metadata. Max length 100 characters. Unset values will be ignored. Set empty values to clear the metadata. Refer to documentation in https://cloud.google.com/storage/docs/metadata#content-language."
+        },
+        "customTime": {
+          "description": "Optional. Updates objects Custom-Time fixed metadata. Unset values will be ignored. Set empty values to clear the metadata. Refer to documentation in https://cloud.google.com/storage/docs/metadata#custom-time.",
+          "type": "string"
+        },
+        "contentDisposition": {
+          "description": "Optional. Updates objects Content-Disposition fixed metadata. Unset values will be ignored. Set empty values to clear the metadata. Refer https://cloud.google.com/storage/docs/metadata#content-disposition for additional documentation.",
+          "type": "string"
+        },
+        "contentType": {
+          "type": "string",
+          "description": "Optional. Updates objects Content-Type fixed metadata. Unset values will be ignored. Set empty values to clear the metadata. Refer to documentation in https://cloud.google.com/storage/docs/metadata#content-type"
+        },
+        "customMetadata": {
+          "description": "Optional. Updates objects custom metadata. Adds or sets individual custom metadata key value pairs on objects. Keys that are set with empty custom metadata values will have its value cleared. Existing custom metadata not specified with this flag is not changed. Refer to documentation in https://cloud.google.com/storage/docs/metadata#custom-metadata",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "OperationMetadata": {
+      "id": "OperationMetadata",
+      "type": "object",
+      "description": "Represents the metadata of the long-running operation.",
+      "properties": {
+        "job": {
+          "readOnly": true,
+          "description": "Output only. The Job associated with the operation.",
+          "$ref": "Job"
+        },
+        "requestedCancellation": {
+          "readOnly": true,
+          "type": "boolean",
+          "description": "Output only. Identifies whether the user has requested cancellation of the operation. Operations that have been cancelled successfully have google.longrunning.Operation.error value with a google.rpc.Status.code of 1, corresponding to `Code.CANCELLED`."
+        },
+        "apiVersion": {
+          "description": "Output only. API version used to start the operation.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "operation": {
+          "description": "Output only. The unique operation resource name. Format: projects/{project}/locations/global/operations/{operation}.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "createTime": {
+          "description": "Output only. The time the operation was created.",
+          "format": "google-datetime",
+          "readOnly": true,
+          "type": "string"
+        },
+        "endTime": {
+          "description": "Output only. The time the operation finished running.",
+          "format": "google-datetime",
+          "readOnly": true,
+          "type": "string"
+        }
+      }
+    },
+    "Empty": {
+      "id": "Empty",
+      "type": "object",
+      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
+      "properties": {}
+    },
+    "Job": {
+      "id": "Job",
+      "type": "object",
+      "description": "The Storage Batch Operations Job description.",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Optional. A description provided by the user for the job. Its max length is 1024 bytes when Unicode-encoded."
+        },
+        "putObjectHold": {
+          "description": "Changes object hold status.",
+          "$ref": "PutObjectHold"
+        },
+        "scheduleTime": {
+          "description": "Output only. The time that the job was scheduled.",
+          "format": "google-datetime",
+          "readOnly": true,
+          "type": "string"
+        },
+        "bucketList": {
+          "description": "Specifies a list of buckets and their objects to be transformed.",
+          "$ref": "BucketList"
+        },
+        "errorSummaries": {
+          "readOnly": true,
+          "type": "array",
+          "items": {
+            "$ref": "ErrorSummary"
+          },
+          "description": "Output only. Summarizes errors encountered with sample error log entries."
+        },
+        "updateObjectCustomContext": {
+          "description": "Update object custom context.",
+          "$ref": "UpdateObjectCustomContext"
+        },
+        "completeTime": {
+          "description": "Output only. The time that the job was completed.",
+          "format": "google-datetime",
+          "readOnly": true,
+          "type": "string"
+        },
+        "counters": {
+          "readOnly": true,
+          "description": "Output only. Information about the progress of the job.",
+          "$ref": "Counters"
+        },
+        "name": {
+          "description": "Identifier. The resource name of the Job. job_id is unique within the project, that is either set by the customer or defined by the service. Format: projects/{project}/locations/global/jobs/{job_id} . For example: \"projects/123456/locations/global/jobs/job01\".",
+          "type": "string"
+        },
+        "dryRun": {
+          "type": "boolean",
+          "description": "Optional. If true, the job will run in dry run mode, returning the total object count and, if the object configuration is a prefix list, the bytes found from source. No transformations will be performed."
+        },
+        "rewriteObject": {
+          "description": "Rewrite the object and updates metadata like KMS key.",
+          "$ref": "RewriteObject"
+        },
+        "state": {
+          "description": "Output only. State of the job.",
+          "readOnly": true,
+          "enumDescriptions": [
+            "Default value. This value is unused.",
+            "In progress.",
+            "Completed successfully.",
+            "Cancelled by the user.",
+            "Terminated due to an unrecoverable failure.",
+            "Queued but not yet started."
+          ],
+          "enum": [
+            "STATE_UNSPECIFIED",
+            "RUNNING",
+            "SUCCEEDED",
+            "CANCELED",
+            "FAILED",
+            "QUEUED"
+          ],
+          "type": "string"
+        },
+        "createTime": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Output only. The time that the job was created.",
+          "format": "google-datetime"
+        },
+        "isMultiBucketJob": {
+          "readOnly": true,
+          "type": "boolean",
+          "description": "Output only. If true, this Job operates on multiple buckets. Multibucket jobs are subject to different quota limits than single-bucket jobs."
+        },
+        "loggingConfig": {
+          "description": "Optional. Logging configuration.",
+          "$ref": "LoggingConfig"
+        },
+        "deleteObject": {
+          "description": "Delete objects.",
+          "$ref": "DeleteObject"
+        },
+        "putMetadata": {
+          "description": "Updates object metadata. Allows updating fixed-key and custom metadata and fixed-key metadata i.e. Cache-Control, Content-Disposition, Content-Encoding, Content-Language, Content-Type, Custom-Time.",
+          "$ref": "PutMetadata"
+        }
+      }
+    },
+    "ListLocationsResponse": {
+      "description": "The response message for Locations.ListLocations.",
+      "properties": {
+        "locations": {
+          "description": "A list of locations that matches the specified filter in the request.",
+          "type": "array",
+          "items": {
+            "$ref": "Location"
+          }
+        },
+        "nextPageToken": {
+          "type": "string",
+          "description": "The standard List next-page token."
+        }
+      },
+      "id": "ListLocationsResponse",
+      "type": "object"
+    },
+    "Status": {
+      "description": "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "The status code, which should be an enum value of google.rpc.Code.",
+          "format": "int32"
+        },
+        "message": {
+          "description": "A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.",
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "additionalProperties": {
+              "type": "any",
+              "description": "Properties of the object. Contains field @type with type URL."
+            },
+            "type": "object"
+          },
+          "description": "A list of messages that carry the error details. There is a common set of message types for APIs to use."
+        }
+      },
+      "id": "Status",
+      "type": "object"
+    },
+    "ListOperationsResponse": {
+      "id": "ListOperationsResponse",
+      "type": "object",
+      "description": "The response message for Operations.ListOperations.",
+      "properties": {
+        "nextPageToken": {
+          "type": "string",
+          "description": "The standard List next-page token."
+        },
+        "unreachable": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Unordered list. Unreachable resources. Populated when the request sets `ListOperationsRequest.return_partial_success` and reads across collections. For example, when attempting to list all resources across all supported locations."
+        },
+        "operations": {
+          "description": "A list of operations that matches the specified filter in the request.",
+          "type": "array",
+          "items": {
+            "$ref": "Operation"
+          }
+        }
+      }
     },
     "CancelJobResponse": {
       "id": "CancelJobResponse",
-      "description": "Message for response to cancel Job.",
       "type": "object",
+      "description": "Message for response to cancel Job.",
       "properties": {}
     },
-    "ObjectRetention": {
-      "id": "ObjectRetention",
-      "description": "Describes options for object retention update.",
+    "PutObjectHold": {
+      "properties": {
+        "temporaryHold": {
+          "type": "string",
+          "enumDescriptions": [
+            "Default value, Object hold status will not be changed.",
+            "Places the hold.",
+            "Releases the hold."
+          ],
+          "enum": [
+            "HOLD_STATUS_UNSPECIFIED",
+            "SET",
+            "UNSET"
+          ],
+          "description": "Required. Updates object temporary holds state. When object temporary hold is set, object cannot be deleted or replaced."
+        },
+        "eventBasedHold": {
+          "description": "Required. Updates object event based holds state. When object event based hold is set, object cannot be deleted or replaced. Resets object's time in the bucket for the purposes of the retention period.",
+          "enum": [
+            "HOLD_STATUS_UNSPECIFIED",
+            "SET",
+            "UNSET"
+          ],
+          "enumDescriptions": [
+            "Default value, Object hold status will not be changed.",
+            "Places the hold.",
+            "Releases the hold."
+          ],
+          "type": "string"
+        }
+      },
+      "description": "Describes options to update object hold.",
+      "id": "PutObjectHold",
+      "type": "object"
+    },
+    "DeleteObject": {
+      "id": "DeleteObject",
+      "type": "object",
+      "description": "Describes options to delete an object.",
+      "properties": {
+        "permanentObjectDeletionEnabled": {
+          "type": "boolean",
+          "description": "Required. Controls deletion behavior when versioning is enabled for the object's bucket. If true both live and noncurrent objects will be permanently deleted. Otherwise live objects in versioned buckets will become noncurrent and objects that were already noncurrent will be skipped. This setting doesn't have any impact on the Soft Delete feature. All objects deleted by this service can be be restored for the duration of the Soft Delete retention duration if enabled. If enabled and the manifest doesn't specify an object's generation, a GetObjectMetadata call (a Class B operation) will be made to determine the live object generation."
+        }
+      }
+    },
+    "RewriteObject": {
+      "id": "RewriteObject",
       "type": "object",
       "properties": {
+        "kmsKey": {
+          "type": "string",
+          "description": "Required. Resource name of the Cloud KMS key that will be used to encrypt the object. The Cloud KMS key must be located in same location as the object. Refer to https://cloud.google.com/storage/docs/encryption/using-customer-managed-keys#add-object-key for additional documentation. Format: projects/{project}/locations/{location}/keyRings/{keyring}/cryptoKeys/{key} For example: \"projects/123456/locations/us-central1/keyRings/my-keyring/cryptoKeys/my-key\". The object will be rewritten and set with the specified KMS key."
+        }
+      },
+      "description": "Describes options for object rewrite."
+    },
+    "UpdateObjectCustomContext": {
+      "id": "UpdateObjectCustomContext",
+      "type": "object",
+      "description": "Describes options to update object custom contexts.",
+      "properties": {
+        "customContextUpdates": {
+          "description": "A collection of updates to apply to specific custom contexts. Use this to add, update or delete individual contexts by key.",
+          "$ref": "CustomContextUpdates"
+        },
+        "clearAll": {
+          "description": "If set, must be set to true and all existing object custom contexts will be deleted.",
+          "type": "boolean"
+        }
+      }
+    },
+    "ObjectCustomContextPayload": {
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "The value of the object custom context. If set, `value` must NOT be an empty string since it is a required field in custom context. If unset, `value` will be ignored and no changes will be made to the `value` field of the custom context payload."
+        }
+      },
+      "description": "Describes the payload of a user defined object custom context.",
+      "id": "ObjectCustomContextPayload",
+      "type": "object"
+    },
+    "ObjectRetention": {
+      "description": "Describes options for object retention update.",
+      "properties": {
+        "retainUntilTime": {
+          "description": "Required. The time when the object will be retained until. UNSET will clear the retention. Must be specified in RFC 3339 format e.g. YYYY-MM-DD'T'HH:MM:SS.SS'Z' or YYYY-MM-DD'T'HH:MM:SS'Z'.",
+          "type": "string"
+        },
         "retentionMode": {
-          "enum": [
-            "RETENTION_MODE_UNSPECIFIED",
-            "LOCKED",
-            "UNLOCKED"
-          ],
           "enumDescriptions": [
             "If set and retain_until_time is empty, clears the retention.",
             "Sets the retention mode to locked.",
             "Sets the retention mode to unlocked."
           ],
+          "type": "string",
           "description": "Required. The retention mode of the object.",
-          "type": "string"
-        },
-        "retainUntilTime": {
-          "description": "Required. The time when the object will be retained until. UNSET will clear the retention. Must be specified in RFC 3339 format e.g. YYYY-MM-DD'T'HH:MM:SS.SS'Z' or YYYY-MM-DD'T'HH:MM:SS'Z'.",
-          "type": "string"
+          "enum": [
+            "RETENTION_MODE_UNSPECIFIED",
+            "LOCKED",
+            "UNLOCKED"
+          ]
         }
-      }
+      },
+      "id": "ObjectRetention",
+      "type": "object"
     },
     "ErrorSummary": {
-      "id": "ErrorSummary",
       "description": "A summary of errors by error code, plus a count and sample error log entries.",
-      "type": "object",
       "properties": {
         "errorCode": {
+          "description": "Required. The canonical error code.",
           "enum": [
             "OK",
             "CANCELLED",
@@ -502,8 +1366,6 @@
             "UNAVAILABLE",
             "DATA_LOSS"
           ],
-          "description": "Required. The canonical error code.",
-          "type": "string",
           "enumDescriptions": [
             "Not an error; returned on success. HTTP Mapping: 200 OK",
             "The operation was cancelled, typically by the caller. HTTP Mapping: 499 Client Closed Request",
@@ -522,287 +1384,36 @@
             "Internal errors. This means that some invariants expected by the underlying system have been broken. This error code is reserved for serious errors. HTTP Mapping: 500 Internal Server Error",
             "The service is currently unavailable. This is most likely a transient condition, which can be corrected by retrying with a backoff. Note that it is not always safe to retry non-idempotent operations. See the guidelines above for deciding between `FAILED_PRECONDITION`, `ABORTED`, and `UNAVAILABLE`. HTTP Mapping: 503 Service Unavailable",
             "Unrecoverable data loss or corruption. HTTP Mapping: 500 Internal Server Error"
-          ]
-        },
-        "errorCount": {
-          "format": "int64",
-          "description": "Required. Number of errors encountered per `error_code`.",
+          ],
           "type": "string"
         },
         "errorLogEntries": {
-          "description": "Required. Sample error logs.",
-          "type": "array",
           "items": {
             "$ref": "ErrorLogEntry"
-          }
-        }
-      }
-    },
-    "OperationMetadata": {
-      "id": "OperationMetadata",
-      "description": "Represents the metadata of the long-running operation.",
-      "type": "object",
-      "properties": {
-        "createTime": {
-          "readOnly": true,
-          "format": "google-datetime",
-          "description": "Output only. The time the operation was created.",
-          "type": "string"
+          },
+          "type": "array",
+          "description": "Required. Sample error logs."
         },
-        "endTime": {
-          "readOnly": true,
-          "format": "google-datetime",
-          "description": "Output only. The time the operation finished running.",
-          "type": "string"
-        },
-        "operation": {
-          "readOnly": true,
-          "description": "Output only. The unique operation resource name. Format: projects/{project}/locations/global/operations/{operation}.",
-          "type": "string"
-        },
-        "requestedCancellation": {
-          "description": "Output only. Identifies whether the user has requested cancellation of the operation. Operations that have been cancelled successfully have google.longrunning.Operation.error value with a google.rpc.Status.code of 1, corresponding to `Code.CANCELLED`.",
-          "type": "boolean",
-          "readOnly": true
-        },
-        "apiVersion": {
-          "description": "Output only. API version used to start the operation.",
+        "errorCount": {
           "type": "string",
-          "readOnly": true
-        },
-        "job": {
-          "description": "Output only. The Job associated with the operation.",
-          "readOnly": true,
-          "$ref": "Job"
-        }
-      }
-    },
-    "Bucket": {
-      "properties": {
-        "prefixList": {
-          "$ref": "PrefixList",
-          "description": "Specifies objects matching a prefix set."
-        },
-        "manifest": {
-          "description": "Specifies objects in a manifest file.",
-          "$ref": "Manifest"
-        },
-        "bucket": {
-          "description": "Required. Bucket name for the objects to be transformed.",
-          "type": "string"
+          "description": "Required. Number of errors encountered per `error_code`.",
+          "format": "int64"
         }
       },
-      "id": "Bucket",
-      "description": "Describes configuration of a single bucket and its objects to be transformed.",
+      "id": "ErrorSummary",
       "type": "object"
-    },
-    "Job": {
-      "id": "Job",
-      "description": "The Storage Batch Operations Job description.",
-      "type": "object",
-      "properties": {
-        "scheduleTime": {
-          "readOnly": true,
-          "format": "google-datetime",
-          "description": "Output only. The time that the job was scheduled.",
-          "type": "string"
-        },
-        "description": {
-          "description": "Optional. A description provided by the user for the job. Its max length is 1024 bytes when Unicode-encoded.",
-          "type": "string"
-        },
-        "errorSummaries": {
-          "readOnly": true,
-          "description": "Output only. Summarizes errors encountered with sample error log entries.",
-          "type": "array",
-          "items": {
-            "$ref": "ErrorSummary"
-          }
-        },
-        "name": {
-          "description": "Identifier. The resource name of the Job. job_id is unique within the project, that is either set by the customer or defined by the service. Format: projects/{project}/locations/global/jobs/{job_id} . For example: \"projects/123456/locations/global/jobs/job01\".",
-          "type": "string"
-        },
-        "putObjectHold": {
-          "description": "Changes object hold status.",
-          "$ref": "PutObjectHold"
-        },
-        "bucketList": {
-          "$ref": "BucketList",
-          "description": "Specifies a list of buckets and their objects to be transformed."
-        },
-        "state": {
-          "type": "string",
-          "enumDescriptions": [
-            "Default value. This value is unused.",
-            "In progress.",
-            "Completed successfully.",
-            "Cancelled by the user.",
-            "Terminated due to an unrecoverable failure.",
-            "Queued but not yet started."
-          ],
-          "description": "Output only. State of the job.",
-          "readOnly": true,
-          "enum": [
-            "STATE_UNSPECIFIED",
-            "RUNNING",
-            "SUCCEEDED",
-            "CANCELED",
-            "FAILED",
-            "QUEUED"
-          ]
-        },
-        "deleteObject": {
-          "description": "Delete objects.",
-          "$ref": "DeleteObject"
-        },
-        "rewriteObject": {
-          "$ref": "RewriteObject",
-          "description": "Rewrite the object and updates metadata like KMS key."
-        },
-        "dryRun": {
-          "description": "Optional. If true, the job will run in dry run mode, returning the total object count and, if the object configuration is a prefix list, the bytes found from source. No transformations will be performed.",
-          "type": "boolean"
-        },
-        "loggingConfig": {
-          "$ref": "LoggingConfig",
-          "description": "Optional. Logging configuration."
-        },
-        "isMultiBucketJob": {
-          "readOnly": true,
-          "description": "Output only. If true, this Job operates on multiple buckets. Multibucket jobs are subject to different quota limits than single-bucket jobs.",
-          "type": "boolean"
-        },
-        "createTime": {
-          "readOnly": true,
-          "format": "google-datetime",
-          "description": "Output only. The time that the job was created.",
-          "type": "string"
-        },
-        "updateObjectCustomContext": {
-          "description": "Update object custom context.",
-          "$ref": "UpdateObjectCustomContext"
-        },
-        "completeTime": {
-          "readOnly": true,
-          "format": "google-datetime",
-          "description": "Output only. The time that the job was completed.",
-          "type": "string"
-        },
-        "putMetadata": {
-          "$ref": "PutMetadata",
-          "description": "Updates object metadata. Allows updating fixed-key and custom metadata and fixed-key metadata i.e. Cache-Control, Content-Disposition, Content-Encoding, Content-Language, Content-Type, Custom-Time."
-        },
-        "counters": {
-          "$ref": "Counters",
-          "readOnly": true,
-          "description": "Output only. Information about the progress of the job."
-        }
-      }
-    },
-    "Empty": {
-      "properties": {},
-      "id": "Empty",
-      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
-      "type": "object"
-    },
-    "PrefixList": {
-      "properties": {
-        "includedObjectPrefixes": {
-          "description": "Optional. Include prefixes of the objects to be transformed. * Supports full object name * Supports prefix of the object name * Wildcards are not supported * Supports empty string for all objects in a bucket.",
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      },
-      "id": "PrefixList",
-      "description": "Describes prefixes of objects to be transformed.",
-      "type": "object"
-    },
-    "UpdateObjectCustomContext": {
-      "id": "UpdateObjectCustomContext",
-      "description": "Describes options to update object custom contexts.",
-      "type": "object",
-      "properties": {
-        "customContextUpdates": {
-          "description": "A collection of updates to apply to specific custom contexts. Use this to add, update or delete individual contexts by key.",
-          "$ref": "CustomContextUpdates"
-        },
-        "clearAll": {
-          "description": "If set, must be set to true and all existing object custom contexts will be deleted.",
-          "type": "boolean"
-        }
-      }
-    },
-    "CancelJobRequest": {
-      "id": "CancelJobRequest",
-      "description": "Message for Job to Cancel",
-      "type": "object",
-      "properties": {
-        "requestId": {
-          "description": "Optional. An optional request ID to identify requests. Specify a unique request ID in case you need to retry your request. Requests with same `request_id` will be ignored for at least 60 minutes since the first request. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
-          "type": "string"
-        }
-      }
-    },
-    "Counters": {
-      "id": "Counters",
-      "description": "Describes details about the progress of the job.",
-      "type": "object",
-      "properties": {
-        "totalBytesFound": {
-          "description": "Output only. Number of bytes found from source. This field is only populated for jobs with a prefix list object configuration.",
-          "type": "string",
-          "readOnly": true,
-          "format": "int64"
-        },
-        "objectCustomContextsDeleted": {
-          "readOnly": true,
-          "format": "int64",
-          "description": "Output only. Number of object custom contexts deleted. This field is only populated for jobs with the UpdateObjectCustomContext transformation.",
-          "type": "string"
-        },
-        "objectCustomContextsCreated": {
-          "description": "Output only. Number of object custom contexts created. This field is only populated for jobs with the UpdateObjectCustomContext transformation.",
-          "type": "string",
-          "readOnly": true,
-          "format": "int64"
-        },
-        "totalObjectCount": {
-          "readOnly": true,
-          "format": "int64",
-          "description": "Output only. Number of objects listed.",
-          "type": "string"
-        },
-        "failedObjectCount": {
-          "readOnly": true,
-          "format": "int64",
-          "description": "Output only. The number of objects that failed due to user errors or service errors.",
-          "type": "string"
-        },
-        "objectCustomContextsUpdated": {
-          "description": "Output only. Number of object custom contexts updated. This counter tracks custom contexts where the key already existed, but the payload was modified. This field is only populated for jobs with the UpdateObjectCustomContext transformation.",
-          "type": "string",
-          "readOnly": true,
-          "format": "int64"
-        },
-        "succeededObjectCount": {
-          "readOnly": true,
-          "format": "int64",
-          "description": "Output only. Number of objects completed.",
-          "type": "string"
-        }
-      }
     },
     "CustomContextUpdates": {
+      "id": "CustomContextUpdates",
+      "type": "object",
+      "description": "Describes a collection of updates to apply to custom contexts identified by key.",
       "properties": {
         "updates": {
-          "description": "Optional. Insert or update the existing custom contexts.",
-          "type": "object",
           "additionalProperties": {
             "$ref": "ObjectCustomContextPayload"
-          }
+          },
+          "type": "object",
+          "description": "Optional. Insert or update the existing custom contexts."
         },
         "keysToClear": {
           "description": "Optional. Custom contexts to clear by key. A key cannot be present in both `updates` and `keys_to_clear`.",
@@ -811,624 +1422,13 @@
             "type": "string"
           }
         }
-      },
-      "id": "CustomContextUpdates",
-      "description": "Describes a collection of updates to apply to custom contexts identified by key.",
-      "type": "object"
-    },
-    "LoggingConfig": {
-      "id": "LoggingConfig",
-      "description": "Specifies the Cloud Logging behavior.",
-      "type": "object",
-      "properties": {
-        "logActions": {
-          "description": "Required. Specifies the actions to be logged.",
-          "type": "array",
-          "items": {
-            "enum": [
-              "LOGGABLE_ACTION_UNSPECIFIED",
-              "TRANSFORM"
-            ],
-            "type": "string",
-            "enumDescriptions": [
-              "Illegal value, to avoid allowing a default.",
-              "The corresponding transform action in this job."
-            ]
-          }
-        },
-        "logActionStates": {
-          "description": "Required. States in which Action are logged.If empty, no logs are generated.",
-          "type": "array",
-          "items": {
-            "enum": [
-              "LOGGABLE_ACTION_STATE_UNSPECIFIED",
-              "SUCCEEDED",
-              "FAILED"
-            ],
-            "type": "string",
-            "enumDescriptions": [
-              "Illegal value, to avoid allowing a default.",
-              "`LoggableAction` completed successfully. `SUCCEEDED` actions are logged as INFO.",
-              "`LoggableAction` terminated in an error state. `FAILED` actions are logged as ERROR."
-            ]
-          }
-        }
-      }
-    }
-  },
-  "version_module": true,
-  "basePath": "",
-  "discoveryVersion": "v1",
-  "revision": "20260422",
-  "rootUrl": "https://storagebatchoperations.googleapis.com/",
-  "description": "",
-  "id": "storagebatchoperations:v1",
-  "resources": {
-    "projects": {
-      "resources": {
-        "locations": {
-          "methods": {
-            "get": {
-              "path": "v1/{+name}",
-              "parameters": {
-                "name": {
-                  "pattern": "^projects/[^/]+/locations/[^/]+$",
-                  "description": "Resource name for the location.",
-                  "location": "path",
-                  "required": true,
-                  "type": "string"
-                }
-              },
-              "httpMethod": "GET",
-              "parameterOrder": [
-                "name"
-              ],
-              "response": {
-                "$ref": "Location"
-              },
-              "scopes": [
-                "https://www.googleapis.com/auth/cloud-platform"
-              ],
-              "id": "storagebatchoperations.projects.locations.get",
-              "description": "Gets information about a location.",
-              "flatPath": "v1/projects/{projectsId}/locations/{locationsId}"
-            },
-            "list": {
-              "flatPath": "v1/projects/{projectsId}/locations",
-              "id": "storagebatchoperations.projects.locations.list",
-              "description": "Lists information about the supported locations for this service. This method lists locations based on the resource scope provided in the ListLocationsRequest.name field: * **Global locations**: If `name` is empty, the method lists the public locations available to all projects. * **Project-specific locations**: If `name` follows the format `projects/{project}`, the method lists locations visible to that specific project. This includes public, private, or other project-specific locations enabled for the project. For gRPC and client library implementations, the resource name is passed as the `name` field. For direct service calls, the resource name is incorporated into the request path based on the specific service implementation and version.",
-              "scopes": [
-                "https://www.googleapis.com/auth/cloud-platform"
-              ],
-              "response": {
-                "$ref": "ListLocationsResponse"
-              },
-              "path": "v1/{+name}/locations",
-              "parameters": {
-                "name": {
-                  "type": "string",
-                  "required": true,
-                  "description": "The resource that owns the locations collection, if applicable.",
-                  "location": "path",
-                  "pattern": "^projects/[^/]+$"
-                },
-                "pageToken": {
-                  "description": "A page token received from the `next_page_token` field in the response. Send that page token to receive the subsequent page.",
-                  "location": "query",
-                  "type": "string"
-                },
-                "filter": {
-                  "description": "A filter to narrow down results to a preferred subset. The filtering language accepts strings like `\"displayName=tokyo\"`, and is documented in more detail in [AIP-160](https://google.aip.dev/160).",
-                  "location": "query",
-                  "type": "string"
-                },
-                "pageSize": {
-                  "format": "int32",
-                  "description": "The maximum number of results to return. If not set, the service selects a default.",
-                  "location": "query",
-                  "type": "integer"
-                },
-                "extraLocationTypes": {
-                  "description": "Optional. Do not use this field unless explicitly documented otherwise. This is primarily for internal usage.",
-                  "location": "query",
-                  "type": "string",
-                  "repeated": true
-                }
-              },
-              "httpMethod": "GET",
-              "parameterOrder": [
-                "name"
-              ]
-            }
-          },
-          "resources": {
-            "operations": {
-              "methods": {
-                "list": {
-                  "path": "v1/{+name}/operations",
-                  "parameters": {
-                    "returnPartialSuccess": {
-                      "description": "When set to `true`, operations that are reachable are returned as normal, and those that are unreachable are returned in the ListOperationsResponse.unreachable field. This can only be `true` when reading across collections. For example, when `parent` is set to `\"projects/example/locations/-\"`. This field is not supported by default and will result in an `UNIMPLEMENTED` error if set unless explicitly documented otherwise in service or product specific documentation.",
-                      "location": "query",
-                      "type": "boolean"
-                    },
-                    "filter": {
-                      "description": "The standard list filter.",
-                      "location": "query",
-                      "type": "string"
-                    },
-                    "pageSize": {
-                      "description": "The standard list page size.",
-                      "location": "query",
-                      "type": "integer",
-                      "format": "int32"
-                    },
-                    "name": {
-                      "description": "The name of the operation's parent resource.",
-                      "location": "path",
-                      "pattern": "^projects/[^/]+/locations/[^/]+$",
-                      "type": "string",
-                      "required": true
-                    },
-                    "pageToken": {
-                      "description": "The standard list page token.",
-                      "location": "query",
-                      "type": "string"
-                    }
-                  },
-                  "httpMethod": "GET",
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "response": {
-                    "$ref": "ListOperationsResponse"
-                  },
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/operations",
-                  "id": "storagebatchoperations.projects.locations.operations.list",
-                  "description": "Lists operations that match the specified filter in the request. If the server doesn't support this method, it returns `UNIMPLEMENTED`."
-                },
-                "delete": {
-                  "httpMethod": "DELETE",
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "path": "v1/{+name}",
-                  "parameters": {
-                    "name": {
-                      "description": "The name of the operation resource to be deleted.",
-                      "location": "path",
-                      "pattern": "^projects/[^/]+/locations/[^/]+/operations/[^/]+$",
-                      "type": "string",
-                      "required": true
-                    }
-                  },
-                  "id": "storagebatchoperations.projects.locations.operations.delete",
-                  "description": "Deletes a long-running operation. This method indicates that the client is no longer interested in the operation result. It does not cancel the operation. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`.",
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/operations/{operationsId}",
-                  "response": {
-                    "$ref": "Empty"
-                  },
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ]
-                },
-                "get": {
-                  "path": "v1/{+name}",
-                  "parameters": {
-                    "name": {
-                      "pattern": "^projects/[^/]+/locations/[^/]+/operations/[^/]+$",
-                      "description": "The name of the operation resource.",
-                      "location": "path",
-                      "required": true,
-                      "type": "string"
-                    }
-                  },
-                  "httpMethod": "GET",
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "response": {
-                    "$ref": "Operation"
-                  },
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/operations/{operationsId}",
-                  "id": "storagebatchoperations.projects.locations.operations.get",
-                  "description": "Gets the latest state of a long-running operation. Clients can use this method to poll the operation result at intervals as recommended by the API service."
-                },
-                "cancel": {
-                  "request": {
-                    "$ref": "CancelOperationRequest"
-                  },
-                  "path": "v1/{+name}:cancel",
-                  "parameters": {
-                    "name": {
-                      "pattern": "^projects/[^/]+/locations/[^/]+/operations/[^/]+$",
-                      "description": "The name of the operation resource to be cancelled.",
-                      "location": "path",
-                      "required": true,
-                      "type": "string"
-                    }
-                  },
-                  "httpMethod": "POST",
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "response": {
-                    "$ref": "Empty"
-                  },
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "id": "storagebatchoperations.projects.locations.operations.cancel",
-                  "description": "Starts asynchronous cancellation on a long-running operation. The server makes a best effort to cancel the operation, but success is not guaranteed. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`. Clients can use Operations.GetOperation or other methods to check whether the cancellation succeeded or whether the operation completed despite cancellation. On successful cancellation, the operation is not deleted; instead, it becomes an operation with an Operation.error value with a google.rpc.Status.code of `1`, corresponding to `Code.CANCELLED`.",
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/operations/{operationsId}:cancel"
-                }
-              }
-            },
-            "jobs": {
-              "methods": {
-                "cancel": {
-                  "request": {
-                    "$ref": "CancelJobRequest"
-                  },
-                  "httpMethod": "POST",
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "path": "v1/{+name}:cancel",
-                  "parameters": {
-                    "name": {
-                      "pattern": "^projects/[^/]+/locations/[^/]+/jobs/[^/]+$",
-                      "description": "Required. The `name` of the job to cancel. Format: projects/{project_id}/locations/global/jobs/{job_id}.",
-                      "location": "path",
-                      "required": true,
-                      "type": "string"
-                    }
-                  },
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "response": {
-                    "$ref": "CancelJobResponse"
-                  },
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/jobs/{jobsId}:cancel",
-                  "id": "storagebatchoperations.projects.locations.jobs.cancel",
-                  "description": "Cancels a batch job."
-                },
-                "list": {
-                  "response": {
-                    "$ref": "ListJobsResponse"
-                  },
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "id": "storagebatchoperations.projects.locations.jobs.list",
-                  "description": "Lists Jobs in a given project.",
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/jobs",
-                  "httpMethod": "GET",
-                  "parameterOrder": [
-                    "parent"
-                  ],
-                  "path": "v1/{+parent}/jobs",
-                  "parameters": {
-                    "filter": {
-                      "description": "Optional. Filters results as defined by https://google.aip.dev/160.",
-                      "location": "query",
-                      "type": "string"
-                    },
-                    "pageSize": {
-                      "format": "int32",
-                      "description": "Optional. The list page size. default page size is 100.",
-                      "location": "query",
-                      "type": "integer"
-                    },
-                    "pageToken": {
-                      "description": "Optional. The list page token.",
-                      "location": "query",
-                      "type": "string"
-                    },
-                    "parent": {
-                      "required": true,
-                      "type": "string",
-                      "pattern": "^projects/[^/]+/locations/[^/]+$",
-                      "description": "Required. Format: projects/{project_id}/locations/global.",
-                      "location": "path"
-                    },
-                    "orderBy": {
-                      "description": "Optional. Field to sort by. Supported fields are name, create_time.",
-                      "location": "query",
-                      "type": "string"
-                    }
-                  }
-                },
-                "create": {
-                  "httpMethod": "POST",
-                  "parameterOrder": [
-                    "parent"
-                  ],
-                  "path": "v1/{+parent}/jobs",
-                  "parameters": {
-                    "jobId": {
-                      "description": "Required. The optional `job_id` for this Job . If not specified, an id is generated. `job_id` should be no more than 128 characters and must include only characters available in DNS names, as defined by RFC-1123.",
-                      "location": "query",
-                      "type": "string"
-                    },
-                    "requestId": {
-                      "description": "Optional. An optional request ID to identify requests. Specify a unique request ID in case you need to retry your request. Requests with same `request_id` will be ignored for at least 60 minutes since the first request. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
-                      "location": "query",
-                      "type": "string"
-                    },
-                    "parent": {
-                      "type": "string",
-                      "required": true,
-                      "description": "Required. Value for parent.",
-                      "location": "path",
-                      "pattern": "^projects/[^/]+/locations/[^/]+$"
-                    }
-                  },
-                  "request": {
-                    "$ref": "Job"
-                  },
-                  "id": "storagebatchoperations.projects.locations.jobs.create",
-                  "description": "Creates a batch job.",
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/jobs",
-                  "response": {
-                    "$ref": "Operation"
-                  },
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ]
-                },
-                "delete": {
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "response": {
-                    "$ref": "Empty"
-                  },
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/jobs/{jobsId}",
-                  "id": "storagebatchoperations.projects.locations.jobs.delete",
-                  "description": "Deletes a batch job.",
-                  "path": "v1/{+name}",
-                  "parameters": {
-                    "force": {
-                      "description": "Optional. If set to true, any child bucket operations of the job will also be deleted. Highly recommended to be set to true by all clients. Users cannot mutate bucket operations directly, so only the jobs.delete permission is required to delete a job (and its child bucket operations).",
-                      "location": "query",
-                      "type": "boolean"
-                    },
-                    "name": {
-                      "required": true,
-                      "type": "string",
-                      "pattern": "^projects/[^/]+/locations/[^/]+/jobs/[^/]+$",
-                      "description": "Required. The `name` of the job to delete. Format: projects/{project_id}/locations/global/jobs/{job_id} .",
-                      "location": "path"
-                    },
-                    "requestId": {
-                      "description": "Optional. An optional request ID to identify requests. Specify a unique request ID in case you need to retry your request. Requests with same `request_id` will be ignored for at least 60 minutes since the first request. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).",
-                      "location": "query",
-                      "type": "string"
-                    }
-                  },
-                  "httpMethod": "DELETE",
-                  "parameterOrder": [
-                    "name"
-                  ]
-                },
-                "get": {
-                  "httpMethod": "GET",
-                  "parameterOrder": [
-                    "name"
-                  ],
-                  "path": "v1/{+name}",
-                  "parameters": {
-                    "name": {
-                      "required": true,
-                      "type": "string",
-                      "pattern": "^projects/[^/]+/locations/[^/]+/jobs/[^/]+$",
-                      "description": "Required. `name` of the job to retrieve. Format: projects/{project_id}/locations/global/jobs/{job_id} .",
-                      "location": "path"
-                    }
-                  },
-                  "scopes": [
-                    "https://www.googleapis.com/auth/cloud-platform"
-                  ],
-                  "response": {
-                    "$ref": "Job"
-                  },
-                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/jobs/{jobsId}",
-                  "id": "storagebatchoperations.projects.locations.jobs.get",
-                  "description": "Gets a batch job."
-                }
-              },
-              "resources": {
-                "bucketOperations": {
-                  "methods": {
-                    "list": {
-                      "scopes": [
-                        "https://www.googleapis.com/auth/cloud-platform"
-                      ],
-                      "response": {
-                        "$ref": "ListBucketOperationsResponse"
-                      },
-                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/jobs/{jobsId}/bucketOperations",
-                      "id": "storagebatchoperations.projects.locations.jobs.bucketOperations.list",
-                      "description": "Lists BucketOperations in a given project and job.",
-                      "path": "v1/{+parent}/bucketOperations",
-                      "parameters": {
-                        "parent": {
-                          "required": true,
-                          "type": "string",
-                          "pattern": "^projects/[^/]+/locations/[^/]+/jobs/[^/]+$",
-                          "description": "Required. Format: projects/{project_id}/locations/global/jobs/{job_id}.",
-                          "location": "path"
-                        },
-                        "orderBy": {
-                          "description": "Optional. Field to sort by. Supported fields are name, create_time.",
-                          "location": "query",
-                          "type": "string"
-                        },
-                        "pageToken": {
-                          "description": "Optional. The list page token.",
-                          "location": "query",
-                          "type": "string"
-                        },
-                        "filter": {
-                          "description": "Optional. Filters results as defined by https://google.aip.dev/160.",
-                          "location": "query",
-                          "type": "string"
-                        },
-                        "pageSize": {
-                          "format": "int32",
-                          "description": "Optional. The list page size. Default page size is 100.",
-                          "location": "query",
-                          "type": "integer"
-                        }
-                      },
-                      "httpMethod": "GET",
-                      "parameterOrder": [
-                        "parent"
-                      ]
-                    },
-                    "get": {
-                      "httpMethod": "GET",
-                      "parameterOrder": [
-                        "name"
-                      ],
-                      "path": "v1/{+name}",
-                      "parameters": {
-                        "name": {
-                          "pattern": "^projects/[^/]+/locations/[^/]+/jobs/[^/]+/bucketOperations/[^/]+$",
-                          "description": "Required. `name` of the bucket operation to retrieve. Format: projects/{project_id}/locations/global/jobs/{job_id}/bucketOperations/{bucket_operation_id}.",
-                          "location": "path",
-                          "required": true,
-                          "type": "string"
-                        }
-                      },
-                      "scopes": [
-                        "https://www.googleapis.com/auth/cloud-platform"
-                      ],
-                      "response": {
-                        "$ref": "BucketOperation"
-                      },
-                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/jobs/{jobsId}/bucketOperations/{bucketOperationsId}",
-                      "id": "storagebatchoperations.projects.locations.jobs.bucketOperations.get",
-                      "description": "Gets a BucketOperation."
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
       }
     }
   },
   "title": "Storage Batch Operations API",
-  "ownerName": "Google",
-  "batchPath": "batch",
-  "servicePath": "",
-  "kind": "discovery#restDescription",
-  "protocol": "rest",
   "icons": {
-    "x32": "http://www.google.com/images/icons/product/search-32.gif",
-    "x16": "http://www.google.com/images/icons/product/search-16.gif"
+    "x16": "http://www.google.com/images/icons/product/search-16.gif",
+    "x32": "http://www.google.com/images/icons/product/search-32.gif"
   },
-  "ownerDomain": "google.com",
-  "fullyEncodeReservedExpansion": true,
-  "version": "v1",
-  "documentationLink": "https://cloud.google.com/storage/docs/batch-operations/overview",
-  "auth": {
-    "oauth2": {
-      "scopes": {
-        "https://www.googleapis.com/auth/cloud-platform": {
-          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
-        }
-      }
-    }
-  },
-  "baseUrl": "https://storagebatchoperations.googleapis.com/",
-  "parameters": {
-    "uploadType": {
-      "type": "string",
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
-      "location": "query"
-    },
-    "oauth_token": {
-      "type": "string",
-      "description": "OAuth 2.0 token for the current user.",
-      "location": "query"
-    },
-    "callback": {
-      "type": "string",
-      "description": "JSONP",
-      "location": "query"
-    },
-    "fields": {
-      "type": "string",
-      "description": "Selector specifying which fields to include in a partial response.",
-      "location": "query"
-    },
-    "key": {
-      "type": "string",
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
-      "location": "query"
-    },
-    "access_token": {
-      "type": "string",
-      "description": "OAuth access token.",
-      "location": "query"
-    },
-    "prettyPrint": {
-      "type": "boolean",
-      "description": "Returns response with indentations and line breaks.",
-      "default": "true",
-      "location": "query"
-    },
-    "alt": {
-      "type": "string",
-      "default": "json",
-      "description": "Data format for response.",
-      "location": "query",
-      "enumDescriptions": [
-        "Responses with Content-Type of application/json",
-        "Media download with context-dependent Content-Type",
-        "Responses with Content-Type of application/x-protobuf"
-      ],
-      "enum": [
-        "json",
-        "media",
-        "proto"
-      ]
-    },
-    "upload_protocol": {
-      "type": "string",
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
-      "location": "query"
-    },
-    "quotaUser": {
-      "type": "string",
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
-      "location": "query"
-    },
-    "$.xgafv": {
-      "type": "string",
-      "enum": [
-        "1",
-        "2"
-      ],
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ],
-      "description": "V1 error format.",
-      "location": "query"
-    }
-  },
-  "mtlsRootUrl": "https://storagebatchoperations.mtls.googleapis.com/",
-  "canonicalName": "Storage Batch Operations"
+  "name": "storagebatchoperations"
 }
