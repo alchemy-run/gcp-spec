@@ -1,13 +1,111 @@
 {
-  "protocol": "rest",
+  "icons": {
+    "x16": "http://www.google.com/images/icons/product/search-16.gif",
+    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  },
+  "auth": {
+    "oauth2": {
+      "scopes": {
+        "https://www.googleapis.com/auth/doubleclickbidmanager": {
+          "description": "View and manage your reports in DoubleClick Bid Manager"
+        }
+      }
+    }
+  },
+  "batchPath": "batch",
+  "mtlsRootUrl": "https://doubleclickbidmanager.mtls.googleapis.com/",
+  "description": "DoubleClick Bid Manager API allows users to manage and create campaigns and reports.",
+  "baseUrl": "https://doubleclickbidmanager.googleapis.com/v2/",
+  "parameters": {
+    "access_token": {
+      "type": "string",
+      "location": "query",
+      "description": "OAuth access token."
+    },
+    "callback": {
+      "type": "string",
+      "location": "query",
+      "description": "JSONP"
+    },
+    "fields": {
+      "type": "string",
+      "location": "query",
+      "description": "Selector specifying which fields to include in a partial response."
+    },
+    "upload_protocol": {
+      "type": "string",
+      "location": "query",
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\")."
+    },
+    "quotaUser": {
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
+      "type": "string",
+      "location": "query"
+    },
+    "uploadType": {
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
+      "type": "string",
+      "location": "query"
+    },
+    "key": {
+      "type": "string",
+      "location": "query",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token."
+    },
+    "$.xgafv": {
+      "type": "string",
+      "enum": [
+        "1",
+        "2"
+      ],
+      "location": "query",
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ],
+      "description": "V1 error format."
+    },
+    "alt": {
+      "default": "json",
+      "type": "string",
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ],
+      "location": "query",
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ],
+      "description": "Data format for response."
+    },
+    "oauth_token": {
+      "type": "string",
+      "location": "query",
+      "description": "OAuth 2.0 token for the current user."
+    },
+    "prettyPrint": {
+      "description": "Returns response with indentations and line breaks.",
+      "type": "boolean",
+      "location": "query",
+      "default": "true"
+    }
+  },
+  "servicePath": "v2/",
+  "ownerName": "Google",
   "ownerDomain": "google.com",
   "schemas": {
     "ReportKey": {
+      "description": "Identifying information of a report.",
+      "id": "ReportKey",
+      "type": "object",
       "properties": {
         "queryId": {
+          "readOnly": true,
           "description": "Output only. The unique ID of the query that generated the report.",
           "format": "int64",
-          "readOnly": true,
           "type": "string"
         },
         "reportId": {
@@ -16,12 +114,11 @@
           "readOnly": true,
           "type": "string"
         }
-      },
-      "id": "ReportKey",
-      "type": "object",
-      "description": "Identifying information of a report."
+      }
     },
     "FilterPair": {
+      "id": "FilterPair",
+      "type": "object",
       "properties": {
         "type": {
           "description": "The type of value to filter by. Defined by a [Filter](/bid-manager/reference/rest/v2/filters-metrics#filters) value.",
@@ -32,14 +129,23 @@
           "type": "string"
         }
       },
-      "id": "FilterPair",
-      "type": "object",
       "description": "Represents a single filter rule."
     },
     "Query": {
+      "description": "A single query used to generate a report.",
       "id": "Query",
       "type": "object",
       "properties": {
+        "queryId": {
+          "readOnly": true,
+          "description": "Output only. The unique ID of the query.",
+          "format": "int64",
+          "type": "string"
+        },
+        "schedule": {
+          "description": "When and how often the query is scheduled to run. If the frequency field is set to `ONE_TIME`, the query will only run when queries.run is called.",
+          "$ref": "QuerySchedule"
+        },
         "metadata": {
           "description": "The metadata of the query.",
           "$ref": "QueryMetadata"
@@ -47,23 +153,10 @@
         "params": {
           "description": "The parameters of the report generated by the query.",
           "$ref": "Parameters"
-        },
-        "schedule": {
-          "description": "When and how often the query is scheduled to run. If the frequency field is set to `ONE_TIME`, the query will only run when queries.run is called.",
-          "$ref": "QuerySchedule"
-        },
-        "queryId": {
-          "type": "string",
-          "description": "Output only. The unique ID of the query.",
-          "format": "int64",
-          "readOnly": true
         }
-      },
-      "description": "A single query used to generate a report."
+      }
     },
     "ListReportsResponse": {
-      "id": "ListReportsResponse",
-      "type": "object",
       "properties": {
         "nextPageToken": {
           "description": "A token to retrieve the next page of results. Pass this value in the page_token field in the subsequent call to `queries.reports.list` method to retrieve the next page of results.",
@@ -76,22 +169,55 @@
           "description": "The list of reports. This field will be absent if empty.",
           "type": "array"
         }
-      }
+      },
+      "id": "ListReportsResponse",
+      "type": "object"
+    },
+    "Date": {
+      "description": "Represents a whole or partial calendar date, such as a birthday. The time of day and time zone are either specified elsewhere or are insignificant. The date is relative to the Gregorian Calendar. This can represent one of the following: * A full date, with non-zero year, month, and day values. * A month and day, with a zero year (for example, an anniversary). * A year on its own, with a zero month and a zero day. * A year and month, with a zero day (for example, a credit card expiration date). Related types: * google.type.TimeOfDay * google.type.DateTime * google.protobuf.Timestamp",
+      "properties": {
+        "month": {
+          "description": "Month of a year. Must be from 1 to 12, or 0 to specify a year without a month and day.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "year": {
+          "description": "Year of the date. Must be from 1 to 9999, or 0 to specify a date without a year.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "day": {
+          "type": "integer",
+          "description": "Day of a month. Must be from 1 to 31 and valid for the year and month, or 0 to specify a year by itself or a year and month where the day isn't significant.",
+          "format": "int32"
+        }
+      },
+      "id": "Date",
+      "type": "object"
+    },
+    "ListQueriesResponse": {
+      "properties": {
+        "queries": {
+          "description": "The list of queries. This field will be absent if empty.",
+          "items": {
+            "$ref": "Query"
+          },
+          "type": "array"
+        },
+        "nextPageToken": {
+          "description": "A token to retrieve the next page of results. Pass this value in the page_token field in the subsequent call to `queries.list` method to retrieve the next page of results.",
+          "type": "string"
+        }
+      },
+      "id": "ListQueriesResponse",
+      "type": "object"
     },
     "QuerySchedule": {
+      "id": "QuerySchedule",
+      "type": "object",
       "properties": {
         "frequency": {
-          "type": "string",
-          "enum": [
-            "FREQUENCY_UNSPECIFIED",
-            "ONE_TIME",
-            "DAILY",
-            "WEEKLY",
-            "SEMI_MONTHLY",
-            "MONTHLY",
-            "QUARTERLY",
-            "YEARLY"
-          ],
+          "description": "How frequently to run the query. If set to `ONE_TIME`, the query will only be run when queries.run is called.",
           "enumDescriptions": [
             "Default value when frequency is not specified or is unknown in this version.",
             "Only when the query is run manually.",
@@ -102,7 +228,21 @@
             "Once a quarter.",
             "Once a year."
           ],
-          "description": "How frequently to run the query. If set to `ONE_TIME`, the query will only be run when queries.run is called."
+          "type": "string",
+          "enum": [
+            "FREQUENCY_UNSPECIFIED",
+            "ONE_TIME",
+            "DAILY",
+            "WEEKLY",
+            "SEMI_MONTHLY",
+            "MONTHLY",
+            "QUARTERLY",
+            "YEARLY"
+          ]
+        },
+        "endDate": {
+          "description": "The date on which to end the scheduled runs. This field is required if frequency is not set to `ONE_TIME`. Otherwise, it will be ignored.",
+          "$ref": "Date"
         },
         "startDate": {
           "description": "The date on which to begin the scheduled runs. This field is required if frequency is not set to `ONE_TIME`. Otherwise, it will be ignored.",
@@ -111,17 +251,12 @@
         "nextRunTimezoneCode": {
           "description": "The canonical code for the timezone the query schedule is based on. Scheduled runs are usually conducted in the morning of a given day. Defaults to `America/New_York`.",
           "type": "string"
-        },
-        "endDate": {
-          "description": "The date on which to end the scheduled runs. This field is required if frequency is not set to `ONE_TIME`. Otherwise, it will be ignored.",
-          "$ref": "Date"
         }
       },
-      "id": "QuerySchedule",
-      "type": "object",
       "description": "Settings on when and how frequently to run a query."
     },
     "RunQueryRequest": {
+      "description": "Details specifying how to run a query.",
       "properties": {
         "dataRange": {
           "description": "The date range used by the query to generate the report. If unspecified, the query's original data_range is used.",
@@ -129,186 +264,48 @@
         }
       },
       "id": "RunQueryRequest",
-      "type": "object",
-      "description": "Details specifying how to run a query."
-    },
-    "Date": {
-      "description": "Represents a whole or partial calendar date, such as a birthday. The time of day and time zone are either specified elsewhere or are insignificant. The date is relative to the Gregorian Calendar. This can represent one of the following: * A full date, with non-zero year, month, and day values. * A month and day, with a zero year (for example, an anniversary). * A year on its own, with a zero month and a zero day. * A year and month, with a zero day (for example, a credit card expiration date). Related types: * google.type.TimeOfDay * google.type.DateTime * google.protobuf.Timestamp",
-      "properties": {
-        "year": {
-          "description": "Year of the date. Must be from 1 to 9999, or 0 to specify a date without a year.",
-          "format": "int32",
-          "type": "integer"
-        },
-        "day": {
-          "description": "Day of a month. Must be from 1 to 31 and valid for the year and month, or 0 to specify a year by itself or a year and month where the day isn't significant.",
-          "format": "int32",
-          "type": "integer"
-        },
-        "month": {
-          "type": "integer",
-          "description": "Month of a year. Must be from 1 to 12, or 0 to specify a year without a month and day.",
-          "format": "int32"
-        }
-      },
-      "id": "Date",
       "type": "object"
     },
-    "ListQueriesResponse": {
-      "id": "ListQueriesResponse",
-      "type": "object",
-      "properties": {
-        "nextPageToken": {
-          "description": "A token to retrieve the next page of results. Pass this value in the page_token field in the subsequent call to `queries.list` method to retrieve the next page of results.",
-          "type": "string"
-        },
-        "queries": {
-          "description": "The list of queries. This field will be absent if empty.",
-          "items": {
-            "$ref": "Query"
-          },
-          "type": "array"
-        }
-      }
-    },
-    "ReportMetadata": {
-      "properties": {
-        "status": {
-          "description": "The status of the report.",
-          "$ref": "ReportStatus"
-        },
-        "reportDataEndDate": {
-          "description": "The end date of the report data date range.",
-          "$ref": "Date"
-        },
-        "googleCloudStoragePath": {
-          "readOnly": true,
-          "description": "Output only. The location of the generated report file in Google Cloud Storage. This field will be absent if status.state is not `DONE`.",
-          "type": "string"
-        },
-        "reportDataStartDate": {
-          "description": "The start date of the report data date range.",
-          "$ref": "Date"
-        }
-      },
-      "id": "ReportMetadata",
-      "type": "object",
-      "description": "The metadata of a report."
-    },
-    "DataRange": {
-      "id": "DataRange",
-      "type": "object",
-      "properties": {
-        "range": {
-          "type": "string",
-          "enum": [
-            "RANGE_UNSPECIFIED",
-            "CUSTOM_DATES",
-            "CURRENT_DAY",
-            "PREVIOUS_DAY",
-            "WEEK_TO_DATE",
-            "MONTH_TO_DATE",
-            "QUARTER_TO_DATE",
-            "YEAR_TO_DATE",
-            "PREVIOUS_WEEK",
-            "PREVIOUS_MONTH",
-            "PREVIOUS_QUARTER",
-            "PREVIOUS_YEAR",
-            "LAST_7_DAYS",
-            "LAST_30_DAYS",
-            "LAST_90_DAYS",
-            "LAST_365_DAYS",
-            "ALL_TIME",
-            "LAST_14_DAYS",
-            "LAST_60_DAYS"
-          ],
-          "description": "The preset date range to be reported on. If `CUSTOM_DATES` is assigned to this field, fields custom_start_date and custom_end_date must be set to specify the custom date range.",
-          "enumDescriptions": [
-            "Default value when range is not specified or is unknown in this version.",
-            "Custom date range.",
-            "Current day.",
-            "Previous day.",
-            "All days, including the current day, since the most recent Sunday.",
-            "All days, including the current day, since the start of the current month.",
-            "All days, including the current day, since the start of the current quarter.",
-            "All days, including the current day, since the start of the current calendar year.",
-            "The previous completed week, beginning from Sunday.",
-            "The previous completed calendar month.",
-            "The previous completed quarter.",
-            "The previous completed calendar year.",
-            "The previous 7 days, excluding the current day.",
-            "The previous 30 days, excluding the current day.",
-            "The previous 90 days, excluding the current day.",
-            "The previous 365 days, excluding the current day.",
-            "All time for which data is available, excluding the current day.",
-            "The previous 14 days, excluding the current day.",
-            "The previous 60 days, excluding the current day."
-          ]
-        },
-        "customEndDate": {
-          "description": "If `CUSTOM_DATES` is assigned to range, this field specifies the end date for the date range that is reported on. This field is required if using `CUSTOM_DATES` range and will be ignored otherwise.",
-          "$ref": "Date"
-        },
-        "customStartDate": {
-          "description": "If `CUSTOM_DATES` is assigned to range, this field specifies the starting date for the date range that is reported on. This field is required if using `CUSTOM_DATES` range and will be ignored otherwise.",
-          "$ref": "Date"
-        }
-      },
-      "description": "The date range to be reported on."
-    },
-    "ReportStatus": {
-      "description": "The status of a report.",
-      "id": "ReportStatus",
-      "type": "object",
-      "properties": {
-        "state": {
-          "readOnly": true,
-          "type": "string",
-          "enum": [
-            "STATE_UNSPECIFIED",
-            "QUEUED",
-            "RUNNING",
-            "DONE",
-            "FAILED"
-          ],
-          "description": "Output only. The state of the report generation.",
-          "enumDescriptions": [
-            "Default value when state is not specified or is unknown in this version.",
-            "The report is queued to run.",
-            "The report is currently running.",
-            "The report has finished running successfully.",
-            "The report has finished running in failure."
-          ]
-        },
-        "finishTime": {
-          "type": "string",
-          "description": "Output only. The timestamp of when report generation finished successfully or in failure. This field will not be set unless state is `DONE` or `FAILED`.",
-          "format": "google-datetime",
-          "readOnly": true
-        },
-        "format": {
-          "type": "string",
-          "enum": [
-            "FORMAT_UNSPECIFIED",
-            "CSV",
-            "XLSX"
-          ],
-          "enumDescriptions": [
-            "Default value when format is not specified or is unknown in this version.",
-            "CSV.",
-            "Excel."
-          ],
-          "description": "The format of the generated report file."
-        }
-      }
-    },
     "Parameters": {
+      "description": "Parameters of a generated report.",
       "properties": {
-        "options": {
-          "description": "Additional report parameter options.",
-          "$ref": "Options"
+        "filters": {
+          "items": {
+            "$ref": "FilterPair"
+          },
+          "description": "Filters to limit the scope of reported data.",
+          "type": "array"
+        },
+        "groupBys": {
+          "items": {
+            "type": "string"
+          },
+          "description": "Dimensions by which to segment and group the data. Defined by [Filter](/bid-manager/reference/rest/v2/filters-metrics#filters) values.",
+          "type": "array"
+        },
+        "metrics": {
+          "items": {
+            "type": "string"
+          },
+          "description": "Metrics to define the data populating the report. Defined by [Metric](/bid-manager/reference/rest/v2/filters-metrics#metrics) values.",
+          "type": "array"
         },
         "type": {
+          "enumDescriptions": [
+            "Default value when report type is not specified or is unknown in this version.",
+            "Standard report.",
+            "Inventory Availability report.",
+            "Audience Composition report.",
+            "Floodlight report.",
+            "YouTube report.",
+            "GRP report.",
+            "YouTube Programmatic Guaranteed report.",
+            "Reach report.",
+            "Unique Reach Audience report.",
+            "Full Path report.",
+            "Path Attribution report."
+          ],
+          "description": "The type of the report. The type of the report determines the dimesions, filters, and metrics that can be used.",
           "enumDeprecated": [
             false,
             false,
@@ -337,48 +334,205 @@
             "UNIQUE_REACH_AUDIENCE",
             "FULL_PATH",
             "PATH_ATTRIBUTION"
-          ],
-          "enumDescriptions": [
-            "Default value when report type is not specified or is unknown in this version.",
-            "Standard report.",
-            "Inventory Availability report.",
-            "Audience Composition report.",
-            "Floodlight report.",
-            "YouTube report.",
-            "GRP report.",
-            "YouTube Programmatic Guaranteed report.",
-            "Reach report.",
-            "Unique Reach Audience report.",
-            "Full Path report.",
-            "Path Attribution report."
-          ],
-          "description": "The type of the report. The type of the report determines the dimesions, filters, and metrics that can be used."
+          ]
         },
-        "metrics": {
-          "items": {
-            "type": "string"
-          },
-          "description": "Metrics to define the data populating the report. Defined by [Metric](/bid-manager/reference/rest/v2/filters-metrics#metrics) values.",
-          "type": "array"
-        },
-        "groupBys": {
-          "type": "array",
-          "description": "Dimensions by which to segment and group the data. Defined by [Filter](/bid-manager/reference/rest/v2/filters-metrics#filters) values.",
-          "items": {
-            "type": "string"
-          }
-        },
-        "filters": {
-          "type": "array",
-          "description": "Filters to limit the scope of reported data.",
-          "items": {
-            "$ref": "FilterPair"
-          }
+        "options": {
+          "description": "Additional report parameter options.",
+          "$ref": "Options"
         }
       },
       "id": "Parameters",
+      "type": "object"
+    },
+    "ReportMetadata": {
+      "description": "The metadata of a report.",
+      "id": "ReportMetadata",
       "type": "object",
-      "description": "Parameters of a generated report."
+      "properties": {
+        "status": {
+          "description": "The status of the report.",
+          "$ref": "ReportStatus"
+        },
+        "reportDataEndDate": {
+          "description": "The end date of the report data date range.",
+          "$ref": "Date"
+        },
+        "googleCloudStoragePath": {
+          "description": "Output only. The location of the generated report file in Google Cloud Storage. This field will be absent if status.state is not `DONE`.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "reportDataStartDate": {
+          "description": "The start date of the report data date range.",
+          "$ref": "Date"
+        }
+      }
+    },
+    "DataRange": {
+      "description": "The date range to be reported on.",
+      "properties": {
+        "range": {
+          "type": "string",
+          "enum": [
+            "RANGE_UNSPECIFIED",
+            "CUSTOM_DATES",
+            "CURRENT_DAY",
+            "PREVIOUS_DAY",
+            "WEEK_TO_DATE",
+            "MONTH_TO_DATE",
+            "QUARTER_TO_DATE",
+            "YEAR_TO_DATE",
+            "PREVIOUS_WEEK",
+            "PREVIOUS_MONTH",
+            "PREVIOUS_QUARTER",
+            "PREVIOUS_YEAR",
+            "LAST_7_DAYS",
+            "LAST_30_DAYS",
+            "LAST_90_DAYS",
+            "LAST_365_DAYS",
+            "ALL_TIME",
+            "LAST_14_DAYS",
+            "LAST_60_DAYS"
+          ],
+          "enumDescriptions": [
+            "Default value when range is not specified or is unknown in this version.",
+            "Custom date range.",
+            "Current day.",
+            "Previous day.",
+            "All days, including the current day, since the most recent Sunday.",
+            "All days, including the current day, since the start of the current month.",
+            "All days, including the current day, since the start of the current quarter.",
+            "All days, including the current day, since the start of the current calendar year.",
+            "The previous completed week, beginning from Sunday.",
+            "The previous completed calendar month.",
+            "The previous completed quarter.",
+            "The previous completed calendar year.",
+            "The previous 7 days, excluding the current day.",
+            "The previous 30 days, excluding the current day.",
+            "The previous 90 days, excluding the current day.",
+            "The previous 365 days, excluding the current day.",
+            "All time for which data is available, excluding the current day.",
+            "The previous 14 days, excluding the current day.",
+            "The previous 60 days, excluding the current day."
+          ],
+          "description": "The preset date range to be reported on. If `CUSTOM_DATES` is assigned to this field, fields custom_start_date and custom_end_date must be set to specify the custom date range."
+        },
+        "customEndDate": {
+          "description": "If `CUSTOM_DATES` is assigned to range, this field specifies the end date for the date range that is reported on. This field is required if using `CUSTOM_DATES` range and will be ignored otherwise.",
+          "$ref": "Date"
+        },
+        "customStartDate": {
+          "description": "If `CUSTOM_DATES` is assigned to range, this field specifies the starting date for the date range that is reported on. This field is required if using `CUSTOM_DATES` range and will be ignored otherwise.",
+          "$ref": "Date"
+        }
+      },
+      "id": "DataRange",
+      "type": "object"
+    },
+    "ReportStatus": {
+      "description": "The status of a report.",
+      "id": "ReportStatus",
+      "type": "object",
+      "properties": {
+        "state": {
+          "enumDescriptions": [
+            "Default value when state is not specified or is unknown in this version.",
+            "The report is queued to run.",
+            "The report is currently running.",
+            "The report has finished running successfully.",
+            "The report has finished running in failure."
+          ],
+          "description": "Output only. The state of the report generation.",
+          "type": "string",
+          "enum": [
+            "STATE_UNSPECIFIED",
+            "QUEUED",
+            "RUNNING",
+            "DONE",
+            "FAILED"
+          ],
+          "readOnly": true
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "FORMAT_UNSPECIFIED",
+            "CSV",
+            "XLSX"
+          ],
+          "description": "The format of the generated report file.",
+          "enumDescriptions": [
+            "Default value when format is not specified or is unknown in this version.",
+            "CSV.",
+            "Excel."
+          ]
+        },
+        "finishTime": {
+          "description": "Output only. The timestamp of when report generation finished successfully or in failure. This field will not be set unless state is `DONE` or `FAILED`.",
+          "format": "google-datetime",
+          "readOnly": true,
+          "type": "string"
+        }
+      }
+    },
+    "Report": {
+      "description": "A single report generated by its parent report.",
+      "id": "Report",
+      "type": "object",
+      "properties": {
+        "key": {
+          "description": "The key information identifying the report.",
+          "$ref": "ReportKey"
+        },
+        "metadata": {
+          "description": "The metadata of the report.",
+          "$ref": "ReportMetadata"
+        },
+        "params": {
+          "description": "The parameters of the report.",
+          "$ref": "Parameters"
+        }
+      }
+    },
+    "QueryMetadata": {
+      "id": "QueryMetadata",
+      "type": "object",
+      "properties": {
+        "sendNotification": {
+          "description": "Whether an email notification is sent to the query creator when a report generated by the query is ready. This value is `false` by default.",
+          "type": "boolean"
+        },
+        "format": {
+          "description": "The format of the report generated by the query.",
+          "enumDescriptions": [
+            "Default value when format is not specified or is unknown in this version.",
+            "CSV.",
+            "Excel."
+          ],
+          "type": "string",
+          "enum": [
+            "FORMAT_UNSPECIFIED",
+            "CSV",
+            "XLSX"
+          ]
+        },
+        "shareEmailAddress": {
+          "description": "List of additional email addresses with which to share the query. If send_notification is `true`, these email addresses will receive a notification when a report generated by the query is ready. If these email addresses are connected to Display & Video 360 users, the query will be available to them in the Display & Video 360 interface.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "title": {
+          "description": "The display name of the query. This value will be used in the file name of reports generated by the query.",
+          "type": "string"
+        },
+        "dataRange": {
+          "description": "The date range the report generated by the query will report on. This date range will be defined by the time zone as used by the advertiser.",
+          "$ref": "DataRange"
+        }
+      },
+      "description": "The metadata of the query."
     },
     "Options": {
       "properties": {
@@ -390,283 +544,50 @@
       "id": "Options",
       "type": "object",
       "description": "Report parameter options."
-    },
-    "Report": {
-      "description": "A single report generated by its parent report.",
-      "properties": {
-        "metadata": {
-          "description": "The metadata of the report.",
-          "$ref": "ReportMetadata"
-        },
-        "params": {
-          "description": "The parameters of the report.",
-          "$ref": "Parameters"
-        },
-        "key": {
-          "description": "The key information identifying the report.",
-          "$ref": "ReportKey"
-        }
-      },
-      "id": "Report",
-      "type": "object"
-    },
-    "QueryMetadata": {
-      "description": "The metadata of the query.",
-      "id": "QueryMetadata",
-      "type": "object",
-      "properties": {
-        "title": {
-          "description": "The display name of the query. This value will be used in the file name of reports generated by the query.",
-          "type": "string"
-        },
-        "dataRange": {
-          "description": "The date range the report generated by the query will report on. This date range will be defined by the time zone as used by the advertiser.",
-          "$ref": "DataRange"
-        },
-        "format": {
-          "enumDescriptions": [
-            "Default value when format is not specified or is unknown in this version.",
-            "CSV.",
-            "Excel."
-          ],
-          "description": "The format of the report generated by the query.",
-          "type": "string",
-          "enum": [
-            "FORMAT_UNSPECIFIED",
-            "CSV",
-            "XLSX"
-          ]
-        },
-        "shareEmailAddress": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "List of additional email addresses with which to share the query. If send_notification is `true`, these email addresses will receive a notification when a report generated by the query is ready. If these email addresses are connected to Display & Video 360 users, the query will be available to them in the Display & Video 360 interface."
-        },
-        "sendNotification": {
-          "description": "Whether an email notification is sent to the query creator when a report generated by the query is ready. This value is `false` by default.",
-          "type": "boolean"
-        }
-      }
     }
   },
   "kind": "discovery#restDescription",
-  "ownerName": "Google",
-  "baseUrl": "https://doubleclickbidmanager.googleapis.com/v2/",
-  "parameters": {
-    "access_token": {
-      "description": "OAuth access token.",
-      "type": "string",
-      "location": "query"
-    },
-    "callback": {
-      "description": "JSONP",
-      "type": "string",
-      "location": "query"
-    },
-    "fields": {
-      "description": "Selector specifying which fields to include in a partial response.",
-      "type": "string",
-      "location": "query"
-    },
-    "upload_protocol": {
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
-      "type": "string",
-      "location": "query"
-    },
-    "quotaUser": {
-      "type": "string",
-      "location": "query",
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters."
-    },
-    "uploadType": {
-      "type": "string",
-      "location": "query",
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\")."
-    },
-    "key": {
-      "type": "string",
-      "location": "query",
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token."
-    },
-    "$.xgafv": {
-      "type": "string",
-      "enum": [
-        "1",
-        "2"
-      ],
-      "location": "query",
-      "description": "V1 error format.",
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ]
-    },
-    "alt": {
-      "default": "json",
-      "type": "string",
-      "enum": [
-        "json",
-        "media",
-        "proto"
-      ],
-      "location": "query",
-      "enumDescriptions": [
-        "Responses with Content-Type of application/json",
-        "Media download with context-dependent Content-Type",
-        "Responses with Content-Type of application/x-protobuf"
-      ],
-      "description": "Data format for response."
-    },
-    "oauth_token": {
-      "type": "string",
-      "location": "query",
-      "description": "OAuth 2.0 token for the current user."
-    },
-    "prettyPrint": {
-      "default": "true",
-      "type": "boolean",
-      "location": "query",
-      "description": "Returns response with indentations and line breaks."
-    }
-  },
-  "servicePath": "v2/",
-  "auth": {
-    "oauth2": {
-      "scopes": {
-        "https://www.googleapis.com/auth/doubleclickbidmanager": {
-          "description": "View and manage your reports in DoubleClick Bid Manager"
-        }
-      }
-    }
-  },
-  "batchPath": "batch",
-  "mtlsRootUrl": "https://doubleclickbidmanager.mtls.googleapis.com/",
-  "description": "DoubleClick Bid Manager API allows users to manage and create campaigns and reports.",
-  "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
-  },
-  "id": "doubleclickbidmanager:v2",
-  "title": "DoubleClick Bid Manager API",
-  "rootUrl": "https://doubleclickbidmanager.googleapis.com/",
+  "protocol": "rest",
+  "basePath": "/v2/",
+  "name": "doubleclickbidmanager",
+  "version": "v2",
+  "documentationLink": "https://developers.google.com/bid-manager/",
+  "canonicalName": "DoubleClick Bid Manager",
+  "discoveryVersion": "v1",
+  "revision": "20260429",
   "resources": {
     "queries": {
       "methods": {
-        "run": {
-          "id": "doubleclickbidmanager.queries.run",
-          "parameterOrder": [
-            "queryId"
-          ],
-          "scopes": [
-            "https://www.googleapis.com/auth/doubleclickbidmanager"
-          ],
-          "request": {
-            "$ref": "RunQueryRequest"
-          },
-          "parameters": {
-            "synchronous": {
-              "description": "Whether the query should be run synchronously. When `true`, the request won't return until the resulting report has finished running. This parameter is `false` by default. Setting this parameter to `true` is **not recommended**.",
-              "location": "query",
-              "type": "boolean"
-            },
-            "queryId": {
-              "description": "Required. The ID of the query to run.",
-              "format": "int64",
-              "required": true,
-              "location": "path",
-              "type": "string"
-            }
-          },
-          "description": "Runs an existing query to generate a report.",
-          "flatPath": "queries/{queryId}:run",
-          "httpMethod": "POST",
-          "response": {
-            "$ref": "Report"
-          },
-          "path": "queries/{queryId}:run"
-        },
-        "create": {
-          "id": "doubleclickbidmanager.queries.create",
-          "request": {
-            "$ref": "Query"
-          },
-          "parameterOrder": [],
-          "scopes": [
-            "https://www.googleapis.com/auth/doubleclickbidmanager"
-          ],
-          "parameters": {},
-          "description": "Creates a new query.",
-          "flatPath": "queries",
-          "httpMethod": "POST",
-          "response": {
-            "$ref": "Query"
-          },
-          "path": "queries"
-        },
-        "list": {
-          "id": "doubleclickbidmanager.queries.list",
-          "parameterOrder": [],
-          "scopes": [
-            "https://www.googleapis.com/auth/doubleclickbidmanager"
-          ],
-          "description": "Lists queries created by the current user.",
-          "parameters": {
-            "orderBy": {
-              "location": "query",
-              "type": "string",
-              "description": "Field to sort the list by. Accepts the following values: * `queryId` (default) * `metadata.title` The default sorting order is ascending. To specify descending order for a field, add the suffix `desc` to the field name. For example, `queryId desc`."
-            },
-            "pageSize": {
-              "description": "Maximum number of results per page. Must be between `1` and `100`. Defaults to `100` if unspecified.",
-              "format": "int32",
-              "location": "query",
-              "type": "integer"
-            },
-            "pageToken": {
-              "description": "A token identifying which page of results the server should return. Typically, this is the value of nextPageToken, returned from the previous call to the `queries.list` method. If unspecified, the first page of results is returned.",
-              "location": "query",
-              "type": "string"
-            }
-          },
-          "path": "queries",
-          "flatPath": "queries",
-          "httpMethod": "GET",
-          "response": {
-            "$ref": "ListQueriesResponse"
-          }
-        },
         "delete": {
-          "description": "Deletes an existing query as well as its generated reports.",
           "id": "doubleclickbidmanager.queries.delete",
           "parameters": {
             "queryId": {
+              "location": "path",
+              "type": "string",
               "description": "Required. The ID of the query to delete.",
               "format": "int64",
-              "required": true,
-              "location": "path",
-              "type": "string"
+              "required": true
             }
           },
+          "description": "Deletes an existing query as well as its generated reports.",
+          "flatPath": "queries/{queryId}",
+          "httpMethod": "DELETE",
           "path": "queries/{queryId}",
           "parameterOrder": [
             "queryId"
           ],
           "scopes": [
             "https://www.googleapis.com/auth/doubleclickbidmanager"
-          ],
-          "flatPath": "queries/{queryId}",
-          "httpMethod": "DELETE"
+          ]
         },
         "get": {
-          "path": "queries/{queryId}",
-          "flatPath": "queries/{queryId}",
-          "httpMethod": "GET",
-          "response": {
-            "$ref": "Query"
-          },
-          "description": "Retrieves a query.",
+          "id": "doubleclickbidmanager.queries.get",
+          "parameterOrder": [
+            "queryId"
+          ],
+          "scopes": [
+            "https://www.googleapis.com/auth/doubleclickbidmanager"
+          ],
           "parameters": {
             "queryId": {
               "required": true,
@@ -676,32 +597,128 @@
               "type": "string"
             }
           },
+          "description": "Retrieves a query.",
+          "flatPath": "queries/{queryId}",
+          "httpMethod": "GET",
+          "response": {
+            "$ref": "Query"
+          },
+          "path": "queries/{queryId}"
+        },
+        "run": {
+          "flatPath": "queries/{queryId}:run",
+          "httpMethod": "POST",
+          "response": {
+            "$ref": "Report"
+          },
+          "path": "queries/{queryId}:run",
+          "parameters": {
+            "queryId": {
+              "location": "path",
+              "type": "string",
+              "required": true,
+              "description": "Required. The ID of the query to run.",
+              "format": "int64"
+            },
+            "synchronous": {
+              "location": "query",
+              "type": "boolean",
+              "description": "Whether the query should be run synchronously. When `true`, the request won't return until the resulting report has finished running. This parameter is `false` by default. Setting this parameter to `true` is **not recommended**."
+            }
+          },
+          "description": "Runs an existing query to generate a report.",
           "parameterOrder": [
             "queryId"
           ],
           "scopes": [
             "https://www.googleapis.com/auth/doubleclickbidmanager"
           ],
-          "id": "doubleclickbidmanager.queries.get"
+          "request": {
+            "$ref": "RunQueryRequest"
+          },
+          "id": "doubleclickbidmanager.queries.run"
+        },
+        "create": {
+          "description": "Creates a new query.",
+          "parameters": {},
+          "path": "queries",
+          "flatPath": "queries",
+          "httpMethod": "POST",
+          "response": {
+            "$ref": "Query"
+          },
+          "id": "doubleclickbidmanager.queries.create",
+          "parameterOrder": [],
+          "scopes": [
+            "https://www.googleapis.com/auth/doubleclickbidmanager"
+          ],
+          "request": {
+            "$ref": "Query"
+          }
+        },
+        "list": {
+          "id": "doubleclickbidmanager.queries.list",
+          "parameterOrder": [],
+          "scopes": [
+            "https://www.googleapis.com/auth/doubleclickbidmanager"
+          ],
+          "parameters": {
+            "pageSize": {
+              "location": "query",
+              "type": "integer",
+              "description": "Maximum number of results per page. Must be between `1` and `100`. Defaults to `100` if unspecified.",
+              "format": "int32"
+            },
+            "pageToken": {
+              "description": "A token identifying which page of results the server should return. Typically, this is the value of nextPageToken, returned from the previous call to the `queries.list` method. If unspecified, the first page of results is returned.",
+              "location": "query",
+              "type": "string"
+            },
+            "orderBy": {
+              "description": "Field to sort the list by. Accepts the following values: * `queryId` (default) * `metadata.title` The default sorting order is ascending. To specify descending order for a field, add the suffix `desc` to the field name. For example, `queryId desc`.",
+              "location": "query",
+              "type": "string"
+            }
+          },
+          "description": "Lists queries created by the current user.",
+          "flatPath": "queries",
+          "httpMethod": "GET",
+          "response": {
+            "$ref": "ListQueriesResponse"
+          },
+          "path": "queries"
         }
       },
       "resources": {
         "reports": {
           "methods": {
             "list": {
+              "parameterOrder": [
+                "queryId"
+              ],
+              "scopes": [
+                "https://www.googleapis.com/auth/doubleclickbidmanager"
+              ],
+              "id": "doubleclickbidmanager.queries.reports.list",
+              "path": "queries/{queryId}/reports",
               "flatPath": "queries/{queryId}/reports",
               "httpMethod": "GET",
               "response": {
                 "$ref": "ListReportsResponse"
               },
-              "path": "queries/{queryId}/reports",
+              "description": "Lists reports generated by the provided query.",
               "parameters": {
+                "orderBy": {
+                  "description": "Field to sort the list by. Accepts the following values: * `key.reportId` (default) The default sorting order is ascending. To specify descending order for a field, add the suffix `desc` to the field name. For example, `key.reportId desc`.",
+                  "location": "query",
+                  "type": "string"
+                },
                 "queryId": {
-                  "location": "path",
-                  "type": "string",
-                  "required": true,
                   "description": "Required. The ID of the query that generated the reports.",
-                  "format": "int64"
+                  "format": "int64",
+                  "required": true,
+                  "location": "path",
+                  "type": "string"
                 },
                 "pageSize": {
                   "description": "Maximum number of results per page. Must be between `1` and `100`. Defaults to `100` if unspecified.",
@@ -713,21 +730,8 @@
                   "description": "A token identifying which page of results the server should return. Typically, this is the value of nextPageToken returned from the previous call to the `queries.reports.list` method. If unspecified, the first page of results is returned.",
                   "location": "query",
                   "type": "string"
-                },
-                "orderBy": {
-                  "description": "Field to sort the list by. Accepts the following values: * `key.reportId` (default) The default sorting order is ascending. To specify descending order for a field, add the suffix `desc` to the field name. For example, `key.reportId desc`.",
-                  "location": "query",
-                  "type": "string"
                 }
-              },
-              "description": "Lists reports generated by the provided query.",
-              "parameterOrder": [
-                "queryId"
-              ],
-              "scopes": [
-                "https://www.googleapis.com/auth/doubleclickbidmanager"
-              ],
-              "id": "doubleclickbidmanager.queries.reports.list"
+              }
             },
             "get": {
               "id": "doubleclickbidmanager.queries.reports.get",
@@ -738,13 +742,14 @@
               "scopes": [
                 "https://www.googleapis.com/auth/doubleclickbidmanager"
               ],
+              "description": "Retrieves a report.",
               "parameters": {
                 "queryId": {
                   "location": "path",
                   "type": "string",
-                  "required": true,
                   "description": "Required. The ID of the query that generated the report.",
-                  "format": "int64"
+                  "format": "int64",
+                  "required": true
                 },
                 "reportId": {
                   "description": "Required. The ID of the query to retrieve.",
@@ -754,24 +759,19 @@
                   "type": "string"
                 }
               },
-              "description": "Retrieves a report.",
+              "path": "queries/{queryId}/reports/{reportId}",
               "flatPath": "queries/{queryId}/reports/{reportId}",
               "httpMethod": "GET",
               "response": {
                 "$ref": "Report"
-              },
-              "path": "queries/{queryId}/reports/{reportId}"
+              }
             }
           }
         }
       }
     }
   },
-  "revision": "20260429",
-  "documentationLink": "https://developers.google.com/bid-manager/",
-  "canonicalName": "DoubleClick Bid Manager",
-  "discoveryVersion": "v1",
-  "name": "doubleclickbidmanager",
-  "version": "v2",
-  "basePath": "/v2/"
+  "rootUrl": "https://doubleclickbidmanager.googleapis.com/",
+  "title": "DoubleClick Bid Manager API",
+  "id": "doubleclickbidmanager:v2"
 }

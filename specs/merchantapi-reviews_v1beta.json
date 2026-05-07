@@ -1,26 +1,15 @@
 {
-  "version": "reviews_v1beta",
-  "rootUrl": "https://merchantapi.googleapis.com/",
-  "name": "merchantapi",
-  "fullyEncodeReservedExpansion": true,
+  "description": "Programmatically manage your Merchant Center Accounts.",
+  "baseUrl": "https://merchantapi.googleapis.com/",
   "discoveryVersion": "v1",
-  "kind": "discovery#restDescription",
-  "basePath": "",
-  "canonicalName": "Merchant",
-  "documentationLink": "https://developers.google.com/merchant/api",
-  "version_module": true,
-  "id": "merchantapi:reviews_v1beta",
+  "ownerDomain": "google.com",
   "schemas": {
-    "Empty": {
-      "properties": {},
-      "type": "object",
-      "id": "Empty",
-      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }"
-    },
-    "ProductReviewDestinationStatus": {
+    "MerchantReviewDestinationStatus": {
+      "description": "The destination status of the merchant review status.",
       "type": "object",
       "properties": {
         "reportingContext": {
+          "description": "Output only. The name of the reporting context.",
           "enum": [
             "REPORTING_CONTEXT_ENUM_UNSPECIFIED",
             "SHOPPING_ADS",
@@ -43,9 +32,8 @@
             "MERCHANT_REVIEWS",
             "YOUTUBE_CHECKOUT"
           ],
-          "description": "Output only. The name of the reporting context.",
-          "type": "string",
           "readOnly": true,
+          "type": "string",
           "enumDeprecated": [
             false,
             false,
@@ -92,45 +80,96 @@
           ]
         }
       },
-      "id": "ProductReviewDestinationStatus",
-      "description": "The destination status of the product review status."
+      "id": "MerchantReviewDestinationStatus"
     },
-    "ProductChange": {
-      "id": "ProductChange",
-      "description": "The change that happened to the product including old value, new value, country code as the region code and reporting context.",
+    "ReviewLink": {
+      "id": "ReviewLink",
+      "type": "object",
       "properties": {
-        "regionCode": {
-          "description": "Countries that have the change (if applicable). Represented in the ISO 3166 format.",
-          "type": "string"
-        },
-        "newValue": {
-          "type": "string",
-          "description": "The new value of the changed resource or attribute. If empty, it means that the product was deleted. Will have one of these values : (`approved`, `pending`, `disapproved`, ``)"
-        },
-        "reportingContext": {
+        "type": {
           "enumDescriptions": [
-            "Not specified.",
-            "[Shopping ads](https://support.google.com/merchants/answer/6149970).",
-            "Deprecated: Use `DEMAND_GEN_ADS` instead. [Discovery and Demand Gen ads](https://support.google.com/merchants/answer/13389785).",
-            "[Demand Gen ads](https://support.google.com/merchants/answer/13389785).",
-            "[Demand Gen ads on Discover surface](https://support.google.com/merchants/answer/13389785).",
-            "[Video ads](https://support.google.com/google-ads/answer/6340491).",
-            "[Display ads](https://support.google.com/merchants/answer/6069387).",
-            "[Local inventory ads](https://support.google.com/merchants/answer/3271956).",
-            "[Vehicle inventory ads](https://support.google.com/merchants/answer/11544533).",
-            "[Free product listings](https://support.google.com/merchants/answer/9199328).",
-            "[Free product listings on UCP checkout](https://developers.google.com/merchant/ucp).",
-            "[Free local product listings](https://support.google.com/merchants/answer/9825611).",
-            "[Free local vehicle listings](https://support.google.com/merchants/answer/11544533).",
-            "[Youtube Affiliate](https://support.google.com/youtube/answer/13376398).",
-            "[YouTube Shopping](https://support.google.com/merchants/answer/13478370).",
-            "[Cloud retail](https://cloud.google.com/solutions/retail).",
-            "[Local cloud retail](https://cloud.google.com/solutions/retail).",
-            "[Product Reviews](https://support.google.com/merchants/answer/14620732).",
-            "[Merchant Reviews](https://developers.google.com/merchant-review-feeds).",
-            "YouTube Checkout ."
+            "Type unspecified.",
+            "The review page contains only this single review.",
+            "The review page contains a group of reviews including this review."
           ],
           "type": "string",
+          "description": "Optional. Type of the review URI.",
+          "enum": [
+            "TYPE_UNSPECIFIED",
+            "SINGLETON",
+            "GROUP"
+          ]
+        },
+        "link": {
+          "type": "string",
+          "description": "Optional. The URI of the review landing page. For example: `http://www.example.com/review_5.html`."
+        }
+      },
+      "description": "The URI of the review landing page."
+    },
+    "ProductReviewStatus": {
+      "description": "Product review status.",
+      "type": "object",
+      "properties": {
+        "destinationStatuses": {
+          "description": "Output only. The intended destinations for the product review.",
+          "items": {
+            "$ref": "ProductReviewDestinationStatus"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "itemLevelIssues": {
+          "description": "Output only. A list of all issues associated with the product review.",
+          "items": {
+            "$ref": "ProductReviewItemLevelIssue"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "createTime": {
+          "readOnly": true,
+          "type": "string",
+          "format": "google-datetime",
+          "description": "Output only. Date on which the item has been created, in [ISO 8601](http://en.wikipedia.org/wiki/ISO_8601) format."
+        },
+        "lastUpdateTime": {
+          "description": "Output only. Date on which the item has been last updated, in [ISO 8601](http://en.wikipedia.org/wiki/ISO_8601) format.",
+          "readOnly": true,
+          "type": "string",
+          "format": "google-datetime"
+        }
+      },
+      "id": "ProductReviewStatus"
+    },
+    "ProductReviewDestinationStatus": {
+      "description": "The destination status of the product review status.",
+      "type": "object",
+      "properties": {
+        "reportingContext": {
+          "description": "Output only. The name of the reporting context.",
+          "enum": [
+            "REPORTING_CONTEXT_ENUM_UNSPECIFIED",
+            "SHOPPING_ADS",
+            "DISCOVERY_ADS",
+            "DEMAND_GEN_ADS",
+            "DEMAND_GEN_ADS_DISCOVER_SURFACE",
+            "VIDEO_ADS",
+            "DISPLAY_ADS",
+            "LOCAL_INVENTORY_ADS",
+            "VEHICLE_INVENTORY_ADS",
+            "FREE_LISTINGS",
+            "FREE_LISTINGS_UCP_CHECKOUT",
+            "FREE_LOCAL_LISTINGS",
+            "FREE_LOCAL_VEHICLE_LISTINGS",
+            "YOUTUBE_AFFILIATE",
+            "YOUTUBE_SHOPPING",
+            "CLOUD_RETAIL",
+            "LOCAL_CLOUD_RETAIL",
+            "PRODUCT_REVIEWS",
+            "MERCHANT_REVIEWS",
+            "YOUTUBE_CHECKOUT"
+          ],
           "enumDeprecated": [
             false,
             false,
@@ -153,6 +192,47 @@
             false,
             false
           ],
+          "readOnly": true,
+          "type": "string",
+          "enumDescriptions": [
+            "Not specified.",
+            "[Shopping ads](https://support.google.com/merchants/answer/6149970).",
+            "Deprecated: Use `DEMAND_GEN_ADS` instead. [Discovery and Demand Gen ads](https://support.google.com/merchants/answer/13389785).",
+            "[Demand Gen ads](https://support.google.com/merchants/answer/13389785).",
+            "[Demand Gen ads on Discover surface](https://support.google.com/merchants/answer/13389785).",
+            "[Video ads](https://support.google.com/google-ads/answer/6340491).",
+            "[Display ads](https://support.google.com/merchants/answer/6069387).",
+            "[Local inventory ads](https://support.google.com/merchants/answer/3271956).",
+            "[Vehicle inventory ads](https://support.google.com/merchants/answer/11544533).",
+            "[Free product listings](https://support.google.com/merchants/answer/9199328).",
+            "[Free product listings on UCP checkout](https://developers.google.com/merchant/ucp).",
+            "[Free local product listings](https://support.google.com/merchants/answer/9825611).",
+            "[Free local vehicle listings](https://support.google.com/merchants/answer/11544533).",
+            "[Youtube Affiliate](https://support.google.com/youtube/answer/13376398).",
+            "[YouTube Shopping](https://support.google.com/merchants/answer/13478370).",
+            "[Cloud retail](https://cloud.google.com/solutions/retail).",
+            "[Local cloud retail](https://cloud.google.com/solutions/retail).",
+            "[Product Reviews](https://support.google.com/merchants/answer/14620732).",
+            "[Merchant Reviews](https://developers.google.com/merchant-review-feeds).",
+            "YouTube Checkout ."
+          ]
+        }
+      },
+      "id": "ProductReviewDestinationStatus"
+    },
+    "ProductChange": {
+      "id": "ProductChange",
+      "type": "object",
+      "properties": {
+        "oldValue": {
+          "description": "The old value of the changed resource or attribute. If empty, it means that the product was created. Will have one of these values : (`approved`, `pending`, `disapproved`, ``)",
+          "type": "string"
+        },
+        "newValue": {
+          "type": "string",
+          "description": "The new value of the changed resource or attribute. If empty, it means that the product was deleted. Will have one of these values : (`approved`, `pending`, `disapproved`, ``)"
+        },
+        "reportingContext": {
           "description": "Reporting contexts that have the change (if applicable). Currently this field supports only (`SHOPPING_ADS`, `LOCAL_INVENTORY_ADS`, `YOUTUBE_SHOPPING`, `YOUTUBE_CHECKOUT`, `YOUTUBE_AFFILIATE`) from the enum value [ReportingContextEnum](/merchant/api/reference/rest/Shared.Types/ReportingContextEnum)",
           "enum": [
             "REPORTING_CONTEXT_ENUM_UNSPECIFIED",
@@ -175,113 +255,92 @@
             "PRODUCT_REVIEWS",
             "MERCHANT_REVIEWS",
             "YOUTUBE_CHECKOUT"
-          ]
-        },
-        "oldValue": {
-          "type": "string",
-          "description": "The old value of the changed resource or attribute. If empty, it means that the product was created. Will have one of these values : (`approved`, `pending`, `disapproved`, ``)"
-        }
-      },
-      "type": "object"
-    },
-    "ProductReview": {
-      "properties": {
-        "name": {
-          "description": "Identifier. The name of the product review. Format: `\"{productreview.name=accounts/{account}/productReviews/{productReview}}\"`",
-          "type": "string"
-        },
-        "productReviewAttributes": {
-          "description": "Optional. A list of product review attributes.",
-          "$ref": "ProductReviewAttributes"
-        },
-        "productReviewId": {
-          "description": "Required. The permanent, unique identifier for the product review in the publisher’s system.",
-          "type": "string"
-        },
-        "productReviewStatus": {
-          "description": "Output only. The status of a product review, data validation issues, that is, information about a product review computed asynchronously.",
-          "$ref": "ProductReviewStatus",
-          "readOnly": true
-        },
-        "customAttributes": {
-          "type": "array",
-          "items": {
-            "$ref": "CustomAttribute"
-          },
-          "description": "Optional. A list of custom (merchant-provided) attributes."
-        },
-        "dataSource": {
-          "description": "Output only. The primary data source of the product review.",
-          "type": "string",
-          "readOnly": true
-        }
-      },
-      "type": "object",
-      "id": "ProductReview",
-      "description": "A review for a product. For more information, see [Introduction to Product Review Feeds](https://developers.google.com/product-review-feeds)"
-    },
-    "MerchantReviewStatus": {
-      "id": "MerchantReviewStatus",
-      "description": "The status of a merchant review, data validation issues, that is, information about a merchant review computed asynchronously.",
-      "type": "object",
-      "properties": {
-        "lastUpdateTime": {
-          "description": "Output only. Date on which the item has been last updated, in [ISO 8601](http://en.wikipedia.org/wiki/ISO_8601) format.",
-          "format": "google-datetime",
-          "readOnly": true,
-          "type": "string"
-        },
-        "destinationStatuses": {
-          "readOnly": true,
-          "type": "array",
-          "description": "Output only. The intended destinations for the merchant review.",
-          "items": {
-            "$ref": "MerchantReviewDestinationStatus"
-          }
-        },
-        "createTime": {
-          "description": "Output only. Date on which the item has been created, in [ISO 8601](http://en.wikipedia.org/wiki/ISO_8601) format.",
-          "format": "google-datetime",
-          "type": "string",
-          "readOnly": true
-        },
-        "itemLevelIssues": {
-          "items": {
-            "$ref": "MerchantReviewItemLevelIssue"
-          },
-          "description": "Output only. A list of all issues associated with the merchant review.",
-          "type": "array",
-          "readOnly": true
-        }
-      }
-    },
-    "ProductReviewItemLevelIssue": {
-      "properties": {
-        "code": {
-          "description": "Output only. The error code of the issue.",
-          "type": "string",
-          "readOnly": true
-        },
-        "detail": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. A detailed issue description in English."
-        },
-        "severity": {
-          "description": "Output only. How this issue affects serving of the product review.",
-          "enum": [
-            "SEVERITY_UNSPECIFIED",
-            "NOT_IMPACTED",
-            "DISAPPROVED"
           ],
           "enumDescriptions": [
             "Not specified.",
-            "This issue represents a warning and does not have a direct affect on the product review.",
-            "Issue disapproves the product review."
+            "[Shopping ads](https://support.google.com/merchants/answer/6149970).",
+            "Deprecated: Use `DEMAND_GEN_ADS` instead. [Discovery and Demand Gen ads](https://support.google.com/merchants/answer/13389785).",
+            "[Demand Gen ads](https://support.google.com/merchants/answer/13389785).",
+            "[Demand Gen ads on Discover surface](https://support.google.com/merchants/answer/13389785).",
+            "[Video ads](https://support.google.com/google-ads/answer/6340491).",
+            "[Display ads](https://support.google.com/merchants/answer/6069387).",
+            "[Local inventory ads](https://support.google.com/merchants/answer/3271956).",
+            "[Vehicle inventory ads](https://support.google.com/merchants/answer/11544533).",
+            "[Free product listings](https://support.google.com/merchants/answer/9199328).",
+            "[Free product listings on UCP checkout](https://developers.google.com/merchant/ucp).",
+            "[Free local product listings](https://support.google.com/merchants/answer/9825611).",
+            "[Free local vehicle listings](https://support.google.com/merchants/answer/11544533).",
+            "[Youtube Affiliate](https://support.google.com/youtube/answer/13376398).",
+            "[YouTube Shopping](https://support.google.com/merchants/answer/13478370).",
+            "[Cloud retail](https://cloud.google.com/solutions/retail).",
+            "[Local cloud retail](https://cloud.google.com/solutions/retail).",
+            "[Product Reviews](https://support.google.com/merchants/answer/14620732).",
+            "[Merchant Reviews](https://developers.google.com/merchant-review-feeds).",
+            "YouTube Checkout ."
           ],
-          "type": "string",
-          "readOnly": true
+          "enumDeprecated": [
+            false,
+            false,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "type": "string"
         },
+        "regionCode": {
+          "type": "string",
+          "description": "Countries that have the change (if applicable). Represented in the ISO 3166 format."
+        }
+      },
+      "description": "The change that happened to the product including old value, new value, country code as the region code and reporting context."
+    },
+    "Empty": {
+      "description": "A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }",
+      "type": "object",
+      "properties": {},
+      "id": "Empty"
+    },
+    "CustomAttribute": {
+      "id": "CustomAttribute",
+      "description": "A message that represents custom attributes. Exactly one of `value` or `group_values` must not be empty.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the attribute."
+        },
+        "value": {
+          "type": "string",
+          "description": "The value of the attribute. If `value` is not empty, `group_values` must be empty."
+        },
+        "groupValues": {
+          "description": "Subattributes within this attribute group. If `group_values` is not empty, `value` must be empty.",
+          "items": {
+            "$ref": "CustomAttribute"
+          },
+          "type": "array"
+        }
+      }
+    },
+    "MerchantReviewItemLevelIssue": {
+      "description": "The ItemLevelIssue of the merchant review status.",
+      "type": "object",
+      "properties": {
         "attribute": {
           "readOnly": true,
           "type": "string",
@@ -310,8 +369,8 @@
             "[Merchant Reviews](https://developers.google.com/merchant-review-feeds).",
             "YouTube Checkout ."
           ],
-          "type": "string",
           "readOnly": true,
+          "type": "string",
           "enumDeprecated": [
             false,
             false,
@@ -358,31 +417,412 @@
             "YOUTUBE_CHECKOUT"
           ]
         },
-        "description": {
-          "description": "Output only. A short issue description in English.",
-          "type": "string",
-          "readOnly": true
-        },
-        "resolution": {
-          "description": "Output only. Whether the issue can be resolved by the merchant.",
-          "type": "string",
-          "readOnly": true
-        },
         "documentation": {
           "readOnly": true,
           "type": "string",
           "description": "Output only. The URL of a web page to help with resolving this issue."
+        },
+        "description": {
+          "description": "Output only. A short issue description in English.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "code": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Output only. The error code of the issue."
+        },
+        "detail": {
+          "description": "Output only. A detailed issue description in English.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "resolution": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Output only. Whether the issue can be resolved by the merchant."
+        },
+        "severity": {
+          "enumDescriptions": [
+            "Not specified.",
+            "This issue represents a warning and does not have a direct affect on the merchant review.",
+            "Issue disapproves the merchant review."
+          ],
+          "readOnly": true,
+          "type": "string",
+          "description": "Output only. How this issue affects serving of the merchant review.",
+          "enum": [
+            "SEVERITY_UNSPECIFIED",
+            "NOT_IMPACTED",
+            "DISAPPROVED"
+          ]
         }
       },
-      "type": "object",
-      "id": "ProductReviewItemLevelIssue",
-      "description": "The ItemLevelIssue of the product review status."
+      "id": "MerchantReviewItemLevelIssue"
     },
-    "MerchantReviewDestinationStatus": {
+    "MerchantReview": {
+      "id": "MerchantReview",
+      "description": "A review for a merchant. For more information, see [Introduction to Merchant Review Feeds](https://developers.google.com/merchant-review-feeds)",
       "type": "object",
       "properties": {
-        "reportingContext": {
+        "dataSource": {
+          "description": "Output only. The primary data source of the merchant review.",
           "readOnly": true,
+          "type": "string"
+        },
+        "customAttributes": {
+          "description": "Optional. A list of custom (merchant-provided) attributes. It can also be used for submitting any attribute of the data specification in its generic form (for example, `{ \"name\": \"size type\", \"value\": \"regular\" }`). This is useful for submitting attributes not explicitly exposed by the API, such as experimental attributes. Maximum allowed number of characters for each custom attribute is 10240 (represents sum of characters for name and value). Maximum 2500 custom attributes can be set per product, with total size of 102.4kB. Underscores in custom attribute names are replaced by spaces upon insertion.",
+          "items": {
+            "$ref": "CustomAttribute"
+          },
+          "type": "array"
+        },
+        "merchantReviewStatus": {
+          "description": "Output only. The status of a merchant review, data validation issues, that is, information about a merchant review computed asynchronously.",
+          "readOnly": true,
+          "$ref": "MerchantReviewStatus"
+        },
+        "name": {
+          "description": "Identifier. The name of the merchant review. Format: `\"{merchantreview.name=accounts/{account}/merchantReviews/{merchantReview}}\"`",
+          "type": "string"
+        },
+        "merchantReviewId": {
+          "type": "string",
+          "description": "Required. The user provided merchant review ID to uniquely identify the merchant review."
+        },
+        "merchantReviewAttributes": {
+          "$ref": "MerchantReviewAttributes",
+          "description": "Optional. A list of merchant review attributes."
+        }
+      }
+    },
+    "ListProductReviewsResponse": {
+      "description": "response message for the ListProductReviews method.",
+      "type": "object",
+      "properties": {
+        "productReviews": {
+          "type": "array",
+          "description": "The product review.",
+          "items": {
+            "$ref": "ProductReview"
+          }
+        },
+        "nextPageToken": {
+          "description": "A token, which can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages.",
+          "type": "string"
+        }
+      },
+      "id": "ListProductReviewsResponse"
+    },
+    "MerchantReviewStatus": {
+      "description": "The status of a merchant review, data validation issues, that is, information about a merchant review computed asynchronously.",
+      "type": "object",
+      "properties": {
+        "destinationStatuses": {
+          "description": "Output only. The intended destinations for the merchant review.",
+          "items": {
+            "$ref": "MerchantReviewDestinationStatus"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "itemLevelIssues": {
+          "readOnly": true,
+          "type": "array",
+          "description": "Output only. A list of all issues associated with the merchant review.",
+          "items": {
+            "$ref": "MerchantReviewItemLevelIssue"
+          }
+        },
+        "createTime": {
+          "description": "Output only. Date on which the item has been created, in [ISO 8601](http://en.wikipedia.org/wiki/ISO_8601) format.",
+          "readOnly": true,
+          "type": "string",
+          "format": "google-datetime"
+        },
+        "lastUpdateTime": {
+          "description": "Output only. Date on which the item has been last updated, in [ISO 8601](http://en.wikipedia.org/wiki/ISO_8601) format.",
+          "readOnly": true,
+          "type": "string",
+          "format": "google-datetime"
+        }
+      },
+      "id": "MerchantReviewStatus"
+    },
+    "ProductReviewAttributes": {
+      "description": "Attributes.",
+      "type": "object",
+      "properties": {
+        "gtins": {
+          "type": "array",
+          "description": "Optional. Contains GTINs (global trade item numbers) associated with a product. Sub-types of GTINs (e.g. UPC, EAN, ISBN, JAN) are supported.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cons": {
+          "type": "array",
+          "description": "Optional. Contains the disadvantages based on the opinion of the reviewer. Omit boilerplate text like \"con:\" unless it was written by the reviewer.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "publisherFavicon": {
+          "description": "Optional. A link to the company favicon of the publisher. The image dimensions should be favicon size: 16x16 pixels. The image format should be GIF, JPG or PNG.",
+          "type": "string"
+        },
+        "reviewCountry": {
+          "description": "Optional. The country of the review defined by ISO 3166-1 Alpha-2 Country Code.",
+          "type": "string"
+        },
+        "reviewerId": {
+          "description": "Optional. The author of the product review. A permanent, unique identifier for the author of the review in the publisher's system.",
+          "type": "string"
+        },
+        "transactionId": {
+          "description": "Optional. A permanent, unique identifier for the transaction associated with the review in the publisher's system. This ID can be used to indicate that multiple reviews are associated with the same transaction.",
+          "type": "string"
+        },
+        "pros": {
+          "description": "Optional. Contains the advantages based on the opinion of the reviewer. Omit boilerplate text like \"pro:\" unless it was written by the reviewer.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reviewLanguage": {
+          "description": "Optional. The language of the review defined by BCP-47 language code.",
+          "type": "string"
+        },
+        "asins": {
+          "type": "array",
+          "description": "Optional. Contains ASINs (Amazon Standard Identification Numbers) associated with a product.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "aggregatorName": {
+          "description": "Optional. The name of the aggregator of the product reviews. A publisher may use a reviews aggregator to manage reviews and provide the feeds. This element indicates the use of an aggregator and contains information about the aggregator.",
+          "type": "string"
+        },
+        "title": {
+          "description": "Optional. The title of the review.",
+          "type": "string"
+        },
+        "subclientName": {
+          "description": "Optional. The name of the subclient of the product reviews. The subclient is an identifier of the product review source. It should be equivalent to the directory provided in the file data source path.",
+          "type": "string"
+        },
+        "productNames": {
+          "type": "array",
+          "description": "Optional. Descriptive name of a product.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rating": {
+          "description": "Optional. The reviewer's overall rating of the product.",
+          "type": "number",
+          "format": "double"
+        },
+        "skus": {
+          "description": "Optional. Contains SKUs (stock keeping units) associated with a product. Often this matches the product Offer Id in the product feed.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reviewTime": {
+          "type": "string",
+          "format": "google-datetime",
+          "description": "Required. The timestamp indicating when the review was written."
+        },
+        "minRating": {
+          "description": "Optional. Contains the ratings associated with the review. The minimum possible number for the rating. This should be the worst possible rating and should not be a value for no rating.",
+          "type": "string",
+          "format": "int64"
+        },
+        "mpns": {
+          "description": "Optional. Contains MPNs (manufacturer part numbers) associated with a product.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "brands": {
+          "description": "Optional. Contains brand names associated with a product.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "collectionMethod": {
+          "type": "string",
+          "description": "Optional. The method used to collect the review.",
+          "enum": [
+            "COLLECTION_METHOD_UNSPECIFIED",
+            "UNSOLICITED",
+            "POST_FULFILLMENT"
+          ],
+          "enumDescriptions": [
+            "Collection method unspecified.",
+            "The user was not responding to a specific solicitation when they submitted the review.",
+            "The user submitted the review in response to a solicitation after fulfillment of the user's order."
+          ]
+        },
+        "reviewerUsername": {
+          "description": "Optional. The name of the reviewer of the product review.",
+          "type": "string"
+        },
+        "maxRating": {
+          "type": "string",
+          "format": "int64",
+          "description": "Optional. The maximum possible number for the rating. The value of the max rating must be greater than the value of the min attribute."
+        },
+        "content": {
+          "type": "string",
+          "description": "Optional. The content of the review. If empty, the content might still get populated from pros and cons."
+        },
+        "isSpam": {
+          "description": "Optional. Indicates whether the review is marked as spam in the publisher's system.",
+          "type": "boolean"
+        },
+        "isVerifiedPurchase": {
+          "description": "Optional. Indicates whether the reviewer's purchase is verified.",
+          "type": "boolean"
+        },
+        "publisherName": {
+          "description": "Optional. The name of the publisher of the product reviews. The information about the publisher, which may be a retailer, manufacturer, reviews service company, or any entity that publishes product reviews.",
+          "type": "string"
+        },
+        "productLinks": {
+          "description": "Optional. The URI of the product. This URI can have the same value as the `review_link` element, if the review URI and the product URI are the same.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "isIncentivizedReview": {
+          "type": "boolean",
+          "description": "Optional. Indicates whether the review is incentivized."
+        },
+        "reviewLink": {
+          "description": "Optional. The URI of the review landing page.",
+          "$ref": "ReviewLink"
+        },
+        "reviewerIsAnonymous": {
+          "type": "boolean",
+          "description": "Optional. Set to true if the reviewer should remain anonymous."
+        },
+        "reviewerImageLinks": {
+          "type": "array",
+          "description": "Optional. A URI to an image of the reviewed product created by the review author. The URI does not have to end with an image file extension.",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "id": "ProductReviewAttributes"
+    },
+    "ListMerchantReviewsResponse": {
+      "description": "Response message for the `ListMerchantsReview` method.",
+      "type": "object",
+      "properties": {
+        "merchantReviews": {
+          "type": "array",
+          "description": "The merchant review.",
+          "items": {
+            "$ref": "MerchantReview"
+          }
+        },
+        "nextPageToken": {
+          "type": "string",
+          "description": "The token to retrieve the next page of results."
+        }
+      },
+      "id": "ListMerchantReviewsResponse"
+    },
+    "ProductReview": {
+      "id": "ProductReview",
+      "description": "A review for a product. For more information, see [Introduction to Product Review Feeds](https://developers.google.com/product-review-feeds)",
+      "type": "object",
+      "properties": {
+        "dataSource": {
+          "description": "Output only. The primary data source of the product review.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "productReviewId": {
+          "type": "string",
+          "description": "Required. The permanent, unique identifier for the product review in the publisher’s system."
+        },
+        "productReviewStatus": {
+          "readOnly": true,
+          "$ref": "ProductReviewStatus",
+          "description": "Output only. The status of a product review, data validation issues, that is, information about a product review computed asynchronously."
+        },
+        "customAttributes": {
+          "description": "Optional. A list of custom (merchant-provided) attributes.",
+          "items": {
+            "$ref": "CustomAttribute"
+          },
+          "type": "array"
+        },
+        "productReviewAttributes": {
+          "description": "Optional. A list of product review attributes.",
+          "$ref": "ProductReviewAttributes"
+        },
+        "name": {
+          "description": "Identifier. The name of the product review. Format: `\"{productreview.name=accounts/{account}/productReviews/{productReview}}\"`",
+          "type": "string"
+        }
+      }
+    },
+    "ProductReviewItemLevelIssue": {
+      "id": "ProductReviewItemLevelIssue",
+      "type": "object",
+      "properties": {
+        "severity": {
+          "enumDescriptions": [
+            "Not specified.",
+            "This issue represents a warning and does not have a direct affect on the product review.",
+            "Issue disapproves the product review."
+          ],
+          "readOnly": true,
+          "type": "string",
+          "description": "Output only. How this issue affects serving of the product review.",
+          "enum": [
+            "SEVERITY_UNSPECIFIED",
+            "NOT_IMPACTED",
+            "DISAPPROVED"
+          ]
+        },
+        "resolution": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Output only. Whether the issue can be resolved by the merchant."
+        },
+        "description": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Output only. A short issue description in English."
+        },
+        "code": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Output only. The error code of the issue."
+        },
+        "detail": {
+          "description": "Output only. A detailed issue description in English.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "attribute": {
+          "description": "Output only. The attribute's name, if the issue is caused by a single attribute.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "reportingContext": {
           "enumDeprecated": [
             false,
             false,
@@ -405,6 +845,7 @@
             false,
             false
           ],
+          "readOnly": true,
           "type": "string",
           "enumDescriptions": [
             "Not specified.",
@@ -428,6 +869,7 @@
             "[Merchant Reviews](https://developers.google.com/merchant-review-feeds).",
             "YouTube Checkout ."
           ],
+          "description": "Output only. The reporting context the issue applies to.",
           "enum": [
             "REPORTING_CONTEXT_ENUM_UNSPECIFIED",
             "SHOPPING_ADS",
@@ -449,115 +891,91 @@
             "PRODUCT_REVIEWS",
             "MERCHANT_REVIEWS",
             "YOUTUBE_CHECKOUT"
-          ],
-          "description": "Output only. The name of the reporting context."
+          ]
+        },
+        "documentation": {
+          "description": "Output only. The URL of a web page to help with resolving this issue.",
+          "readOnly": true,
+          "type": "string"
         }
       },
-      "id": "MerchantReviewDestinationStatus",
-      "description": "The destination status of the merchant review status."
+      "description": "The ItemLevelIssue of the product review status."
     },
-    "MerchantReview": {
-      "id": "MerchantReview",
-      "description": "A review for a merchant. For more information, see [Introduction to Merchant Review Feeds](https://developers.google.com/merchant-review-feeds)",
+    "ProductStatusChangeMessage": {
+      "id": "ProductStatusChangeMessage",
+      "description": "The message that the merchant will receive to notify about product status change event",
       "type": "object",
       "properties": {
-        "merchantReviewAttributes": {
-          "description": "Optional. A list of merchant review attributes.",
-          "$ref": "MerchantReviewAttributes"
-        },
-        "name": {
+        "resourceId": {
           "type": "string",
-          "description": "Identifier. The name of the merchant review. Format: `\"{merchantreview.name=accounts/{account}/merchantReviews/{merchantReview}}\"`"
+          "description": "The product id."
         },
-        "merchantReviewStatus": {
-          "description": "Output only. The status of a merchant review, data validation issues, that is, information about a merchant review computed asynchronously.",
-          "$ref": "MerchantReviewStatus",
-          "readOnly": true
-        },
-        "merchantReviewId": {
+        "resource": {
           "type": "string",
-          "description": "Required. The user provided merchant review ID to uniquely identify the merchant review."
+          "description": "The product name. Format: `accounts/{account}/products/{product}`"
         },
-        "customAttributes": {
+        "eventTime": {
+          "description": "The time at which the event was generated. If you want to order the notification messages you receive you should rely on this field not on the order of receiving the notifications.",
+          "type": "string",
+          "format": "google-datetime"
+        },
+        "changes": {
           "type": "array",
-          "description": "Optional. A list of custom (merchant-provided) attributes. It can also be used for submitting any attribute of the data specification in its generic form (for example, `{ \"name\": \"size type\", \"value\": \"regular\" }`). This is useful for submitting attributes not explicitly exposed by the API, such as experimental attributes. Maximum allowed number of characters for each custom attribute is 10240 (represents sum of characters for name and value). Maximum 2500 custom attributes can be set per product, with total size of 102.4kB. Underscores in custom attribute names are replaced by spaces upon insertion.",
+          "description": "A message to describe the change that happened to the product",
           "items": {
-            "$ref": "CustomAttribute"
+            "$ref": "ProductChange"
           }
         },
-        "dataSource": {
-          "readOnly": true,
+        "attribute": {
+          "description": "The attribute in the resource that changed, in this case it will be always `Status`.",
+          "enum": [
+            "ATTRIBUTE_UNSPECIFIED",
+            "STATUS"
+          ],
           "type": "string",
-          "description": "Output only. The primary data source of the merchant review."
+          "enumDescriptions": [
+            "Unspecified attribute",
+            "Status of the changed entity"
+          ]
+        },
+        "managingAccount": {
+          "description": "The account that manages the merchant's account. can be the same as merchant id if it is standalone account. Format : `accounts/{service_provider_id}`",
+          "type": "string"
+        },
+        "account": {
+          "description": "The target account that owns the entity that changed. Format : `accounts/{merchant_id}`",
+          "type": "string"
+        },
+        "resourceType": {
+          "enumDescriptions": [
+            "Unspecified resource",
+            "Resource type : product"
+          ],
+          "description": "The resource that changed, in this case it will always be `Product`.",
+          "enum": [
+            "RESOURCE_UNSPECIFIED",
+            "PRODUCT"
+          ],
+          "type": "string"
+        },
+        "expirationTime": {
+          "description": "Optional. The product expiration time. This field will not be set if the notification is sent for a product deletion event.",
+          "type": "string",
+          "format": "google-datetime"
         }
       }
     },
-    "ListProductReviewsResponse": {
-      "properties": {
-        "productReviews": {
-          "description": "The product review.",
-          "items": {
-            "$ref": "ProductReview"
-          },
-          "type": "array"
-        },
-        "nextPageToken": {
-          "type": "string",
-          "description": "A token, which can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages."
-        }
-      },
-      "type": "object",
-      "id": "ListProductReviewsResponse",
-      "description": "response message for the ListProductReviews method."
-    },
     "MerchantReviewAttributes": {
+      "description": "Attributes.",
       "type": "object",
       "properties": {
-        "maxRating": {
+        "reviewerUsername": {
           "type": "string",
-          "description": "Optional. The maximum possible number for the rating. The value of the max rating must be greater than the value of the min rating.",
-          "format": "int64"
-        },
-        "reviewerId": {
-          "type": "string",
-          "description": "Optional. A permanent, unique identifier for the author of the review in the publisher's system."
-        },
-        "isAnonymous": {
-          "type": "boolean",
-          "description": "Optional. Set to true if the reviewer should remain anonymous."
-        },
-        "merchantDisplayName": {
-          "description": "Optional. Human-readable display name for the merchant.",
-          "type": "string"
-        },
-        "merchantLink": {
-          "type": "string",
-          "description": "Optional. URL to the merchant's main website. Do not use a redirect URL for this value. In other words, the value should point directly to the merchant's site."
-        },
-        "reviewTime": {
-          "description": "Required. The timestamp indicating when the review was written.",
-          "format": "google-datetime",
-          "type": "string"
-        },
-        "reviewCountry": {
-          "description": "Optional. The country where the reviewer made the order defined by ISO 3166-1 Alpha-2 Country Code.",
-          "type": "string"
-        },
-        "minRating": {
-          "type": "string",
-          "description": "Optional. The minimum possible number for the rating. This should be the worst possible rating and should not be a value for no rating.",
-          "format": "int64"
-        },
-        "content": {
-          "type": "string",
-          "description": "Required. This should be any freeform text provided by the user and should not be truncated. If multiple responses to different questions are provided, all responses should be included, with the minimal context for the responses to make sense. Context should not be provided if questions were left unanswered."
-        },
-        "merchantId": {
-          "type": "string",
-          "description": "Required. Must be unique and stable across all requests. In other words, if a request today and another 90 days ago refer to the same merchant, they must have the same id."
+          "description": "Optional. Display name of the review author."
         },
         "collectionMethod": {
           "type": "string",
+          "description": "Optional. The method used to collect the review.",
           "enum": [
             "COLLECTION_METHOD_UNSPECIFIED",
             "MERCHANT_UNSOLICITED",
@@ -569,497 +987,330 @@
             "The user was not responding to a specific solicitation when they submitted the review.",
             "The user submitted the review in response to a solicitation when the user placed an order.",
             "The user submitted the review in response to a solicitation after fulfillment of the user's order."
-          ],
-          "description": "Optional. The method used to collect the review."
+          ]
         },
-        "merchantRatingLink": {
-          "description": "Optional. URL to the landing page that hosts the reviews for this merchant. Do not use a redirect URL.",
+        "merchantDisplayName": {
+          "description": "Optional. Human-readable display name for the merchant.",
+          "type": "string"
+        },
+        "minRating": {
+          "description": "Optional. The minimum possible number for the rating. This should be the worst possible rating and should not be a value for no rating.",
+          "type": "string",
+          "format": "int64"
+        },
+        "reviewTime": {
+          "description": "Required. The timestamp indicating when the review was written.",
+          "type": "string",
+          "format": "google-datetime"
+        },
+        "reviewCountry": {
+          "description": "Optional. The country where the reviewer made the order defined by ISO 3166-1 Alpha-2 Country Code.",
           "type": "string"
         },
         "rating": {
           "type": "number",
-          "description": "Optional. The reviewer's overall rating of the merchant.",
-          "format": "double"
-        },
-        "reviewerUsername": {
-          "type": "string",
-          "description": "Optional. Display name of the review author."
-        },
-        "title": {
-          "description": "Optional. The title of the review.",
-          "type": "string"
-        },
-        "reviewLanguage": {
-          "type": "string",
-          "description": "Optional. The language of the review defined by BCP-47 language code."
-        }
-      },
-      "id": "MerchantReviewAttributes",
-      "description": "Attributes."
-    },
-    "ProductStatusChangeMessage": {
-      "id": "ProductStatusChangeMessage",
-      "description": "The message that the merchant will receive to notify about product status change event",
-      "type": "object",
-      "properties": {
-        "managingAccount": {
-          "type": "string",
-          "description": "The account that manages the merchant's account. can be the same as merchant id if it is standalone account. Format : `accounts/{service_provider_id}`"
-        },
-        "expirationTime": {
-          "description": "Optional. The product expiration time. This field will not be set if the notification is sent for a product deletion event.",
-          "format": "google-datetime",
-          "type": "string"
-        },
-        "changes": {
-          "type": "array",
-          "items": {
-            "$ref": "ProductChange"
-          },
-          "description": "A message to describe the change that happened to the product"
-        },
-        "eventTime": {
-          "description": "The time at which the event was generated. If you want to order the notification messages you receive you should rely on this field not on the order of receiving the notifications.",
-          "format": "google-datetime",
-          "type": "string"
-        },
-        "attribute": {
-          "type": "string",
-          "enum": [
-            "ATTRIBUTE_UNSPECIFIED",
-            "STATUS"
-          ],
-          "enumDescriptions": [
-            "Unspecified attribute",
-            "Status of the changed entity"
-          ],
-          "description": "The attribute in the resource that changed, in this case it will be always `Status`."
-        },
-        "account": {
-          "description": "The target account that owns the entity that changed. Format : `accounts/{merchant_id}`",
-          "type": "string"
-        },
-        "resource": {
-          "description": "The product name. Format: `accounts/{account}/products/{product}`",
-          "type": "string"
-        },
-        "resourceId": {
-          "description": "The product id.",
-          "type": "string"
-        },
-        "resourceType": {
-          "enumDescriptions": [
-            "Unspecified resource",
-            "Resource type : product"
-          ],
-          "description": "The resource that changed, in this case it will always be `Product`.",
-          "type": "string",
-          "enum": [
-            "RESOURCE_UNSPECIFIED",
-            "PRODUCT"
-          ]
-        }
-      }
-    },
-    "ProductReviewStatus": {
-      "type": "object",
-      "properties": {
-        "lastUpdateTime": {
-          "description": "Output only. Date on which the item has been last updated, in [ISO 8601](http://en.wikipedia.org/wiki/ISO_8601) format.",
-          "format": "google-datetime",
-          "type": "string",
-          "readOnly": true
-        },
-        "destinationStatuses": {
-          "items": {
-            "$ref": "ProductReviewDestinationStatus"
-          },
-          "description": "Output only. The intended destinations for the product review.",
-          "type": "array",
-          "readOnly": true
-        },
-        "createTime": {
-          "type": "string",
-          "readOnly": true,
-          "description": "Output only. Date on which the item has been created, in [ISO 8601](http://en.wikipedia.org/wiki/ISO_8601) format.",
-          "format": "google-datetime"
-        },
-        "itemLevelIssues": {
-          "items": {
-            "$ref": "ProductReviewItemLevelIssue"
-          },
-          "description": "Output only. A list of all issues associated with the product review.",
-          "type": "array",
-          "readOnly": true
-        }
-      },
-      "id": "ProductReviewStatus",
-      "description": "Product review status."
-    },
-    "ReviewLink": {
-      "type": "object",
-      "properties": {
-        "type": {
-          "type": "string",
-          "enum": [
-            "TYPE_UNSPECIFIED",
-            "SINGLETON",
-            "GROUP"
-          ],
-          "description": "Optional. Type of the review URI.",
-          "enumDescriptions": [
-            "Type unspecified.",
-            "The review page contains only this single review.",
-            "The review page contains a group of reviews including this review."
-          ]
-        },
-        "link": {
-          "description": "Optional. The URI of the review landing page. For example: `http://www.example.com/review_5.html`.",
-          "type": "string"
-        }
-      },
-      "id": "ReviewLink",
-      "description": "The URI of the review landing page."
-    },
-    "MerchantReviewItemLevelIssue": {
-      "id": "MerchantReviewItemLevelIssue",
-      "description": "The ItemLevelIssue of the merchant review status.",
-      "type": "object",
-      "properties": {
-        "reportingContext": {
-          "description": "Output only. The reporting context the issue applies to.",
-          "enum": [
-            "REPORTING_CONTEXT_ENUM_UNSPECIFIED",
-            "SHOPPING_ADS",
-            "DISCOVERY_ADS",
-            "DEMAND_GEN_ADS",
-            "DEMAND_GEN_ADS_DISCOVER_SURFACE",
-            "VIDEO_ADS",
-            "DISPLAY_ADS",
-            "LOCAL_INVENTORY_ADS",
-            "VEHICLE_INVENTORY_ADS",
-            "FREE_LISTINGS",
-            "FREE_LISTINGS_UCP_CHECKOUT",
-            "FREE_LOCAL_LISTINGS",
-            "FREE_LOCAL_VEHICLE_LISTINGS",
-            "YOUTUBE_AFFILIATE",
-            "YOUTUBE_SHOPPING",
-            "CLOUD_RETAIL",
-            "LOCAL_CLOUD_RETAIL",
-            "PRODUCT_REVIEWS",
-            "MERCHANT_REVIEWS",
-            "YOUTUBE_CHECKOUT"
-          ],
-          "enumDescriptions": [
-            "Not specified.",
-            "[Shopping ads](https://support.google.com/merchants/answer/6149970).",
-            "Deprecated: Use `DEMAND_GEN_ADS` instead. [Discovery and Demand Gen ads](https://support.google.com/merchants/answer/13389785).",
-            "[Demand Gen ads](https://support.google.com/merchants/answer/13389785).",
-            "[Demand Gen ads on Discover surface](https://support.google.com/merchants/answer/13389785).",
-            "[Video ads](https://support.google.com/google-ads/answer/6340491).",
-            "[Display ads](https://support.google.com/merchants/answer/6069387).",
-            "[Local inventory ads](https://support.google.com/merchants/answer/3271956).",
-            "[Vehicle inventory ads](https://support.google.com/merchants/answer/11544533).",
-            "[Free product listings](https://support.google.com/merchants/answer/9199328).",
-            "[Free product listings on UCP checkout](https://developers.google.com/merchant/ucp).",
-            "[Free local product listings](https://support.google.com/merchants/answer/9825611).",
-            "[Free local vehicle listings](https://support.google.com/merchants/answer/11544533).",
-            "[Youtube Affiliate](https://support.google.com/youtube/answer/13376398).",
-            "[YouTube Shopping](https://support.google.com/merchants/answer/13478370).",
-            "[Cloud retail](https://cloud.google.com/solutions/retail).",
-            "[Local cloud retail](https://cloud.google.com/solutions/retail).",
-            "[Product Reviews](https://support.google.com/merchants/answer/14620732).",
-            "[Merchant Reviews](https://developers.google.com/merchant-review-feeds).",
-            "YouTube Checkout ."
-          ],
-          "type": "string",
-          "readOnly": true,
-          "enumDeprecated": [
-            false,
-            false,
-            true,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
-          ]
-        },
-        "resolution": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. Whether the issue can be resolved by the merchant."
-        },
-        "documentation": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. The URL of a web page to help with resolving this issue."
-        },
-        "description": {
-          "type": "string",
-          "readOnly": true,
-          "description": "Output only. A short issue description in English."
-        },
-        "code": {
-          "description": "Output only. The error code of the issue.",
-          "type": "string",
-          "readOnly": true
-        },
-        "detail": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. A detailed issue description in English."
-        },
-        "severity": {
-          "enum": [
-            "SEVERITY_UNSPECIFIED",
-            "NOT_IMPACTED",
-            "DISAPPROVED"
-          ],
-          "description": "Output only. How this issue affects serving of the merchant review.",
-          "type": "string",
-          "readOnly": true,
-          "enumDescriptions": [
-            "Not specified.",
-            "This issue represents a warning and does not have a direct affect on the merchant review.",
-            "Issue disapproves the merchant review."
-          ]
-        },
-        "attribute": {
-          "description": "Output only. The attribute's name, if the issue is caused by a single attribute.",
-          "readOnly": true,
-          "type": "string"
-        }
-      }
-    },
-    "CustomAttribute": {
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "The name of the attribute."
-        },
-        "value": {
-          "description": "The value of the attribute. If `value` is not empty, `group_values` must be empty.",
-          "type": "string"
-        },
-        "groupValues": {
-          "items": {
-            "$ref": "CustomAttribute"
-          },
-          "description": "Subattributes within this attribute group. If `group_values` is not empty, `value` must be empty.",
-          "type": "array"
-        }
-      },
-      "type": "object",
-      "id": "CustomAttribute",
-      "description": "A message that represents custom attributes. Exactly one of `value` or `group_values` must not be empty."
-    },
-    "ListMerchantReviewsResponse": {
-      "type": "object",
-      "properties": {
-        "nextPageToken": {
-          "description": "The token to retrieve the next page of results.",
-          "type": "string"
-        },
-        "merchantReviews": {
-          "type": "array",
-          "items": {
-            "$ref": "MerchantReview"
-          },
-          "description": "The merchant review."
-        }
-      },
-      "id": "ListMerchantReviewsResponse",
-      "description": "Response message for the `ListMerchantsReview` method."
-    },
-    "ProductReviewAttributes": {
-      "id": "ProductReviewAttributes",
-      "description": "Attributes.",
-      "type": "object",
-      "properties": {
-        "reviewerImageLinks": {
-          "items": {
-            "type": "string"
-          },
-          "description": "Optional. A URI to an image of the reviewed product created by the review author. The URI does not have to end with an image file extension.",
-          "type": "array"
-        },
-        "asins": {
-          "items": {
-            "type": "string"
-          },
-          "description": "Optional. Contains ASINs (Amazon Standard Identification Numbers) associated with a product.",
-          "type": "array"
-        },
-        "pros": {
-          "description": "Optional. Contains the advantages based on the opinion of the reviewer. Omit boilerplate text like \"pro:\" unless it was written by the reviewer.",
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
-        "productNames": {
-          "type": "array",
-          "description": "Optional. Descriptive name of a product.",
-          "items": {
-            "type": "string"
-          }
-        },
-        "collectionMethod": {
-          "type": "string",
-          "enum": [
-            "COLLECTION_METHOD_UNSPECIFIED",
-            "UNSOLICITED",
-            "POST_FULFILLMENT"
-          ],
-          "description": "Optional. The method used to collect the review.",
-          "enumDescriptions": [
-            "Collection method unspecified.",
-            "The user was not responding to a specific solicitation when they submitted the review.",
-            "The user submitted the review in response to a solicitation after fulfillment of the user's order."
-          ]
-        },
-        "isSpam": {
-          "type": "boolean",
-          "description": "Optional. Indicates whether the review is marked as spam in the publisher's system."
-        },
-        "reviewerUsername": {
-          "description": "Optional. The name of the reviewer of the product review.",
-          "type": "string"
-        },
-        "rating": {
-          "description": "Optional. The reviewer's overall rating of the product.",
           "format": "double",
-          "type": "number"
+          "description": "Optional. The reviewer's overall rating of the merchant."
         },
-        "isVerifiedPurchase": {
-          "type": "boolean",
-          "description": "Optional. Indicates whether the reviewer's purchase is verified."
-        },
-        "subclientName": {
+        "merchantId": {
           "type": "string",
-          "description": "Optional. The name of the subclient of the product reviews. The subclient is an identifier of the product review source. It should be equivalent to the directory provided in the file data source path."
-        },
-        "maxRating": {
-          "description": "Optional. The maximum possible number for the rating. The value of the max rating must be greater than the value of the min attribute.",
-          "format": "int64",
-          "type": "string"
-        },
-        "skus": {
-          "type": "array",
-          "description": "Optional. Contains SKUs (stock keeping units) associated with a product. Often this matches the product Offer Id in the product feed.",
-          "items": {
-            "type": "string"
-          }
-        },
-        "reviewTime": {
-          "type": "string",
-          "description": "Required. The timestamp indicating when the review was written.",
-          "format": "google-datetime"
-        },
-        "minRating": {
-          "description": "Optional. Contains the ratings associated with the review. The minimum possible number for the rating. This should be the worst possible rating and should not be a value for no rating.",
-          "format": "int64",
-          "type": "string"
-        },
-        "publisherFavicon": {
-          "description": "Optional. A link to the company favicon of the publisher. The image dimensions should be favicon size: 16x16 pixels. The image format should be GIF, JPG or PNG.",
-          "type": "string"
-        },
-        "gtins": {
-          "items": {
-            "type": "string"
-          },
-          "description": "Optional. Contains GTINs (global trade item numbers) associated with a product. Sub-types of GTINs (e.g. UPC, EAN, ISBN, JAN) are supported.",
-          "type": "array"
-        },
-        "aggregatorName": {
-          "type": "string",
-          "description": "Optional. The name of the aggregator of the product reviews. A publisher may use a reviews aggregator to manage reviews and provide the feeds. This element indicates the use of an aggregator and contains information about the aggregator."
-        },
-        "cons": {
-          "items": {
-            "type": "string"
-          },
-          "description": "Optional. Contains the disadvantages based on the opinion of the reviewer. Omit boilerplate text like \"con:\" unless it was written by the reviewer.",
-          "type": "array"
-        },
-        "brands": {
-          "type": "array",
-          "description": "Optional. Contains brand names associated with a product.",
-          "items": {
-            "type": "string"
-          }
-        },
-        "reviewLanguage": {
-          "type": "string",
-          "description": "Optional. The language of the review defined by BCP-47 language code."
+          "description": "Required. Must be unique and stable across all requests. In other words, if a request today and another 90 days ago refer to the same merchant, they must have the same id."
         },
         "title": {
-          "description": "Optional. The title of the review.",
+          "type": "string",
+          "description": "Optional. The title of the review."
+        },
+        "merchantLink": {
+          "type": "string",
+          "description": "Optional. URL to the merchant's main website. Do not use a redirect URL for this value. In other words, the value should point directly to the merchant's site."
+        },
+        "isAnonymous": {
+          "description": "Optional. Set to true if the reviewer should remain anonymous.",
+          "type": "boolean"
+        },
+        "reviewLanguage": {
+          "description": "Optional. The language of the review defined by BCP-47 language code.",
           "type": "string"
         },
-        "publisherName": {
+        "merchantRatingLink": {
           "type": "string",
-          "description": "Optional. The name of the publisher of the product reviews. The information about the publisher, which may be a retailer, manufacturer, reviews service company, or any entity that publishes product reviews."
-        },
-        "mpns": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Optional. Contains MPNs (manufacturer part numbers) associated with a product."
-        },
-        "reviewerId": {
-          "type": "string",
-          "description": "Optional. The author of the product review. A permanent, unique identifier for the author of the review in the publisher's system."
-        },
-        "transactionId": {
-          "description": "Optional. A permanent, unique identifier for the transaction associated with the review in the publisher's system. This ID can be used to indicate that multiple reviews are associated with the same transaction.",
-          "type": "string"
-        },
-        "reviewLink": {
-          "description": "Optional. The URI of the review landing page.",
-          "$ref": "ReviewLink"
-        },
-        "isIncentivizedReview": {
-          "type": "boolean",
-          "description": "Optional. Indicates whether the review is incentivized."
-        },
-        "reviewerIsAnonymous": {
-          "type": "boolean",
-          "description": "Optional. Set to true if the reviewer should remain anonymous."
+          "description": "Optional. URL to the landing page that hosts the reviews for this merchant. Do not use a redirect URL."
         },
         "content": {
-          "type": "string",
-          "description": "Optional. The content of the review. If empty, the content might still get populated from pros and cons."
+          "description": "Required. This should be any freeform text provided by the user and should not be truncated. If multiple responses to different questions are provided, all responses should be included, with the minimal context for the responses to make sense. Context should not be provided if questions were left unanswered.",
+          "type": "string"
         },
-        "reviewCountry": {
+        "maxRating": {
+          "description": "Optional. The maximum possible number for the rating. The value of the max rating must be greater than the value of the min rating.",
           "type": "string",
-          "description": "Optional. The country of the review defined by ISO 3166-1 Alpha-2 Country Code."
+          "format": "int64"
         },
-        "productLinks": {
-          "type": "array",
-          "description": "Optional. The URI of the product. This URI can have the same value as the `review_link` element, if the review URI and the product URI are the same.",
-          "items": {
-            "type": "string"
+        "reviewerId": {
+          "description": "Optional. A permanent, unique identifier for the author of the review in the publisher's system.",
+          "type": "string"
+        }
+      },
+      "id": "MerchantReviewAttributes"
+    }
+  },
+  "fullyEncodeReservedExpansion": true,
+  "resources": {
+    "accounts": {
+      "resources": {
+        "productReviews": {
+          "methods": {
+            "list": {
+              "path": "reviews/v1beta/{+parent}/productReviews",
+              "scopes": [
+                "https://www.googleapis.com/auth/content"
+              ],
+              "description": "Lists product reviews.",
+              "id": "merchantapi.accounts.productReviews.list",
+              "parameterOrder": [
+                "parent"
+              ],
+              "flatPath": "reviews/v1beta/accounts/{accountsId}/productReviews",
+              "parameters": {
+                "pageToken": {
+                  "location": "query",
+                  "type": "string",
+                  "description": "Optional. A page token, received from a previous `ListProductReviews` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListProductReviews` must match the call that provided the page token."
+                },
+                "parent": {
+                  "location": "path",
+                  "description": "Required. The account to list product reviews for. Format: accounts/{account}",
+                  "required": true,
+                  "pattern": "^accounts/[^/]+$",
+                  "type": "string"
+                },
+                "pageSize": {
+                  "description": "Optional. The maximum number of products to return. The service may return fewer than this value.",
+                  "location": "query",
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "response": {
+                "$ref": "ListProductReviewsResponse"
+              },
+              "httpMethod": "GET"
+            },
+            "delete": {
+              "httpMethod": "DELETE",
+              "parameters": {
+                "name": {
+                  "type": "string",
+                  "location": "path",
+                  "description": "Required. The ID of the Product review. Format: accounts/{account}/productReviews/{productReview}",
+                  "required": true,
+                  "pattern": "^accounts/[^/]+/productReviews/[^/]+$"
+                }
+              },
+              "response": {
+                "$ref": "Empty"
+              },
+              "id": "merchantapi.accounts.productReviews.delete",
+              "parameterOrder": [
+                "name"
+              ],
+              "flatPath": "reviews/v1beta/accounts/{accountsId}/productReviews/{productReviewsId}",
+              "path": "reviews/v1beta/{+name}",
+              "scopes": [
+                "https://www.googleapis.com/auth/content"
+              ],
+              "description": "Deletes a product review."
+            },
+            "get": {
+              "scopes": [
+                "https://www.googleapis.com/auth/content"
+              ],
+              "path": "reviews/v1beta/{+name}",
+              "description": "Gets a product review.",
+              "id": "merchantapi.accounts.productReviews.get",
+              "flatPath": "reviews/v1beta/accounts/{accountsId}/productReviews/{productReviewsId}",
+              "parameterOrder": [
+                "name"
+              ],
+              "parameters": {
+                "name": {
+                  "location": "path",
+                  "description": "Required. The ID of the merchant review. Format: accounts/{account}/productReviews/{productReview}",
+                  "required": true,
+                  "pattern": "^accounts/[^/]+/productReviews/[^/]+$",
+                  "type": "string"
+                }
+              },
+              "response": {
+                "$ref": "ProductReview"
+              },
+              "httpMethod": "GET"
+            },
+            "insert": {
+              "scopes": [
+                "https://www.googleapis.com/auth/content"
+              ],
+              "path": "reviews/v1beta/{+parent}/productReviews:insert",
+              "description": "Inserts a product review.",
+              "id": "merchantapi.accounts.productReviews.insert",
+              "flatPath": "reviews/v1beta/accounts/{accountsId}/productReviews:insert",
+              "parameterOrder": [
+                "parent"
+              ],
+              "parameters": {
+                "parent": {
+                  "location": "path",
+                  "description": "Required. The account where the product review will be inserted. Format: accounts/{account}",
+                  "required": true,
+                  "pattern": "^accounts/[^/]+$",
+                  "type": "string"
+                },
+                "dataSource": {
+                  "location": "query",
+                  "type": "string",
+                  "description": "Required. Format: `accounts/{account}/dataSources/{datasource}`."
+                }
+              },
+              "request": {
+                "$ref": "ProductReview"
+              },
+              "response": {
+                "$ref": "ProductReview"
+              },
+              "httpMethod": "POST"
+            }
+          }
+        },
+        "merchantReviews": {
+          "methods": {
+            "get": {
+              "httpMethod": "GET",
+              "parameters": {
+                "name": {
+                  "location": "path",
+                  "description": "Required. The ID of the merchant review. Format: accounts/{account}/merchantReviews/{merchantReview}",
+                  "required": true,
+                  "pattern": "^accounts/[^/]+/merchantReviews/[^/]+$",
+                  "type": "string"
+                }
+              },
+              "response": {
+                "$ref": "MerchantReview"
+              },
+              "id": "merchantapi.accounts.merchantReviews.get",
+              "parameterOrder": [
+                "name"
+              ],
+              "flatPath": "reviews/v1beta/accounts/{accountsId}/merchantReviews/{merchantReviewsId}",
+              "path": "reviews/v1beta/{+name}",
+              "scopes": [
+                "https://www.googleapis.com/auth/content"
+              ],
+              "description": "Gets a merchant review."
+            },
+            "insert": {
+              "path": "reviews/v1beta/{+parent}/merchantReviews:insert",
+              "scopes": [
+                "https://www.googleapis.com/auth/content"
+              ],
+              "description": "Inserts a review for your Merchant Center account. If the review already exists, then the review is replaced with the new instance.",
+              "id": "merchantapi.accounts.merchantReviews.insert",
+              "parameterOrder": [
+                "parent"
+              ],
+              "flatPath": "reviews/v1beta/accounts/{accountsId}/merchantReviews:insert",
+              "parameters": {
+                "parent": {
+                  "type": "string",
+                  "pattern": "^accounts/[^/]+$",
+                  "location": "path",
+                  "description": "Required. The account where the merchant review will be inserted. Format: accounts/{account}",
+                  "required": true
+                },
+                "dataSource": {
+                  "description": "Required. The data source of the [merchantreview](https://support.google.com/merchants/answer/7045996?sjid=5253581244217581976-EU) Format: `accounts/{account}/dataSources/{datasource}`.",
+                  "location": "query",
+                  "type": "string"
+                }
+              },
+              "request": {
+                "$ref": "MerchantReview"
+              },
+              "response": {
+                "$ref": "MerchantReview"
+              },
+              "httpMethod": "POST"
+            },
+            "list": {
+              "description": "Lists merchant reviews.",
+              "path": "reviews/v1beta/{+parent}/merchantReviews",
+              "scopes": [
+                "https://www.googleapis.com/auth/content"
+              ],
+              "parameterOrder": [
+                "parent"
+              ],
+              "flatPath": "reviews/v1beta/accounts/{accountsId}/merchantReviews",
+              "id": "merchantapi.accounts.merchantReviews.list",
+              "parameters": {
+                "pageToken": {
+                  "description": "Optional. A page token, received from a previous `ListMerchantReviews` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListMerchantReviews` must match the call that provided the page token.",
+                  "location": "query",
+                  "type": "string"
+                },
+                "parent": {
+                  "type": "string",
+                  "description": "Required. The account to list merchant reviews for. Format: accounts/{account}",
+                  "required": true,
+                  "location": "path",
+                  "pattern": "^accounts/[^/]+$"
+                },
+                "pageSize": {
+                  "description": "Optional. The maximum number of merchant reviews to return. The service can return fewer than this value. The maximum value is 1000; values above 1000 are coerced to 1000. If unspecified, the maximum number of reviews is returned.",
+                  "location": "query",
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "response": {
+                "$ref": "ListMerchantReviewsResponse"
+              },
+              "httpMethod": "GET"
+            },
+            "delete": {
+              "httpMethod": "DELETE",
+              "parameters": {
+                "name": {
+                  "pattern": "^accounts/[^/]+/merchantReviews/[^/]+$",
+                  "description": "Required. The ID of the merchant review. Format: accounts/{account}/merchantReviews/{merchantReview}",
+                  "required": true,
+                  "location": "path",
+                  "type": "string"
+                }
+              },
+              "response": {
+                "$ref": "Empty"
+              },
+              "id": "merchantapi.accounts.merchantReviews.delete",
+              "parameterOrder": [
+                "name"
+              ],
+              "flatPath": "reviews/v1beta/accounts/{accountsId}/merchantReviews/{merchantReviewsId}",
+              "path": "reviews/v1beta/{+name}",
+              "scopes": [
+                "https://www.googleapis.com/auth/content"
+              ],
+              "description": "Deletes merchant review."
+            }
           }
         }
       }
     }
   },
+  "name": "merchantapi",
+  "batchPath": "batch",
+  "mtlsRootUrl": "https://merchantapi.mtls.googleapis.com/",
+  "protocol": "rest",
+  "canonicalName": "Merchant",
   "auth": {
     "oauth2": {
       "scopes": {
@@ -1069,13 +1320,21 @@
       }
     }
   },
-  "batchPath": "batch",
+  "kind": "discovery#restDescription",
+  "basePath": "",
+  "documentationLink": "https://developers.google.com/merchant/api",
+  "version_module": true,
+  "revision": "20260505",
   "servicePath": "",
+  "ownerName": "Google",
+  "id": "merchantapi:reviews_v1beta",
   "title": "Merchant API",
+  "version": "reviews_v1beta",
   "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+    "x32": "http://www.google.com/images/icons/product/search-32.gif",
+    "x16": "http://www.google.com/images/icons/product/search-16.gif"
   },
+  "rootUrl": "https://merchantapi.googleapis.com/",
   "parameters": {
     "alt": {
       "enumDescriptions": [
@@ -1083,9 +1342,9 @@
         "Media download with context-dependent Content-Type",
         "Responses with Content-Type of application/x-protobuf"
       ],
-      "location": "query",
       "type": "string",
       "default": "json",
+      "location": "query",
       "description": "Data format for response.",
       "enum": [
         "json",
@@ -1093,323 +1352,64 @@
         "proto"
       ]
     },
-    "key": {
+    "uploadType": {
       "type": "string",
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+      "location": "query",
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\")."
+    },
+    "callback": {
+      "type": "string",
+      "location": "query",
+      "description": "JSONP"
+    },
+    "access_token": {
+      "description": "OAuth access token.",
+      "type": "string",
       "location": "query"
     },
     "fields": {
       "description": "Selector specifying which fields to include in a partial response.",
-      "location": "query",
-      "type": "string"
+      "type": "string",
+      "location": "query"
     },
     "oauth_token": {
       "description": "OAuth 2.0 token for the current user.",
-      "location": "query",
-      "type": "string"
-    },
-    "callback": {
-      "description": "JSONP",
-      "location": "query",
-      "type": "string"
+      "type": "string",
+      "location": "query"
     },
     "prettyPrint": {
-      "type": "boolean",
       "description": "Returns response with indentations and line breaks.",
-      "location": "query",
-      "default": "true"
-    },
-    "access_token": {
-      "type": "string",
-      "description": "OAuth access token.",
+      "default": "true",
+      "type": "boolean",
       "location": "query"
     },
     "upload_protocol": {
-      "type": "string",
       "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
+      "type": "string",
+      "location": "query"
+    },
+    "key": {
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+      "type": "string",
       "location": "query"
     },
     "quotaUser": {
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
-      "location": "query",
-      "type": "string"
-    },
-    "uploadType": {
       "type": "string",
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
-      "location": "query"
+      "location": "query",
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters."
     },
     "$.xgafv": {
-      "type": "string",
-      "location": "query",
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ],
+      "description": "V1 error format.",
       "enum": [
         "1",
         "2"
       ],
-      "description": "V1 error format."
+      "location": "query",
+      "type": "string",
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ]
     }
-  },
-  "protocol": "rest",
-  "description": "Programmatically manage your Merchant Center Accounts.",
-  "ownerDomain": "google.com",
-  "baseUrl": "https://merchantapi.googleapis.com/",
-  "mtlsRootUrl": "https://merchantapi.mtls.googleapis.com/",
-  "ownerName": "Google",
-  "resources": {
-    "accounts": {
-      "resources": {
-        "merchantReviews": {
-          "methods": {
-            "delete": {
-              "id": "merchantapi.accounts.merchantReviews.delete",
-              "scopes": [
-                "https://www.googleapis.com/auth/content"
-              ],
-              "parameters": {
-                "name": {
-                  "description": "Required. The ID of the merchant review. Format: accounts/{account}/merchantReviews/{merchantReview}",
-                  "pattern": "^accounts/[^/]+/merchantReviews/[^/]+$",
-                  "type": "string",
-                  "location": "path",
-                  "required": true
-                }
-              },
-              "httpMethod": "DELETE",
-              "flatPath": "reviews/v1beta/accounts/{accountsId}/merchantReviews/{merchantReviewsId}",
-              "parameterOrder": [
-                "name"
-              ],
-              "response": {
-                "$ref": "Empty"
-              },
-              "path": "reviews/v1beta/{+name}",
-              "description": "Deletes merchant review."
-            },
-            "list": {
-              "id": "merchantapi.accounts.merchantReviews.list",
-              "scopes": [
-                "https://www.googleapis.com/auth/content"
-              ],
-              "httpMethod": "GET",
-              "parameters": {
-                "pageSize": {
-                  "description": "Optional. The maximum number of merchant reviews to return. The service can return fewer than this value. The maximum value is 1000; values above 1000 are coerced to 1000. If unspecified, the maximum number of reviews is returned.",
-                  "location": "query",
-                  "format": "int32",
-                  "type": "integer"
-                },
-                "parent": {
-                  "type": "string",
-                  "location": "path",
-                  "required": true,
-                  "description": "Required. The account to list merchant reviews for. Format: accounts/{account}",
-                  "pattern": "^accounts/[^/]+$"
-                },
-                "pageToken": {
-                  "type": "string",
-                  "description": "Optional. A page token, received from a previous `ListMerchantReviews` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListMerchantReviews` must match the call that provided the page token.",
-                  "location": "query"
-                }
-              },
-              "flatPath": "reviews/v1beta/accounts/{accountsId}/merchantReviews",
-              "description": "Lists merchant reviews.",
-              "path": "reviews/v1beta/{+parent}/merchantReviews",
-              "response": {
-                "$ref": "ListMerchantReviewsResponse"
-              },
-              "parameterOrder": [
-                "parent"
-              ]
-            },
-            "insert": {
-              "flatPath": "reviews/v1beta/accounts/{accountsId}/merchantReviews:insert",
-              "request": {
-                "$ref": "MerchantReview"
-              },
-              "description": "Inserts a review for your Merchant Center account. If the review already exists, then the review is replaced with the new instance.",
-              "path": "reviews/v1beta/{+parent}/merchantReviews:insert",
-              "response": {
-                "$ref": "MerchantReview"
-              },
-              "parameterOrder": [
-                "parent"
-              ],
-              "id": "merchantapi.accounts.merchantReviews.insert",
-              "scopes": [
-                "https://www.googleapis.com/auth/content"
-              ],
-              "httpMethod": "POST",
-              "parameters": {
-                "parent": {
-                  "type": "string",
-                  "location": "path",
-                  "required": true,
-                  "description": "Required. The account where the merchant review will be inserted. Format: accounts/{account}",
-                  "pattern": "^accounts/[^/]+$"
-                },
-                "dataSource": {
-                  "description": "Required. The data source of the [merchantreview](https://support.google.com/merchants/answer/7045996?sjid=5253581244217581976-EU) Format: `accounts/{account}/dataSources/{datasource}`.",
-                  "location": "query",
-                  "type": "string"
-                }
-              }
-            },
-            "get": {
-              "response": {
-                "$ref": "MerchantReview"
-              },
-              "parameterOrder": [
-                "name"
-              ],
-              "description": "Gets a merchant review.",
-              "path": "reviews/v1beta/{+name}",
-              "flatPath": "reviews/v1beta/accounts/{accountsId}/merchantReviews/{merchantReviewsId}",
-              "parameters": {
-                "name": {
-                  "location": "path",
-                  "required": true,
-                  "type": "string",
-                  "description": "Required. The ID of the merchant review. Format: accounts/{account}/merchantReviews/{merchantReview}",
-                  "pattern": "^accounts/[^/]+/merchantReviews/[^/]+$"
-                }
-              },
-              "httpMethod": "GET",
-              "id": "merchantapi.accounts.merchantReviews.get",
-              "scopes": [
-                "https://www.googleapis.com/auth/content"
-              ]
-            }
-          }
-        },
-        "productReviews": {
-          "methods": {
-            "delete": {
-              "id": "merchantapi.accounts.productReviews.delete",
-              "scopes": [
-                "https://www.googleapis.com/auth/content"
-              ],
-              "httpMethod": "DELETE",
-              "parameters": {
-                "name": {
-                  "description": "Required. The ID of the Product review. Format: accounts/{account}/productReviews/{productReview}",
-                  "pattern": "^accounts/[^/]+/productReviews/[^/]+$",
-                  "type": "string",
-                  "required": true,
-                  "location": "path"
-                }
-              },
-              "flatPath": "reviews/v1beta/accounts/{accountsId}/productReviews/{productReviewsId}",
-              "path": "reviews/v1beta/{+name}",
-              "description": "Deletes a product review.",
-              "parameterOrder": [
-                "name"
-              ],
-              "response": {
-                "$ref": "Empty"
-              }
-            },
-            "get": {
-              "id": "merchantapi.accounts.productReviews.get",
-              "scopes": [
-                "https://www.googleapis.com/auth/content"
-              ],
-              "parameters": {
-                "name": {
-                  "type": "string",
-                  "required": true,
-                  "location": "path",
-                  "description": "Required. The ID of the merchant review. Format: accounts/{account}/productReviews/{productReview}",
-                  "pattern": "^accounts/[^/]+/productReviews/[^/]+$"
-                }
-              },
-              "httpMethod": "GET",
-              "flatPath": "reviews/v1beta/accounts/{accountsId}/productReviews/{productReviewsId}",
-              "response": {
-                "$ref": "ProductReview"
-              },
-              "parameterOrder": [
-                "name"
-              ],
-              "description": "Gets a product review.",
-              "path": "reviews/v1beta/{+name}"
-            },
-            "list": {
-              "path": "reviews/v1beta/{+parent}/productReviews",
-              "description": "Lists product reviews.",
-              "parameterOrder": [
-                "parent"
-              ],
-              "response": {
-                "$ref": "ListProductReviewsResponse"
-              },
-              "flatPath": "reviews/v1beta/accounts/{accountsId}/productReviews",
-              "httpMethod": "GET",
-              "parameters": {
-                "parent": {
-                  "description": "Required. The account to list product reviews for. Format: accounts/{account}",
-                  "pattern": "^accounts/[^/]+$",
-                  "location": "path",
-                  "required": true,
-                  "type": "string"
-                },
-                "pageToken": {
-                  "type": "string",
-                  "description": "Optional. A page token, received from a previous `ListProductReviews` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListProductReviews` must match the call that provided the page token.",
-                  "location": "query"
-                },
-                "pageSize": {
-                  "description": "Optional. The maximum number of products to return. The service may return fewer than this value.",
-                  "location": "query",
-                  "format": "int32",
-                  "type": "integer"
-                }
-              },
-              "id": "merchantapi.accounts.productReviews.list",
-              "scopes": [
-                "https://www.googleapis.com/auth/content"
-              ]
-            },
-            "insert": {
-              "response": {
-                "$ref": "ProductReview"
-              },
-              "parameterOrder": [
-                "parent"
-              ],
-              "description": "Inserts a product review.",
-              "path": "reviews/v1beta/{+parent}/productReviews:insert",
-              "request": {
-                "$ref": "ProductReview"
-              },
-              "flatPath": "reviews/v1beta/accounts/{accountsId}/productReviews:insert",
-              "parameters": {
-                "parent": {
-                  "required": true,
-                  "location": "path",
-                  "type": "string",
-                  "description": "Required. The account where the product review will be inserted. Format: accounts/{account}",
-                  "pattern": "^accounts/[^/]+$"
-                },
-                "dataSource": {
-                  "description": "Required. Format: `accounts/{account}/dataSources/{datasource}`.",
-                  "location": "query",
-                  "type": "string"
-                }
-              },
-              "httpMethod": "POST",
-              "id": "merchantapi.accounts.productReviews.insert",
-              "scopes": [
-                "https://www.googleapis.com/auth/content"
-              ]
-            }
-          }
-        }
-      }
-    }
-  },
-  "revision": "20260501"
+  }
 }
