@@ -38,6 +38,25 @@ interface DirectoryResponse {
   items: DirectoryItem[];
 }
 
+/**
+ * APIs that publish a discovery document but are not listed in Google's
+ * central discovery directory at {@link DISCOVERY_URL}. Add entries here to
+ * include them in the mirror.
+ */
+const EXTRAS: DirectoryItem[] = [
+  {
+    kind: "discovery#directoryItem",
+    id: "lustre:v1",
+    name: "lustre",
+    version: "v1",
+    title: "Google Cloud Managed Lustre API",
+    description: "Google Cloud Managed Lustre API.",
+    discoveryRestUrl:
+      "https://lustre.googleapis.com/$discovery/rest?version=v1",
+    preferred: true,
+  },
+];
+
 const concurrency = 20;
 
 async function main() {
@@ -57,7 +76,15 @@ async function main() {
     JSON.stringify(directory, null, 2),
   );
 
-  console.log(`Found ${directory.items.length} API entries`);
+  // Merge in APIs published outside the central directory. Re-sort by
+  // name+version so the manifest stays alphabetically stable.
+  directory.items = [...directory.items, ...EXTRAS].sort((a, b) =>
+    `${a.name}:${a.version}`.localeCompare(`${b.name}:${b.version}`),
+  );
+
+  console.log(
+    `Found ${directory.items.length} API entries (${EXTRAS.length} from EXTRAS)`,
+  );
 
   // Fetch ALL versions of ALL APIs — no filtering
   const items = directory.items;
@@ -132,9 +159,7 @@ async function main() {
     JSON.stringify(manifest, null, 2),
   );
 
-  console.log(
-    `\nDone! ${fetched} specs saved to specs/, ${failed} failed.`,
-  );
+  console.log(`\nDone! ${fetched} specs saved to specs/, ${failed} failed.`);
   console.log(`Manifest: ${SPECS_DIR}/_manifest.json`);
 }
 
