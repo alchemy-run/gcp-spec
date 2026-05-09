@@ -1,98 +1,28 @@
 {
-  "parameters": {
-    "key": {
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
-      "location": "query",
-      "type": "string"
-    },
-    "access_token": {
-      "description": "OAuth access token.",
-      "location": "query",
-      "type": "string"
-    },
-    "oauth_token": {
-      "description": "OAuth 2.0 token for the current user.",
-      "location": "query",
-      "type": "string"
-    },
-    "$.xgafv": {
-      "location": "query",
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ],
-      "description": "V1 error format.",
-      "type": "string",
-      "enum": [
-        "1",
-        "2"
-      ]
-    },
-    "alt": {
-      "enumDescriptions": [
-        "Responses with Content-Type of application/json",
-        "Media download with context-dependent Content-Type",
-        "Responses with Content-Type of application/x-protobuf"
-      ],
-      "default": "json",
-      "location": "query",
-      "type": "string",
-      "enum": [
-        "json",
-        "media",
-        "proto"
-      ],
-      "description": "Data format for response."
-    },
-    "callback": {
-      "description": "JSONP",
-      "location": "query",
-      "type": "string"
-    },
-    "upload_protocol": {
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
-      "location": "query",
-      "type": "string"
-    },
-    "fields": {
-      "description": "Selector specifying which fields to include in a partial response.",
-      "location": "query",
-      "type": "string"
-    },
-    "quotaUser": {
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
-      "location": "query",
-      "type": "string"
-    },
-    "prettyPrint": {
-      "type": "boolean",
-      "default": "true",
-      "description": "Returns response with indentations and line breaks.",
-      "location": "query"
-    },
-    "uploadType": {
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
-      "location": "query",
-      "type": "string"
-    }
-  },
-  "protocol": "rest",
-  "mtlsRootUrl": "https://chromewebstore.mtls.googleapis.com/",
-  "version": "v2",
-  "revision": "20260506",
-  "baseUrl": "https://chromewebstore.googleapis.com/",
   "ownerName": "Google",
-  "version_module": true,
   "description": "The Chrome Web Store API provides access to data about apps and extensions, as well as developer tools for managing them.",
-  "icons": {
-    "x32": "http://www.google.com/images/icons/product/search-32.gif",
-    "x16": "http://www.google.com/images/icons/product/search-16.gif"
-  },
-  "title": "Chrome Web Store API",
+  "mtlsRootUrl": "https://chromewebstore.mtls.googleapis.com/",
   "schemas": {
-    "PublishItemRequest": {
+    "SetPublishedDeployPercentageRequest": {
+      "id": "SetPublishedDeployPercentageRequest",
       "type": "object",
       "properties": {
+        "deployPercentage": {
+          "type": "integer",
+          "description": "Required. Unscaled percentage value for the publised revision (nonnegative number between 0 and 100). It must be larger than the existing target percentage.",
+          "format": "int32"
+        }
+      },
+      "description": "Request message for SetPublishedDeployPercentage."
+    },
+    "PublishItemRequest": {
+      "id": "PublishItemRequest",
+      "type": "object",
+      "properties": {
+        "skipReview": {
+          "type": "boolean",
+          "description": "Optional. Whether to attempt to skip item review. The API will validate if the item qualifies and return a validation error if the item requires review. Defaults to `false` if unset."
+        },
         "publishType": {
           "description": "Optional. Use this to control if the item is published immediately on approval or staged for publishing in the future. Defaults to `DEFAULT_PUBLISH` if unset.",
           "type": "string",
@@ -107,10 +37,6 @@
             "STAGED_PUBLISH"
           ]
         },
-        "skipReview": {
-          "description": "Optional. Whether to attempt to skip item review. The API will validate if the item qualifies and return a validation error if the item requires review. Defaults to `false` if unset.",
-          "type": "boolean"
-        },
         "deployInfos": {
           "description": "Optional. Additional deploy information including the desired initial percentage rollout. Defaults to the current value saved in the developer dashboard if unset.",
           "type": "array",
@@ -119,24 +45,24 @@
           }
         }
       },
-      "id": "PublishItemRequest",
       "description": "Request message for PublishItem."
     },
-    "CancelSubmissionResponse": {
-      "id": "CancelSubmissionResponse",
-      "description": "Response message for `CancelSubmission`.",
+    "SetPublishedDeployPercentageResponse": {
+      "description": "Response message for `SetPublishedDeployPercentage`.",
+      "id": "SetPublishedDeployPercentageResponse",
       "type": "object",
       "properties": {}
     },
     "PublishItemResponse": {
+      "id": "PublishItemResponse",
       "type": "object",
       "properties": {
-        "name": {
-          "description": "The name of the item that was submitted",
+        "itemId": {
+          "description": "Output only. The ID of the item.",
+          "readOnly": true,
           "type": "string"
         },
         "state": {
-          "type": "string",
           "enum": [
             "ITEM_STATE_UNSPECIFIED",
             "PENDING_REVIEW",
@@ -146,7 +72,6 @@
             "REJECTED",
             "CANCELLED"
           ],
-          "description": "Output only. The current state of the submission.",
           "readOnly": true,
           "enumDescriptions": [
             "Default value. This value is unused.",
@@ -156,7 +81,164 @@
             "The item is published to trusted testers.",
             "The item has been rejected for publishing.",
             "The item submission has been cancelled."
+          ],
+          "description": "Output only. The current state of the submission.",
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the item that was submitted"
+        }
+      },
+      "description": "Response message for `PublishItem`."
+    },
+    "UploadItemPackageResponse": {
+      "id": "UploadItemPackageResponse",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "The name of the item the package was uploaded to.",
+          "type": "string"
+        },
+        "crxVersion": {
+          "description": "The extension version provided in the manifest of the uploaded package. This will not be set if the upload is still in progress (`upload_state` is `UPLOAD_IN_PROGRESS`).",
+          "type": "string"
+        },
+        "uploadState": {
+          "description": "Output only. The state of the upload. If `upload_state` is `UPLOAD_IN_PROGRESS`, you can poll for updates using the fetchStatus method.",
+          "type": "string",
+          "readOnly": true,
+          "enumDescriptions": [
+            "The default value.",
+            "The upload succeeded.",
+            "The upload is currently being processed.",
+            "The upload failed.",
+            "Used as the value of `lastAsyncUploadState` in a `fetchStatus` response indicating that an upload attempt was not found."
+          ],
+          "enum": [
+            "UPLOAD_STATE_UNSPECIFIED",
+            "SUCCEEDED",
+            "IN_PROGRESS",
+            "FAILED",
+            "NOT_FOUND"
           ]
+        },
+        "itemId": {
+          "description": "Output only. The ID of the item the package was uploaded to.",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "description": "Response message for `UploadItemPackage`."
+    },
+    "ItemRevisionStatus": {
+      "id": "ItemRevisionStatus",
+      "type": "object",
+      "properties": {
+        "state": {
+          "readOnly": true,
+          "enumDescriptions": [
+            "Default value. This value is unused.",
+            "The item is pending review.",
+            "The item has been approved and is ready to be published.",
+            "The item is published publicly.",
+            "The item is published to trusted testers.",
+            "The item has been rejected for publishing.",
+            "The item submission has been cancelled."
+          ],
+          "enum": [
+            "ITEM_STATE_UNSPECIFIED",
+            "PENDING_REVIEW",
+            "STAGED",
+            "PUBLISHED",
+            "PUBLISHED_TO_TESTERS",
+            "REJECTED",
+            "CANCELLED"
+          ],
+          "type": "string",
+          "description": "Output only. Current state of the item"
+        },
+        "distributionChannels": {
+          "type": "array",
+          "items": {
+            "$ref": "DistributionChannel"
+          },
+          "description": "Details on the package of the item"
+        }
+      },
+      "description": "Details on the status of an item revision."
+    },
+    "UploadItemPackageRequest": {
+      "id": "UploadItemPackageRequest",
+      "type": "object",
+      "properties": {},
+      "description": "Request message for UploadItemPackage."
+    },
+    "DeployInfo": {
+      "id": "DeployInfo",
+      "type": "object",
+      "properties": {
+        "deployPercentage": {
+          "type": "integer",
+          "description": "Required. The current deploy percentage for the release channel (nonnegative number between 0 and 100).",
+          "format": "int32"
+        }
+      },
+      "description": "Deployment information for a specific release channel. Used in requests to update deployment parameters."
+    },
+    "CancelSubmissionRequest": {
+      "id": "CancelSubmissionRequest",
+      "type": "object",
+      "properties": {},
+      "description": "Request message for CancelSubmission."
+    },
+    "FetchItemStatusResponse": {
+      "id": "FetchItemStatusResponse",
+      "type": "object",
+      "properties": {
+        "submittedItemRevisionStatus": {
+          "description": "Status of the item revision submitted to be published. Will be unset if the item has not been submitted for publishing since the last successful publish.",
+          "$ref": "ItemRevisionStatus"
+        },
+        "publicKey": {
+          "description": "The public key of the item, which may be generated by the store.",
+          "type": "string"
+        },
+        "takenDown": {
+          "type": "boolean",
+          "description": "If true, the item has been taken down for a policy violation. Check the developer dashboard for details."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the requested item."
+        },
+        "publishedItemRevisionStatus": {
+          "readOnly": true,
+          "$ref": "ItemRevisionStatus",
+          "description": "Output only. Status of the current published revision of the item. Will be unset if the item is not published."
+        },
+        "lastAsyncUploadState": {
+          "type": "string",
+          "description": "Output only. The state of the last async upload for an item. Only set when there has been an async upload for the item in the past 24 hours.",
+          "enum": [
+            "UPLOAD_STATE_UNSPECIFIED",
+            "SUCCEEDED",
+            "IN_PROGRESS",
+            "FAILED",
+            "NOT_FOUND"
+          ],
+          "readOnly": true,
+          "enumDescriptions": [
+            "The default value.",
+            "The upload succeeded.",
+            "The upload is currently being processed.",
+            "The upload failed.",
+            "Used as the value of `lastAsyncUploadState` in a `fetchStatus` response indicating that an upload attempt was not found."
+          ]
+        },
+        "warned": {
+          "description": "If true, the item has been warned for a policy violation and will be taken down if not resolved. Check the developer dashboard for details.",
+          "type": "boolean"
         },
         "itemId": {
           "readOnly": true,
@@ -164,11 +246,15 @@
           "description": "Output only. The ID of the item."
         }
       },
-      "id": "PublishItemResponse",
-      "description": "Response message for `PublishItem`."
+      "description": "Response message for `FetchItemStatus`."
+    },
+    "CancelSubmissionResponse": {
+      "description": "Response message for `CancelSubmission`.",
+      "id": "CancelSubmissionResponse",
+      "type": "object",
+      "properties": {}
     },
     "DistributionChannel": {
-      "description": "Deployment information for a specific release channel",
       "id": "DistributionChannel",
       "type": "object",
       "properties": {
@@ -181,264 +267,66 @@
           "description": "The extension version provided in the manifest of the uploaded package.",
           "type": "string"
         }
-      }
-    },
-    "UploadItemPackageRequest": {
-      "description": "Request message for UploadItemPackage.",
-      "id": "UploadItemPackageRequest",
-      "type": "object",
-      "properties": {}
-    },
-    "UploadItemPackageResponse": {
-      "type": "object",
-      "properties": {
-        "itemId": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. The ID of the item the package was uploaded to."
-        },
-        "crxVersion": {
-          "description": "The extension version provided in the manifest of the uploaded package. This will not be set if the upload is still in progress (`upload_state` is `UPLOAD_IN_PROGRESS`).",
-          "type": "string"
-        },
-        "uploadState": {
-          "readOnly": true,
-          "enumDescriptions": [
-            "The default value.",
-            "The upload succeeded.",
-            "The upload is currently being processed.",
-            "The upload failed.",
-            "Used as the value of `lastAsyncUploadState` in a `fetchStatus` response indicating that an upload attempt was not found."
-          ],
-          "type": "string",
-          "enum": [
-            "UPLOAD_STATE_UNSPECIFIED",
-            "SUCCEEDED",
-            "IN_PROGRESS",
-            "FAILED",
-            "NOT_FOUND"
-          ],
-          "description": "Output only. The state of the upload. If `upload_state` is `UPLOAD_IN_PROGRESS`, you can poll for updates using the fetchStatus method."
-        },
-        "name": {
-          "description": "The name of the item the package was uploaded to.",
-          "type": "string"
-        }
       },
-      "id": "UploadItemPackageResponse",
-      "description": "Response message for `UploadItemPackage`."
-    },
-    "SetPublishedDeployPercentageResponse": {
-      "id": "SetPublishedDeployPercentageResponse",
-      "description": "Response message for `SetPublishedDeployPercentage`.",
-      "type": "object",
-      "properties": {}
-    },
-    "DeployInfo": {
-      "description": "Deployment information for a specific release channel. Used in requests to update deployment parameters.",
-      "id": "DeployInfo",
-      "type": "object",
-      "properties": {
-        "deployPercentage": {
-          "description": "Required. The current deploy percentage for the release channel (nonnegative number between 0 and 100).",
-          "format": "int32",
-          "type": "integer"
-        }
-      }
-    },
-    "CancelSubmissionRequest": {
-      "type": "object",
-      "properties": {},
-      "description": "Request message for CancelSubmission.",
-      "id": "CancelSubmissionRequest"
-    },
-    "ItemRevisionStatus": {
-      "description": "Details on the status of an item revision.",
-      "id": "ItemRevisionStatus",
-      "type": "object",
-      "properties": {
-        "state": {
-          "description": "Output only. Current state of the item",
-          "type": "string",
-          "enum": [
-            "ITEM_STATE_UNSPECIFIED",
-            "PENDING_REVIEW",
-            "STAGED",
-            "PUBLISHED",
-            "PUBLISHED_TO_TESTERS",
-            "REJECTED",
-            "CANCELLED"
-          ],
-          "readOnly": true,
-          "enumDescriptions": [
-            "Default value. This value is unused.",
-            "The item is pending review.",
-            "The item has been approved and is ready to be published.",
-            "The item is published publicly.",
-            "The item is published to trusted testers.",
-            "The item has been rejected for publishing.",
-            "The item submission has been cancelled."
-          ]
-        },
-        "distributionChannels": {
-          "type": "array",
-          "items": {
-            "$ref": "DistributionChannel"
-          },
-          "description": "Details on the package of the item"
-        }
-      }
-    },
-    "FetchItemStatusResponse": {
-      "id": "FetchItemStatusResponse",
-      "description": "Response message for `FetchItemStatus`.",
-      "type": "object",
-      "properties": {
-        "takenDown": {
-          "description": "If true, the item has been taken down for a policy violation. Check the developer dashboard for details.",
-          "type": "boolean"
-        },
-        "publicKey": {
-          "description": "The public key of the item, which may be generated by the store.",
-          "type": "string"
-        },
-        "name": {
-          "description": "The name of the requested item.",
-          "type": "string"
-        },
-        "warned": {
-          "description": "If true, the item has been warned for a policy violation and will be taken down if not resolved. Check the developer dashboard for details.",
-          "type": "boolean"
-        },
-        "publishedItemRevisionStatus": {
-          "readOnly": true,
-          "description": "Output only. Status of the current published revision of the item. Will be unset if the item is not published.",
-          "$ref": "ItemRevisionStatus"
-        },
-        "itemId": {
-          "readOnly": true,
-          "type": "string",
-          "description": "Output only. The ID of the item."
-        },
-        "submittedItemRevisionStatus": {
-          "description": "Status of the item revision submitted to be published. Will be unset if the item has not been submitted for publishing since the last successful publish.",
-          "$ref": "ItemRevisionStatus"
-        },
-        "lastAsyncUploadState": {
-          "description": "Output only. The state of the last async upload for an item. Only set when there has been an async upload for the item in the past 24 hours.",
-          "type": "string",
-          "enum": [
-            "UPLOAD_STATE_UNSPECIFIED",
-            "SUCCEEDED",
-            "IN_PROGRESS",
-            "FAILED",
-            "NOT_FOUND"
-          ],
-          "readOnly": true,
-          "enumDescriptions": [
-            "The default value.",
-            "The upload succeeded.",
-            "The upload is currently being processed.",
-            "The upload failed.",
-            "Used as the value of `lastAsyncUploadState` in a `fetchStatus` response indicating that an upload attempt was not found."
-          ]
-        }
-      }
-    },
-    "SetPublishedDeployPercentageRequest": {
-      "type": "object",
-      "properties": {
-        "deployPercentage": {
-          "description": "Required. Unscaled percentage value for the publised revision (nonnegative number between 0 and 100). It must be larger than the existing target percentage.",
-          "format": "int32",
-          "type": "integer"
-        }
-      },
-      "id": "SetPublishedDeployPercentageRequest",
-      "description": "Request message for SetPublishedDeployPercentage."
+      "description": "Deployment information for a specific release channel"
     }
   },
+  "canonicalName": "Chromewebstore",
+  "title": "Chrome Web Store API",
+  "version": "v2",
   "resources": {
     "publishers": {
       "resources": {
         "items": {
           "methods": {
-            "setPublishedDeployPercentage": {
-              "parameters": {
-                "name": {
-                  "required": true,
-                  "type": "string",
-                  "description": "Required. Name of the item to update the published revision of in the form `publishers/{publisherId}/items/{itemId}`",
-                  "pattern": "^publishers/[^/]+/items/[^/]+$",
-                  "location": "path"
-                }
-              },
+            "publish": {
               "request": {
-                "$ref": "SetPublishedDeployPercentageRequest"
+                "$ref": "PublishItemRequest"
+              },
+              "response": {
+                "$ref": "PublishItemResponse"
               },
               "scopes": [
                 "https://www.googleapis.com/auth/chromewebstore"
               ],
-              "path": "v2/{+name}:setPublishedDeployPercentage",
-              "description": "Set a higher target deploy percentage for the item's published revision. This will be updated without the item being submitted for review. This is only available to items with over 10,000 seven-day active users.",
-              "id": "chromewebstore.publishers.items.setPublishedDeployPercentage",
-              "flatPath": "v2/publishers/{publishersId}/items/{itemsId}:setPublishedDeployPercentage",
+              "httpMethod": "POST",
+              "description": "Submit the item to be published in the store. The item will be submitted for review unless `skip_review` is set to true, or the item is staged from a previous submission with `publish_type` set to `STAGED_PUBLISH`.",
               "parameterOrder": [
                 "name"
               ],
-              "response": {
-                "$ref": "SetPublishedDeployPercentageResponse"
-              },
-              "httpMethod": "POST"
-            },
-            "publish": {
+              "path": "v2/{+name}:publish",
+              "id": "chromewebstore.publishers.items.publish",
+              "flatPath": "v2/publishers/{publishersId}/items/{itemsId}:publish",
               "parameters": {
                 "name": {
                   "pattern": "^publishers/[^/]+/items/[^/]+$",
                   "location": "path",
-                  "description": "Required. Name of the item in the form `publishers/{publisherId}/items/{itemId}`",
+                  "type": "string",
                   "required": true,
-                  "type": "string"
+                  "description": "Required. Name of the item in the form `publishers/{publisherId}/items/{itemId}`"
                 }
-              },
-              "request": {
-                "$ref": "PublishItemRequest"
-              },
-              "scopes": [
-                "https://www.googleapis.com/auth/chromewebstore"
-              ],
-              "id": "chromewebstore.publishers.items.publish",
-              "path": "v2/{+name}:publish",
-              "description": "Submit the item to be published in the store. The item will be submitted for review unless `skip_review` is set to true, or the item is staged from a previous submission with `publish_type` set to `STAGED_PUBLISH`.",
-              "flatPath": "v2/publishers/{publishersId}/items/{itemsId}:publish",
-              "response": {
-                "$ref": "PublishItemResponse"
-              },
+              }
+            },
+            "fetchStatus": {
               "parameterOrder": [
                 "name"
               ],
-              "httpMethod": "POST"
-            },
-            "fetchStatus": {
-              "httpMethod": "GET",
+              "path": "v2/{+name}:fetchStatus",
               "response": {
                 "$ref": "FetchItemStatusResponse"
               },
-              "parameterOrder": [
-                "name"
-              ],
-              "flatPath": "v2/publishers/{publishersId}/items/{itemsId}:fetchStatus",
-              "id": "chromewebstore.publishers.items.fetchStatus",
-              "path": "v2/{+name}:fetchStatus",
-              "description": "Fetch the status of an item.",
               "scopes": [
                 "https://www.googleapis.com/auth/chromewebstore",
                 "https://www.googleapis.com/auth/chromewebstore.readonly"
               ],
+              "httpMethod": "GET",
+              "description": "Fetch the status of an item.",
+              "id": "chromewebstore.publishers.items.fetchStatus",
+              "flatPath": "v2/publishers/{publishersId}/items/{itemsId}:fetchStatus",
               "parameters": {
                 "name": {
-                  "required": true,
                   "type": "string",
+                  "required": true,
                   "description": "Required. Name of the item to retrieve the status of in the form `publishers/{publisherId}/items/{itemId}`",
                   "pattern": "^publishers/[^/]+/items/[^/]+$",
                   "location": "path"
@@ -446,8 +334,17 @@
               }
             },
             "cancelSubmission": {
+              "parameterOrder": [
+                "name"
+              ],
+              "path": "v2/{+name}:cancelSubmission",
+              "httpMethod": "POST",
+              "description": "Cancel the current active submission of an item if present. This can be used to cancel the review of a pending submission.",
               "request": {
                 "$ref": "CancelSubmissionRequest"
+              },
+              "response": {
+                "$ref": "CancelSubmissionResponse"
               },
               "scopes": [
                 "https://www.googleapis.com/auth/chromewebstore"
@@ -461,17 +358,36 @@
                   "description": "Required. Name of the item to cancel the submission of in the form `publishers/{publisherId}/items/{itemId}`"
                 }
               },
+              "id": "chromewebstore.publishers.items.cancelSubmission",
+              "flatPath": "v2/publishers/{publishersId}/items/{itemsId}:cancelSubmission"
+            },
+            "setPublishedDeployPercentage": {
+              "parameters": {
+                "name": {
+                  "location": "path",
+                  "pattern": "^publishers/[^/]+/items/[^/]+$",
+                  "description": "Required. Name of the item to update the published revision of in the form `publishers/{publisherId}/items/{itemId}`",
+                  "required": true,
+                  "type": "string"
+                }
+              },
+              "id": "chromewebstore.publishers.items.setPublishedDeployPercentage",
+              "flatPath": "v2/publishers/{publishersId}/items/{itemsId}:setPublishedDeployPercentage",
               "parameterOrder": [
                 "name"
               ],
-              "response": {
-                "$ref": "CancelSubmissionResponse"
-              },
+              "path": "v2/{+name}:setPublishedDeployPercentage",
               "httpMethod": "POST",
-              "path": "v2/{+name}:cancelSubmission",
-              "description": "Cancel the current active submission of an item if present. This can be used to cancel the review of a pending submission.",
-              "id": "chromewebstore.publishers.items.cancelSubmission",
-              "flatPath": "v2/publishers/{publishersId}/items/{itemsId}:cancelSubmission"
+              "description": "Set a higher target deploy percentage for the item's published revision. This will be updated without the item being submitted for review. This is only available to items with over 10,000 seven-day active users.",
+              "request": {
+                "$ref": "SetPublishedDeployPercentageRequest"
+              },
+              "response": {
+                "$ref": "SetPublishedDeployPercentageResponse"
+              },
+              "scopes": [
+                "https://www.googleapis.com/auth/chromewebstore"
+              ]
             }
           }
         }
@@ -480,6 +396,29 @@
     "media": {
       "methods": {
         "upload": {
+          "parameters": {
+            "name": {
+              "pattern": "^publishers/[^/]+/items/[^/]+$",
+              "location": "path",
+              "required": true,
+              "description": "Required. Name of the item to upload the new package to in the form `publishers/{publisherId}/items/{itemId}`",
+              "type": "string"
+            }
+          },
+          "id": "chromewebstore.media.upload",
+          "flatPath": "v2/publishers/{publishersId}/items/{itemsId}:upload",
+          "httpMethod": "POST",
+          "description": "Upload a new package to an existing item.",
+          "request": {
+            "$ref": "UploadItemPackageRequest"
+          },
+          "response": {
+            "$ref": "UploadItemPackageResponse"
+          },
+          "scopes": [
+            "https://www.googleapis.com/auth/chromewebstore"
+          ],
+          "supportsMediaUpload": true,
           "mediaUpload": {
             "protocols": {
               "simple": {
@@ -492,59 +431,120 @@
             ],
             "maxSize": "2147483648"
           },
-          "parameters": {
-            "name": {
-              "pattern": "^publishers/[^/]+/items/[^/]+$",
-              "location": "path",
-              "description": "Required. Name of the item to upload the new package to in the form `publishers/{publisherId}/items/{itemId}`",
-              "required": true,
-              "type": "string"
-            }
-          },
-          "request": {
-            "$ref": "UploadItemPackageRequest"
-          },
-          "scopes": [
-            "https://www.googleapis.com/auth/chromewebstore"
-          ],
-          "id": "chromewebstore.media.upload",
-          "path": "v2/{+name}:upload",
-          "description": "Upload a new package to an existing item.",
-          "flatPath": "v2/publishers/{publishersId}/items/{itemsId}:upload",
-          "supportsMediaUpload": true,
-          "response": {
-            "$ref": "UploadItemPackageResponse"
-          },
           "parameterOrder": [
             "name"
           ],
-          "httpMethod": "POST"
+          "path": "v2/{+name}:upload"
         }
       }
     }
   },
-  "discoveryVersion": "v1",
-  "kind": "discovery#restDescription",
-  "basePath": "",
-  "canonicalName": "Chromewebstore",
-  "fullyEncodeReservedExpansion": true,
+  "icons": {
+    "x16": "http://www.google.com/images/icons/product/search-16.gif",
+    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  },
   "name": "chromewebstore",
-  "auth": {
-    "oauth2": {
-      "scopes": {
-        "https://www.googleapis.com/auth/chromewebstore.readonly": {
-          "description": "See and download your Chrome Web Store extensions and apps, and see licenses you have access to"
-        },
-        "https://www.googleapis.com/auth/chromewebstore": {
-          "description": "See, edit, update, or publish your Chrome Web Store extensions, themes, apps, and licences you have access to"
-        }
-      }
+  "baseUrl": "https://chromewebstore.googleapis.com/",
+  "batchPath": "batch",
+  "rootUrl": "https://chromewebstore.googleapis.com/",
+  "version_module": true,
+  "fullyEncodeReservedExpansion": true,
+  "discoveryVersion": "v1",
+  "servicePath": "",
+  "parameters": {
+    "$.xgafv": {
+      "type": "string",
+      "description": "V1 error format.",
+      "enum": [
+        "1",
+        "2"
+      ],
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ],
+      "location": "query"
+    },
+    "fields": {
+      "description": "Selector specifying which fields to include in a partial response.",
+      "location": "query",
+      "type": "string"
+    },
+    "prettyPrint": {
+      "description": "Returns response with indentations and line breaks.",
+      "default": "true",
+      "location": "query",
+      "type": "boolean"
+    },
+    "upload_protocol": {
+      "type": "string",
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
+      "location": "query"
+    },
+    "access_token": {
+      "description": "OAuth access token.",
+      "location": "query",
+      "type": "string"
+    },
+    "uploadType": {
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
+      "location": "query",
+      "type": "string"
+    },
+    "key": {
+      "type": "string",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+      "location": "query"
+    },
+    "quotaUser": {
+      "type": "string",
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
+      "location": "query"
+    },
+    "oauth_token": {
+      "description": "OAuth 2.0 token for the current user.",
+      "location": "query",
+      "type": "string"
+    },
+    "callback": {
+      "description": "JSONP",
+      "location": "query",
+      "type": "string"
+    },
+    "alt": {
+      "location": "query",
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ],
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ],
+      "description": "Data format for response.",
+      "default": "json",
+      "type": "string"
     }
   },
   "id": "chromewebstore:v2",
-  "batchPath": "batch",
-  "documentationLink": "https://developer.chrome.com/docs/webstore/api",
+  "basePath": "",
+  "revision": "20260506",
   "ownerDomain": "google.com",
-  "rootUrl": "https://chromewebstore.googleapis.com/",
-  "servicePath": ""
+  "auth": {
+    "oauth2": {
+      "scopes": {
+        "https://www.googleapis.com/auth/chromewebstore": {
+          "description": "See, edit, update, or publish your Chrome Web Store extensions, themes, apps, and licences you have access to"
+        },
+        "https://www.googleapis.com/auth/chromewebstore.readonly": {
+          "description": "See and download your Chrome Web Store extensions and apps, and see licenses you have access to"
+        }
+      }
+    }
+  },
+  "kind": "discovery#restDescription",
+  "documentationLink": "https://developer.chrome.com/docs/webstore/api",
+  "protocol": "rest"
 }
