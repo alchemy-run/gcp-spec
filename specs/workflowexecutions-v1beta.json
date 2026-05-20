@@ -1,225 +1,17 @@
 {
-  "name": "workflowexecutions",
+  "kind": "discovery#restDescription",
+  "version": "v1beta",
+  "fullyEncodeReservedExpansion": true,
   "batchPath": "batch",
-  "description": "Execute workflows created with Workflows API.",
-  "documentationLink": "https://cloud.google.com/workflows",
-  "canonicalName": "Workflow Executions",
-  "baseUrl": "https://workflowexecutions.googleapis.com/",
-  "schemas": {
-    "Error": {
-      "id": "Error",
-      "description": "Error describes why the execution was abnormally terminated.",
-      "type": "object",
-      "properties": {
-        "payload": {
-          "description": "Error message and data returned represented as a JSON string.",
-          "type": "string"
-        },
-        "context": {
-          "description": "Human-readable stack trace string.",
-          "type": "string"
-        },
-        "stackTrace": {
-          "description": "Stack trace with detailed information of where error was generated.",
-          "$ref": "StackTrace"
-        }
-      }
-    },
-    "ListExecutionsResponse": {
-      "type": "object",
-      "properties": {
-        "nextPageToken": {
-          "type": "string",
-          "description": "A token, which can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages."
-        },
-        "executions": {
-          "description": "The executions which match the request.",
-          "items": {
-            "$ref": "Execution"
-          },
-          "type": "array"
-        }
-      },
-      "id": "ListExecutionsResponse",
-      "description": "Response for the ListExecutions method."
-    },
-    "Execution": {
-      "description": "A running instance of a [Workflow](/workflows/docs/reference/rest/v1beta/projects.locations.workflows).",
-      "id": "Execution",
-      "type": "object",
-      "properties": {
-        "endTime": {
-          "description": "Output only. Marks the end of execution, successful or not.",
-          "readOnly": true,
-          "type": "string",
-          "format": "google-datetime"
-        },
-        "argument": {
-          "description": "Input parameters of the execution represented as a JSON string. The size limit is 32KB. *Note*: If you are using the REST API directly to run your workflow, you must escape any JSON string value of `argument`. Example: `'{\"argument\":\"{\\\"firstName\\\":\\\"FIRST\\\",\\\"lastName\\\":\\\"LAST\\\"}\"}'`",
-          "type": "string"
-        },
-        "result": {
-          "type": "string",
-          "description": "Output only. Output of the execution represented as a JSON string. The value can only be present if the execution's state is `SUCCEEDED`.",
-          "readOnly": true
-        },
-        "name": {
-          "type": "string",
-          "description": "Output only. The resource name of the execution. Format: projects/{project}/locations/{location}/workflows/{workflow}/executions/{execution}",
-          "readOnly": true
-        },
-        "state": {
-          "description": "Output only. Current state of the execution.",
-          "enumDescriptions": [
-            "Invalid state.",
-            "The execution is in progress.",
-            "The execution finished successfully.",
-            "The execution failed with an error.",
-            "The execution was stopped intentionally.",
-            "Reserved for future use.",
-            "Request has been placed in the backlog for processing at a later time."
-          ],
-          "readOnly": true,
-          "type": "string",
-          "enum": [
-            "STATE_UNSPECIFIED",
-            "ACTIVE",
-            "SUCCEEDED",
-            "FAILED",
-            "CANCELLED",
-            "UNAVAILABLE",
-            "QUEUED"
-          ]
-        },
-        "callLogLevel": {
-          "type": "string",
-          "enumDescriptions": [
-            "No call logging level specified.",
-            "Log all call steps within workflows, all call returns, and all exceptions raised.",
-            "Log only exceptions that are raised from call steps within workflows."
-          ],
-          "enum": [
-            "CALL_LOG_LEVEL_UNSPECIFIED",
-            "LOG_ALL_CALLS",
-            "LOG_ERRORS_ONLY"
-          ],
-          "description": "The call logging level associated to this execution."
-        },
-        "workflowRevisionId": {
-          "description": "Output only. Revision of the workflow this execution is using.",
-          "readOnly": true,
-          "type": "string"
-        },
-        "error": {
-          "description": "Output only. The error which caused the execution to finish prematurely. The value is only present if the execution's state is `FAILED` or `CANCELLED`.",
-          "readOnly": true,
-          "$ref": "Error"
-        },
-        "startTime": {
-          "description": "Output only. Marks the beginning of execution.",
-          "readOnly": true,
-          "type": "string",
-          "format": "google-datetime"
-        },
-        "status": {
-          "description": "Output only. Status tracks the current steps and progress data of this execution.",
-          "readOnly": true,
-          "$ref": "Status"
-        }
-      }
-    },
-    "StackTraceElement": {
-      "description": "A single stack element (frame) where an error occurred.",
-      "id": "StackTraceElement",
-      "type": "object",
-      "properties": {
-        "step": {
-          "description": "The step the error occurred at.",
-          "type": "string"
-        },
-        "position": {
-          "description": "The source position information of the stack trace element.",
-          "$ref": "Position"
-        },
-        "routine": {
-          "type": "string",
-          "description": "The routine where the error occurred."
-        }
-      }
-    },
-    "Position": {
-      "description": "Position contains source position information about the stack trace element such as line number, column number and length of the code block in bytes.",
-      "id": "Position",
-      "type": "object",
-      "properties": {
-        "column": {
-          "type": "string",
-          "format": "int64",
-          "description": "The source code column position (of the line) the current instruction was generated from."
-        },
-        "line": {
-          "type": "string",
-          "format": "int64",
-          "description": "The source code line number the current instruction was generated from."
-        },
-        "length": {
-          "description": "The number of bytes of source code making up this stack trace element.",
-          "type": "string",
-          "format": "int64"
-        }
-      }
-    },
-    "Status": {
-      "id": "Status",
-      "description": "Represents the current status of this execution.",
-      "type": "object",
-      "properties": {
-        "currentSteps": {
-          "description": "A list of currently executing or last executed step names for the workflow execution currently running. If the workflow has succeeded or failed, this is the last attempted or executed step. Presently, if the current step is inside a subworkflow, the list only includes that step. In the future, the list will contain items for each step in the call stack, starting with the outermost step in the `main` subworkflow, and ending with the most deeply nested step.",
-          "items": {
-            "$ref": "Step"
-          },
-          "type": "array"
-        }
-      }
-    },
-    "CancelExecutionRequest": {
-      "id": "CancelExecutionRequest",
-      "description": "Request for the CancelExecution method.",
-      "type": "object",
-      "properties": {}
-    },
-    "StackTrace": {
-      "description": "A collection of stack elements (frames) where an error occurred.",
-      "id": "StackTrace",
-      "type": "object",
-      "properties": {
-        "elements": {
-          "description": "An array of stack elements.",
-          "items": {
-            "$ref": "StackTraceElement"
-          },
-          "type": "array"
-        }
-      }
-    },
-    "Step": {
-      "id": "Step",
-      "description": "Represents a step of the workflow this execution is running.",
-      "type": "object",
-      "properties": {
-        "routine": {
-          "type": "string",
-          "description": "Name of a routine within the workflow."
-        },
-        "step": {
-          "description": "Name of a step within the routine.",
-          "type": "string"
-        }
-      }
-    }
-  },
+  "basePath": "",
+  "servicePath": "",
   "revision": "20260505",
+  "documentationLink": "https://cloud.google.com/workflows",
+  "name": "workflowexecutions",
+  "mtlsRootUrl": "https://workflowexecutions.mtls.googleapis.com/",
+  "title": "Workflow Executions API",
+  "discoveryVersion": "v1",
+  "version_module": true,
   "resources": {
     "projects": {
       "resources": {
@@ -229,63 +21,136 @@
               "resources": {
                 "executions": {
                   "methods": {
-                    "get": {
-                      "httpMethod": "GET",
-                      "description": "Returns an execution of the given name.",
-                      "id": "workflowexecutions.projects.locations.workflows.executions.get",
-                      "response": {
+                    "create": {
+                      "parameters": {
+                        "parent": {
+                          "pattern": "^projects/[^/]+/locations/[^/]+/workflows/[^/]+$",
+                          "type": "string",
+                          "description": "Required. Name of the workflow for which an execution should be created. Format: projects/{project}/locations/{location}/workflows/{workflow} The latest revision of the workflow will be used.",
+                          "location": "path",
+                          "required": true
+                        }
+                      },
+                      "path": "v1beta/{+parent}/executions",
+                      "parameterOrder": [
+                        "parent"
+                      ],
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform"
+                      ],
+                      "id": "workflowexecutions.projects.locations.workflows.executions.create",
+                      "description": "Creates a new execution using the latest revision of the given workflow.",
+                      "flatPath": "v1beta/projects/{projectsId}/locations/{locationsId}/workflows/{workflowsId}/executions",
+                      "request": {
                         "$ref": "Execution"
                       },
-                      "flatPath": "v1beta/projects/{projectsId}/locations/{locationsId}/workflows/{workflowsId}/executions/{executionsId}",
-                      "path": "v1beta/{+name}",
+                      "httpMethod": "POST",
+                      "response": {
+                        "$ref": "Execution"
+                      }
+                    },
+                    "list": {
+                      "httpMethod": "GET",
+                      "response": {
+                        "$ref": "ListExecutionsResponse"
+                      },
+                      "flatPath": "v1beta/projects/{projectsId}/locations/{locationsId}/workflows/{workflowsId}/executions",
+                      "description": "Returns a list of executions which belong to the workflow with the given name. The method returns executions of all workflow revisions. Returned executions are ordered by their start time (newest first).",
+                      "id": "workflowexecutions.projects.locations.workflows.executions.list",
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform"
+                      ],
+                      "path": "v1beta/{+parent}/executions",
+                      "parameterOrder": [
+                        "parent"
+                      ],
                       "parameters": {
-                        "name": {
-                          "type": "string",
+                        "pageSize": {
+                          "description": "Maximum number of executions to return per call. Max supported value depends on the selected Execution view: it's 10000 for BASIC and 100 for FULL. The default value used if the field is not specified is 100, regardless of the selected view. Values greater than the max value will be coerced down to it.",
+                          "format": "int32",
+                          "type": "integer",
+                          "location": "query"
+                        },
+                        "parent": {
+                          "location": "path",
                           "required": true,
-                          "description": "Required. Name of the execution to be retrieved. Format: projects/{project}/locations/{location}/workflows/{workflow}/executions/{execution}",
-                          "pattern": "^projects/[^/]+/locations/[^/]+/workflows/[^/]+/executions/[^/]+$",
-                          "location": "path"
+                          "pattern": "^projects/[^/]+/locations/[^/]+/workflows/[^/]+$",
+                          "type": "string",
+                          "description": "Required. Name of the workflow for which the executions should be listed. Format: projects/{project}/locations/{location}/workflows/{workflow}"
+                        },
+                        "pageToken": {
+                          "location": "query",
+                          "type": "string",
+                          "description": "A page token, received from a previous `ListExecutions` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListExecutions` must match the call that provided the page token."
                         },
                         "view": {
-                          "description": "Optional. A view defining which fields should be filled in the returned execution. The API will default to the FULL view.",
-                          "location": "query",
-                          "enumDescriptions": [
-                            "The default / unset value.",
-                            "Includes only basic metadata about the execution. Following fields are returned: name, start_time, end_time, state and workflow_revision_id.",
-                            "Includes all data."
-                          ],
                           "type": "string",
+                          "description": "Optional. A view defining which fields should be filled in the returned executions. The API will default to the BASIC view.",
+                          "location": "query",
                           "enum": [
                             "EXECUTION_VIEW_UNSPECIFIED",
                             "BASIC",
                             "FULL"
+                          ],
+                          "enumDescriptions": [
+                            "The default / unset value.",
+                            "Includes only basic metadata about the execution. Following fields are returned: name, start_time, end_time, state and workflow_revision_id.",
+                            "Includes all data."
+                          ]
+                        }
+                      }
+                    },
+                    "get": {
+                      "id": "workflowexecutions.projects.locations.workflows.executions.get",
+                      "description": "Returns an execution of the given name.",
+                      "flatPath": "v1beta/projects/{projectsId}/locations/{locationsId}/workflows/{workflowsId}/executions/{executionsId}",
+                      "httpMethod": "GET",
+                      "response": {
+                        "$ref": "Execution"
+                      },
+                      "parameters": {
+                        "name": {
+                          "description": "Required. Name of the execution to be retrieved. Format: projects/{project}/locations/{location}/workflows/{workflow}/executions/{execution}",
+                          "type": "string",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/workflows/[^/]+/executions/[^/]+$",
+                          "required": true,
+                          "location": "path"
+                        },
+                        "view": {
+                          "type": "string",
+                          "description": "Optional. A view defining which fields should be filled in the returned execution. The API will default to the FULL view.",
+                          "location": "query",
+                          "enum": [
+                            "EXECUTION_VIEW_UNSPECIFIED",
+                            "BASIC",
+                            "FULL"
+                          ],
+                          "enumDescriptions": [
+                            "The default / unset value.",
+                            "Includes only basic metadata about the execution. Following fields are returned: name, start_time, end_time, state and workflow_revision_id.",
+                            "Includes all data."
                           ]
                         }
                       },
-                      "scopes": [
-                        "https://www.googleapis.com/auth/cloud-platform"
-                      ],
+                      "path": "v1beta/{+name}",
                       "parameterOrder": [
                         "name"
+                      ],
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform"
                       ]
                     },
                     "cancel": {
                       "httpMethod": "POST",
-                      "id": "workflowexecutions.projects.locations.workflows.executions.cancel",
                       "response": {
                         "$ref": "Execution"
                       },
-                      "description": "Cancels an execution of the given name.",
-                      "flatPath": "v1beta/projects/{projectsId}/locations/{locationsId}/workflows/{workflowsId}/executions/{executionsId}:cancel",
-                      "parameters": {
-                        "name": {
-                          "type": "string",
-                          "required": true,
-                          "description": "Required. Name of the execution to be cancelled. Format: projects/{project}/locations/{location}/workflows/{workflow}/executions/{execution}",
-                          "pattern": "^projects/[^/]+/locations/[^/]+/workflows/[^/]+/executions/[^/]+$",
-                          "location": "path"
-                        }
+                      "request": {
+                        "$ref": "CancelExecutionRequest"
                       },
+                      "flatPath": "v1beta/projects/{projectsId}/locations/{locationsId}/workflows/{workflowsId}/executions/{executionsId}:cancel",
+                      "description": "Cancels an execution of the given name.",
+                      "id": "workflowexecutions.projects.locations.workflows.executions.cancel",
                       "scopes": [
                         "https://www.googleapis.com/auth/cloud-platform"
                       ],
@@ -293,88 +158,15 @@
                       "parameterOrder": [
                         "name"
                       ],
-                      "request": {
-                        "$ref": "CancelExecutionRequest"
-                      }
-                    },
-                    "create": {
-                      "parameterOrder": [
-                        "parent"
-                      ],
-                      "request": {
-                        "$ref": "Execution"
-                      },
-                      "path": "v1beta/{+parent}/executions",
                       "parameters": {
-                        "parent": {
-                          "description": "Required. Name of the workflow for which an execution should be created. Format: projects/{project}/locations/{location}/workflows/{workflow} The latest revision of the workflow will be used.",
-                          "pattern": "^projects/[^/]+/locations/[^/]+/workflows/[^/]+$",
-                          "location": "path",
+                        "name": {
+                          "pattern": "^projects/[^/]+/locations/[^/]+/workflows/[^/]+/executions/[^/]+$",
                           "type": "string",
+                          "description": "Required. Name of the execution to be cancelled. Format: projects/{project}/locations/{location}/workflows/{workflow}/executions/{execution}",
+                          "location": "path",
                           "required": true
                         }
-                      },
-                      "scopes": [
-                        "https://www.googleapis.com/auth/cloud-platform"
-                      ],
-                      "flatPath": "v1beta/projects/{projectsId}/locations/{locationsId}/workflows/{workflowsId}/executions",
-                      "description": "Creates a new execution using the latest revision of the given workflow.",
-                      "id": "workflowexecutions.projects.locations.workflows.executions.create",
-                      "response": {
-                        "$ref": "Execution"
-                      },
-                      "httpMethod": "POST"
-                    },
-                    "list": {
-                      "httpMethod": "GET",
-                      "description": "Returns a list of executions which belong to the workflow with the given name. The method returns executions of all workflow revisions. Returned executions are ordered by their start time (newest first).",
-                      "id": "workflowexecutions.projects.locations.workflows.executions.list",
-                      "response": {
-                        "$ref": "ListExecutionsResponse"
-                      },
-                      "path": "v1beta/{+parent}/executions",
-                      "parameters": {
-                        "view": {
-                          "type": "string",
-                          "enum": [
-                            "EXECUTION_VIEW_UNSPECIFIED",
-                            "BASIC",
-                            "FULL"
-                          ],
-                          "description": "Optional. A view defining which fields should be filled in the returned executions. The API will default to the BASIC view.",
-                          "location": "query",
-                          "enumDescriptions": [
-                            "The default / unset value.",
-                            "Includes only basic metadata about the execution. Following fields are returned: name, start_time, end_time, state and workflow_revision_id.",
-                            "Includes all data."
-                          ]
-                        },
-                        "parent": {
-                          "type": "string",
-                          "required": true,
-                          "description": "Required. Name of the workflow for which the executions should be listed. Format: projects/{project}/locations/{location}/workflows/{workflow}",
-                          "pattern": "^projects/[^/]+/locations/[^/]+/workflows/[^/]+$",
-                          "location": "path"
-                        },
-                        "pageSize": {
-                          "type": "integer",
-                          "format": "int32",
-                          "description": "Maximum number of executions to return per call. Max supported value depends on the selected Execution view: it's 10000 for BASIC and 100 for FULL. The default value used if the field is not specified is 100, regardless of the selected view. Values greater than the max value will be coerced down to it.",
-                          "location": "query"
-                        },
-                        "pageToken": {
-                          "description": "A page token, received from a previous `ListExecutions` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListExecutions` must match the call that provided the page token.",
-                          "location": "query",
-                          "type": "string"
-                        }
-                      },
-                      "scopes": [
-                        "https://www.googleapis.com/auth/cloud-platform"
-                      ],
-                      "flatPath": "v1beta/projects/{projectsId}/locations/{locationsId}/workflows/{workflowsId}/executions",
-                      "parameterOrder": [
-                        "parent"
-                      ]
+                      }
                     }
                   }
                 }
@@ -385,7 +177,89 @@
       }
     }
   },
-  "mtlsRootUrl": "https://workflowexecutions.mtls.googleapis.com/",
+  "rootUrl": "https://workflowexecutions.googleapis.com/",
+  "ownerDomain": "google.com",
+  "parameters": {
+    "key": {
+      "location": "query",
+      "type": "string",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token."
+    },
+    "access_token": {
+      "type": "string",
+      "location": "query",
+      "description": "OAuth access token."
+    },
+    "alt": {
+      "description": "Data format for response.",
+      "type": "string",
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ],
+      "default": "json",
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ],
+      "location": "query"
+    },
+    "fields": {
+      "description": "Selector specifying which fields to include in a partial response.",
+      "location": "query",
+      "type": "string"
+    },
+    "$.xgafv": {
+      "enum": [
+        "1",
+        "2"
+      ],
+      "location": "query",
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ],
+      "type": "string",
+      "description": "V1 error format."
+    },
+    "prettyPrint": {
+      "location": "query",
+      "type": "boolean",
+      "default": "true",
+      "description": "Returns response with indentations and line breaks."
+    },
+    "quotaUser": {
+      "type": "string",
+      "location": "query",
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters."
+    },
+    "upload_protocol": {
+      "location": "query",
+      "type": "string",
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\")."
+    },
+    "callback": {
+      "description": "JSONP",
+      "location": "query",
+      "type": "string"
+    },
+    "oauth_token": {
+      "description": "OAuth 2.0 token for the current user.",
+      "location": "query",
+      "type": "string"
+    },
+    "uploadType": {
+      "type": "string",
+      "location": "query",
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\")."
+    }
+  },
+  "baseUrl": "https://workflowexecutions.googleapis.com/",
+  "protocol": "rest",
+  "ownerName": "Google",
+  "id": "workflowexecutions:v1beta",
   "auth": {
     "oauth2": {
       "scopes": {
@@ -395,98 +269,224 @@
       }
     }
   },
-  "rootUrl": "https://workflowexecutions.googleapis.com/",
-  "basePath": "",
-  "ownerName": "Google",
-  "id": "workflowexecutions:v1beta",
-  "title": "Workflow Executions API",
-  "kind": "discovery#restDescription",
-  "discoveryVersion": "v1",
-  "ownerDomain": "google.com",
+  "schemas": {
+    "Step": {
+      "description": "Represents a step of the workflow this execution is running.",
+      "id": "Step",
+      "properties": {
+        "step": {
+          "description": "Name of a step within the routine.",
+          "type": "string"
+        },
+        "routine": {
+          "description": "Name of a routine within the workflow.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "StackTrace": {
+      "type": "object",
+      "id": "StackTrace",
+      "properties": {
+        "elements": {
+          "description": "An array of stack elements.",
+          "items": {
+            "$ref": "StackTraceElement"
+          },
+          "type": "array"
+        }
+      },
+      "description": "A collection of stack elements (frames) where an error occurred."
+    },
+    "CancelExecutionRequest": {
+      "id": "CancelExecutionRequest",
+      "properties": {},
+      "type": "object",
+      "description": "Request for the CancelExecution method."
+    },
+    "Position": {
+      "id": "Position",
+      "properties": {
+        "line": {
+          "type": "string",
+          "description": "The source code line number the current instruction was generated from.",
+          "format": "int64"
+        },
+        "length": {
+          "description": "The number of bytes of source code making up this stack trace element.",
+          "format": "int64",
+          "type": "string"
+        },
+        "column": {
+          "description": "The source code column position (of the line) the current instruction was generated from.",
+          "format": "int64",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "description": "Position contains source position information about the stack trace element such as line number, column number and length of the code block in bytes."
+    },
+    "StackTraceElement": {
+      "description": "A single stack element (frame) where an error occurred.",
+      "type": "object",
+      "id": "StackTraceElement",
+      "properties": {
+        "routine": {
+          "description": "The routine where the error occurred.",
+          "type": "string"
+        },
+        "step": {
+          "description": "The step the error occurred at.",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "Position",
+          "description": "The source position information of the stack trace element."
+        }
+      }
+    },
+    "Execution": {
+      "id": "Execution",
+      "properties": {
+        "name": {
+          "description": "Output only. The resource name of the execution. Format: projects/{project}/locations/{location}/workflows/{workflow}/executions/{execution}",
+          "readOnly": true,
+          "type": "string"
+        },
+        "argument": {
+          "description": "Input parameters of the execution represented as a JSON string. The size limit is 32KB. *Note*: If you are using the REST API directly to run your workflow, you must escape any JSON string value of `argument`. Example: `'{\"argument\":\"{\\\"firstName\\\":\\\"FIRST\\\",\\\"lastName\\\":\\\"LAST\\\"}\"}'`",
+          "type": "string"
+        },
+        "endTime": {
+          "description": "Output only. Marks the end of execution, successful or not.",
+          "readOnly": true,
+          "format": "google-datetime",
+          "type": "string"
+        },
+        "startTime": {
+          "type": "string",
+          "description": "Output only. Marks the beginning of execution.",
+          "readOnly": true,
+          "format": "google-datetime"
+        },
+        "status": {
+          "$ref": "Status",
+          "description": "Output only. Status tracks the current steps and progress data of this execution.",
+          "readOnly": true
+        },
+        "callLogLevel": {
+          "type": "string",
+          "enum": [
+            "CALL_LOG_LEVEL_UNSPECIFIED",
+            "LOG_ALL_CALLS",
+            "LOG_ERRORS_ONLY"
+          ],
+          "description": "The call logging level associated to this execution.",
+          "enumDescriptions": [
+            "No call logging level specified.",
+            "Log all call steps within workflows, all call returns, and all exceptions raised.",
+            "Log only exceptions that are raised from call steps within workflows."
+          ]
+        },
+        "state": {
+          "description": "Output only. Current state of the execution.",
+          "type": "string",
+          "readOnly": true,
+          "enumDescriptions": [
+            "Invalid state.",
+            "The execution is in progress.",
+            "The execution finished successfully.",
+            "The execution failed with an error.",
+            "The execution was stopped intentionally.",
+            "Reserved for future use.",
+            "Request has been placed in the backlog for processing at a later time."
+          ],
+          "enum": [
+            "STATE_UNSPECIFIED",
+            "ACTIVE",
+            "SUCCEEDED",
+            "FAILED",
+            "CANCELLED",
+            "UNAVAILABLE",
+            "QUEUED"
+          ]
+        },
+        "result": {
+          "type": "string",
+          "description": "Output only. Output of the execution represented as a JSON string. The value can only be present if the execution's state is `SUCCEEDED`.",
+          "readOnly": true
+        },
+        "error": {
+          "description": "Output only. The error which caused the execution to finish prematurely. The value is only present if the execution's state is `FAILED` or `CANCELLED`.",
+          "readOnly": true,
+          "$ref": "Error"
+        },
+        "workflowRevisionId": {
+          "type": "string",
+          "description": "Output only. Revision of the workflow this execution is using.",
+          "readOnly": true
+        }
+      },
+      "type": "object",
+      "description": "A running instance of a [Workflow](/workflows/docs/reference/rest/v1beta/projects.locations.workflows)."
+    },
+    "Error": {
+      "id": "Error",
+      "properties": {
+        "context": {
+          "description": "Human-readable stack trace string.",
+          "type": "string"
+        },
+        "payload": {
+          "description": "Error message and data returned represented as a JSON string.",
+          "type": "string"
+        },
+        "stackTrace": {
+          "$ref": "StackTrace",
+          "description": "Stack trace with detailed information of where error was generated."
+        }
+      },
+      "type": "object",
+      "description": "Error describes why the execution was abnormally terminated."
+    },
+    "ListExecutionsResponse": {
+      "id": "ListExecutionsResponse",
+      "properties": {
+        "nextPageToken": {
+          "description": "A token, which can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages.",
+          "type": "string"
+        },
+        "executions": {
+          "type": "array",
+          "items": {
+            "$ref": "Execution"
+          },
+          "description": "The executions which match the request."
+        }
+      },
+      "type": "object",
+      "description": "Response for the ListExecutions method."
+    },
+    "Status": {
+      "description": "Represents the current status of this execution.",
+      "type": "object",
+      "id": "Status",
+      "properties": {
+        "currentSteps": {
+          "items": {
+            "$ref": "Step"
+          },
+          "type": "array",
+          "description": "A list of currently executing or last executed step names for the workflow execution currently running. If the workflow has succeeded or failed, this is the last attempted or executed step. Presently, if the current step is inside a subworkflow, the list only includes that step. In the future, the list will contain items for each step in the call stack, starting with the outermost step in the `main` subworkflow, and ending with the most deeply nested step."
+        }
+      }
+    }
+  },
+  "description": "Execute workflows created with Workflows API.",
+  "canonicalName": "Workflow Executions",
   "icons": {
     "x16": "http://www.google.com/images/icons/product/search-16.gif",
     "x32": "http://www.google.com/images/icons/product/search-32.gif"
-  },
-  "fullyEncodeReservedExpansion": true,
-  "parameters": {
-    "oauth_token": {
-      "description": "OAuth 2.0 token for the current user.",
-      "location": "query",
-      "type": "string"
-    },
-    "uploadType": {
-      "type": "string",
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
-      "location": "query"
-    },
-    "alt": {
-      "type": "string",
-      "enum": [
-        "json",
-        "media",
-        "proto"
-      ],
-      "description": "Data format for response.",
-      "location": "query",
-      "enumDescriptions": [
-        "Responses with Content-Type of application/json",
-        "Media download with context-dependent Content-Type",
-        "Responses with Content-Type of application/x-protobuf"
-      ],
-      "default": "json"
-    },
-    "callback": {
-      "description": "JSONP",
-      "location": "query",
-      "type": "string"
-    },
-    "fields": {
-      "description": "Selector specifying which fields to include in a partial response.",
-      "location": "query",
-      "type": "string"
-    },
-    "quotaUser": {
-      "type": "string",
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
-      "location": "query"
-    },
-    "upload_protocol": {
-      "type": "string",
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
-      "location": "query"
-    },
-    "access_token": {
-      "type": "string",
-      "description": "OAuth access token.",
-      "location": "query"
-    },
-    "key": {
-      "type": "string",
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
-      "location": "query"
-    },
-    "$.xgafv": {
-      "type": "string",
-      "enum": [
-        "1",
-        "2"
-      ],
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ],
-      "description": "V1 error format.",
-      "location": "query"
-    },
-    "prettyPrint": {
-      "type": "boolean",
-      "default": "true",
-      "description": "Returns response with indentations and line breaks.",
-      "location": "query"
-    }
-  },
-  "protocol": "rest",
-  "version": "v1beta",
-  "version_module": true,
-  "servicePath": ""
+  }
 }
