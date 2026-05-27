@@ -1,4 +1,7 @@
 {
+  "batchPath": "batch",
+  "kind": "discovery#restDescription",
+  "version": "v1beta1",
   "schemas": {
     "ListLocationsResponse": {
       "id": "ListLocationsResponse",
@@ -577,6 +580,7 @@
             "Initial state: packet originating from a Cloud Function. A CloudFunctionInfo is populated with starting function information.",
             "Initial state: packet originating from an App Engine service version. An AppEngineVersionInfo is populated with starting version information.",
             "Initial state: packet originating from a Cloud Run revision. A CloudRunRevisionInfo is populated with starting revision information.",
+            "Initial state: packet originating from a Cloud Run Job. A CloudRunJobInfo is populated with starting Job information.",
             "Initial state: packet originating from a Storage Bucket. Used only for return traces. The storage_bucket information is populated.",
             "Initial state: packet originating from a published service that uses Private Service Connect. Used only for return traces.",
             "Initial state: packet originating from a serverless network endpoint group backend. Used only for return traces. The serverless_neg information is populated.",
@@ -614,6 +618,7 @@
             "Special state: viewer of the test result does not have permission to see the configuration in this step."
           ],
           "enumDeprecated": [
+            false,
             false,
             false,
             false,
@@ -677,6 +682,7 @@
             "START_FROM_CLOUD_FUNCTION",
             "START_FROM_APP_ENGINE_VERSION",
             "START_FROM_CLOUD_RUN_REVISION",
+            "START_FROM_CLOUD_RUN_JOB",
             "START_FROM_STORAGE_BUCKET",
             "START_FROM_PSC_PUBLISHED_SERVICE",
             "START_FROM_SERVERLESS_NEG",
@@ -842,6 +848,10 @@
         "cloudRunRevision": {
           "description": "Display information of a Cloud Run revision.",
           "$ref": "CloudRunRevisionInfo"
+        },
+        "cloudRunJob": {
+          "description": "Display information of a Cloud Run job.",
+          "$ref": "CloudRunJobInfo"
         },
         "nat": {
           "description": "Display information of a NAT.",
@@ -1556,6 +1566,7 @@
             "Target is a Redis Instance.",
             "Target is a Redis Cluster.",
             "Target is a GKE Pod.",
+            "Target is a Cloud Run Job. Used only for return traces.",
             "Target is a DMS Private Connection. Used only for return traces.",
             "Target is a Datastream Private Connection. Used only for return traces."
           ],
@@ -1579,6 +1590,7 @@
             "REDIS_INSTANCE",
             "REDIS_CLUSTER",
             "GKE_POD",
+            "CLOUD_RUN_JOB",
             "DMS_PRIVATE_CONNECTION",
             "DATASTREAM_PRIVATE_CONNECTION"
           ]
@@ -1924,6 +1936,7 @@
             "The packet sent from the hybrid NEG proxy matches a non-dynamic route, but such a configuration is not supported.",
             "The packet sent from the hybrid NEG proxy matches a dynamic route with a next hop in a different region, but such a configuration is not supported.",
             "Packet sent from a Cloud Run revision that is not ready.",
+            "Packet sent from a Cloud Run job that is not ready.",
             "Packet was dropped inside Private Service Connect service producer.",
             "Packet sent to a load balancer, which requires a proxy-only subnet and the subnet is not found.",
             "Packet sent to Cloud Nat without active NAT IPs.",
@@ -2035,6 +2048,7 @@
             "HYBRID_NEG_NON_DYNAMIC_ROUTE_MATCHED",
             "HYBRID_NEG_NON_LOCAL_DYNAMIC_ROUTE_MATCHED",
             "CLOUD_RUN_REVISION_NOT_READY",
+            "CLOUD_RUN_JOB_NOT_READY",
             "DROPPED_INSIDE_PSC_SERVICE_PRODUCER",
             "LOAD_BALANCER_HAS_NO_PROXY_SUBNET",
             "CLOUD_NAT_NO_ADDRESSES",
@@ -2522,6 +2536,25 @@
         },
         "serviceUri": {
           "description": "URI of Cloud Run service this revision belongs to.",
+          "type": "string"
+        }
+      }
+    },
+    "CloudRunJobInfo": {
+      "id": "CloudRunJobInfo",
+      "description": "For display only. Metadata associated with a Cloud Run job.",
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "description": "Name of a Cloud Run job.",
+          "type": "string"
+        },
+        "uri": {
+          "description": "URI of a Cloud Run job.",
+          "type": "string"
+        },
+        "location": {
+          "description": "Location in which this job is deployed.",
           "type": "string"
         }
       }
@@ -3521,97 +3554,28 @@
       }
     }
   },
-  "id": "networkmanagement:v1beta1",
-  "mtlsRootUrl": "https://networkmanagement.mtls.googleapis.com/",
-  "version_module": true,
   "protocol": "rest",
-  "baseUrl": "https://networkmanagement.googleapis.com/",
-  "ownerName": "Google",
-  "parameters": {
-    "access_token": {
-      "type": "string",
-      "description": "OAuth access token.",
-      "location": "query"
-    },
-    "alt": {
-      "type": "string",
-      "description": "Data format for response.",
-      "default": "json",
-      "enum": [
-        "json",
-        "media",
-        "proto"
-      ],
-      "enumDescriptions": [
-        "Responses with Content-Type of application/json",
-        "Media download with context-dependent Content-Type",
-        "Responses with Content-Type of application/x-protobuf"
-      ],
-      "location": "query"
-    },
-    "callback": {
-      "type": "string",
-      "description": "JSONP",
-      "location": "query"
-    },
-    "fields": {
-      "type": "string",
-      "description": "Selector specifying which fields to include in a partial response.",
-      "location": "query"
-    },
-    "key": {
-      "type": "string",
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
-      "location": "query"
-    },
-    "oauth_token": {
-      "type": "string",
-      "description": "OAuth 2.0 token for the current user.",
-      "location": "query"
-    },
-    "prettyPrint": {
-      "type": "boolean",
-      "description": "Returns response with indentations and line breaks.",
-      "default": "true",
-      "location": "query"
-    },
-    "quotaUser": {
-      "type": "string",
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
-      "location": "query"
-    },
-    "upload_protocol": {
-      "type": "string",
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
-      "location": "query"
-    },
-    "uploadType": {
-      "type": "string",
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
-      "location": "query"
-    },
-    "$.xgafv": {
-      "type": "string",
-      "description": "V1 error format.",
-      "enum": [
-        "1",
-        "2"
-      ],
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ],
-      "location": "query"
+  "rootUrl": "https://networkmanagement.googleapis.com/",
+  "description": "The Network Management API provides a collection of network performance monitoring and diagnostic capabilities.",
+  "canonicalName": "Network Management",
+  "auth": {
+    "oauth2": {
+      "scopes": {
+        "https://www.googleapis.com/auth/cloud-platform": {
+          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
+        }
+      }
     }
   },
-  "revision": "20260513",
-  "canonicalName": "Network Management",
-  "rootUrl": "https://networkmanagement.googleapis.com/",
-  "version": "v1beta1",
+  "basePath": "",
+  "revision": "20260520",
+  "documentationLink": "https://cloud.google.com/",
   "discoveryVersion": "v1",
-  "description": "The Network Management API provides a collection of network performance monitoring and diagnostic capabilities.",
-  "batchPath": "batch",
-  "kind": "discovery#restDescription",
+  "version_module": true,
+  "baseUrl": "https://networkmanagement.googleapis.com/",
+  "fullyEncodeReservedExpansion": true,
+  "servicePath": "",
+  "name": "networkmanagement",
   "resources": {
     "projects": {
       "resources": {
@@ -4745,24 +4709,90 @@
       }
     }
   },
-  "name": "networkmanagement",
-  "basePath": "",
-  "fullyEncodeReservedExpansion": true,
-  "ownerDomain": "google.com",
-  "documentationLink": "https://cloud.google.com/",
-  "servicePath": "",
+  "mtlsRootUrl": "https://networkmanagement.mtls.googleapis.com/",
+  "id": "networkmanagement:v1beta1",
   "title": "Network Management API",
-  "auth": {
-    "oauth2": {
-      "scopes": {
-        "https://www.googleapis.com/auth/cloud-platform": {
-          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
-        }
-      }
-    }
-  },
+  "ownerName": "Google",
   "icons": {
     "x16": "http://www.google.com/images/icons/product/search-16.gif",
     "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  },
+  "ownerDomain": "google.com",
+  "parameters": {
+    "access_token": {
+      "type": "string",
+      "description": "OAuth access token.",
+      "location": "query"
+    },
+    "alt": {
+      "type": "string",
+      "description": "Data format for response.",
+      "default": "json",
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ],
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ],
+      "location": "query"
+    },
+    "callback": {
+      "type": "string",
+      "description": "JSONP",
+      "location": "query"
+    },
+    "fields": {
+      "type": "string",
+      "description": "Selector specifying which fields to include in a partial response.",
+      "location": "query"
+    },
+    "key": {
+      "type": "string",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+      "location": "query"
+    },
+    "oauth_token": {
+      "type": "string",
+      "description": "OAuth 2.0 token for the current user.",
+      "location": "query"
+    },
+    "prettyPrint": {
+      "type": "boolean",
+      "description": "Returns response with indentations and line breaks.",
+      "default": "true",
+      "location": "query"
+    },
+    "quotaUser": {
+      "type": "string",
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
+      "location": "query"
+    },
+    "upload_protocol": {
+      "type": "string",
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
+      "location": "query"
+    },
+    "uploadType": {
+      "type": "string",
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
+      "location": "query"
+    },
+    "$.xgafv": {
+      "type": "string",
+      "description": "V1 error format.",
+      "enum": [
+        "1",
+        "2"
+      ],
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ],
+      "location": "query"
+    }
   }
 }

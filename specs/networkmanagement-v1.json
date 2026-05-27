@@ -1301,6 +1301,7 @@
             "Initial state: packet originating from a Cloud Function. A CloudFunctionInfo is populated with starting function information.",
             "Initial state: packet originating from an App Engine service version. An AppEngineVersionInfo is populated with starting version information.",
             "Initial state: packet originating from a Cloud Run revision. A CloudRunRevisionInfo is populated with starting revision information.",
+            "Initial state: packet originating from a Cloud Run Job. A CloudRunJobInfo is populated with starting Job information.",
             "Initial state: packet originating from a Storage Bucket. Used only for return traces. The storage_bucket information is populated.",
             "Initial state: packet originating from a published service that uses Private Service Connect. Used only for return traces.",
             "Initial state: packet originating from a serverless network endpoint group backend. Used only for return traces. The serverless_neg information is populated.",
@@ -1338,6 +1339,7 @@
             "Special state: viewer of the test result does not have permission to see the configuration in this step."
           ],
           "enumDeprecated": [
+            false,
             false,
             false,
             false,
@@ -1401,6 +1403,7 @@
             "START_FROM_CLOUD_FUNCTION",
             "START_FROM_APP_ENGINE_VERSION",
             "START_FROM_CLOUD_RUN_REVISION",
+            "START_FROM_CLOUD_RUN_JOB",
             "START_FROM_STORAGE_BUCKET",
             "START_FROM_PSC_PUBLISHED_SERVICE",
             "START_FROM_SERVERLESS_NEG",
@@ -1566,6 +1569,10 @@
         "cloudRunRevision": {
           "description": "Display information of a Cloud Run revision.",
           "$ref": "CloudRunRevisionInfo"
+        },
+        "cloudRunJob": {
+          "description": "Display information of a Cloud Run job.",
+          "$ref": "CloudRunJobInfo"
         },
         "nat": {
           "description": "Display information of a NAT.",
@@ -2280,6 +2287,7 @@
             "Target is a Redis Instance.",
             "Target is a Redis Cluster.",
             "Target is a GKE Pod.",
+            "Target is a Cloud Run Job. Used only for return traces.",
             "Target is a DMS Private Connection. Used only for return traces.",
             "Target is a Datastream Private Connection. Used only for return traces."
           ],
@@ -2303,6 +2311,7 @@
             "REDIS_INSTANCE",
             "REDIS_CLUSTER",
             "GKE_POD",
+            "CLOUD_RUN_JOB",
             "DMS_PRIVATE_CONNECTION",
             "DATASTREAM_PRIVATE_CONNECTION"
           ]
@@ -2648,6 +2657,7 @@
             "The packet sent from the hybrid NEG proxy matches a non-dynamic route, but such a configuration is not supported.",
             "The packet sent from the hybrid NEG proxy matches a dynamic route with a next hop in a different region, but such a configuration is not supported.",
             "Packet sent from a Cloud Run revision that is not ready.",
+            "Packet sent from a Cloud Run job that is not ready.",
             "Packet was dropped inside Private Service Connect service producer.",
             "Packet sent to a load balancer, which requires a proxy-only subnet and the subnet is not found.",
             "Packet sent to Cloud Nat without active NAT IPs.",
@@ -2759,6 +2769,7 @@
             "HYBRID_NEG_NON_DYNAMIC_ROUTE_MATCHED",
             "HYBRID_NEG_NON_LOCAL_DYNAMIC_ROUTE_MATCHED",
             "CLOUD_RUN_REVISION_NOT_READY",
+            "CLOUD_RUN_JOB_NOT_READY",
             "DROPPED_INSIDE_PSC_SERVICE_PRODUCER",
             "LOAD_BALANCER_HAS_NO_PROXY_SUBNET",
             "CLOUD_NAT_NO_ADDRESSES",
@@ -3246,6 +3257,25 @@
         },
         "serviceUri": {
           "description": "URI of Cloud Run service this revision belongs to.",
+          "type": "string"
+        }
+      }
+    },
+    "CloudRunJobInfo": {
+      "id": "CloudRunJobInfo",
+      "description": "For display only. Metadata associated with a Cloud Run job.",
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "description": "Name of a Cloud Run job.",
+          "type": "string"
+        },
+        "uri": {
+          "description": "URI of a Cloud Run job.",
+          "type": "string"
+        },
+        "location": {
+          "description": "Location in which this job is deployed.",
           "type": "string"
         }
       }
@@ -4245,97 +4275,38 @@
       }
     }
   },
-  "title": "Network Management API",
-  "baseUrl": "https://networkmanagement.googleapis.com/",
-  "batchPath": "batch",
-  "description": "The Network Management API provides a collection of network performance monitoring and diagnostic capabilities.",
-  "documentationLink": "https://cloud.google.com/",
-  "mtlsRootUrl": "https://networkmanagement.mtls.googleapis.com/",
+  "basePath": "",
+  "ownerName": "Google",
+  "kind": "discovery#restDescription",
+  "version_module": true,
+  "icons": {
+    "x16": "http://www.google.com/images/icons/product/search-16.gif",
+    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  },
+  "rootUrl": "https://networkmanagement.googleapis.com/",
+  "fullyEncodeReservedExpansion": true,
+  "id": "networkmanagement:v1",
   "version": "v1",
   "name": "networkmanagement",
-  "protocol": "rest",
-  "ownerName": "Google",
-  "rootUrl": "https://networkmanagement.googleapis.com/",
-  "parameters": {
-    "access_token": {
-      "type": "string",
-      "description": "OAuth access token.",
-      "location": "query"
-    },
-    "alt": {
-      "type": "string",
-      "description": "Data format for response.",
-      "default": "json",
-      "enum": [
-        "json",
-        "media",
-        "proto"
-      ],
-      "enumDescriptions": [
-        "Responses with Content-Type of application/json",
-        "Media download with context-dependent Content-Type",
-        "Responses with Content-Type of application/x-protobuf"
-      ],
-      "location": "query"
-    },
-    "callback": {
-      "type": "string",
-      "description": "JSONP",
-      "location": "query"
-    },
-    "fields": {
-      "type": "string",
-      "description": "Selector specifying which fields to include in a partial response.",
-      "location": "query"
-    },
-    "key": {
-      "type": "string",
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
-      "location": "query"
-    },
-    "oauth_token": {
-      "type": "string",
-      "description": "OAuth 2.0 token for the current user.",
-      "location": "query"
-    },
-    "prettyPrint": {
-      "type": "boolean",
-      "description": "Returns response with indentations and line breaks.",
-      "default": "true",
-      "location": "query"
-    },
-    "quotaUser": {
-      "type": "string",
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
-      "location": "query"
-    },
-    "upload_protocol": {
-      "type": "string",
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
-      "location": "query"
-    },
-    "uploadType": {
-      "type": "string",
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
-      "location": "query"
-    },
-    "$.xgafv": {
-      "type": "string",
-      "description": "V1 error format.",
-      "enum": [
-        "1",
-        "2"
-      ],
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ],
-      "location": "query"
+  "description": "The Network Management API provides a collection of network performance monitoring and diagnostic capabilities.",
+  "auth": {
+    "oauth2": {
+      "scopes": {
+        "https://www.googleapis.com/auth/cloud-platform": {
+          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
+        }
+      }
     }
   },
-  "fullyEncodeReservedExpansion": true,
+  "baseUrl": "https://networkmanagement.googleapis.com/",
+  "batchPath": "batch",
+  "mtlsRootUrl": "https://networkmanagement.mtls.googleapis.com/",
+  "title": "Network Management API",
+  "protocol": "rest",
+  "canonicalName": "Network Management",
+  "discoveryVersion": "v1",
+  "revision": "20260520",
   "ownerDomain": "google.com",
-  "version_module": true,
   "resources": {
     "projects": {
       "resources": {
@@ -4997,6 +4968,11 @@
                       "location": "path",
                       "required": true,
                       "type": "string"
+                    },
+                    "privateConnectivityEnabled": {
+                      "description": "Optional. For Google Cloud MPs, this field indicates whether the Monitoring Point is deployed in a Private Service Connect deployment. Not used for non-Google Cloud MPs.",
+                      "location": "query",
+                      "type": "boolean"
                     }
                   },
                   "parameterOrder": [
@@ -5037,7 +5013,8 @@
                             "Monitoring Point that runs in a Kernel-based Virtual Machine (KVM) hypervisor.",
                             "Monitoring Point that runs in a VMware hypervisor.",
                             "Monitoring Point that runs on a K8S Helm.",
-                            "Monitoring Point that runs as a startup script in a Compute Engine VM."
+                            "Monitoring Point that runs as a startup script in a Compute Engine VM.",
+                            "Monitoring Point that runs as a startup script in an Azure VM."
                           ],
                           "enum": [
                             "MONITORING_POINT_TYPE_UNSPECIFIED",
@@ -5045,7 +5022,8 @@
                             "KVM",
                             "VMWARE",
                             "HELM",
-                            "GCE_VM"
+                            "GCE_VM",
+                            "AZURE_VM"
                           ]
                         },
                         "hostname": {
@@ -5067,6 +5045,11 @@
                           "description": "Optional. IANA Time Zone Database version number. For example \"2019a\".",
                           "location": "query",
                           "type": "string"
+                        },
+                        "privateConnectivityEnabled": {
+                          "description": "Optional. For Google Cloud MPs, this field indicates whether the Monitoring Point is deployed in a Private Service Connect deployment. Not used for non-Google Cloud MPs.",
+                          "location": "query",
+                          "type": "boolean"
                         },
                         "useDhcp": {
                           "description": "Optional. Dynamic Host Configuration Protocol, is a network management protocol that automatically assigns IP addresses and other network configuration parameters to devices connecting to a network.",
@@ -6015,24 +5998,83 @@
       }
     }
   },
-  "canonicalName": "Network Management",
-  "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
-  },
-  "auth": {
-    "oauth2": {
-      "scopes": {
-        "https://www.googleapis.com/auth/cloud-platform": {
-          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
-        }
-      }
+  "servicePath": "",
+  "parameters": {
+    "access_token": {
+      "type": "string",
+      "description": "OAuth access token.",
+      "location": "query"
+    },
+    "alt": {
+      "type": "string",
+      "description": "Data format for response.",
+      "default": "json",
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ],
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ],
+      "location": "query"
+    },
+    "callback": {
+      "type": "string",
+      "description": "JSONP",
+      "location": "query"
+    },
+    "fields": {
+      "type": "string",
+      "description": "Selector specifying which fields to include in a partial response.",
+      "location": "query"
+    },
+    "key": {
+      "type": "string",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+      "location": "query"
+    },
+    "oauth_token": {
+      "type": "string",
+      "description": "OAuth 2.0 token for the current user.",
+      "location": "query"
+    },
+    "prettyPrint": {
+      "type": "boolean",
+      "description": "Returns response with indentations and line breaks.",
+      "default": "true",
+      "location": "query"
+    },
+    "quotaUser": {
+      "type": "string",
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
+      "location": "query"
+    },
+    "upload_protocol": {
+      "type": "string",
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
+      "location": "query"
+    },
+    "uploadType": {
+      "type": "string",
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
+      "location": "query"
+    },
+    "$.xgafv": {
+      "type": "string",
+      "description": "V1 error format.",
+      "enum": [
+        "1",
+        "2"
+      ],
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ],
+      "location": "query"
     }
   },
-  "id": "networkmanagement:v1",
-  "kind": "discovery#restDescription",
-  "discoveryVersion": "v1",
-  "revision": "20260513",
-  "basePath": "",
-  "servicePath": ""
+  "documentationLink": "https://cloud.google.com/"
 }
